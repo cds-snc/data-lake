@@ -1,0 +1,53 @@
+name: "Terragrunt apply PRODUCTION"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "terragrunt/aws/**"
+      - "terragrunt/env/production/**"
+      - "terragrunt/env/common/**"
+      - "terragrunt/env/terragrunt.hcl"
+      - ".github/workflows/terragrunt-apply-production.yml"
+
+env:
+  AWS_REGION: ca-central-1
+  CONFTEST_VERSION: 0.27.0
+  TERRAFORM_VERSION: 1.9.8
+  TERRAGRUNT_VERSION: 0.68.6
+  TF_INPUT: false
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terragrunt-apply-production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+
+      - name: Setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: arn:aws:iam::739275439843:role/data-lake-apply
+          role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terragrunt apply buckets
+        working-directory: terragrunt/env/production/buckets
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Report deployment to Sentinel
+        if: always()
+        uses: cds-snc/sentinel-forward-data-action@main
+        with:
+          input_data: '{"product": "data-lake", "sha": "${{ github.sha }}", "version": "Infrastructure ${{ github.sha }}", "repository": "${{ github.repository }}", "environment": "production", "status": "${{ job.status }}"}'
+          log_type: CDS_Product_Deployment_Data
+          log_analytics_workspace_id: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+          log_analytics_workspace_key: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
