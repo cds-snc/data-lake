@@ -1,0 +1,50 @@
+name: "Terragrunt plan PRODUCTION"
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "terragrunt/aws/**"
+      - "terragrunt/env/production/**"
+      - "terragrunt/env/common/**"
+      - "terragrunt/env/terragrunt.hcl"
+      - ".github/workflows/terragrunt-plan-production.yml"
+
+env:
+  AWS_REGION: ca-central-1
+  CONFTEST_VERSION: 0.27.0
+  TERRAFORM_VERSION: 1.9.8
+  TERRAGRUNT_VERSION: 0.68.6
+  TF_INPUT: false
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  terragrunt-plan-production:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+
+      - name: Setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: arn:aws:iam::739275439843:role/data-lake-plan
+          role-session-name: TFPlan
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terragrunt plan buckets
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+        with:
+          directory: "terragrunt/env/production/buckets"
+          comment-delete: "true"
+          comment-title: "Production: buckets"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"

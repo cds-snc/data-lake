@@ -1,0 +1,5 @@
+# Terraform
+.terragrunt-cache
+.terraform
+*.tfstate
+*.tfvars
