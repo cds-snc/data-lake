@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: data-lake
+  description: Infrastructure for the Platform Data Lake
+  labels:
+    license: MIT
+spec:
+  type: website
+  lifecycle: experimental
+  owner: platform-core-services
