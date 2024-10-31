@@ -13,4 +13,4 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Dependency review
-        uses: actions/dependency-review-action@v1
+        uses: actions/dependency-review-action@4081bf99e2866ebe428fc0477b69eb4fcda7220a # v4.4.0
