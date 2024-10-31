@@ -60,12 +60,20 @@ module "log_bucket" {
   bucket_name       = "cds-data-lake-bucket-logs-${var.env}"
   versioning_status = "Enabled"
 
-  lifecycle_rule = {
-    "lifecycle_rule" : {
-      "enabled" : "true",
-      "expiration" : { "days" : "30" }
+  lifecycle_rule = [{
+    id      = "expire_logs"
+    enabled = true
+    expiration = {
+      days                         = "30"
+      expired_object_delete_marker = true
     }
-  }
+    noncurrent_version_expiration = {
+      days = "30"
+    }
+    abort_incomplete_multipart_upload = {
+      days_after_initiation = "7"
+    }
+  }]
 
   billing_tag_value = var.billing_tag_value
 }
