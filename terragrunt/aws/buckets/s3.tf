@@ -2,7 +2,7 @@
 # Holds exported data before transformation
 #
 module "raw_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v9.6.7"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=4768da635c66d3333538835b215887cb3c7e3036"
   bucket_name       = "cds-data-lake-raw-${var.env}"
   billing_tag_value = var.billing_tag_value
 
@@ -25,7 +25,7 @@ module "raw_bucket" {
 # ETL jobs process the `Raw` bucket and store the transformed data here
 #
 module "transformed_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v9.6.7"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=4768da635c66d3333538835b215887cb3c7e3036"
   bucket_name       = "cds-data-lake-transformed-${var.env}"
   billing_tag_value = var.billing_tag_value
 
@@ -47,7 +47,7 @@ module "transformed_bucket" {
 # Holds enriched data that has been created by combining multiple transformed datasets
 #
 module "curated_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v9.6.7"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=4768da635c66d3333538835b215887cb3c7e3036"
   bucket_name       = "cds-data-lake-curated-${var.env}"
   billing_tag_value = var.billing_tag_value
 
