@@ -11,6 +11,11 @@ module "raw_bucket" {
     target_prefix = "raw/"
   }
 
+  lifecycle_rule = [
+    local.lifecycle_remove_noncurrent_versions,
+    local.lifecycle_transition_storage
+  ]
+
   versioning = {
     enabled = true
   }
@@ -28,6 +33,10 @@ module "transformed_bucket" {
     target_bucket = module.log_bucket.s3_bucket_id
     target_prefix = "transformed/"
   }
+
+  lifecycle_rule = [
+    local.lifecycle_remove_noncurrent_versions
+  ]
 
   versioning = {
     enabled = true
@@ -47,6 +56,10 @@ module "curated_bucket" {
     target_prefix = "curated/"
   }
 
+  lifecycle_rule = [
+    local.lifecycle_remove_noncurrent_versions
+  ]
+
   versioning = {
     enabled = true
   }
@@ -60,20 +73,10 @@ module "log_bucket" {
   bucket_name       = "cds-data-lake-bucket-logs-${var.env}"
   versioning_status = "Enabled"
 
-  lifecycle_rule = [{
-    id      = "expire_logs"
-    enabled = true
-    expiration = {
-      days                         = "30"
-      expired_object_delete_marker = true
-    }
-    noncurrent_version_expiration = {
-      days = "30"
-    }
-    abort_incomplete_multipart_upload = {
-      days_after_initiation = "7"
-    }
-  }]
+  lifecycle_rule = [
+    local.lifecycle_expire_all,
+    local.lifecycle_remove_noncurrent_versions
+  ]
 
   billing_tag_value = var.billing_tag_value
 }
