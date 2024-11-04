@@ -4,8 +4,7 @@ locals {
     id      = "expire_all"
     enabled = true
     expiration = {
-      days                         = "30"
-      expired_object_delete_marker = true
+      days = "30"
     }
   }
   # Cleanup old versions and incomplete uploads
