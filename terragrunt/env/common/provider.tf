@@ -14,9 +14,9 @@ provider "aws" {
   allowed_account_ids = [var.account_id]
 
   default_tags {
-   tags = {
-     CostCentre = "PlatformDataLake"
-     Terraform  = true
-   }
- }
+    tags = {
+      CostCentre = "PlatformDataLake"
+      Terraform  = true
+    }
+  }
 }
