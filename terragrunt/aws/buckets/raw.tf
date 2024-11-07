@@ -22,7 +22,7 @@ module "raw_bucket" {
 }
 
 resource "aws_s3_bucket_policy" "raw_bucket" {
-  bucket = module.cost_usage_report.raw_bucket
+  bucket = module.raw_bucket.s3_bucket_id
   policy = data.aws_iam_policy_document.raw_bucket.json
 }
 
