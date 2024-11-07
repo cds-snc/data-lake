@@ -49,4 +49,23 @@ data "aws_iam_policy_document" "glue_crawler" {
       "${var.transformed_bucket_arn}/*"
     ]
   }
+
+  statement {
+    sid    = "UseGlueKey"
+    effect = "Allow"
+    actions = [
+      "kms:CreateGrant",
+      "kms:Decrypt",
+      "kms:DescribeKey",
+      "kms:Encrypt",
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:ReEncryptFrom",
+      "kms:ReEncryptTo",
+      "kms:RetireGrant"
+    ]
+    resources = [
+      aws_kms_key.aws_glue.arn
+    ]
+  }
 }
