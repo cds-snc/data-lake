@@ -15,7 +15,7 @@ resource "aws_kms_key" "aws_glue" {
 
 resource "aws_kms_alias" "data_export" {
   name          = "alias/aws-glue"
-  target_key_id = aws_kms_key.data_export.key_id
+  target_key_id = aws_kms_key.aws_glue.key_id
 }
 
 data "aws_iam_policy_document" "aws_glue" {

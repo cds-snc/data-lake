@@ -1,5 +1,5 @@
-resource "aws_glue_security_configuration" "s3_encryption" {
-  name = "s3-encryption"
+resource "aws_glue_security_configuration" "encryption_at_rest" {
+  name = "encryption-at-rest"
 
   encryption_configuration {
     cloudwatch_encryption {
@@ -8,7 +8,7 @@ resource "aws_glue_security_configuration" "s3_encryption" {
     }
 
     job_bookmarks_encryption {
-      job_bookmarks_encryption_mode = "SSE-KMS"
+      job_bookmarks_encryption_mode = "CSE-KMS"
       kms_key_arn                   = aws_kms_key.aws_glue.arn
     }
 
@@ -27,7 +27,7 @@ resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
   table_prefix  = "cost_usage_report_"
 
   role                   = aws_iam_role.glue_crawler.arn
-  security_configuration = aws_glue_security_configuration.s3_encryption.name
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
     path = "s3://${var.raw_bucket_name}/operations/aws/cost-usage-report"
@@ -57,7 +57,7 @@ resource "aws_glue_crawler" "operations_aws_production_account_tags" {
   table_prefix  = "org_"
 
   role                   = aws_iam_role.glue_crawler.arn
-  security_configuration = aws_glue_security_configuration.s3_encryption.name
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
     path = "s3://${var.raw_bucket_name}/operations/aws/organization"
