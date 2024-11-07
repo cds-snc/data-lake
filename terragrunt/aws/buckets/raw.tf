@@ -34,21 +34,19 @@ data "aws_iam_policy_document" "raw_bucket" {
     sid    = "CostAndUsageReport"
     effect = "Allow"
     principals {
-      type = "Service"
-      identifiers = [
-        "bcm-data-exports.amazonaws.com",
-        "billingreports.amazonaws.com"
-      ]
-    }
-    principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::659087519042:role/BillingExtractTags"
+        "arn:aws:iam::659087519042:role/BillingExtractTags",
+        "arn:aws:iam::659087519042:role/CostUsageReplicateToDataLake"
       ]
     }
     actions = [
+      "s3:List*",
+      "s3:GetBucketVersioning",
+      "s3:PutBucketVersioning",
       "s3:PutObject",
-      "s3:GetBucketPolicy"
+      "s3:ReplicateObject",
+      "s3:ReplicateDelete"
     ]
     resources = [
       module.raw_bucket.s3_bucket_arn,
