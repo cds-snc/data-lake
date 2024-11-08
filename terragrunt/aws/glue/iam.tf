@@ -68,4 +68,18 @@ data "aws_iam_policy_document" "glue_crawler" {
       aws_kms_key.aws_glue.arn
     ]
   }
+
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${var.region}.amazonaws.com"]
+    }
+    actions = [
+      "logs:AssociateKmsKey"
+    ]
+    resources = [
+      aws_kms_key.aws_glue.arn
+    ]
+  }
 }
