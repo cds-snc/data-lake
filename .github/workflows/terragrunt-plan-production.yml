@@ -17,6 +17,7 @@ env:
   TERRAFORM_VERSION: 1.9.8
   TERRAGRUNT_VERSION: 0.68.6
   TF_INPUT: false
+  TF_VAR_cloudwatch_alarm_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}
 
 permissions:
   id-token: write
@@ -45,7 +46,7 @@ jobs:
         with:
           directory: "terragrunt/env/production/buckets"
           comment-delete: "true"
-          comment-title: "Production: buckets"
+          comment-title: "Production: buckets 🪣"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
@@ -54,6 +55,15 @@ jobs:
         with:
           directory: "terragrunt/env/production/glue"
           comment-delete: "true"
-          comment-title: "Production: glue"
+          comment-title: "Production: glue 🧴"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan alarms
+        uses: cds-snc/terraform-plan@25afd759b2ada46a94b011fab7a81963c4f3a61a # v3.3.0
+        with:
+          directory: "terragrunt/env/production/alarms"
+          comment-delete: "true"
+          comment-title: "Production: alarms 🚨"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
