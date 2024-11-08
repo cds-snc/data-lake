@@ -24,18 +24,39 @@ data "aws_iam_policy_document" "aws_glue" {
 
   # Allow this account to use the key
   statement {
-    effect    = "Allow"
-    actions   = ["kms:*"]
-    resources = ["*"]
+    effect = "Allow"
     principals {
       type        = "AWS"
       identifiers = [var.account_id]
     }
+    actions   = ["kms:*"]
+    resources = ["*"]
   }
 
-  # Allow product accounts to use the key for encryption
+  # Allow CloudWatch Logs to use the key for encryption
   statement {
     effect = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${var.region}.amazonaws.com"]
+    }
+    actions = [
+      "kms:Encrypt*",
+      "kms:Decrypt*",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Describe*"
+    ]
+    resources = ["*"]
+  }
+
+  # Allow Glue roles to use the key for encryption
+  statement {
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = local.glue_role_arns
+    }
     actions = [
       "kms:Encrypt",
       "kms:Decrypt",
@@ -48,9 +69,5 @@ data "aws_iam_policy_document" "aws_glue" {
       "kms:RetireGrant"
     ]
     resources = ["*"]
-    principals {
-      type        = "AWS"
-      identifiers = local.glue_role_arns
-    }
   }
 }
