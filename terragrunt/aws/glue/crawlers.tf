@@ -23,6 +23,7 @@ resource "aws_glue_security_configuration" "encryption_at_rest" {
 #
 resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
   name          = "Cost and Usage Report 2.0"
+  description   = "Classify the AWS Organization Cost and Usage Report data"
   database_name = aws_glue_catalog_database.operations_aws_production.name
   table_prefix  = "cost_usage_report_"
 
@@ -44,8 +45,7 @@ resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
       Version              = 1
   })
 
-  # TODO: enable schedule once job has been tested
-  # schedule = "cron(00 7 1 * ? *)" # Create the new month's partition key
+  schedule = "cron(00 7 1 * ? *)" # Create the new month's partition key
 }
 
 #
@@ -53,8 +53,9 @@ resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
 #
 resource "aws_glue_crawler" "operations_aws_production_account_tags" {
   name          = "Organization Account Tags"
+  description   = "Classify the AWS Organization account tag extract"
   database_name = aws_glue_catalog_database.operations_aws_production.name
-  table_prefix  = "org_"
+  table_prefix  = "account_tags_"
 
   role                   = aws_iam_role.glue_crawler.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
@@ -74,6 +75,5 @@ resource "aws_glue_crawler" "operations_aws_production_account_tags" {
       Version              = 1
   })
 
-  # TODO: enable schedule once job has been tested
-  # schedule = "cron(00 13 * * ? *)" # Pickup new accounts each day
+  schedule = "cron(00 13 * * ? *)" # Pickup new accounts each day
 }
