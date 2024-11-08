@@ -70,16 +70,13 @@ data "aws_iam_policy_document" "glue_crawler" {
   }
 
   statement {
+    sid    = "AssociateKmsKey"
     effect = "Allow"
-    principals {
-      type        = "Service"
-      identifiers = ["logs.${var.region}.amazonaws.com"]
-    }
     actions = [
       "logs:AssociateKmsKey"
     ]
     resources = [
-      aws_kms_key.aws_glue.arn
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/crawlers-role/service-role/${aws_iam_role.glue_crawler.name}-${aws_glue_security_configuration.encryption_at_rest.name}:*"
     ]
   }
 }
