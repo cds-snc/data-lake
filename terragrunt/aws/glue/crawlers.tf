@@ -53,7 +53,7 @@ resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
 #
 resource "aws_glue_crawler" "operations_aws_production_account_tags" {
   name          = "Organization Account Tags"
-  description   = "Classify the AWS Organization account tag extract" 
+  description   = "Classify the AWS Organization account tag extract"
   database_name = aws_glue_catalog_database.operations_aws_production.name
   table_prefix  = "account_tags_"
 
