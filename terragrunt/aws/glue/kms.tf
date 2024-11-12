@@ -1,6 +1,7 @@
 locals {
   glue_role_arns = [
     aws_iam_role.glue_crawler.arn,
+    aws_iam_role.glue_etl.arn,
   ]
 }
 

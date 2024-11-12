@@ -4,13 +4,20 @@
 resource "aws_iam_role" "glue_crawler" {
   name               = "AWSGlueCrawler-DataLake"
   path               = "/service-role/"
-  assume_role_policy = data.aws_iam_policy_document.glue_crawler_assume.json
+  assume_role_policy = data.aws_iam_policy_document.glue_assume.json
 }
 
 resource "aws_iam_policy" "glue_crawler" {
   name   = "AWSGlueCrawler-DataLake"
   path   = "/service-role/"
-  policy = data.aws_iam_policy_document.glue_crawler.json
+  policy = data.aws_iam_policy_document.glue_crawler_combined.json
+}
+
+data "aws_iam_policy_document" "glue_crawler_combined" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.s3_read_data_lake.json,
+    data.aws_iam_policy_document.glue_kms.json
+  ]
 }
 
 resource "aws_iam_role_policy_attachment" "glue_crawler" {
@@ -23,7 +30,43 @@ resource "aws_iam_role_policy_attachment" "aws_glue_service_role" {
   role       = aws_iam_role.glue_crawler.name
 }
 
-data "aws_iam_policy_document" "glue_crawler_assume" {
+#
+# Glue ETL role
+#
+resource "aws_iam_role" "glue_etl" {
+  name               = "AWSGlueETL-DataLake"
+  path               = "/service-role/"
+  assume_role_policy = data.aws_iam_policy_document.glue_assume.json
+}
+
+resource "aws_iam_policy" "glue_etl" {
+  name   = "AWSGlueETL-DataLake"
+  path   = "/service-role/"
+  policy = data.aws_iam_policy_document.glue_etl_combined.json
+}
+
+data "aws_iam_policy_document" "glue_etl_combined" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.s3_read_data_lake.json,
+    data.aws_iam_policy_document.s3_write_data_lake.json,
+    data.aws_iam_policy_document.glue_kms.json
+  ]
+}
+
+resource "aws_iam_role_policy_attachment" "glue_etl" {
+  policy_arn = aws_iam_policy.glue_etl.arn
+  role       = aws_iam_role.glue_etl.name
+}
+
+resource "aws_iam_role_policy_attachment" "glue_etl_service_role" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+  role       = aws_iam_role.glue_etl.name
+}
+
+#
+# Custom policies
+#
+data "aws_iam_policy_document" "glue_assume" {
   statement {
     actions = [
       "sts:AssumeRole",
@@ -37,7 +80,7 @@ data "aws_iam_policy_document" "glue_crawler_assume" {
   }
 }
 
-data "aws_iam_policy_document" "glue_crawler" {
+data "aws_iam_policy_document" "s3_read_data_lake" {
   statement {
     sid = "ReadDataLakeS3Buckets"
     actions = [
@@ -49,7 +92,9 @@ data "aws_iam_policy_document" "glue_crawler" {
       "${var.transformed_bucket_arn}/*"
     ]
   }
+}
 
+data "aws_iam_policy_document" "glue_kms" {
   statement {
     sid    = "UseGlueKey"
     effect = "Allow"
@@ -77,6 +122,19 @@ data "aws_iam_policy_document" "glue_crawler" {
     ]
     resources = [
       "arn:aws:logs:${var.region}:${var.account_id}:log-group:${local.glue_crawler_log_group_name}:*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "s3_write_data_lake" {
+  statement {
+    sid = "WriteDataLakeS3TransformedBuckets"
+    actions = [
+      "s3:PutObject",
+    ]
+    resources = [
+      "${var.curated_bucket_arn}/*",
+      "${var.transformed_bucket_arn}/*"
     ]
   }
 }
