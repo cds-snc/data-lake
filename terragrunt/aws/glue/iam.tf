@@ -121,9 +121,9 @@ data "aws_iam_policy_document" "glue_kms" {
       "logs:AssociateKmsKey"
     ]
     resources = [
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group:${local.glue_crawler_log_group_name}*",
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group:${local.glue_etl_log_group_name}*",
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/sessions/*",
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/crawlers*",
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/jobs*",
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/sessions*"
     ]
   }
 }
@@ -133,6 +133,7 @@ data "aws_iam_policy_document" "s3_write_data_lake" {
     sid = "WriteDataLakeS3TransformedBuckets"
     actions = [
       "s3:PutObject",
+      "s3:DeleteObject"
     ]
     resources = [
       "${var.curated_bucket_arn}/*",
