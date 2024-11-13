@@ -22,7 +22,7 @@ resource "aws_glue_security_configuration" "encryption_at_rest" {
 # Cost and Usage Report
 #
 resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
-  name          = "Cost and Usage Report 2.0"
+  name          = "Operations / AWS / Cost and Usage Report"
   description   = "Classify the AWS Organization Cost and Usage Report data"
   database_name = aws_glue_catalog_database.operations_aws_production.name
   table_prefix  = "cost_usage_report_"
@@ -52,7 +52,7 @@ resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
 # Organization Account Tags
 #
 resource "aws_glue_crawler" "operations_aws_production_account_tags" {
-  name          = "Organization Account Tags"
+  name          = "Operations / AWS / Organization / Account Tags"
   description   = "Classify the AWS Organization account tag extract"
   database_name = aws_glue_catalog_database.operations_aws_production.name
   table_prefix  = "account_tags_"
