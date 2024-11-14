@@ -7,8 +7,8 @@ resource "aws_cloudwatch_log_metric_filter" "glue_crawler_error" {
   log_group_name = var.glue_crawler_log_group_name
 
   metric_transformation {
-    name          = "glue-crawler-error"
-    namespace     = "data-lake"
+    name          = local.glue_crawler_error_metric_name
+    namespace     = local.data_lake_namespace
     value         = "1"
     default_value = "0"
     unit          = "Count"
@@ -36,8 +36,8 @@ resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
   alarm_description   = "Failed Glue jobs in a 1 minute period."
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
-  metric_name         = aws_cloudwatch_event_target.glue_job_failure.input_transformer[0].input_template.MetricData[0].MetricName
-  namespace           = aws_cloudwatch_event_target.glue_job_failure.input_transformer[0].input_template.Namespace
+  metric_name         = local.glue_job_failure_metric_name
+  namespace           = local.data_lake_namespace
   period              = "60"
   statistic           = "Sum"
   threshold           = "0"

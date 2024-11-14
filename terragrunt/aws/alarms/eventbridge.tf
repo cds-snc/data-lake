@@ -23,7 +23,7 @@ resource "aws_cloudwatch_event_target" "glue_job_failure" {
     }
     input_template = jsonencode({
       MetricData = [{
-        MetricName = "glue-job-failure"
+        MetricName = local.glue_job_failure_metric_name
         Value      = 1
         Unit       = "Count"
         Dimensions = [{
@@ -31,7 +31,7 @@ resource "aws_cloudwatch_event_target" "glue_job_failure" {
           Value = "<jobName>"
         }]
       }]
-      Namespace = "data-lake"
+      Namespace = local.data_lake_namespace
     })
   }
 }
