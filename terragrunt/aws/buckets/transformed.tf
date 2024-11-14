@@ -19,3 +19,30 @@ module "transformed_bucket" {
     enabled = true
   }
 }
+
+resource "aws_s3_bucket_policy" "transformed_bucket" {
+  bucket = module.transformed_bucket.s3_bucket_id
+  policy = data.aws_iam_policy_document.transformed_bucket.json
+}
+
+data "aws_iam_policy_document" "transformed_bucket" {
+  statement {
+    sid    = "SupersetRead"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        var.superset_iam_role_arn
+      ]
+    }
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket"
+    ]
+    resources = [
+      module.transformed_bucket.s3_bucket_arn,
+      "${module.transformed_bucket.s3_bucket_arn}/*"
+    ]
+  }
+}

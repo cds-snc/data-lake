@@ -3,10 +3,11 @@ locals {
 }
 
 inputs = {
-  account_id        = "${local.vars.inputs.account_id}"
-  billing_tag_value = "${local.vars.inputs.billing_tag_value}"
-  env               = "${local.vars.inputs.env}"
-  region            = "ca-central-1"
+  account_id            = "${local.vars.inputs.account_id}"
+  billing_tag_value     = "${local.vars.inputs.billing_tag_value}"
+  env                   = "${local.vars.inputs.env}"
+  region                = "ca-central-1"
+  superset_iam_role_arn = "arn:aws:iam::066023111852:role/SupersetAthenaRead"
 }
 
 remote_state {

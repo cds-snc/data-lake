@@ -1,4 +1,35 @@
 #
+# Resource policy for the Glue Data Catalog
+#
+resource "aws_glue_resource_policy" "cross_account_access" {
+  policy = data.aws_iam_policy_document.cross_account_access.json
+}
+
+data "aws_iam_policy_document" "cross_account_access" {
+  statement {
+    sid = "SupersetReadAccess"
+    principals {
+      type = "AWS"
+      identifiers = [
+        var.superset_iam_role_arn
+      ]
+    }
+    actions = [
+      "glue:BatchGetPartition",
+      "glue:GetDatabase",
+      "glue:GetDatabases",
+      "glue:GetPartition",
+      "glue:GetPartitions",
+      "glue:GetTable",
+      "glue:GetTables",
+      "glue:GetTableVersion",
+      "glue:GetTableVersions"
+    ]
+    resources = ["arn:aws:glue:${var.region}:${var.account_id}:*"]
+  }
+}
+
+#
 # Glue crawler role
 #
 resource "aws_iam_role" "glue_crawler" {
