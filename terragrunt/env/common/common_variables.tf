@@ -17,3 +17,8 @@ variable "region" {
   description = "(Required) The region to build infra in"
   type        = string
 }
+
+variable "superset_iam_role_arn" {
+  description = "(Required) The ARN of the IAM role that Superset uses to access the Glue catalog"
+  type        = string
+}
