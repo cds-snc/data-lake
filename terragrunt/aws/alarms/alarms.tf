@@ -31,26 +31,6 @@ resource "aws_cloudwatch_metric_alarm" "glue_crawler_error" {
   ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
 }
 
-resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
-  alarm_name          = "glue-job-failures"
-  alarm_description   = "Failed Glue jobs in a 1 minute period."
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "1"
-  metric_name         = local.glue_job_failure_metric_name
-  namespace           = local.data_lake_namespace
-  period              = "60"
-  statistic           = "Sum"
-  threshold           = "0"
-  treat_missing_data  = "notBreaching"
-
-  alarm_actions = [aws_sns_topic.cloudwatch_alarm_action.arn]
-  ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
-
-  dimensions = {
-    JobName = "*"
-  }
-}
-
 #
 # Log Insight queries
 #
