@@ -2,9 +2,11 @@
 set -euo pipefail
 
 #
-# Syncs the AWS Glue ETL jobs with the repository and creates a PR.
+# Checks if there are changes to the Glue ETL jobs and creates a PR if yes.
+# This script will update an existing PR if the branch already exists.
 #
 
+JOB_DIR="./terragrunt/aws/glue/etl"
 REMOTE_REPO="origin"
 BRANCH_NAME="chore/glue-job-sync"
 BASE_BRANCH="main"
@@ -13,7 +15,7 @@ PR_BODY="## Summary
 Automated sync of AWS Glue ETL jobs."
 
 # Check for changes in the repository
-if git diff-index --quiet HEAD --; then
+if git diff-index --quiet HEAD -- "$JOB_DIR"; then
     echo "No changes detected."
     exit 0
 else
@@ -33,7 +35,7 @@ fi
 # Add changes and commit
 git config user.email "github-actions[bot]@users.noreply.github.com"
 git config user.name "github-actions[bot]"
-git add .
+git add "$JOB_DIR"
 git commit -m "$PR_TITLE"
 
 # Push branch and create the PR

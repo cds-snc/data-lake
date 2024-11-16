@@ -14,27 +14,23 @@ while IFS= read -r name; do
   # Split the name on '/'
   IFS='/' read -ra segments <<< "$name"
 
-  # Initialize directory path
   dir_path=""
   filename=""
 
-  # Get the number of segments
   num_segments=${#segments[@]}
-
-  # Process all segments except the last one to build the directory path
   for ((i=0; i<num_segments; i++)); do
     segment="${segments[i]}"
     segment=$(echo "$segment" | xargs)
-    segment=$(echo "$segment" | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')
+    segment=$(echo "$segment" | sed 's/ /-/g' | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]')
 
-    if [ $i -eq $((num_segments-1)) ]; then
+    if [ "$i" -eq $((num_segments-1)) ]; then
       filename="$segment.json"
     else
       dir_path="$dir_path/$segment"
     fi
   done
 
-  dir_path="./terragrunt/aws/glue/etl/${dir_path}"
+  dir_path="./terragrunt/aws/glue/etl${dir_path}"
 
   mkdir -p "$dir_path"
   aws glue get-job --job-name "$name" --output json > "$dir_path/$filename"
