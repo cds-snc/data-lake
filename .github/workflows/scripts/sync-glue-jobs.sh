@@ -16,6 +16,7 @@ Automated sync of AWS Glue ETL jobs."
 
 # Check if the remote branch exists
 git fetch "$REMOTE_REPO"
+git fetch "$REMOTE_REPO" "$BASE_BRANCH":"$BASE_BRANCH"
 if git ls-remote --heads "$REMOTE_REPO" "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
     echo "Branch '$BRANCH_NAME' exists. Checking out and updating."
     git stash
