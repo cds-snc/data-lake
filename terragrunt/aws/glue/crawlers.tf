@@ -76,7 +76,7 @@ resource "aws_glue_crawler" "operations_aws_production_account_tags" {
       Version              = 1
   })
 
-  schedule = "cron(00 13 * * ? *)" # Pickup new accounts each day
+  schedule = "cron(00 7 1 * ? *)" # Check for schema changes each month
 }
 
 # JSON classifier for arrays of objects
