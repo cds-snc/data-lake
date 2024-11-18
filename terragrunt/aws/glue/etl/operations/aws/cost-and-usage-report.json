@@ -1,1577 +1,1407 @@
 {
-	"jobConfig": {
-		"name": "Operations / AWS / Cost and Usage Report",
-		"description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
-		"role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
-		"command": "glueetl",
-		"version": "4.0",
-		"runtime": null,
-		"workerType": "G.1X",
-		"numberOfWorkers": 10,
-		"maxCapacity": 10,
-		"jobRunQueuingEnabled": false,
-		"maxRetries": 0,
-		"timeout": 120,
-		"maxConcurrentRuns": 1,
-		"security": "encryption-at-rest",
-		"scriptName": " Cost and Usage Report.py",
-		"scriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Operations / AWS /",
-		"language": "python-3",
-		"spark": true,
-		"sparkConfiguration": "standard",
-		"jobParameters": [],
-		"tags": [],
-		"jobMode": "VISUAL_MODE",
-		"createdOn": "2024-11-12T16:36:58.812Z",
-		"developerMode": false,
-		"connectionsList": [],
-		"temporaryDirectory": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/",
-		"etlAutoScaling": true,
-		"logging": true,
-		"glueHiveMetastore": true,
-		"etlAutoTuning": true,
-		"metrics": true,
-		"observabilityMetrics": true,
-		"bookmark": "job-bookmark-disable",
-		"sparkPath": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
-		"flexExecution": false,
-		"minFlexWorkers": null,
-		"sourceControlDetails": {
-			"Provider": "NONE",
-			"Repository": "",
-			"Branch": "",
-			"Folder": "glue-etl",
-			"LastCommitId": "c708a0d9eec25a6ef215ce7d385967e9bda2241e"
-		},
-		"maintenanceWindow": null,
-		"pythonPath": "",
-		"securityConfigEncryption": {
-			"serverSideEncryption": "AES256"
-		}
-	},
-	"dag": {
-		"node-1731428848266": {
-			"nodeId": "node-1731428848266",
-			"dataPreview": false,
-			"previewAmount": 0,
-			"inputs": [],
-			"name": "Cost and Usage Report",
-			"generatedNodeName": "CostandUsageReport_node1731428848266",
-			"classification": "DataSource",
-			"type": "Catalog",
-			"isCatalog": true,
-			"database": "operations_aws_production",
-			"table": "cost_usage_report_data",
-			"calculatedType": "",
-			"runtimeParameters": [],
-			"codeGenVersion": 2
-		},
-		"node-1731523780914": {
-			"nodeId": "node-1731523780914",
-			"dataPreview": false,
-			"previewAmount": 0,
-			"inputs": [
-				"node-1731523763363",
-				"node-1731428848266"
-			],
-			"name": "Join",
-			"generatedNodeName": "Join_node1731523780914",
-			"classification": "Transform",
-			"type": "Join",
-			"joinType": "equijoin",
-			"columns": [
-				{
-					"from": "node-1731523763363",
-					"keys": [
-						"id"
-					]
-				},
-				{
-					"from": "node-1731428848266",
-					"keys": [
-						"line_item_usage_account_id"
-					]
-				}
-			],
-			"columnConditions": [
-				"="
-			],
-			"parentsValid": true,
-			"calculatedType": "",
-			"codeGenVersion": 2
-		},
-		"node-1731429060956": {
-			"nodeId": "node-1731429060956",
-			"dataPreview": false,
-			"previewAmount": 0,
-			"inputs": [
-				"node-1731523780914"
-			],
-			"name": "Change Schema",
-			"generatedNodeName": "ChangeSchema_node1731429060956",
-			"classification": "Transform",
-			"type": "ApplyMapping",
-			"mapping": [
-				{
-					"toKey": "id",
-					"fromPath": [
-						"id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "arn",
-					"fromPath": [
-						"arn"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "email",
-					"fromPath": [
-						"email"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "name",
-					"fromPath": [
-						"name"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "status",
-					"fromPath": [
-						"status"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "joinedmethod",
-					"fromPath": [
-						"joinedmethod"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "joinedtimestamp",
-					"fromPath": [
-						"joinedtimestamp"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "tag_env",
-					"fromPath": [
-						"tag_env"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "tag_business_unit",
-					"fromPath": [
-						"tag_business_unit"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "tag_product",
-					"fromPath": [
-						"tag_product"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "bill_bill_type",
-					"fromPath": [
-						"bill_bill_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "bill_billing_entity",
-					"fromPath": [
-						"bill_billing_entity"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "bill_billing_period_end_date",
-					"fromPath": [
-						"bill_billing_period_end_date"
-					],
-					"toType": "timestamp",
-					"fromType": "timestamp",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "bill_billing_period_start_date",
-					"fromPath": [
-						"bill_billing_period_start_date"
-					],
-					"toType": "timestamp",
-					"fromType": "timestamp",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "bill_invoice_id",
-					"fromPath": [
-						"bill_invoice_id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "bill_invoicing_entity",
-					"fromPath": [
-						"bill_invoicing_entity"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "bill_payer_account_id",
-					"fromPath": [
-						"bill_payer_account_id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "bill_payer_account_name",
-					"fromPath": [
-						"bill_payer_account_name"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "cost_category",
-					"fromPath": [
-						"cost_category"
-					],
-					"toType": "object",
-					"fromType": "object",
-					"dropped": true,
-					"children": [
-						{
-							"toKey": "string",
-							"fromPath": [
-								"cost_category",
-								"string"
-							],
-							"toType": "string",
-							"fromType": "string",
-							"dropped": true,
-							"children": null
-						}
-					]
-				},
-				{
-					"toKey": "discount",
-					"fromPath": [
-						"discount"
-					],
-					"toType": "object",
-					"fromType": "object",
-					"dropped": true,
-					"children": [
-						{
-							"toKey": "string",
-							"fromPath": [
-								"discount",
-								"string"
-							],
-							"toType": "double",
-							"fromType": "double",
-							"dropped": true,
-							"children": null
-						}
-					]
-				},
-				{
-					"toKey": "discount_bundled_discount",
-					"fromPath": [
-						"discount_bundled_discount"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "discount_total_discount",
-					"fromPath": [
-						"discount_total_discount"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "identity_line_item_id",
-					"fromPath": [
-						"identity_line_item_id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "identity_time_interval",
-					"fromPath": [
-						"identity_time_interval"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_availability_zone",
-					"fromPath": [
-						"line_item_availability_zone"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_blended_cost",
-					"fromPath": [
-						"line_item_blended_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_blended_rate",
-					"fromPath": [
-						"line_item_blended_rate"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_currency_code",
-					"fromPath": [
-						"line_item_currency_code"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_legal_entity",
-					"fromPath": [
-						"line_item_legal_entity"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_line_item_description",
-					"fromPath": [
-						"line_item_line_item_description"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_line_item_type",
-					"fromPath": [
-						"line_item_line_item_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_net_unblended_cost",
-					"fromPath": [
-						"line_item_net_unblended_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_net_unblended_rate",
-					"fromPath": [
-						"line_item_net_unblended_rate"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_normalization_factor",
-					"fromPath": [
-						"line_item_normalization_factor"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_normalized_usage_amount",
-					"fromPath": [
-						"line_item_normalized_usage_amount"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_operation",
-					"fromPath": [
-						"line_item_operation"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_product_code",
-					"fromPath": [
-						"line_item_product_code"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_resource_id",
-					"fromPath": [
-						"line_item_resource_id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_tax_type",
-					"fromPath": [
-						"line_item_tax_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_unblended_cost",
-					"fromPath": [
-						"line_item_unblended_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_unblended_rate",
-					"fromPath": [
-						"line_item_unblended_rate"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_usage_account_id",
-					"fromPath": [
-						"line_item_usage_account_id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_usage_account_name",
-					"fromPath": [
-						"line_item_usage_account_name"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_usage_amount",
-					"fromPath": [
-						"line_item_usage_amount"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_usage_end_date",
-					"fromPath": [
-						"line_item_usage_end_date"
-					],
-					"toType": "timestamp",
-					"fromType": "timestamp",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_usage_start_date",
-					"fromPath": [
-						"line_item_usage_start_date"
-					],
-					"toType": "timestamp",
-					"fromType": "timestamp",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "line_item_usage_type",
-					"fromPath": [
-						"line_item_usage_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_currency",
-					"fromPath": [
-						"pricing_currency"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_lease_contract_length",
-					"fromPath": [
-						"pricing_lease_contract_length"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_offering_class",
-					"fromPath": [
-						"pricing_offering_class"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_public_on_demand_cost",
-					"fromPath": [
-						"pricing_public_on_demand_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_public_on_demand_rate",
-					"fromPath": [
-						"pricing_public_on_demand_rate"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_purchase_option",
-					"fromPath": [
-						"pricing_purchase_option"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_rate_code",
-					"fromPath": [
-						"pricing_rate_code"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_rate_id",
-					"fromPath": [
-						"pricing_rate_id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_term",
-					"fromPath": [
-						"pricing_term"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "pricing_unit",
-					"fromPath": [
-						"pricing_unit"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product",
-					"fromPath": [
-						"product"
-					],
-					"toType": "object",
-					"fromType": "object",
-					"dropped": true,
-					"children": [
-						{
-							"toKey": "string",
-							"fromPath": [
-								"product",
-								"string"
-							],
-							"toType": "string",
-							"fromType": "string",
-							"dropped": true,
-							"children": null
-						}
-					]
-				},
-				{
-					"toKey": "product_comment",
-					"fromPath": [
-						"product_comment"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_fee_code",
-					"fromPath": [
-						"product_fee_code"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_fee_description",
-					"fromPath": [
-						"product_fee_description"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_from_location",
-					"fromPath": [
-						"product_from_location"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_from_location_type",
-					"fromPath": [
-						"product_from_location_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_from_region_code",
-					"fromPath": [
-						"product_from_region_code"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_instance_family",
-					"fromPath": [
-						"product_instance_family"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_instance_type",
-					"fromPath": [
-						"product_instance_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_instancesku",
-					"fromPath": [
-						"product_instancesku"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_location",
-					"fromPath": [
-						"product_location"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_location_type",
-					"fromPath": [
-						"product_location_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_operation",
-					"fromPath": [
-						"product_operation"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_pricing_unit",
-					"fromPath": [
-						"product_pricing_unit"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_product_family",
-					"fromPath": [
-						"product_product_family"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_region_code",
-					"fromPath": [
-						"product_region_code"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_servicecode",
-					"fromPath": [
-						"product_servicecode"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_sku",
-					"fromPath": [
-						"product_sku"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_to_location",
-					"fromPath": [
-						"product_to_location"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_to_location_type",
-					"fromPath": [
-						"product_to_location_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_to_region_code",
-					"fromPath": [
-						"product_to_region_code"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "product_usagetype",
-					"fromPath": [
-						"product_usagetype"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_amortized_upfront_cost_for_usage",
-					"fromPath": [
-						"reservation_amortized_upfront_cost_for_usage"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_amortized_upfront_fee_for_billing_period",
-					"fromPath": [
-						"reservation_amortized_upfront_fee_for_billing_period"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_availability_zone",
-					"fromPath": [
-						"reservation_availability_zone"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_effective_cost",
-					"fromPath": [
-						"reservation_effective_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_end_time",
-					"fromPath": [
-						"reservation_end_time"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_modification_status",
-					"fromPath": [
-						"reservation_modification_status"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_net_amortized_upfront_cost_for_usage",
-					"fromPath": [
-						"reservation_net_amortized_upfront_cost_for_usage"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_net_amortized_upfront_fee_for_billing_period",
-					"fromPath": [
-						"reservation_net_amortized_upfront_fee_for_billing_period"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_net_effective_cost",
-					"fromPath": [
-						"reservation_net_effective_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_net_recurring_fee_for_usage",
-					"fromPath": [
-						"reservation_net_recurring_fee_for_usage"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_net_unused_amortized_upfront_fee_for_billing_period",
-					"fromPath": [
-						"reservation_net_unused_amortized_upfront_fee_for_billing_period"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_net_unused_recurring_fee",
-					"fromPath": [
-						"reservation_net_unused_recurring_fee"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_net_upfront_value",
-					"fromPath": [
-						"reservation_net_upfront_value"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_normalized_units_per_reservation",
-					"fromPath": [
-						"reservation_normalized_units_per_reservation"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_number_of_reservations",
-					"fromPath": [
-						"reservation_number_of_reservations"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_recurring_fee_for_usage",
-					"fromPath": [
-						"reservation_recurring_fee_for_usage"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_reservation_a_r_n",
-					"fromPath": [
-						"reservation_reservation_a_r_n"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_start_time",
-					"fromPath": [
-						"reservation_start_time"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_subscription_id",
-					"fromPath": [
-						"reservation_subscription_id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_total_reserved_normalized_units",
-					"fromPath": [
-						"reservation_total_reserved_normalized_units"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_total_reserved_units",
-					"fromPath": [
-						"reservation_total_reserved_units"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_units_per_reservation",
-					"fromPath": [
-						"reservation_units_per_reservation"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_unused_amortized_upfront_fee_for_billing_period",
-					"fromPath": [
-						"reservation_unused_amortized_upfront_fee_for_billing_period"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_unused_normalized_unit_quantity",
-					"fromPath": [
-						"reservation_unused_normalized_unit_quantity"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_unused_quantity",
-					"fromPath": [
-						"reservation_unused_quantity"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_unused_recurring_fee",
-					"fromPath": [
-						"reservation_unused_recurring_fee"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "reservation_upfront_value",
-					"fromPath": [
-						"reservation_upfront_value"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "resource_tags",
-					"fromPath": [
-						"resource_tags"
-					],
-					"toType": "object",
-					"fromType": "object",
-					"dropped": true,
-					"children": [
-						{
-							"toKey": "string",
-							"fromPath": [
-								"resource_tags",
-								"string"
-							],
-							"toType": "string",
-							"fromType": "string",
-							"dropped": true,
-							"children": null
-						}
-					]
-				},
-				{
-					"toKey": "savings_plan_amortized_upfront_commitment_for_billing_period",
-					"fromPath": [
-						"savings_plan_amortized_upfront_commitment_for_billing_period"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_end_time",
-					"fromPath": [
-						"savings_plan_end_time"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_instance_type_family",
-					"fromPath": [
-						"savings_plan_instance_type_family"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_net_amortized_upfront_commitment_for_billing_period",
-					"fromPath": [
-						"savings_plan_net_amortized_upfront_commitment_for_billing_period"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_net_recurring_commitment_for_billing_period",
-					"fromPath": [
-						"savings_plan_net_recurring_commitment_for_billing_period"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_net_savings_plan_effective_cost",
-					"fromPath": [
-						"savings_plan_net_savings_plan_effective_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_offering_type",
-					"fromPath": [
-						"savings_plan_offering_type"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_payment_option",
-					"fromPath": [
-						"savings_plan_payment_option"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_purchase_term",
-					"fromPath": [
-						"savings_plan_purchase_term"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_recurring_commitment_for_billing_period",
-					"fromPath": [
-						"savings_plan_recurring_commitment_for_billing_period"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_region",
-					"fromPath": [
-						"savings_plan_region"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_savings_plan_a_r_n",
-					"fromPath": [
-						"savings_plan_savings_plan_a_r_n"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_savings_plan_effective_cost",
-					"fromPath": [
-						"savings_plan_savings_plan_effective_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_savings_plan_rate",
-					"fromPath": [
-						"savings_plan_savings_plan_rate"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_start_time",
-					"fromPath": [
-						"savings_plan_start_time"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_total_commitment_to_date",
-					"fromPath": [
-						"savings_plan_total_commitment_to_date"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "savings_plan_used_commitment",
-					"fromPath": [
-						"savings_plan_used_commitment"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_actual_usage",
-					"fromPath": [
-						"split_line_item_actual_usage"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_net_split_cost",
-					"fromPath": [
-						"split_line_item_net_split_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_net_unused_cost",
-					"fromPath": [
-						"split_line_item_net_unused_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_parent_resource_id",
-					"fromPath": [
-						"split_line_item_parent_resource_id"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_public_on_demand_split_cost",
-					"fromPath": [
-						"split_line_item_public_on_demand_split_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_public_on_demand_unused_cost",
-					"fromPath": [
-						"split_line_item_public_on_demand_unused_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_reserved_usage",
-					"fromPath": [
-						"split_line_item_reserved_usage"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_split_cost",
-					"fromPath": [
-						"split_line_item_split_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_split_usage",
-					"fromPath": [
-						"split_line_item_split_usage"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_split_usage_ratio",
-					"fromPath": [
-						"split_line_item_split_usage_ratio"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "split_line_item_unused_cost",
-					"fromPath": [
-						"split_line_item_unused_cost"
-					],
-					"toType": "double",
-					"fromType": "double",
-					"dropped": false,
-					"children": null
-				},
-				{
-					"toKey": "billing_period",
-					"fromPath": [
-						"billing_period"
-					],
-					"toType": "string",
-					"fromType": "string",
-					"dropped": false,
-					"children": null
-				}
-			],
-			"parentsValid": true,
-			"calculatedType": "",
-			"codeGenVersion": 2
-		},
-		"node-1731523763363": {
-			"nodeId": "node-1731523763363",
-			"dataPreview": false,
-			"previewAmount": 0,
-			"inputs": [],
-			"name": "Account Tags",
-			"generatedNodeName": "AccountTags_node1731523763363",
-			"classification": "DataSource",
-			"type": "Catalog",
-			"isCatalog": true,
-			"database": "operations_aws_production",
-			"table": "account_tags_organization",
-			"calculatedType": "",
-			"runtimeParameters": [],
-			"codeGenVersion": 2
-		},
-		"node-1731429129432": {
-			"nodeId": "node-1731429129432",
-			"dataPreview": false,
-			"previewAmount": 0,
-			"inputs": [
-				"node-1731429060956"
-			],
-			"name": "Transformed",
-			"generatedNodeName": "Transformed_node1731429129432",
-			"classification": "DataSink",
-			"type": "S3",
-			"streamingBatchInterval": 100,
-			"format": "glueparquet",
-			"compression": "snappy",
-			"path": "s3://cds-data-lake-transformed-production/operations/aws/cost-usage-report/",
-			"partitionKeys": [],
-			"schemaChangePolicy": {
-				"enableUpdateCatalog": true,
-				"updateBehavior": "UPDATE_IN_DATABASE",
-				"database": "operations_aws_production",
-				"table": "cost_usage_report_by_account"
-			},
-			"updateCatalogOptions": "schemaAndPartitions",
-			"autoDataQuality": {
-				"isEnabled": false,
-				"evaluationContext": null
-			},
-			"calculatedType": "",
-			"codeGenVersion": 2
-		}
-	},
-	"hasBeenSaved": false,
-	"usageProfileName": null
+    "Job": {
+        "Name": "Operations / AWS / Cost and Usage Report",
+        "JobMode": "VISUAL",
+        "JobRunQueuingEnabled": false,
+        "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
+        "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+        "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
+        "LastModifiedOn": "2024-11-16T15:56:55.792000+00:00",
+        "ExecutionProperty": {
+            "MaxConcurrentRuns": 1
+        },
+        "Command": {
+            "Name": "glueetl",
+            "ScriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Operations / AWS / Cost and Usage Report.py",
+            "PythonVersion": "3"
+        },
+        "DefaultArguments": {
+            "--enable-metrics": "true",
+            "--enable-spark-ui": "true",
+            "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
+            "--enable-job-insights": "true",
+            "--enable-observability-metrics": "true",
+            "--enable-glue-datacatalog": "true",
+            "--enable-continuous-cloudwatch-log": "true",
+            "--job-bookmark-option": "job-bookmark-enable",
+            "--job-language": "python",
+            "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/",
+            "--enable-auto-scaling": "true"
+        },
+        "MaxRetries": 0,
+        "AllocatedCapacity": 10,
+        "Timeout": 120,
+        "MaxCapacity": 10.0,
+        "WorkerType": "G.1X",
+        "NumberOfWorkers": 10,
+        "SecurityConfiguration": "encryption-at-rest",
+        "GlueVersion": "4.0",
+        "CodeGenConfigurationNodes": {
+            "node-1731428848266": {
+                "CatalogSource": {
+                    "Name": "Cost and Usage Report",
+                    "Database": "operations_aws_production_raw",
+                    "Table": "cost_usage_report_data"
+                }
+            },
+            "node-1731523780914": {
+                "Join": {
+                    "Name": "Join",
+                    "Inputs": [
+                        "node-1731523763363",
+                        "node-1731428848266"
+                    ],
+                    "JoinType": "equijoin",
+                    "Columns": [
+                        {
+                            "From": "node-1731523763363",
+                            "Keys": [
+                                [
+                                    "id"
+                                ]
+                            ]
+                        },
+                        {
+                            "From": "node-1731428848266",
+                            "Keys": [
+                                [
+                                    "line_item_usage_account_id"
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1731766047920": {
+                "SelectFromCollection": {
+                    "Name": "Select DynamicFrame",
+                    "Inputs": [
+                        "node-1731765812605"
+                    ],
+                    "Index": 0
+                }
+            },
+            "node-1731429060956": {
+                "ApplyMapping": {
+                    "Name": "Change Schema",
+                    "Inputs": [
+                        "node-1731523780914"
+                    ],
+                    "Mapping": [
+                        {
+                            "ToKey": "id",
+                            "FromPath": [
+                                "id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "arn",
+                            "FromPath": [
+                                "arn"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "email",
+                            "FromPath": [
+                                "email"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "name",
+                            "FromPath": [
+                                "name"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "status",
+                            "FromPath": [
+                                "status"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "joinedmethod",
+                            "FromPath": [
+                                "joinedmethod"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "joinedtimestamp",
+                            "FromPath": [
+                                "joinedtimestamp"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tag_env",
+                            "FromPath": [
+                                "tag_env"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tag_business_unit",
+                            "FromPath": [
+                                "tag_business_unit"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tag_product",
+                            "FromPath": [
+                                "tag_product"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "bill_bill_type",
+                            "FromPath": [
+                                "bill_bill_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "bill_billing_entity",
+                            "FromPath": [
+                                "bill_billing_entity"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "bill_billing_period_end_date",
+                            "FromPath": [
+                                "bill_billing_period_end_date"
+                            ],
+                            "FromType": "timestamp",
+                            "ToType": "timestamp",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "bill_billing_period_start_date",
+                            "FromPath": [
+                                "bill_billing_period_start_date"
+                            ],
+                            "FromType": "timestamp",
+                            "ToType": "timestamp",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "bill_invoice_id",
+                            "FromPath": [
+                                "bill_invoice_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "bill_invoicing_entity",
+                            "FromPath": [
+                                "bill_invoicing_entity"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "bill_payer_account_id",
+                            "FromPath": [
+                                "bill_payer_account_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "bill_payer_account_name",
+                            "FromPath": [
+                                "bill_payer_account_name"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "cost_category",
+                            "FromPath": [
+                                "cost_category"
+                            ],
+                            "FromType": "object",
+                            "ToType": "object",
+                            "Dropped": true,
+                            "Children": [
+                                {
+                                    "ToKey": "string",
+                                    "FromPath": [
+                                        "cost_category",
+                                        "string"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": true
+                                }
+                            ]
+                        },
+                        {
+                            "ToKey": "discount",
+                            "FromPath": [
+                                "discount"
+                            ],
+                            "FromType": "object",
+                            "ToType": "object",
+                            "Dropped": true,
+                            "Children": [
+                                {
+                                    "ToKey": "string",
+                                    "FromPath": [
+                                        "discount",
+                                        "string"
+                                    ],
+                                    "FromType": "double",
+                                    "ToType": "double",
+                                    "Dropped": true
+                                }
+                            ]
+                        },
+                        {
+                            "ToKey": "discount_bundled_discount",
+                            "FromPath": [
+                                "discount_bundled_discount"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "discount_total_discount",
+                            "FromPath": [
+                                "discount_total_discount"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "identity_line_item_id",
+                            "FromPath": [
+                                "identity_line_item_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "identity_time_interval",
+                            "FromPath": [
+                                "identity_time_interval"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_availability_zone",
+                            "FromPath": [
+                                "line_item_availability_zone"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_blended_cost",
+                            "FromPath": [
+                                "line_item_blended_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_blended_rate",
+                            "FromPath": [
+                                "line_item_blended_rate"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_currency_code",
+                            "FromPath": [
+                                "line_item_currency_code"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_legal_entity",
+                            "FromPath": [
+                                "line_item_legal_entity"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_line_item_description",
+                            "FromPath": [
+                                "line_item_line_item_description"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_line_item_type",
+                            "FromPath": [
+                                "line_item_line_item_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_net_unblended_cost",
+                            "FromPath": [
+                                "line_item_net_unblended_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_net_unblended_rate",
+                            "FromPath": [
+                                "line_item_net_unblended_rate"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_normalization_factor",
+                            "FromPath": [
+                                "line_item_normalization_factor"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_normalized_usage_amount",
+                            "FromPath": [
+                                "line_item_normalized_usage_amount"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_operation",
+                            "FromPath": [
+                                "line_item_operation"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_product_code",
+                            "FromPath": [
+                                "line_item_product_code"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_resource_id",
+                            "FromPath": [
+                                "line_item_resource_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_tax_type",
+                            "FromPath": [
+                                "line_item_tax_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_unblended_cost",
+                            "FromPath": [
+                                "line_item_unblended_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_unblended_rate",
+                            "FromPath": [
+                                "line_item_unblended_rate"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_usage_account_id",
+                            "FromPath": [
+                                "line_item_usage_account_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_usage_account_name",
+                            "FromPath": [
+                                "line_item_usage_account_name"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_usage_amount",
+                            "FromPath": [
+                                "line_item_usage_amount"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_usage_end_date",
+                            "FromPath": [
+                                "line_item_usage_end_date"
+                            ],
+                            "FromType": "timestamp",
+                            "ToType": "timestamp",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_usage_start_date",
+                            "FromPath": [
+                                "line_item_usage_start_date"
+                            ],
+                            "FromType": "timestamp",
+                            "ToType": "timestamp",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "line_item_usage_type",
+                            "FromPath": [
+                                "line_item_usage_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_currency",
+                            "FromPath": [
+                                "pricing_currency"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_lease_contract_length",
+                            "FromPath": [
+                                "pricing_lease_contract_length"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_offering_class",
+                            "FromPath": [
+                                "pricing_offering_class"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_public_on_demand_cost",
+                            "FromPath": [
+                                "pricing_public_on_demand_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_public_on_demand_rate",
+                            "FromPath": [
+                                "pricing_public_on_demand_rate"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_purchase_option",
+                            "FromPath": [
+                                "pricing_purchase_option"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_rate_code",
+                            "FromPath": [
+                                "pricing_rate_code"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_rate_id",
+                            "FromPath": [
+                                "pricing_rate_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_term",
+                            "FromPath": [
+                                "pricing_term"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "pricing_unit",
+                            "FromPath": [
+                                "pricing_unit"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product",
+                            "FromPath": [
+                                "product"
+                            ],
+                            "FromType": "object",
+                            "ToType": "object",
+                            "Dropped": true,
+                            "Children": [
+                                {
+                                    "ToKey": "string",
+                                    "FromPath": [
+                                        "product",
+                                        "string"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": true
+                                }
+                            ]
+                        },
+                        {
+                            "ToKey": "product_comment",
+                            "FromPath": [
+                                "product_comment"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_fee_code",
+                            "FromPath": [
+                                "product_fee_code"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_fee_description",
+                            "FromPath": [
+                                "product_fee_description"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_from_location",
+                            "FromPath": [
+                                "product_from_location"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_from_location_type",
+                            "FromPath": [
+                                "product_from_location_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_from_region_code",
+                            "FromPath": [
+                                "product_from_region_code"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_instance_family",
+                            "FromPath": [
+                                "product_instance_family"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_instance_type",
+                            "FromPath": [
+                                "product_instance_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_instancesku",
+                            "FromPath": [
+                                "product_instancesku"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_location",
+                            "FromPath": [
+                                "product_location"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_location_type",
+                            "FromPath": [
+                                "product_location_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_operation",
+                            "FromPath": [
+                                "product_operation"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_pricing_unit",
+                            "FromPath": [
+                                "product_pricing_unit"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_product_family",
+                            "FromPath": [
+                                "product_product_family"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_region_code",
+                            "FromPath": [
+                                "product_region_code"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_servicecode",
+                            "FromPath": [
+                                "product_servicecode"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_sku",
+                            "FromPath": [
+                                "product_sku"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_to_location",
+                            "FromPath": [
+                                "product_to_location"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_to_location_type",
+                            "FromPath": [
+                                "product_to_location_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_to_region_code",
+                            "FromPath": [
+                                "product_to_region_code"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "product_usagetype",
+                            "FromPath": [
+                                "product_usagetype"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_amortized_upfront_cost_for_usage",
+                            "FromPath": [
+                                "reservation_amortized_upfront_cost_for_usage"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_amortized_upfront_fee_for_billing_period",
+                            "FromPath": [
+                                "reservation_amortized_upfront_fee_for_billing_period"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_availability_zone",
+                            "FromPath": [
+                                "reservation_availability_zone"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_effective_cost",
+                            "FromPath": [
+                                "reservation_effective_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_end_time",
+                            "FromPath": [
+                                "reservation_end_time"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_modification_status",
+                            "FromPath": [
+                                "reservation_modification_status"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_net_amortized_upfront_cost_for_usage",
+                            "FromPath": [
+                                "reservation_net_amortized_upfront_cost_for_usage"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_net_amortized_upfront_fee_for_billing_period",
+                            "FromPath": [
+                                "reservation_net_amortized_upfront_fee_for_billing_period"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_net_effective_cost",
+                            "FromPath": [
+                                "reservation_net_effective_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_net_recurring_fee_for_usage",
+                            "FromPath": [
+                                "reservation_net_recurring_fee_for_usage"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_net_unused_amortized_upfront_fee_for_billing_period",
+                            "FromPath": [
+                                "reservation_net_unused_amortized_upfront_fee_for_billing_period"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_net_unused_recurring_fee",
+                            "FromPath": [
+                                "reservation_net_unused_recurring_fee"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_net_upfront_value",
+                            "FromPath": [
+                                "reservation_net_upfront_value"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_normalized_units_per_reservation",
+                            "FromPath": [
+                                "reservation_normalized_units_per_reservation"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_number_of_reservations",
+                            "FromPath": [
+                                "reservation_number_of_reservations"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_recurring_fee_for_usage",
+                            "FromPath": [
+                                "reservation_recurring_fee_for_usage"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_reservation_a_r_n",
+                            "FromPath": [
+                                "reservation_reservation_a_r_n"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_start_time",
+                            "FromPath": [
+                                "reservation_start_time"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_subscription_id",
+                            "FromPath": [
+                                "reservation_subscription_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_total_reserved_normalized_units",
+                            "FromPath": [
+                                "reservation_total_reserved_normalized_units"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_total_reserved_units",
+                            "FromPath": [
+                                "reservation_total_reserved_units"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_units_per_reservation",
+                            "FromPath": [
+                                "reservation_units_per_reservation"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_unused_amortized_upfront_fee_for_billing_period",
+                            "FromPath": [
+                                "reservation_unused_amortized_upfront_fee_for_billing_period"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_unused_normalized_unit_quantity",
+                            "FromPath": [
+                                "reservation_unused_normalized_unit_quantity"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_unused_quantity",
+                            "FromPath": [
+                                "reservation_unused_quantity"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_unused_recurring_fee",
+                            "FromPath": [
+                                "reservation_unused_recurring_fee"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "reservation_upfront_value",
+                            "FromPath": [
+                                "reservation_upfront_value"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "resource_tags",
+                            "FromPath": [
+                                "resource_tags"
+                            ],
+                            "FromType": "object",
+                            "ToType": "object",
+                            "Dropped": true,
+                            "Children": [
+                                {
+                                    "ToKey": "string",
+                                    "FromPath": [
+                                        "resource_tags",
+                                        "string"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": true
+                                }
+                            ]
+                        },
+                        {
+                            "ToKey": "savings_plan_amortized_upfront_commitment_for_billing_period",
+                            "FromPath": [
+                                "savings_plan_amortized_upfront_commitment_for_billing_period"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_end_time",
+                            "FromPath": [
+                                "savings_plan_end_time"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_instance_type_family",
+                            "FromPath": [
+                                "savings_plan_instance_type_family"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_net_amortized_upfront_commitment_for_billing_period",
+                            "FromPath": [
+                                "savings_plan_net_amortized_upfront_commitment_for_billing_period"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_net_recurring_commitment_for_billing_period",
+                            "FromPath": [
+                                "savings_plan_net_recurring_commitment_for_billing_period"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_net_savings_plan_effective_cost",
+                            "FromPath": [
+                                "savings_plan_net_savings_plan_effective_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_offering_type",
+                            "FromPath": [
+                                "savings_plan_offering_type"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_payment_option",
+                            "FromPath": [
+                                "savings_plan_payment_option"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_purchase_term",
+                            "FromPath": [
+                                "savings_plan_purchase_term"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_recurring_commitment_for_billing_period",
+                            "FromPath": [
+                                "savings_plan_recurring_commitment_for_billing_period"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_region",
+                            "FromPath": [
+                                "savings_plan_region"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_savings_plan_a_r_n",
+                            "FromPath": [
+                                "savings_plan_savings_plan_a_r_n"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_savings_plan_effective_cost",
+                            "FromPath": [
+                                "savings_plan_savings_plan_effective_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_savings_plan_rate",
+                            "FromPath": [
+                                "savings_plan_savings_plan_rate"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_start_time",
+                            "FromPath": [
+                                "savings_plan_start_time"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_total_commitment_to_date",
+                            "FromPath": [
+                                "savings_plan_total_commitment_to_date"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "savings_plan_used_commitment",
+                            "FromPath": [
+                                "savings_plan_used_commitment"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_actual_usage",
+                            "FromPath": [
+                                "split_line_item_actual_usage"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_net_split_cost",
+                            "FromPath": [
+                                "split_line_item_net_split_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_net_unused_cost",
+                            "FromPath": [
+                                "split_line_item_net_unused_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_parent_resource_id",
+                            "FromPath": [
+                                "split_line_item_parent_resource_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_public_on_demand_split_cost",
+                            "FromPath": [
+                                "split_line_item_public_on_demand_split_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_public_on_demand_unused_cost",
+                            "FromPath": [
+                                "split_line_item_public_on_demand_unused_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_reserved_usage",
+                            "FromPath": [
+                                "split_line_item_reserved_usage"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_split_cost",
+                            "FromPath": [
+                                "split_line_item_split_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_split_usage",
+                            "FromPath": [
+                                "split_line_item_split_usage"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_split_usage_ratio",
+                            "FromPath": [
+                                "split_line_item_split_usage_ratio"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "split_line_item_unused_cost",
+                            "FromPath": [
+                                "split_line_item_unused_cost"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "billing_period",
+                            "FromPath": [
+                                "billing_period"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        }
+                    ]
+                }
+            },
+            "node-1731523763363": {
+                "CatalogSource": {
+                    "Name": "Account Tags",
+                    "Database": "operations_aws_production_raw",
+                    "Table": "account_tags_organization"
+                }
+            },
+            "node-1731765812605": {
+                "CustomCode": {
+                    "Name": "Remove old data",
+                    "Inputs": [
+                        "node-1731429060956"
+                    ],
+                    "Code": "import boto3\nfrom datetime import datetime\n\n# Remove current billing period's data to prevent it from continually\n# adding to the existing totals.  Job bookmarks do not work hear because each\n# day's export is considered a new data file to process but also contains the\n# previous day(s) data.\ns3 = boto3.resource('s3')\nbucket = s3.Bucket('cds-data-lake-transformed-production')\nbilling_period = datetime.now().strftime(\"%Y-%m\")\nbucket.objects.filter(Prefix=f\"operations/aws/cost-usage-report/billing_period={billing_period}/\").delete()\n\nreturn dfc",
+                    "ClassName": "RemoveOldData"
+                }
+            },
+            "node-1731429129432": {
+                "S3GlueParquetTarget": {
+                    "Name": "Transformed",
+                    "Inputs": [
+                        "node-1731766047920"
+                    ],
+                    "PartitionKeys": [
+                        [
+                            "billing_period"
+                        ]
+                    ],
+                    "Path": "s3://cds-data-lake-transformed-production/operations/aws/cost-usage-report/",
+                    "Compression": "snappy",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "UPDATE_IN_DATABASE",
+                        "Table": "cost_usage_report_by_account",
+                        "Database": "operations_aws_production"
+                    }
+                }
+            }
+        },
+        "ExecutionClass": "FLEX"
+    }
 }
