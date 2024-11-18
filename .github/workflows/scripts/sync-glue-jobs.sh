@@ -26,7 +26,9 @@ fi
 git fetch "$REMOTE_REPO"
 if git ls-remote --heads "$REMOTE_REPO" "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
     echo "Branch '$BRANCH_NAME' exists. Checking out and updating."
+    git stash
     git checkout "$BRANCH_NAME"
+    git stash pop
 else
     echo "Branch '$BRANCH_NAME' does not exist. Creating new branch."
     git checkout -b "$BRANCH_NAME" "$BASE_BRANCH"
