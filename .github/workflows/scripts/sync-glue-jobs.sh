@@ -14,14 +14,6 @@ PR_TITLE="chore: automated glue job sync"
 PR_BODY="## Summary
 Automated sync of AWS Glue ETL jobs."
 
-# Check for changes in the repository
-if git diff-index --quiet HEAD -- "$JOB_DIR"; then
-    echo "No changes detected."
-    exit 0
-else
-    echo "Changes detected."
-fi
-
 # Check if the remote branch exists
 git fetch "$REMOTE_REPO"
 if git ls-remote --heads "$REMOTE_REPO" "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
@@ -32,6 +24,12 @@ if git ls-remote --heads "$REMOTE_REPO" "$BRANCH_NAME" | grep -q "$BRANCH_NAME";
 else
     echo "Branch '$BRANCH_NAME' does not exist. Creating new branch."
     git checkout -b "$BRANCH_NAME" "$BASE_BRANCH"
+fi
+
+# Check for changes in the repository
+if git diff-index --quiet HEAD -- "$JOB_DIR"; then
+    echo "No changes detected."
+    exit 0
 fi
 
 # Add changes and commit
