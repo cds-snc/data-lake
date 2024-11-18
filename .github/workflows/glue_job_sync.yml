@@ -29,4 +29,6 @@ jobs:
         run: ./.github/workflows/scripts/get-glue-jobs.sh
 
       - name: Create PR if changes
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: ./.github/workflows/scripts/sync-glue-jobs.sh
