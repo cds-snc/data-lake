@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "terragrunt/aws/**"
+      - "!terragrunt/aws/glue/etl/**"
       - "terragrunt/env/production/**"
       - "terragrunt/env/common/**"
       - "terragrunt/env/terragrunt.hcl"
