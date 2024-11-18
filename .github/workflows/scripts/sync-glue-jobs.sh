@@ -6,6 +6,7 @@ set -euo pipefail
 # This script will update an existing PR if the branch already exists.
 #
 
+CREATE_PR="true"
 JOB_DIR="./terragrunt/aws/glue/etl"
 REMOTE_REPO="origin"
 BRANCH_NAME="chore/glue-job-sync"
@@ -18,6 +19,7 @@ Automated sync of AWS Glue ETL jobs."
 git fetch "$REMOTE_REPO"
 git fetch "$REMOTE_REPO" "$BASE_BRANCH":"$BASE_BRANCH"
 if git ls-remote --heads "$REMOTE_REPO" "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+    CREATE_PR="false"
     echo "Branch '$BRANCH_NAME' exists. Checking out and updating."
     git stash
     git checkout "$BRANCH_NAME"
@@ -31,14 +33,26 @@ fi
 if git diff-index --quiet HEAD -- "$JOB_DIR"; then
     echo "No changes detected."
     exit 0
+else
+    echo "Changes detected."
+    git push "$REMOTE_REPO" "$BRANCH_NAME"
 fi
 
-# Add changes and commit
-git config user.email "github-actions[bot]@users.noreply.github.com"
-git config user.name "github-actions[bot]"
-git add "$JOB_DIR"
-git commit -m "$PR_TITLE"
+# Commit changes through the GitHub API so the commits are signed
+echo "Committing changes..."
+FILES_CHANGED="$(git status --porcelain | awk '{print $2}')"
+for FILE in $FILES_CHANGED; do
+    MESSAGE="chore: regenerate $(basename $FILE) for $(date -u '+%Y-%m-%d')"
+    SHA="$(git rev-parse $BRANCH_NAME:$FILE || "")"
+    gh api --method PUT /repos/cds-snc/data-lake/contents/$FILE \
+        --field message="$MESSAGE" \
+        --field content="$(base64 -w 0 $FILE)" \
+        --field encoding="base64" \
+        --field branch="$BRANCH_NAME" \
+        --field sha="$SHA"
+done
 
-# Push branch and create the PR
-git push "$REMOTE_REPO" "$BRANCH_NAME"
-gh pr create --base "$BASE_BRANCH" --head "$BRANCH_NAME" --title "$PR_TITLE" --body "$PR_BODY"
+if [ "$CREATE_PR" = "true" ]; then
+    echo "Creating PR..."
+    gh pr create --base "$BASE_BRANCH" --head "$BRANCH_NAME" --title "$PR_TITLE" --body "$PR_BODY"
+fi
