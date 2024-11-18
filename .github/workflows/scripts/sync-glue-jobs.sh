@@ -42,11 +42,11 @@ fi
 echo "Committing changes..."
 FILES_CHANGED="$(git status --porcelain | awk '{print $2}')"
 for FILE in $FILES_CHANGED; do
-    MESSAGE="chore: regenerate $(basename $FILE) for $(date -u '+%Y-%m-%d')"
-    SHA="$(git rev-parse $BRANCH_NAME:$FILE || "")"
-    gh api --method PUT /repos/cds-snc/data-lake/contents/$FILE \
+    MESSAGE="chore: regenerate $(basename "$FILE") for $(date -u '+%Y-%m-%d')"
+    SHA="$(git rev-parse $BRANCH_NAME:"$FILE" || "")"
+    gh api --method PUT /repos/cds-snc/data-lake/contents/"$FILE" \
         --field message="$MESSAGE" \
-        --field content="$(base64 -w 0 $FILE)" \
+        --field content="$(base64 -w 0 "$FILE")" \
         --field encoding="base64" \
         --field branch="$BRANCH_NAME" \
         --field sha="$SHA"
