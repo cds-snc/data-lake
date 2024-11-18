@@ -3,6 +3,7 @@ name: Workflow failure
 on:
   workflow_run:
     workflows:
+      - "Glue Job Sync"
       - "Terragrunt apply PRODUCTION"
     types:
       - completed
