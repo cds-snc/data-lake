@@ -16,20 +16,18 @@ PR_BODY="## Summary
 Automated sync of AWS Glue ETL jobs."
 
 # Check if the remote branch exists
-git fetch "$REMOTE_REPO"
-git fetch "$REMOTE_REPO" "$BASE_BRANCH":"$BASE_BRANCH"
 if git ls-remote --heads "$REMOTE_REPO" "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
-    CREATE_PR="false"
     echo "Branch '$BRANCH_NAME' exists. Checking out and updating."
     git stash
     git checkout "$BRANCH_NAME"
     git stash pop
+    CREATE_PR="false"
 else
     echo "Branch '$BRANCH_NAME' does not exist. Creating new branch."
     git checkout -b "$BRANCH_NAME" "$BASE_BRANCH"
 fi
 
-# Check for changes in the repository
+# Check for changes in the branch
 if git diff-index --quiet HEAD -- "$JOB_DIR"; then
     echo "No changes detected."
     exit 0
@@ -52,6 +50,7 @@ for FILE in $FILES_CHANGED; do
         --field sha="$SHA"
 done
 
+# Create the PR if it doesn't already exist
 if [ "$CREATE_PR" = "true" ]; then
     echo "Creating PR..."
     gh pr create --base "$BASE_BRANCH" --head "$BRANCH_NAME" --title "$PR_TITLE" --body "$PR_BODY"
