@@ -13,18 +13,18 @@ LIMIT 10;
 ```
 
 ## Data pipeline
-A high level view of the data pipeline is shown below:
+A high level view is shown below with more details about each step following the diagram.
 
 ```mermaid
 graph TD
     %% Source Systems
     CUR[AWS CUR 2.0 Export]
-    Lambda[Account Tags Lambda]
+    Lambda["`**Lambda**<br>Extract account tags`"]
     
     %% Storage
-    OrgS3["`**Organization S3 Bucket**<br/>cds-cost-usage-report`"]
-    RawS3["`**Raw S3 Bucket**<br/>cds-data-lake-raw-production`"]
-    TransS3["`**Transformed S3 Bucket**<br/>cds-data-lake-transformed-production`"]
+    OrgS3["`**S3 Bucket**<br/>cds-cost-usage-report`"]
+    RawS3["`**S3 Bucket (Raw)**<br/>cds-data-lake-raw-production`"]
+    TransS3["`**S3 Bucket (Transformed)**<br/>cds-data-lake-transformed-production`"]
     
     %% Processing
     Crawlers["Crawlers (Monthly)"]
@@ -33,7 +33,7 @@ graph TD
     ETL["ETL Job (Daily)"]
 
     %% Flow
-    subgraph org[Organization]
+    subgraph org[AWS Organization account]
         CUR --> OrgS3
         Lambda
     end
@@ -41,7 +41,7 @@ graph TD
     Lambda --> |account-tags.json|RawS3
     OrgS3 --> |S3 Replication|RawS3
 
-    subgraph datalake[Data Lake]
+    subgraph datalake[Data Lake account]
         RawS3 --> Crawlers
         Crawlers --> |Updates Schema|CatalogRaw
         CatalogRaw --> ETL
