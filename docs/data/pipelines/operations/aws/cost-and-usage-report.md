@@ -22,14 +22,14 @@ graph TD
     Lambda[Account Tags Lambda]
     
     %% Storage
-    OrgS3[Organization S3 Bucket<br/>cds-cost-usage-report]
-    RawS3[Raw S3 Bucket<br/>cds-data-lake-raw-production]
-    TransS3[Transformed S3 Bucket<br/>cds-data-lake-transformed-production]
+    OrgS3["`Organization S3 Bucket<br/>`cds-cost-usage-report``"]
+    RawS3[Raw S3 Bucket<br/>`cds-data-lake-raw-production`]
+    TransS3[Transformed S3 Bucket<br/>`cds-data-lake-transformed-production`]
     
     %% Processing
     Crawlers["Crawlers (Monthly)"]
-    CatalogRaw["Data Catalog (Raw)<br/>operations_aws_production_raw"]
-    CatalogTransformed["Data Catalog (Transformed)<br/>operations_aws_production"]
+    CatalogRaw["Data Catalog (Raw)<br/>`operations_aws_production_raw`"]
+    CatalogTransformed["Data Catalog (Transformed)<br/>`operations_aws_production`"]
     ETL["ETL Job (Daily)"]
 
     %% Flow
