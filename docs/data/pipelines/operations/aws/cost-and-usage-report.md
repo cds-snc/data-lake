@@ -2,6 +2,16 @@
 ## Description
 The AWS [Cost and Usage Report (CUR) 2.0](https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html) provides detailed billing data exports in  [Parquet format](https://parquet.apache.org/).  It contains line items for all AWS services usage with resource tags, pricing, and cost allocation data. The data is partitioned by time period and account ID, and updated daily.
 
+This data pipeline creates the Glue data catalog table `cost_usage_report_by_account` in the `operations_aws_production` database.  It can be queried in Superset as follows:
+
+```sql
+SELECT 
+    * 
+FROM 
+    "operations_aws_production"."cost_usage_report_by_account" 
+LIMIT 10;
+```
+
 ## Data pipeline
 A high level view of the data pipeline is shown below:
 
@@ -65,7 +75,7 @@ These create and manage the following data catalog tables in the [`operations_aw
 - `cost_usage_report_data`: CUR 2.0 export data.
 - `cost_usage_report_metadata`: CUR 2.0 export metadata, which gives details on the columns and export date.
 
-### ETL Jobs
+### Extract, Transform and Load (ETL) Jobs
 
 Each day, the [`Operations / AWS / Cost and Usage Report` Glue ETL job](https://github.com/cds-snc/data-lake/blob/468142031c7bdd1a2720def7d5ebb4e07fff4bef/terragrunt/aws/glue/etl/operations/aws/cost-and-usage-report.json) runs and joins the CUR 2.0 data with the AWS account tag data.  The resulting data is saved in the data lake's Transformed `cds-data-lake-transformed-production` S3 bucket:
 ```
@@ -74,4 +84,4 @@ cds-data-lake-transformed-production/operations/aws/cost-usage-report/data/billi
 
 Additionally, a data catalog table is created in the [`operations_aws_production` database](https://github.com/cds-snc/data-lake/blob/468142031c7bdd1a2720def7d5ebb4e07fff4bef/terragrunt/aws/glue/databases.tf#L1-L4):
 
-- `cost_usage_report_by_account`: CUR 2.0 export data joined with the AWS account tags.  This table is made available to users for analysis.
+- `cost_usage_report_by_account`: CUR 2.0 export data joined with the AWS account tags.  This table is made available to users for analysis in Superset.
