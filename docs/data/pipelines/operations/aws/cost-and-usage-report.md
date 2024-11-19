@@ -6,7 +6,7 @@ The AWS [Cost and Usage Report (CUR) 2.0](https://docs.aws.amazon.com/cur/latest
 A high level view of the data pipeline is shown below:
 
 ```mermaid
-graph LR
+graph TD
     %% Source Systems
     CUR[AWS CUR 2.0 Export]
     Lambda[Account Tags Lambda]
@@ -54,7 +54,7 @@ cds-data-lake-raw-production/operations/aws/organization/account-tags.json
 ```
 
 ### Crawlers
-On the first of each month, AWS Glue crawlers run in the `DataLake-Production` AWS account to identify schema changes and update the Glue data catalogue:
+On the first of each month, AWS Glue crawlers run in the `DataLake-Production` AWS account to identify schema changes and update the Glue data catalog:
 
 - [Operations / AWS / Cost and Usage Report](https://github.com/cds-snc/data-lake/blob/468142031c7bdd1a2720def7d5ebb4e07fff4bef/terragrunt/aws/glue/crawlers.tf#L24-L49)
 - [Operations / AWS / Organization / Account Tags](https://github.com/cds-snc/data-lake/blob/468142031c7bdd1a2720def7d5ebb4e07fff4bef/terragrunt/aws/glue/crawlers.tf#L54-L80)
