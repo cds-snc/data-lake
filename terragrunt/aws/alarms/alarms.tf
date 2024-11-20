@@ -31,6 +31,26 @@ resource "aws_cloudwatch_metric_alarm" "glue_crawler_error" {
   ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
 }
 
+resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
+  alarm_name          = "glue-job-failures"
+  alarm_description   = "Glue Job state has changed to `FAILURE`, `TIMEOUT` or `ERROR`."
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "Invocations"
+  namespace           = "AWS/Events"
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "0"
+  treat_missing_data  = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.cloudwatch_alarm_action.arn]
+  ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
+
+  dimensions = {
+    RuleName = aws_cloudwatch_event_rule.glue_job_failure.name
+  }
+}
+
 #
 # Log Insight queries
 #
