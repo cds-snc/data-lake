@@ -36,7 +36,7 @@ resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
   alarm_description   = "Glue Job state has changed to `FAILURE`, `TIMEOUT` or `ERROR`."
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
-  metric_name         = "Invocations"
+  metric_name         = "MatchedEvents"
   namespace           = "AWS/Events"
   period              = "60"
   statistic           = "Sum"
