@@ -9,8 +9,10 @@ set -euo pipefail
 # Business Unit / Product / Environment / Job Name
 #
 
-aws glue get-jobs --query 'Jobs[].Name' --output text |
+# shellcheck disable=SC2016
+aws glue get-jobs --query 'join(`\n`, Jobs[].Name)' --output text |
 while IFS= read -r name; do
+  echo "Syncing job: $name"
   # Split the name on '/'
   IFS='/' read -ra segments <<< "$name"
 
