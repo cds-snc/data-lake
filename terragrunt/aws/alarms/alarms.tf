@@ -33,7 +33,7 @@ resource "aws_cloudwatch_metric_alarm" "glue_crawler_error" {
 
 resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
   alarm_name          = "glue-job-failures"
-  alarm_description   = "Glue Job state has changed to `FAILURE`, `TIMEOUT` or `ERROR`."
+  alarm_description   = "Glue Job state has changed to `Failure`, `Timeout` or `Error`."
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "MatchedEvents"
