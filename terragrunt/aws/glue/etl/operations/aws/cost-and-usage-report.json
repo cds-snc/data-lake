@@ -6,7 +6,7 @@
         "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
-        "LastModifiedOn": "2024-11-19T22:02:30.726000+00:00",
+        "LastModifiedOn": "2024-11-21T14:32:56.067000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -29,10 +29,10 @@
             "--enable-auto-scaling": "true"
         },
         "MaxRetries": 0,
-        "AllocatedCapacity": 40,
-        "Timeout": 180,
-        "MaxCapacity": 40.0,
-        "WorkerType": "G.4X",
+        "AllocatedCapacity": 20,
+        "Timeout": 15,
+        "MaxCapacity": 20.0,
+        "WorkerType": "G.2X",
         "NumberOfWorkers": 10,
         "SecurityConfiguration": "encryption-at-rest",
         "GlueVersion": "4.0",
@@ -70,15 +70,6 @@
                             ]
                         }
                     ]
-                }
-            },
-            "node-1731766047920": {
-                "SelectFromCollection": {
-                    "Name": "Select DynamicFrame",
-                    "Inputs": [
-                        "node-1731765812605"
-                    ],
-                    "Index": 0
                 }
             },
             "node-1731429060956": {
@@ -152,6 +143,24 @@
                             "Dropped": false
                         },
                         {
+                            "ToKey": "tag_ssc_cbrid",
+                            "FromPath": [
+                                "tag_ssc_cbrid"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tag_product",
+                            "FromPath": [
+                                "tag_product"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
                             "ToKey": "tag_env",
                             "FromPath": [
                                 "tag_env"
@@ -164,15 +173,6 @@
                             "ToKey": "tag_business_unit",
                             "FromPath": [
                                 "tag_business_unit"
-                            ],
-                            "FromType": "string",
-                            "ToType": "string",
-                            "Dropped": false
-                        },
-                        {
-                            "ToKey": "tag_product",
-                            "FromPath": [
-                                "tag_product"
                             ],
                             "FromType": "string",
                             "ToType": "string",
@@ -1370,21 +1370,11 @@
                     "Table": "account_tags_organization"
                 }
             },
-            "node-1731765812605": {
-                "CustomCode": {
-                    "Name": "Remove old data",
-                    "Inputs": [
-                        "node-1731429060956"
-                    ],
-                    "Code": "import boto3\nfrom datetime import datetime\n\n# Remove current billing period's data to prevent it from continually\n# adding to the existing totals.  Job bookmarks do not work hear because each\n# day's export is considered a new data file to process but also contains the\n# previous day(s) data.\ns3 = boto3.resource('s3')\nbucket = s3.Bucket('cds-data-lake-transformed-production')\nbilling_period = datetime.now().strftime(\"%Y-%m\")\nbucket.objects.filter(Prefix=f\"operations/aws/cost-usage-report/billing_period={billing_period}/\").delete()\n\nreturn dfc",
-                    "ClassName": "RemoveOldData"
-                }
-            },
             "node-1731429129432": {
                 "S3GlueParquetTarget": {
                     "Name": "Transformed",
                     "Inputs": [
-                        "node-1731766047920"
+                        "node-1731429060956"
                     ],
                     "PartitionKeys": [
                         [
@@ -1402,6 +1392,6 @@
                 }
             }
         },
-        "ExecutionClass": "STANDARD"
+        "ExecutionClass": "FLEX"
     }
 }
