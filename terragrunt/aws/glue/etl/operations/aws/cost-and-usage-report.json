@@ -5,8 +5,8 @@
         "JobRunQueuingEnabled": false,
         "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
-        "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
-        "LastModifiedOn": "2024-11-21T14:32:56.067000+00:00",
+        "CreatedOn": "2024-11-12T11:36:58.812000-05:00",
+        "LastModifiedOn": "2024-11-24T09:36:09.911000-05:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -70,6 +70,15 @@
                             ]
                         }
                     ]
+                }
+            },
+            "node-1732400770222": {
+                "SelectFromCollection": {
+                    "Name": "Select From Collection",
+                    "Inputs": [
+                        "node-1732400753303"
+                    ],
+                    "Index": 0
                 }
             },
             "node-1731429060956": {
@@ -1370,11 +1379,21 @@
                     "Table": "account_tags_organization"
                 }
             },
+            "node-1732400753303": {
+                "CustomCode": {
+                    "Name": "Remove old data",
+                    "Inputs": [
+                        "node-1731429060956"
+                    ],
+                    "Code": "import boto3\nfrom datetime import datetime\n\n# Remove current billing period's data to prevent it from continually\n# adding to the existing totals. Job bookmarks do not work here because each\n# day's export is considered a new data file to process but also contains the\n# previous days data.\ns3 = boto3.resource('s3')\nbucket = s3.Bucket('cds-data-lake-transformed-production')\nbilling_period = datetime.now().strftime(\"%Y-%m\")\nbucket.objects.filter(Prefix=f\"operations/aws/cost-usage-report/billing_period={billing_period}/\").delete()\n\nreturn dfc",
+                    "ClassName": "RemoveOldData"
+                }
+            },
             "node-1731429129432": {
                 "S3GlueParquetTarget": {
                     "Name": "Transformed",
                     "Inputs": [
-                        "node-1731429060956"
+                        "node-1732400770222"
                     ],
                     "PartitionKeys": [
                         [
