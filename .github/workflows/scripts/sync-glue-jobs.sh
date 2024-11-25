@@ -20,7 +20,8 @@ if git ls-remote --heads "$REMOTE_REPO" "$BRANCH_NAME" | grep -q "$BRANCH_NAME";
     echo "Branch '$BRANCH_NAME' exists. Checking out and updating."
     git stash
     git checkout "$BRANCH_NAME"
-    git stash pop
+    git stash apply --quiet || true
+    git checkout --theirs -- .
     CREATE_PR="false"
 else
     echo "Branch '$BRANCH_NAME' does not exist. Creating new branch."
