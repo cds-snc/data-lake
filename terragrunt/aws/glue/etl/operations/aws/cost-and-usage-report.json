@@ -5,8 +5,8 @@
         "JobRunQueuingEnabled": false,
         "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
-        "CreatedOn": "2024-11-12T11:36:58.812000-05:00",
-        "LastModifiedOn": "2024-11-24T09:36:09.911000-05:00",
+        "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
+        "LastModifiedOn": "2024-11-24T14:36:09.911000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
