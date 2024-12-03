@@ -4,7 +4,7 @@ Dataset describing how much was spent on AWS services by CDS.
 
 Each row describes the cost of using a particular AWS service (i.e., a line item) within a billing period.
 
-This dataset is represented in [Superset](https://superset.cdssandbox.xyz/superset/welcome/) as the Physical dataset [`cost_usage_report_by_account`](https://superset.cdssandbox.xyz/explore/?datasource_type=table&datasource_id=68). All of the Virtual datasets in the "Operations / AWS / Cost and Usage" group are derived from it.
+This dataset is represented in [Superset](https://superset.cdssandbox.xyz/) as the Physical dataset [`cost_usage_report_by_account`](https://superset.cdssandbox.xyz/explore/?datasource_type=table&datasource_id=68). All of the Virtual datasets in the "Operations / AWS / Cost and Usage" group are derived from it.
 
 **Keywords:** AWS, Amazon, cost, usage, cost, fees
 
@@ -16,7 +16,7 @@ More documentation on the pipeline can be found [here](../../../pipelines/operat
 
 * **Updated:** Daily
 * **Steward:** Platform Core Services
-* **Contact:** [Pat Heard](mailto:pat.heard@cds-snc.ca)
+* **Contact:** [Pat Heard](mailto:patrick.heard@cds-snc.ca)
 * **Location:** s3://cds-data-lake-transformed-production/operations/aws/cost-usage-report/data/billing_period=YYYY-MM/*.parquet
 
 ## Fields
@@ -27,13 +27,13 @@ Many columns are grouped together with a common prefix. For example, the `produc
 
 Example data can be found [here](examples/cost-and-usage-report.csv), as a CSV.
 
-* **id** (integer) - unique identifier for the line item.
-* **arn** (string) - Amazon Resource Name for resource being billed.
-* **email** (string) - email of user who incurred the cost.
-* **name** (string) - name of user who incurred the cost.
-* **status** (string) - status of the line item, one of "ACTIVE" or "INACTIVE".
-* **joinedmethod** (string) - how the resource was added, one of "CREATED" or "INVITED".
-* **joinedtimestamp** (string) - timestamp of service creation in UTC. Formatted as `YYYY-MM-DD HH:MM:SSz.`.
+* **id** (integer) - AWS account ID for the line item.
+* **arn** (string) - Amazon Resource Name of the AWS account for the resource being billed.
+* **email** (string) - email associated with the AWS account for the line item.
+* **name** (string) - name of the AWS account for the line item.
+* **status** (string) - status of the line item's AWS account, one of "ACTIVE" or "INACTIVE".
+* **joinedmethod** (string) - how the AWS account was was added to the AWS organization, one of "CREATED" or "INVITED".
+* **joinedtimestamp** (string) - timestamp of AWS account's creation in UTC. Formatted as `YYYY-MM-DD HH:MM:SSz.`.
 
 * `tag` columns, containing information about the member account business unit tags
     * **tag_env** (string) - tag assigned to the environment.
