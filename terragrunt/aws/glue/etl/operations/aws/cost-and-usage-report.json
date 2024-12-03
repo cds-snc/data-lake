@@ -6,7 +6,7 @@
         "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
-        "LastModifiedOn": "2024-11-24T14:36:09.911000+00:00",
+        "LastModifiedOn": "2024-12-02T21:50:47.036000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -1385,7 +1385,7 @@
                     "Inputs": [
                         "node-1731429060956"
                     ],
-                    "Code": "import boto3\nfrom datetime import datetime\n\n# Remove current billing period's data to prevent it from continually\n# adding to the existing totals. Job bookmarks do not work here because each\n# day's export is considered a new data file to process but also contains the\n# previous days data.\ns3 = boto3.resource('s3')\nbucket = s3.Bucket('cds-data-lake-transformed-production')\nbilling_period = datetime.now().strftime(\"%Y-%m\")\nbucket.objects.filter(Prefix=f\"operations/aws/cost-usage-report/billing_period={billing_period}/\").delete()\n\nreturn dfc",
+                    "Code": "import boto3\nfrom datetime import datetime\nfrom awsglue.dynamicframe import DynamicFrame\n\n#\n# Clean out any existing billing data for the DynamicFrame we have\n# just processed.  This is required since the daily CUR export for a billing\n# period includes all previous data for the period.\n#\n\nbilling_periods = set()\n\n# Loop through each DynamicFrame in the collection\nfor df_name in dfc.keys():\n    dynamic_frame = dfc.select(df_name)\n    spark_df = dynamic_frame.toDF()\n    \n    # Find the billing periods in the DataFrame\n    if \"billing_period\" in spark_df.columns:\n        periods = spark_df.select(\"billing_period\").distinct().collect()\n        print(f\"Found {len(periods)} distinct billing periods\")\n        for row in periods:\n            print(f\"Adding billing period: {row.billing_period}\")\n            billing_periods.add(row.billing_period)\n\ns3 = boto3.resource('s3')\nbucket = s3.Bucket('cds-data-lake-transformed-production')\n\n# Delete existing data for each billing period found\nfor period in billing_periods:\n    print(f\"Deleting data for billing period: {period}\")\n    bucket.objects.filter(\n        Prefix=f\"operations/aws/cost-usage-report/billing_period={period}/\"\n    ).delete()\n\nreturn dfc",
                     "ClassName": "RemoveOldData"
                 }
             },
