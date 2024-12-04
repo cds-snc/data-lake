@@ -1,4 +1,4 @@
-# AWS Cost and Usage Report
+# Operations / AWS / Cost and Usage Report
 
 Dataset describing how much was spent on Amazon Web Services (AWS) by CDS.
 
@@ -7,6 +7,10 @@ Each row describes the cost of using a particular AWS service (i.e., a line item
 This dataset is represented in [Superset](https://superset.cdssandbox.xyz/) as the Physical dataset [`cost_usage_report_by_account`](https://superset.cdssandbox.xyz/explore/?datasource_type=table&datasource_id=68). All of the Virtual datasets in the "Operations / AWS / Cost and Usage" group are derived from it.
 
 **Keywords:** AWS, Amazon, cost, usage, fees
+
+---
+
+[:information_source:  View the data pipeline](../../../pipelines/operations/aws/cost-and-usage-report.md)
 
 ## Provenance
 
