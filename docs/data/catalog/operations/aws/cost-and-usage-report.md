@@ -6,6 +6,8 @@ Each row describes the cost of using a particular AWS service (i.e., a line item
 
 This dataset is represented in [Superset](https://superset.cdssandbox.xyz/) as the Physical dataset [`cost_usage_report_by_account`](https://superset.cdssandbox.xyz/explore/?datasource_type=table&datasource_id=68). All of the Virtual datasets in the "Operations / AWS / Cost and Usage" group are derived from it.
 
+:information_source: [Data Pipeline](../../../pipelines/operations/aws/cost-and-usage-report.md)
+
 **Keywords:** AWS, Amazon, cost, usage, fees
 
 ## Provenance

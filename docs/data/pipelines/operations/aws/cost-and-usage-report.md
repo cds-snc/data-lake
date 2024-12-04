@@ -12,6 +12,8 @@ FROM
 LIMIT 10;
 ```
 
+:information_source: [Data Catalog](../../../catalog/operations/aws/cost-and-usage-report.md)
+
 ## Data pipeline
 A high level view is shown below with more details about each step following the diagram.
 
