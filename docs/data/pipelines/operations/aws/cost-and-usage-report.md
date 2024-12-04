@@ -12,6 +12,8 @@ FROM
 LIMIT 10;
 ```
 
+---
+
 [:information_source:  View the data catalog](../../../catalog/operations/aws/cost-and-usage-report.md)
 
 ## Data pipeline
