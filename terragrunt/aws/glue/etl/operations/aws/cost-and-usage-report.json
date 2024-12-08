@@ -6,7 +6,7 @@
         "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
-        "LastModifiedOn": "2024-12-02T21:50:47.036000+00:00",
+        "LastModifiedOn": "2024-12-07T17:20:07.116000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -1403,7 +1403,7 @@
                     "Path": "s3://cds-data-lake-transformed-production/operations/aws/cost-usage-report/",
                     "Compression": "snappy",
                     "SchemaChangePolicy": {
-                        "EnableUpdateCatalog": true,
+                        "EnableUpdateCatalog": false,
                         "UpdateBehavior": "UPDATE_IN_DATABASE",
                         "Table": "cost_usage_report_by_account",
                         "Database": "operations_aws_production"
