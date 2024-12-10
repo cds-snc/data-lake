@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "curated_bucket" {
     sid    = "SupersetRead"
     effect = "Allow"
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = var.superset_iam_role_arns
     }
     actions = [

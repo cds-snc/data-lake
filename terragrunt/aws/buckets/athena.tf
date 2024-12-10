@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "athena_bucket" {
     sid    = "SupersetReadWrite"
     effect = "Allow"
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = var.superset_iam_role_arns
     }
     actions = [
