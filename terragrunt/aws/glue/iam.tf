@@ -9,10 +9,8 @@ data "aws_iam_policy_document" "cross_account_access" {
   statement {
     sid = "SupersetReadAccess"
     principals {
-      type = "AWS"
-      identifiers = [
-        var.superset_iam_role_arn
-      ]
+      type        = "AWS"
+      identifiers = var.superset_iam_role_arns
     }
     actions = [
       "glue:BatchGetPartition",

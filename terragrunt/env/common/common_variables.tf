@@ -18,7 +18,7 @@ variable "region" {
   type        = string
 }
 
-variable "superset_iam_role_arn" {
-  description = "(Required) The ARN of the IAM role that Superset uses to access the Glue catalog"
-  type        = string
+variable "superset_iam_role_arns" {
+  description = "(Required) The ARNs of the IAM role that Superset uses to access the Glue catalog"
+  type        = list(string)
 }

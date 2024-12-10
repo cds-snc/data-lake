@@ -31,10 +31,8 @@ data "aws_iam_policy_document" "athena_bucket" {
     sid    = "SupersetReadWrite"
     effect = "Allow"
     principals {
-      type = "AWS"
-      identifiers = [
-        var.superset_iam_role_arn
-      ]
+      type        = "AWS"
+      identifiers = var.superset_iam_role_arns
     }
     actions = [
       "s3:AbortMultipartUpload",
