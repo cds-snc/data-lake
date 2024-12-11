@@ -45,7 +45,7 @@ resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
       Version              = 1
   })
 
-  schedule = "cron(00 7 1 * ? *)" # Create the new month's partition key
+  schedule = "cron(00 7 1-10 * ? *)" # Run for the first 10 days of each month to create the new partition key
 }
 
 #
