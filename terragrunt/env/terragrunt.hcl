@@ -21,8 +21,8 @@ remote_state {
   }
   config = {
     encrypt        = true
-    bucket         = "cds-data-lake-tfstate-${local.vars.inputs.env}"
-    dynamodb_table = "terraform-state-lock-dynamo"
+    bucket         = "cds-data-lake-tfstate"
+    use_lockfile   = true
     region         = "ca-central-1"
     key            = "${path_relative_to_include()}/terraform.tfstate"
   }
