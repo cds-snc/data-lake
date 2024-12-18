@@ -21,7 +21,7 @@ remote_state {
   }
   config = {
     encrypt        = true
-    bucket         = "cds-data-lake-tfstate-${local.vars.inputs.env}"
+    bucket         = "cds-data-lake-tfstate"
     use_lockfile   = true
     region         = "ca-central-1"
     key            = "${path_relative_to_include()}/terraform.tfstate"
