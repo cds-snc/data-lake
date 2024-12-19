@@ -26,7 +26,9 @@ data "aws_iam_policy_document" "cross_account_access" {
     resources = [
       "arn:aws:glue:${var.region}:${var.account_id}:catalog",
       "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.operations_aws_production.name}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.operations_aws_production.name}/*"
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.operations_aws_production.name}/*",
+      "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.platform_gc_forms_production.name}",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.platform_gc_forms_production.name}/*"
     ]
   }
 }

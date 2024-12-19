@@ -19,6 +19,34 @@ resource "aws_glue_security_configuration" "encryption_at_rest" {
 }
 
 #
+# GC Forms: Forms
+#
+resource "aws_glue_crawler" "platform_gc_forms_forms_production" {
+  name          = "Platform / GC Forms / Forms"
+  description   = "Classify the GC Forms forms (template) data"
+  database_name = aws_glue_catalog_database.platform_gc_forms_production.name
+  table_prefix  = "forms_"
+
+  role                   = aws_iam_role.glue_crawler.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+
+  s3_target {
+    path = "s3://${var.transformed_bucket_name}/platform/gc-forms/forms"
+  }
+
+  configuration = jsonencode(
+    {
+      CrawlerOutput = {
+        Tables = {
+          TableThreshold = 2
+        }
+      }
+      CreatePartitionIndex = true
+      Version              = 1
+  })
+}
+
+#
 # Cost and Usage Report
 #
 resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
