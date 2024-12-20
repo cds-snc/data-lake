@@ -2,9 +2,9 @@
 
 Adding new datasets to the data lake usually involves three steps:
 
-1. Add the new data to the `Raw` bucket.
+1. Add the new data to the [`Raw` bucket](https://github.com/cds-snc/data-lake/blob/main/terragrunt/aws/buckets/raw.tf).
 2. Define a Glue Crawler to infer the schema of the new dataset.
-3. Define a Glue ETL job to modify the data and write it to the `Transformed` bucket.
+3. Define a Glue ETL job to modify the data and write it to the [`Transformed` bucket](https://github.com/cds-snc/data-lake/blob/main/terragrunt/aws/buckets/transformed.tf).
 
 The flow looks like so:
 
