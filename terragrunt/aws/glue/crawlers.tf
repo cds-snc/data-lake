@@ -38,7 +38,7 @@ resource "aws_glue_crawler" "platform_gc_forms_forms_production" {
     {
       CrawlerOutput = {
         Tables = {
-          TableThreshold = 2
+          TableThreshold = 3
         }
       }
       CreatePartitionIndex = true
