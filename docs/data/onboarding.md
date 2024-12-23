@@ -20,6 +20,10 @@ flowchart LR
 
 Once the data is in the `Transformed` bucket, it can be connected to a tool like Superset or QuickSight for analysis.
 
+---
+
+:information_source: There is only one instance of the data lake, which is used by our Staging and Production BI tools.  However, fine grained access is granted to each dataset so that it only appears in the appropriate BI tool environment.
+
 ## Add the new data
 
 New datasets almost always start in the `Raw` bucket.  The first step is to determine the folder structure for the new dataset.  The pattern we use is below:
