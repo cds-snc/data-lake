@@ -8,6 +8,16 @@ variable "curated_bucket_name" {
   type        = string
 }
 
+variable "glue_bucket_arn" {
+  description = "The ARN of the Glue bucket"
+  type        = string
+}
+
+variable "glue_bucket_name" {
+  description = "The name of the Glue bucket"
+  type        = string
+}
+
 variable "raw_bucket_arn" {
   description = "The ARN of the Raw bucket"
   type        = string
