@@ -18,6 +18,16 @@ output "curated_bucket_name" {
   value       = module.curated_bucket.s3_bucket_id
 }
 
+output "glue_bucket_arn" {
+  description = "ARN of the S3 Glue data bucket."
+  value       = module.glue_bucket.s3_bucket_arn
+}
+
+output "glue_bucket_name" {
+  description = "Name of the S3 Glue data bucket."
+  value       = module.glue_bucket.s3_bucket_id
+}
+
 output "raw_bucket_arn" {
   description = "ARN of the S3 Raw data bucket."
   value       = module.raw_bucket.s3_bucket_arn
