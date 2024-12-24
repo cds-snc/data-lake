@@ -29,9 +29,6 @@ jobs:
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Get Glue jobs
-        run: ./.github/workflows/scripts/get-glue-jobs.sh
-
       - name: Create PR if changes
         env:
           GH_TOKEN: ${{ github.token }}
