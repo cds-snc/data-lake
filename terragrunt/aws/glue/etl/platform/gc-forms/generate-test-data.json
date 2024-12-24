@@ -1,0 +1,34 @@
+{
+    "Job": {
+        "Name": "Platform / GC Forms / Generate test data",
+        "JobMode": "SCRIPT",
+        "JobRunQueuingEnabled": false,
+        "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+        "CreatedOn": "2024-12-23T21:01:50.122000+00:00",
+        "LastModifiedOn": "2024-12-23T21:01:50.122000+00:00",
+        "ExecutionProperty": {
+            "MaxConcurrentRuns": 1
+        },
+        "Command": {
+            "Name": "glueetl",
+            "ScriptLocation": "s3://cds-data-lake-glue-production/platform/gc-forms/generate_test_data.py",
+            "PythonVersion": "3"
+        },
+        "DefaultArguments": {
+            "--continuous-log-logGroup": "/aws-glue/jobs/encryption-at-rest/service-role/AWSGlueETL-DataLake/output",
+            "--enable-metrics": "true",
+            "--output_s3_path": "s3://cds-data-lake-transformed-production/platform/gc-forms/forms/test/",
+            "--enable-continuous-log-filter": "true",
+            "--enable-observability-metrics": "true",
+            "--enable-continuous-cloudwatch-log": "true",
+            "--num_partitions": "1",
+            "--continuous-log-logStreamPrefix": "forms_generate_test_data"
+        },
+        "MaxRetries": 0,
+        "AllocatedCapacity": 10,
+        "Timeout": 2880,
+        "MaxCapacity": 10.0,
+        "SecurityConfiguration": "encryption-at-rest",
+        "GlueVersion": "4.0"
+    }
+}
