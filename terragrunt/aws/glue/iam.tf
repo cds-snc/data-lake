@@ -2,15 +2,23 @@
 # Resource policy for the Glue Data Catalog
 #
 resource "aws_glue_resource_policy" "cross_account_access" {
-  policy = data.aws_iam_policy_document.cross_account_access.json
+  policy = data.aws_iam_policy_document.cross_account_access_combined.json
+}
+
+data "aws_iam_policy_document" "cross_account_access_combined" {
+  source_policy_documents = [
+    for policy in data.aws_iam_policy_document.cross_account_access : policy.json
+  ]
 }
 
 data "aws_iam_policy_document" "cross_account_access" {
+  for_each = {for database in local.glue_catalog_databases: database.name => database}
+
   statement {
-    sid = "SupersetReadAccess"
+    sid = "SupersetReadAccess-${each.value.name}"
     principals {
       type        = "AWS"
-      identifiers = var.superset_iam_role_arns
+      identifiers = [for arn in var.superset_iam_role_arns : arn if endswith(arn, each.value.name)]
     }
     actions = [
       "glue:BatchGetPartition",
@@ -25,10 +33,8 @@ data "aws_iam_policy_document" "cross_account_access" {
     ]
     resources = [
       "arn:aws:glue:${var.region}:${var.account_id}:catalog",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.operations_aws_production.name}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.operations_aws_production.name}/*",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.platform_gc_forms_production.name}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.platform_gc_forms_production.name}/*"
+      "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value.name}",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value.name}/*",
     ]
   }
 }
