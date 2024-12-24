@@ -22,7 +22,8 @@ if git ls-remote --heads "$REMOTE_REPO" "$BRANCH_NAME" | grep -q "$BRANCH_NAME";
     CREATE_PR="false"
 else
     echo "Branch '$BRANCH_NAME' does not exist. Creating new branch."
-    git checkout -b "$BRANCH_NAME" "$BASE_BRANCH"
+    git fetch "$REMOTE_REPO" "$BASE_BRANCH"
+    git checkout -b "$BRANCH_NAME" "$REMOTE_REPO/$BASE_BRANCH"
 fi
 
 echo "Syncing Glue jobs..."
