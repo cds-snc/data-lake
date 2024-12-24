@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "cross_account_access_combined" {
 }
 
 data "aws_iam_policy_document" "cross_account_access" {
-  for_each = {for database in local.glue_catalog_databases: database.name => database}
+  for_each = { for database in local.glue_catalog_databases : database.name => database }
 
   statement {
     sid = "SupersetReadAccess-${each.value.name}"
