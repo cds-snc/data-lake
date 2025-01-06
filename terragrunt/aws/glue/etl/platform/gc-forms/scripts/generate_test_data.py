@@ -127,7 +127,7 @@ def generate_random_value(field):
 # ----------------------------------------------------------------------------
 # 3. Build random rows by iterating over the schema
 # ----------------------------------------------------------------------------
-NUM_ROWS = 1000000
+NUM_ROWS = 1000
 
 data_rows = []
 for _ in range(NUM_ROWS):
