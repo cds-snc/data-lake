@@ -15,6 +15,7 @@ resource "aws_s3_object" "forms_generate_test_data" {
 resource "aws_glue_job" "forms_generate_test_data" {
   name = "Platform / GC Forms / Generate test data"
 
+  timeout                = 15 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
