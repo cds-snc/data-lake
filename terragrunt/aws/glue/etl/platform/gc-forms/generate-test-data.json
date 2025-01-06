@@ -5,7 +5,7 @@
         "JobRunQueuingEnabled": false,
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2024-12-23T21:01:50.122000+00:00",
-        "LastModifiedOn": "2024-12-23T21:01:50.122000+00:00",
+        "LastModifiedOn": "2025-01-06T14:11:16.391000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -26,8 +26,10 @@
         },
         "MaxRetries": 0,
         "AllocatedCapacity": 10,
-        "Timeout": 2880,
+        "Timeout": 15,
         "MaxCapacity": 10.0,
+        "WorkerType": "G.1X",
+        "NumberOfWorkers": 10,
         "SecurityConfiguration": "encryption-at-rest",
         "GlueVersion": "4.0"
     }
