@@ -98,6 +98,7 @@ def random_jsonConfig():
         
         json_str = json.dumps(json_object)
         if len(json_str.encode('utf-8')) >= max_size:
+            print("5mb Threshold met!")
             break
 
     te = time.time()
