@@ -92,8 +92,8 @@ def random_jsonConfig():
     ts = time.time()
     print("...Generating 5mb JSON Blob @" + str(ts))
     while True:
-        key = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-        value = ''.join(random.choices(string.ascii_letters + string.digits, k=100))
+        key = ''.join(random.choices(string.ascii_letters + string.digits, k=1000))
+        value = ''.join(random.choices(string.ascii_letters + string.digits, k=10000))
         json_object[key] = value
         
         json_str = json.dumps(json_object)
