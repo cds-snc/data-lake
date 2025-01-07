@@ -127,8 +127,8 @@ def generate_random_value(field):
 # ----------------------------------------------------------------------------
 # 3. Build random rows by iterating over the schema
 # ----------------------------------------------------------------------------
-CHUNK_SIZE = 100
-NUM_ROWS = 1000
+CHUNK_SIZE = 10
+NUM_ROWS = 100
 
 num_chunks = (NUM_ROWS // CHUNK_SIZE) + (1 if NUM_ROWS % CHUNK_SIZE != 0 else 0)
 
