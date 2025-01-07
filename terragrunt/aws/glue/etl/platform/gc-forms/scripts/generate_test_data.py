@@ -3,6 +3,7 @@ import json
 import random
 import string
 import datetime
+import time
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
@@ -88,6 +89,8 @@ def random_jsonConfig():
     max_size = 5 * 1024 * 1024  # 5 MB
     json_object = {}
 
+    ts = time.time()
+    print("...Generating 5mb JSON Blob @" + str(ts))
     while True:
         key = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
         value = ''.join(random.choices(string.ascii_letters + string.digits, k=100))
@@ -97,9 +100,12 @@ def random_jsonConfig():
         if len(json_str.encode('utf-8')) >= max_size:
             break
 
+    te = time.time()
+    print("5MB JSON Blob made..." + str(ts - te))
     return json_object
 
 def generate_random_value(field):
+    print("Generating Random Field : " + field.name)
     field_name = field.name
     spark_type = field.dataType
 
@@ -133,6 +139,7 @@ NUM_ROWS = 100
 num_chunks = (NUM_ROWS // CHUNK_SIZE) + (1 if NUM_ROWS % CHUNK_SIZE != 0 else 0)
 
 for chunk_idx in range(num_chunks):
+    print("Generating..." + str(chunk_idx))
     data_rows = []
     for _ in range(CHUNK_SIZE):
         if chunk_idx * CHUNK_SIZE + len(data_rows) >= NUM_ROWS:
