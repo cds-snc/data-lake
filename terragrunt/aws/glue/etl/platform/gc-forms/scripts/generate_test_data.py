@@ -127,41 +127,35 @@ def generate_random_value(field):
 # ----------------------------------------------------------------------------
 # 3. Build random rows by iterating over the schema
 # ----------------------------------------------------------------------------
+CHUNK_SIZE = 100
 NUM_ROWS = 1000
 
-data_rows = []
-for _ in range(NUM_ROWS):
-    row_values = []
+num_chunks = (NUM_ROWS // CHUNK_SIZE) + (1 if NUM_ROWS % CHUNK_SIZE != 0 else 0)
+
+for chunk_idx in range(num_chunks):
+    data_rows = []
+    for _ in range(CHUNK_SIZE):
+        if chunk_idx * CHUNK_SIZE + len(data_rows) >= NUM_ROWS:
+            break
+        row_values = []
+        for field in manual_schema.fields:
+            row_values.append(generate_random_value(field))
+        data_rows.append(tuple(row_values))
+
+    # Create a small dataframe for chunked rows
+    df_chunk = spark.createDataFrame(data_rows, schema=manual_schema)
+
+    # Format the timestamp columns
     for field in manual_schema.fields:
-        row_values.append(generate_random_value(field))
-    data_rows.append(tuple(row_values))
+        if isinstance(field.dataType, TimestampType):
+            # Replace the column with a formatted string
+            df_chunk = df_chunk.withColumn(
+                field.name,
+                date_format(col(field.name), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS")
+            )
 
-# ----------------------------------------------------------------------------
-# 4. Create a Spark DataFrame from the random data
-# ----------------------------------------------------------------------------
-# Convert the list of tuples into an RDD
-rdd = spark.sparkContext.parallelize(data_rows)
-
-# Create the DataFrame with our manual schema
-df = spark.createDataFrame(rdd, schema=manual_schema)
-
-# ----------------------------------------------------------------------------
-# 5. Convert any TimestampType columns to a string format
-#    (e.g., "yyyy-MM-dd HH:mm:ss.SSSSSSSSS")
-# ----------------------------------------------------------------------------
-for field in manual_schema.fields:
-    if isinstance(field.dataType, TimestampType):
-        # Replace the column with a formatted string
-        df = df.withColumn(
-            field.name,
-            date_format(col(field.name), "yyyy-MM-dd HH:mm:ss.SSSSSSSSS")
-        )
-
-# ----------------------------------------------------------------------------
-# 6. Write the DataFrame to Parquet, partitioned as desired
-# ----------------------------------------------------------------------------
-df_repartitioned = df.repartition(NUM_PARTITIONS)
-df_repartitioned.write.mode("overwrite").parquet(OUTPUT_S3_PATH)
+    df_repartitioned = df_chunk.repartition(1) # Repartition into 1 file holding 100 chunks.
+    df_repartitioned.write.mode("append").parquet(OUTPUT_S3_PATH)
 
 # Finalize job
 job.commit()
