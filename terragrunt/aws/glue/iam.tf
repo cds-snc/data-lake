@@ -2,15 +2,24 @@
 # Resource policy for the Glue Data Catalog
 #
 resource "aws_glue_resource_policy" "cross_account_access" {
-  policy = data.aws_iam_policy_document.cross_account_access.json
+  policy = data.aws_iam_policy_document.cross_account_access_combined.json
+}
+
+data "aws_iam_policy_document" "cross_account_access_combined" {
+  source_policy_documents = concat(
+    [data.aws_iam_policy_document.cross_account_access_legacy.json],
+    [for policy in data.aws_iam_policy_document.cross_account_access : policy.json]
+  )
 }
 
 data "aws_iam_policy_document" "cross_account_access" {
+  for_each = { for database in local.glue_catalog_databases : database.name => database }
+
   statement {
-    sid = "SupersetReadAccess"
+    sid = "SupersetReadAccess${join("", [for word in split("_", replace(each.value.name, "/[^a-zA-Z0-9_]/", "")) : title(word)])}"
     principals {
       type        = "AWS"
-      identifiers = var.superset_iam_role_arns
+      identifiers = [for arn in var.superset_iam_role_arns : arn if endswith(arn, each.value.name)]
     }
     actions = [
       "glue:BatchGetPartition",
@@ -25,10 +34,41 @@ data "aws_iam_policy_document" "cross_account_access" {
     ]
     resources = [
       "arn:aws:glue:${var.region}:${var.account_id}:catalog",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.operations_aws_production.name}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.operations_aws_production.name}/*",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.platform_gc_forms_production.name}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.platform_gc_forms_production.name}/*"
+      "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value.name}",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value.name}/*",
+    ]
+  }
+}
+
+#
+# Allow the old IAM roles to access the Data Lake until the migration to
+# per database IAM roles is complete
+#
+data "aws_iam_policy_document" "cross_account_access_legacy" {
+  statement {
+    sid = "SupersetReadAccessLegacy"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::066023111852:role/SupersetAthenaRead",
+        "arn:aws:iam::257394494478:role/SupersetAthenaRead"
+      ]
+    }
+    actions = [
+      "glue:BatchGetPartition",
+      "glue:GetDatabase",
+      "glue:GetDatabases",
+      "glue:GetPartition",
+      "glue:GetPartitions",
+      "glue:GetTable",
+      "glue:GetTables",
+      "glue:GetTableVersion",
+      "glue:GetTableVersions"
+    ]
+    resources = [
+      "arn:aws:glue:${var.region}:${var.account_id}:catalog",
+      "arn:aws:glue:${var.region}:${var.account_id}:database/*",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/*",
     ]
   }
 }
