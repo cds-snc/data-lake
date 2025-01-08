@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "cross_account_access" {
   for_each = { for database in local.glue_catalog_databases : database.name => database }
 
   statement {
-    sid = "SupersetReadAccess${replace(each.value.name, "/[^a-zA-Z0-9]/", "")}"
+    sid = "SupersetReadAccess${join("", [for word in split("_", replace(each.value.name, "/[^a-zA-Z0-9_]/", "")): title(word)])}"
     principals {
       type        = "AWS"
       identifiers = [for arn in var.superset_iam_role_arns : arn if endswith(arn, each.value.name)]
