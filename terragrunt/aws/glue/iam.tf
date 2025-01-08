@@ -6,10 +6,9 @@ resource "aws_glue_resource_policy" "cross_account_access" {
 }
 
 data "aws_iam_policy_document" "cross_account_access_combined" {
-  source_policy_documents = concat(
-    [data.aws_iam_policy_document.cross_account_access_legacy.json],
-    [for policy in data.aws_iam_policy_document.cross_account_access : policy.json]
-  )
+  source_policy_documents = [
+    for policy in data.aws_iam_policy_document.cross_account_access : policy.json
+  ]
 }
 
 data "aws_iam_policy_document" "cross_account_access" {
@@ -36,39 +35,6 @@ data "aws_iam_policy_document" "cross_account_access" {
       "arn:aws:glue:${var.region}:${var.account_id}:catalog",
       "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value.name}",
       "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value.name}/*",
-    ]
-  }
-}
-
-#
-# Allow the old IAM roles to access the Data Lake until the migration to
-# per database IAM roles is complete
-#
-data "aws_iam_policy_document" "cross_account_access_legacy" {
-  statement {
-    sid = "SupersetReadAccessLegacy"
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::066023111852:role/SupersetAthenaRead",
-        "arn:aws:iam::257394494478:role/SupersetAthenaRead"
-      ]
-    }
-    actions = [
-      "glue:BatchGetPartition",
-      "glue:GetDatabase",
-      "glue:GetDatabases",
-      "glue:GetPartition",
-      "glue:GetPartitions",
-      "glue:GetTable",
-      "glue:GetTables",
-      "glue:GetTableVersion",
-      "glue:GetTableVersions"
-    ]
-    resources = [
-      "arn:aws:glue:${var.region}:${var.account_id}:catalog",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/*",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/*",
     ]
   }
 }
