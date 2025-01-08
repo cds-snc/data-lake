@@ -7,7 +7,7 @@ resource "aws_glue_resource_policy" "cross_account_access" {
 
 data "aws_iam_policy_document" "cross_account_access_combined" {
   source_policy_documents = concat(
-    [data.aws_iam_policy_document.cross_account_access_legacy],
+    [data.aws_iam_policy_document.cross_account_access_legacy.json],
     [for policy in data.aws_iam_policy_document.cross_account_access : policy.json]
   )
 }
@@ -48,7 +48,7 @@ data "aws_iam_policy_document" "cross_account_access_legacy" {
   statement {
     sid = "SupersetReadAccessLegacy"
     principals {
-      type        = "AWS"
+      type = "AWS"
       identifiers = [
         "arn:aws:iam::066023111852:role/SupersetAthenaRead",
         "arn:aws:iam::257394494478:role/SupersetAthenaRead"
