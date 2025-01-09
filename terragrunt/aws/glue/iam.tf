@@ -12,13 +12,13 @@ data "aws_iam_policy_document" "cross_account_access_combined" {
 }
 
 data "aws_iam_policy_document" "cross_account_access" {
-  for_each = { for database in local.glue_catalog_databases : database.name => database }
+  for_each = toset(local.glue_catalog_databases)
 
   statement {
-    sid = "SupersetReadAccess${join("", [for word in split("_", replace(each.value.name, "/[^a-zA-Z0-9_]/", "")) : title(word)])}"
+    sid = "SupersetReadAccess${join("", [for word in split("_", replace(each.value, "/[^a-zA-Z0-9_]/", "")) : title(word)])}"
     principals {
       type        = "AWS"
-      identifiers = [for arn in var.superset_iam_role_arns : arn if endswith(arn, each.value.name)]
+      identifiers = [for arn in var.superset_iam_role_arns : arn if endswith(arn, each.value)]
     }
     actions = [
       "glue:BatchGetPartition",
@@ -33,8 +33,8 @@ data "aws_iam_policy_document" "cross_account_access" {
     ]
     resources = [
       "arn:aws:glue:${var.region}:${var.account_id}:catalog",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value.name == "all" ? "*" : each.value.name}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value.name == "all" ? "*" : each.value.name}/*",
+      "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value == "all" ? "*" : each.value}",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value == "all" ? "*" : each.value}/*",
     ]
   }
 }
