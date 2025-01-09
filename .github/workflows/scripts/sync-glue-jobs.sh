@@ -30,7 +30,7 @@ echo "Syncing Glue jobs..."
 .github/workflows/scripts/get-glue-jobs.sh
 
 # Check for changes in the branch
-if git diff-index --quiet HEAD -- "$JOB_DIR"; then
+if ! git status --porcelain "$JOB_DIR" | grep -q "."; then
     echo "No changes detected."
     exit 0
 else
