@@ -34,7 +34,8 @@ if git diff-index --quiet HEAD -- "$JOB_DIR"; then
     echo "No changes detected."
     exit 0
 else
-    echo "Changes detected."
+    echo "Changes detected:"
+    git diff -- "$JOB_DIR"
     git push "$REMOTE_REPO" "$BRANCH_NAME"
 fi
 
@@ -42,6 +43,7 @@ fi
 echo "Committing changes..."
 FILES_CHANGED="$(git status --porcelain | awk '{print $2}')"
 for FILE in $FILES_CHANGED; do
+    echo "Committing $FILE..."
     MESSAGE="chore: regenerate $(basename "$FILE") for $(date -u '+%Y-%m-%d')"
     SHA="$(git rev-parse $BRANCH_NAME:"$FILE" || echo "")"
     gh api --method PUT /repos/cds-snc/data-lake/contents/"$FILE" \
