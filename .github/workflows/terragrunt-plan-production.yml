@@ -19,6 +19,7 @@ env:
   TERRAGRUNT_VERSION: 0.68.6
   TF_INPUT: false
   TF_VAR_cloudwatch_alarm_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}
+  TF_VAR_freshdesk_api_key: ${{ secrets.PRODUCTION_FRESHDESK_API_KEY }}
 
 permissions:
   id-token: write
@@ -75,5 +76,14 @@ jobs:
           directory: "terragrunt/env/production/alarms"
           comment-delete: "true"
           comment-title: "Production: alarms 🚨"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan export
+        uses: cds-snc/terraform-plan@d79bcf0eccf632a0ad9e9193072b42c970766c5b # v3.3.1
+        with:
+          directory: "terragrunt/env/production/export"
+          comment-delete: "true"
+          comment-title: "Production: export 💾"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"

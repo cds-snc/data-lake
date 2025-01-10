@@ -19,6 +19,7 @@ env:
   TERRAGRUNT_VERSION: 0.68.6
   TF_INPUT: false
   TF_VAR_cloudwatch_alarm_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}
+  TF_VAR_freshdesk_api_key: ${{ secrets.PRODUCTION_FRESHDESK_API_KEY }}
 
 permissions:
   id-token: write
@@ -55,6 +56,10 @@ jobs:
 
       - name: Terragrunt apply alarms
         working-directory: terragrunt/env/production/alarms
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply export
+        working-directory: terragrunt/env/production/export
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Report deployment to Sentinel
