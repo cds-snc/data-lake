@@ -5,7 +5,7 @@ module "platform_support_freshdesk_export" {
   source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.2.2"
 
   lambda_name                = "platform-support-freshdesk-export"
-  lambda_schedule_expression = "rate(1 day)"
+  lambda_schedule_expression = "cron(0 5 * * ? *)" # 5am UTC every day
   s3_arn_write_path          = "${var.raw_bucket_arn}${local.freshdesk_export_path}"
 
   lambda_policies = [
