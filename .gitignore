@@ -1,3 +1,6 @@
+# Python
+*.pyc
+
 # Terraform
 .terragrunt-cache
 .terraform
