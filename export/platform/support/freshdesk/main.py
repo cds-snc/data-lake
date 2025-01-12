@@ -64,19 +64,17 @@ class FreshdeskClient:
         self.contacts_cache = {}
 
     def get_products(self):
-        """Fetch all products if cache is empty"""
-        if not self.products_cache:
-            logger.info("Fetching products from API...")
-            url = f"{self.base_url}/api/v2/products"
-            response = requests.get(url, headers=self.headers)
-
-            if response.status_code == 200:
-                products = response.json()
-                self.products_cache = {
-                    str(product["id"]): product["name"] for product in products
-                }
-            else:
-                logger.info(f"Error fetching products: {response.status_code}")
+        logger.info("Fetching products from API...")
+        products = {}
+        url = f"{self.base_url}/api/v2/products"
+        response = requests.get(url, headers=self.headers)
+        if response.status_code == 200:
+            products = {
+                str(product["id"]): product["name"] for product in response.json()
+            }
+        else:
+            logger.info(f"Error fetching products: {response.status_code}")
+        return products
 
     def get_ticket_conversations(self, ticket_id):
         """Fetch all ticket conversations"""
