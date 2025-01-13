@@ -1,0 +1,60 @@
+name: Lint, format and test exports
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "export/**"
+      - ".github/workflows/pr-export.yml"
+
+jobs:
+  export-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        export:
+          - platform/support/freshdesk
+    steps:
+      - name: Audit DNS requests
+        uses: cds-snc/dns-proxy-action@main
+        env:
+          DNS_PROXY_FORWARDTOSENTINEL: "true"
+          DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+          DNS_PROXY_LOGANALYTICSSHAREDKEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: dorny/paths-filter@7267a8516b6f92bdb098633497bad573efdbf271 # v2.12.0
+        id: changes
+        with:
+          filters: |
+            export:
+              - '${{ matrix.export }}/**'
+              - '.github/workflows/pr-export.yml'
+
+      - name: Setup python
+        if: steps.changes.outputs.export == 'true'
+        uses: actions/setup-python@b64ffcaf5b410884ad320a9cfac8866006a109aa # v4.8.0
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        if: steps.changes.outputs.export == 'true'
+        working-directory: ./export/${{ matrix.export }}
+        run: make install && make install_dev
+
+      - name: Lint
+        if: steps.changes.outputs.export == 'true'
+        working-directory: ./export/${{ matrix.export }}
+        run: make lint
+
+      - name: Format
+        if: steps.changes.outputs.export == 'true'
+        working-directory: ./export/${{ matrix.export }}
+        run: make ARGS=--check fmt
+
+      - name: Test
+        if: steps.changes.outputs.export == 'true'
+        working-directory: ./export/${{ matrix.export }}
+        run: make test
