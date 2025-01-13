@@ -43,9 +43,11 @@ STATUS_LOOKUP = {
 
 PRIORITY_LOOKUP = {1: "Low", 2: "Medium", 3: "High", 4: "Urgent"}
 
+CONVERSATION_REPLY = 0
+CONVERSATION_NOTE = 2
 CONVERSATION_SOURCE = {
-    0: "Reply",
-    2: "Note",
+    CONVERSATION_REPLY: "Reply",
+    CONVERSATION_NOTE: "Note",
 }
 
 
@@ -88,8 +90,12 @@ class FreshdeskClient:
             response = requests.get(url, headers=self.headers)
             if response.status_code == 200:
                 conversations = response.json()
-                reply_count += len([c for c in conversations if c.get("source") == 0])
-                note_count += len([c for c in conversations if c.get("source") == 2])
+                reply_count += len(
+                    [c for c in conversations if c.get("source") == CONVERSATION_REPLY]
+                )
+                note_count += len(
+                    [c for c in conversations if c.get("source") == CONVERSATION_NOTE]
+                )
                 if len(conversations) == per_page:
                     page += 1
                 else:
