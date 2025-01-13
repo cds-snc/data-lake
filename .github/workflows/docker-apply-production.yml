@@ -60,6 +60,7 @@ jobs:
 
     - name: Build and push Docker image to Amazon ECR
       if: steps.changes.outputs.export == 'true'
+      working-directory: ./export/${{ matrix.export }}
       run: |
         make docker
         docker tag ${{matrix.lambda}} $REGISTRY/${{matrix.lambda}}:${{ env.TAG_VERSION }}
