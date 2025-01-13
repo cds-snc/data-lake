@@ -1,6 +1,6 @@
 .PHONY: build
 
-build:
+docker:
 	docker build --platform linux/amd64 --tag platform-support-freshdesk-export .
  
 fmt:
@@ -15,13 +15,13 @@ install_dev:
 lint:
 	flake8 --ignore=E501 main.py
 
-pull_request: install install_dev lint fmt test
+pull_request: install install_dev docker lint fmt test
 
 test:
 	python -m pytest -s -vv .
 
 .PHONY: \
-	build \
+	docker \
 	fmt \
 	install	\
 	install_dev \

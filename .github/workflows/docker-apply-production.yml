@@ -1,0 +1,78 @@
+name: Docker build, push and deploy Production
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "export/**"
+      - ".github/workflows/docker-apply-production.yml"
+
+env: 
+  AWS_REGION: ca-central-1
+  REGISTRY: ${{ vars.PROD_AWS_ACCOUNT_ID }}.dkr.ecr.ca-central-1.amazonaws.com
+  TAG_VERSION: ${{ github.ref_name }}
+
+permissions:
+  id-token: write
+  contents: read
+  
+jobs:
+  docker-build-push-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - export: platform/support/freshdesk
+            lambda: platform-support-freshdesk-export
+
+    steps:
+    - name: Audit DNS requests
+      uses: cds-snc/dns-proxy-action@main
+      env:
+        DNS_PROXY_FORWARDTOSENTINEL: "true"
+        DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+        DNS_PROXY_LOGANALYTICSSHAREDKEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
+
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - uses: dorny/paths-filter@7267a8516b6f92bdb098633497bad573efdbf271 # v2.12.0
+      id: changes
+      with:
+        filters: |
+          export:
+            - '${{ matrix.export }}/**'
+            - '.github/workflows/docker-apply-production.yml'
+
+    - name: Configure AWS credentials using OIDC
+      if: steps.changes.outputs.export == 'true'
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+      with:
+        role-to-assume: arn:aws:iam::739275439843:role/data-lake-apply
+        role-session-name: DockerBuildPush
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      if: steps.changes.outputs.export == 'true'
+      uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+
+    - name: Build and push Docker image to Amazon ECR
+      if: steps.changes.outputs.export == 'true'
+      run: |
+        make docker
+        docker tag ${{matrix.lambda}} $REGISTRY/${{matrix.lambda}}:${{ env.TAG_VERSION }}
+        docker tag ${{matrix.lambda}} $REGISTRY/${{matrix.lambda}}:latest
+        docker push $REGISTRY/${{matrix.lambda}}:${{ env.TAG_VERSION }}
+        docker push $REGISTRY/${{matrix.lambda}}:latest
+
+    - name: Update Lambda Docker image
+      if: steps.changes.outputs.export == 'true'
+      run: |
+        aws lambda update-function-code \
+          --function-name ${{matrix.lambda}} \
+          --image-uri $REGISTRY/${{matrix.lambda}}:${{ env.TAG_VERSION }} > /dev/null 2>&1
+        aws lambda wait function-active \
+          --function-name ${{matrix.lambda}}
+  
