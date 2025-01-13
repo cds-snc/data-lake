@@ -30,8 +30,8 @@ inputs = {
   raw_bucket_arn  = dependency.buckets.outputs.raw_bucket_arn
   raw_bucket_name = dependency.buckets.outputs.raw_bucket_name
 
-  sns_topic_alarm_action_arn = dependency.buckets.outputs.sns_topic_alarm_action_arn
-  sns_topic_ok_action_arn    = dependency.buckets.outputs.sns_topic_ok_action_arn
+  sns_topic_alarm_action_arn = dependency.alarms.outputs.sns_topic_alarm_action_arn
+  sns_topic_ok_action_arn    = dependency.alarms.outputs.sns_topic_ok_action_arn
 }
 
 include {
