@@ -15,6 +15,8 @@ install_dev:
 lint:
 	flake8 --ignore=E501 main.py
 
+pull_request: install install_dev lint fmt test
+
 test:
 	python -m pytest -s -vv .
 
@@ -24,4 +26,5 @@ test:
 	install	\
 	install_dev \
 	lint \
+	pull_request \
 	test

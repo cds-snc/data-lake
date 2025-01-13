@@ -1,4 +1,4 @@
-name: Lint, format and test export PRs
+name: Export pull request tests
 on:
   workflow_dispatch:
   pull_request:
@@ -39,22 +39,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install dependencies
+      - name: Run PR tests
         if: steps.changes.outputs.export == 'true'
         working-directory: ./export/${{ matrix.export }}
-        run: make install && make install_dev
-
-      - name: Lint
-        if: steps.changes.outputs.export == 'true'
-        working-directory: ./export/${{ matrix.export }}
-        run: make lint
-
-      - name: Format
-        if: steps.changes.outputs.export == 'true'
-        working-directory: ./export/${{ matrix.export }}
-        run: make ARGS=--check fmt
-
-      - name: Test
-        if: steps.changes.outputs.export == 'true'
-        working-directory: ./export/${{ matrix.export }}
-        run: make test
+        run: make ARGS=--check pull_request
