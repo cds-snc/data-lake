@@ -133,6 +133,28 @@ class TestFreshdeskClient:
             assert ticket["product_name"] == "Product 1"
             assert ticket["conversations_total_count"] == 3
 
+    def test_get_tickets_pagination(self, mock_freshdesk_client):
+        with patch("requests.get") as mock_get:
+            mock_get.return_value.status_code = 200
+            mock_get.return_value.json.side_effect = [
+                {"results": [MOCK_TICKET for i in range(1, 31)]},
+                {"results": [MOCK_TICKET for i in range(1, 31)]},
+                {"results": [MOCK_TICKET for i in range(1, 5)]},
+            ]
+
+            # Mock the conversation call
+            mock_freshdesk_client.get_ticket_conversations = Mock(
+                return_value={"total_count": 3, "reply_count": 2, "note_count": 1}
+            )
+
+            # Mock the requester email suffix
+            mock_freshdesk_client.get_requester_email_suffix = Mock(
+                return_value="external"
+            )
+
+            tickets = mock_freshdesk_client.get_tickets()
+            assert len(tickets) == 64
+
 
 def test_upload_to_s3(mock_s3_client):
     test_data = {"test": "data"}
