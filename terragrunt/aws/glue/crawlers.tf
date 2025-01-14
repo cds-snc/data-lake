@@ -70,6 +70,9 @@ resource "aws_glue_crawler" "platform_support_freshdesk_production" {
           TableThreshold = 1
         }
       }
+      Grouping = {
+        TableGroupingPolicy = "CombineCompatibleSchemas"
+      }
       CreatePartitionIndex = true
       Version              = 1
   })
