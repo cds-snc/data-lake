@@ -19,7 +19,7 @@ resource "aws_glue_security_configuration" "encryption_at_rest" {
 }
 
 #
-# GC Forms: Forms
+# Platform / GC Forms / Forms
 #
 resource "aws_glue_crawler" "platform_gc_forms_forms_production" {
   name          = "Platform / GC Forms / Forms"
@@ -47,7 +47,36 @@ resource "aws_glue_crawler" "platform_gc_forms_forms_production" {
 }
 
 #
-# Cost and Usage Report
+# Platform / Support / Freshdesk
+#
+resource "aws_glue_crawler" "platform_support_freshdesk_production" {
+  name          = "Platform / Support / Freshdesk"
+  description   = "Classify the Platform Freshdesk support ticket data"
+  database_name = aws_glue_catalog_database.platform_support_production.name
+  table_prefix  = "freskdesk_"
+  classifiers   = [aws_glue_classifier.json_object_array.name]
+
+  role                   = aws_iam_role.glue_crawler.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+
+  s3_target {
+    path = "s3://${var.raw_bucket_name}/platform/support/freshdesk"
+  }
+
+  configuration = jsonencode(
+    {
+      CrawlerOutput = {
+        Tables = {
+          TableThreshold = 1
+        }
+      }
+      CreatePartitionIndex = true
+      Version              = 1
+  })
+}
+
+#
+# Operations / AWS / Cost and Usage Report
 #
 resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
   name          = "Operations / AWS / Cost and Usage Report"
@@ -77,7 +106,7 @@ resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
 }
 
 #
-# Organization Account Tags
+# Operations / AWS / Organization / Account Tags
 #
 resource "aws_glue_crawler" "operations_aws_production_account_tags" {
   name          = "Operations / AWS / Organization / Account Tags"
