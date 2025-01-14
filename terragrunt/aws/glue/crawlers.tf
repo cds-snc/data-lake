@@ -52,7 +52,7 @@ resource "aws_glue_crawler" "platform_gc_forms_forms_production" {
 resource "aws_glue_crawler" "platform_support_freshdesk_production" {
   name          = "Platform / Support / Freshdesk"
   description   = "Classify the Platform Freshdesk support ticket data"
-  database_name = aws_glue_catalog_database.platform_support_production.name
+  database_name = aws_glue_catalog_database.platform_support_production_raw.name
   table_prefix  = "freskdesk_"
   classifiers   = [aws_glue_classifier.json_object_array.name]
 
