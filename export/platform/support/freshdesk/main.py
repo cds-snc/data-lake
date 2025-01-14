@@ -194,8 +194,10 @@ def upload_to_s3(bucket, prefix, data):
     """Upload data to S3 bucket"""
     s3_client = boto3.client("s3")
 
-    today = datetime.now().strftime("%Y-%m-%d")
-    key = f"{prefix}/{today}.json"
+    yesterday = datetime.now() - timedelta(days=1)
+    day = yesterday.strftime("%Y-%m-%d")
+    month = yesterday.strftime("%Y-%m")
+    key = f"{prefix}/MONTH={month}/{day}.json"
 
     s3_client.put_object(
         Bucket=bucket, Key=key, Body=json.dumps(data, ensure_ascii=False)
@@ -222,7 +224,9 @@ def handler(_event, _context):
     client = FreshdeskClient(FRESHDESK_DOMAIN, freshdesk_api_key)
     tickets = client.get_tickets()
 
-    logger.info(f"Saving {len(tickets)} tickets")
-    s3_path = upload_to_s3(S3_BUCKET_NAME, S3_OBJECT_PREFIX, tickets)
-
-    logger.info(f"Tickets saved to {s3_path}")
+    if tickets:
+        logger.info(f"Saving {len(tickets)} tickets")
+        s3_path = upload_to_s3(S3_BUCKET_NAME, S3_OBJECT_PREFIX, tickets)
+        logger.info(f"Tickets saved to {s3_path}")
+    else:
+        logger.info("No tickets found")

@@ -53,7 +53,7 @@ resource "aws_glue_crawler" "platform_support_freshdesk_production" {
   name          = "Platform / Support / Freshdesk"
   description   = "Classify the Platform Freshdesk support ticket data"
   database_name = aws_glue_catalog_database.platform_support_production_raw.name
-  table_prefix  = "freskdesk_"
+  table_prefix  = "platform_support_"
   classifiers   = [aws_glue_classifier.json_object_array.name]
 
   role                   = aws_iam_role.glue_crawler.arn

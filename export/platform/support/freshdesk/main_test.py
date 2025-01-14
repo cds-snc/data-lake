@@ -151,16 +151,25 @@ def test_get_ssm_parameter(mock_ssm_client):
     )
 
 
-def test_handler(mock_ssm_client):
+def test_handler_tickets(mock_ssm_client):
     with patch("main.FreshdeskClient") as MockClient:
         mock_client = Mock()
         mock_client.get_tickets.return_value = [MOCK_TICKET]
         MockClient.return_value = mock_client
 
         with patch("main.upload_to_s3") as mock_upload:
-            mock_upload.return_value = "s3://test-bucket/test.json"
-
             handler({}, {})
-
             mock_client.get_tickets.assert_called_once()
             mock_upload.assert_called_once()
+
+
+def test_handler_no_tickets(mock_ssm_client):
+    with patch("main.FreshdeskClient") as MockClient:
+        mock_client = Mock()
+        mock_client.get_tickets.return_value = []
+        MockClient.return_value = mock_client
+
+        with patch("main.upload_to_s3") as mock_upload:
+            handler({}, {})
+            mock_client.get_tickets.assert_called_once()
+            mock_upload.assert_not_called()
