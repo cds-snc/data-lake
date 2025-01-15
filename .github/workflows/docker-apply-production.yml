@@ -74,6 +74,6 @@ jobs:
         aws lambda update-function-code \
           --function-name ${{matrix.lambda}} \
           --image-uri $REGISTRY/${{matrix.lambda}}:${{ env.TAG_VERSION }} > /dev/null 2>&1
-        aws lambda wait function-active \
+        aws lambda wait function-updated \
           --function-name ${{matrix.lambda}}
   
