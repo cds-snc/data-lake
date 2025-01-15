@@ -6,6 +6,7 @@ module "platform_support_freshdesk_export" {
 
   lambda_name                = local.freshdesk_lambda_name
   lambda_schedule_expression = "cron(0 5 * * ? *)" # 5am UTC every day
+  lambda_timeout             = "300"
   s3_arn_write_path          = "${var.raw_bucket_arn}/${local.freshdesk_export_path}/*"
 
   lambda_policies = [

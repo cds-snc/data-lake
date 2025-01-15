@@ -141,51 +141,66 @@ class FreshdeskClient:
         """Retrieve all tickets with product names and requester email types"""
         all_tickets = []
         yesterday = datetime.now() - timedelta(days=1)
-        url = f"{self.base_url}/api/v2/search/tickets?query=\"updated_at:'{yesterday.strftime('%Y-%m-%d')}'\""
-        response = requests.get(url, headers=self.headers)
+        page = 1
+        per_page = 30  # set by the API
+        while page <= 10:  # API limit of 10 pages
+            url = f"{self.base_url}/api/v2/search/tickets?query=\"updated_at:'{yesterday.strftime('%Y-%m-%d')}'\"&page={page}"
+            response = requests.get(url, headers=self.headers)
+            if response.status_code == 200:
+                tickets = response.json()
+                for ticket in tickets.get("results", []):
+                    status_num = ticket.get("status")
+                    priority_num = ticket.get("priority")
+                    source_num = ticket.get("source")
+                    product_id = ticket.get("product_id")
+                    requester_id = ticket.get("requester_id")
+                    custom_fields = ticket.get("custom_fields", {})
+                    conversations = self.get_ticket_conversations(ticket.get("id"))
 
-        if response.status_code == 200:
-            tickets = response.json()
-            for ticket in tickets.get("results", []):
-                status_num = ticket.get("status")
-                priority_num = ticket.get("priority")
-                source_num = ticket.get("source")
-                product_id = ticket.get("product_id")
-                requester_id = ticket.get("requester_id")
-                custom_fields = ticket.get("custom_fields", {})
-                conversations = self.get_ticket_conversations(ticket.get("id"))
+                    filtered_ticket = {
+                        "id": ticket.get("id"),
+                        "status": status_num,
+                        "status_label": STATUS_LOOKUP.get(status_num, "Unknown"),
+                        "priority": priority_num,
+                        "priority_label": PRIORITY_LOOKUP.get(priority_num, "Unknown"),
+                        "source": source_num,
+                        "source_label": SOURCE_LOOKUP.get(source_num, "Unknown"),
+                        "created_at": ticket.get("created_at"),
+                        "updated_at": ticket.get("updated_at"),
+                        "due_by": ticket.get("due_by"),
+                        "fr_due_by": ticket.get("fr_due_by"),
+                        "is_escalated": ticket.get("is_escalated"),
+                        "tags": ticket.get("tags", []),
+                        "spam": ticket.get("spam", False),
+                        "requester_email_suffix": self.get_requester_email_suffix(
+                            requester_id
+                        ),
+                        "type": ticket.get("type"),
+                        "product_id": product_id,
+                        "product_name": self.products_cache.get(
+                            str(product_id), "Unknown"
+                        ),
+                        "conversations_total_count": conversations.get("total_count"),
+                        "conversations_reply_count": conversations.get("reply_count"),
+                        "conversations_note_count": conversations.get("note_count"),
+                        "language": custom_fields.get("cf_language"),
+                        "province_or_territory": custom_fields.get(
+                            "cf_provinceterritory"
+                        ),
+                        "organization": custom_fields.get("cf_organization"),
+                    }
+                    all_tickets.append(filtered_ticket)
 
-                filtered_ticket = {
-                    "id": ticket.get("id"),
-                    "status": status_num,
-                    "status_label": STATUS_LOOKUP.get(status_num, "Unknown"),
-                    "priority": priority_num,
-                    "priority_label": PRIORITY_LOOKUP.get(priority_num, "Unknown"),
-                    "source": source_num,
-                    "source_label": SOURCE_LOOKUP.get(source_num, "Unknown"),
-                    "created_at": ticket.get("created_at"),
-                    "updated_at": ticket.get("updated_at"),
-                    "due_by": ticket.get("due_by"),
-                    "fr_due_by": ticket.get("fr_due_by"),
-                    "is_escalated": ticket.get("is_escalated"),
-                    "tags": ticket.get("tags", []),
-                    "spam": ticket.get("spam", False),
-                    "requester_email_suffix": self.get_requester_email_suffix(
-                        requester_id
-                    ),
-                    "type": ticket.get("type"),
-                    "product_id": product_id,
-                    "product_name": self.products_cache.get(str(product_id), "Unknown"),
-                    "conversations_total_count": conversations.get("total_count"),
-                    "conversations_reply_count": conversations.get("reply_count"),
-                    "conversations_note_count": conversations.get("note_count"),
-                    "language": custom_fields.get("cf_language"),
-                    "province_or_territory": custom_fields.get("cf_provinceterritory"),
-                    "organization": custom_fields.get("cf_organization"),
-                }
-                all_tickets.append(filtered_ticket)
-        else:
-            logger.error(f"Error fetching tickets: {response.status_code}")
+                # Check if there are more tickets to fetch
+                if len(tickets.get("results", [])) == per_page:
+                    logger.info(f"Fetching page {page + 1}...")
+                    page += 1
+                else:
+                    logger.info("All tickets fetched")
+                    break
+            else:
+                logger.error(f"Error fetching tickets: {response.status_code}")
+                break
 
         return all_tickets
 
@@ -194,8 +209,10 @@ def upload_to_s3(bucket, prefix, data):
     """Upload data to S3 bucket"""
     s3_client = boto3.client("s3")
 
-    today = datetime.now().strftime("%Y-%m-%d")
-    key = f"{prefix}/{today}.json"
+    yesterday = datetime.now() - timedelta(days=1)
+    day = yesterday.strftime("%Y-%m-%d")
+    month = yesterday.strftime("%Y-%m")
+    key = f"{prefix}/MONTH={month}/{day}.json"
 
     s3_client.put_object(
         Bucket=bucket, Key=key, Body=json.dumps(data, ensure_ascii=False)
@@ -222,7 +239,9 @@ def handler(_event, _context):
     client = FreshdeskClient(FRESHDESK_DOMAIN, freshdesk_api_key)
     tickets = client.get_tickets()
 
-    logger.info(f"Saving {len(tickets)} tickets")
-    s3_path = upload_to_s3(S3_BUCKET_NAME, S3_OBJECT_PREFIX, tickets)
-
-    logger.info(f"Tickets saved to {s3_path}")
+    if tickets:
+        logger.info(f"Saving {len(tickets)} tickets")
+        s3_path = upload_to_s3(S3_BUCKET_NAME, S3_OBJECT_PREFIX, tickets)
+        logger.info(f"Tickets saved to {s3_path}")
+    else:
+        logger.info("No tickets found")

@@ -133,6 +133,28 @@ class TestFreshdeskClient:
             assert ticket["product_name"] == "Product 1"
             assert ticket["conversations_total_count"] == 3
 
+    def test_get_tickets_pagination(self, mock_freshdesk_client):
+        with patch("requests.get") as mock_get:
+            mock_get.return_value.status_code = 200
+            mock_get.return_value.json.side_effect = [
+                {"results": [MOCK_TICKET for i in range(1, 31)]},
+                {"results": [MOCK_TICKET for i in range(1, 31)]},
+                {"results": [MOCK_TICKET for i in range(1, 5)]},
+            ]
+
+            # Mock the conversation call
+            mock_freshdesk_client.get_ticket_conversations = Mock(
+                return_value={"total_count": 3, "reply_count": 2, "note_count": 1}
+            )
+
+            # Mock the requester email suffix
+            mock_freshdesk_client.get_requester_email_suffix = Mock(
+                return_value="external"
+            )
+
+            tickets = mock_freshdesk_client.get_tickets()
+            assert len(tickets) == 64
+
 
 def test_upload_to_s3(mock_s3_client):
     test_data = {"test": "data"}
@@ -151,16 +173,25 @@ def test_get_ssm_parameter(mock_ssm_client):
     )
 
 
-def test_handler(mock_ssm_client):
+def test_handler_tickets(mock_ssm_client):
     with patch("main.FreshdeskClient") as MockClient:
         mock_client = Mock()
         mock_client.get_tickets.return_value = [MOCK_TICKET]
         MockClient.return_value = mock_client
 
         with patch("main.upload_to_s3") as mock_upload:
-            mock_upload.return_value = "s3://test-bucket/test.json"
-
             handler({}, {})
-
             mock_client.get_tickets.assert_called_once()
             mock_upload.assert_called_once()
+
+
+def test_handler_no_tickets(mock_ssm_client):
+    with patch("main.FreshdeskClient") as MockClient:
+        mock_client = Mock()
+        mock_client.get_tickets.return_value = []
+        MockClient.return_value = mock_client
+
+        with patch("main.upload_to_s3") as mock_upload:
+            handler({}, {})
+            mock_client.get_tickets.assert_called_once()
+            mock_upload.assert_not_called()
