@@ -168,6 +168,7 @@ class FreshdeskClient:
                         "source_label": SOURCE_LOOKUP.get(source_num, "Unknown"),
                         "created_at": ticket.get("created_at"),
                         "updated_at": ticket.get("updated_at"),
+                        "month": yesterday.strftime("%Y-%m"),
                         "due_by": ticket.get("due_by"),
                         "fr_due_by": ticket.get("fr_due_by"),
                         "is_escalated": ticket.get("is_escalated"),
@@ -213,7 +214,7 @@ def upload_to_s3(bucket, prefix, data):
     yesterday = datetime.now() - timedelta(days=1)
     day = yesterday.strftime("%Y-%m-%d")
     month = yesterday.strftime("%Y-%m")
-    key = f"{prefix}/MONTH={month}/{day}.json"
+    key = f"{prefix}/month={month}/{day}.json"
 
     s3_client.put_object(
         Bucket=bucket, Key=key, Body=json.dumps(data, ensure_ascii=False)
