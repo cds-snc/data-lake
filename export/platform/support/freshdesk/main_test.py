@@ -21,6 +21,7 @@ MOCK_TICKET = {
     "source": 1,
     "created_at": "2024-01-01T00:00:00Z",
     "updated_at": "2024-01-01T12:00:00Z",
+    "month": "2024-01",
     "due_by": "2024-01-02T00:00:00Z",
     "fr_due_by": "2024-01-02T00:00:00Z",
     "is_escalated": False,
