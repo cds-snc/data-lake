@@ -38,7 +38,7 @@ jobs:
         with:
           filters: |
             export:
-              - '${{ matrix.export }}/**'
+              - 'export/${{ matrix.export }}/**'
               - '.github/workflows/export-pull-request.yml'
 
       - name: Configure AWS credentials using OIDC
