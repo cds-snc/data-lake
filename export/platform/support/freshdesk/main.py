@@ -88,7 +88,8 @@ class FreshdeskClient:
         while page <= 10:  # Limit to 1000 conversations
             url = f"{self.base_url}/api/v2/tickets/{ticket_id}/conversations?per_page={per_page}&page={page}"
             response = requests.get(url, headers=self.headers)
-            if response.status_code == 200:
+            try:
+                response.raise_for_status()
                 conversations = response.json()
                 reply_count += len(
                     [c for c in conversations if c.get("source") == CONVERSATION_REPLY]
@@ -100,8 +101,8 @@ class FreshdeskClient:
                     page += 1
                 else:
                     break
-            else:
-                logger.error(f"Error fetching conversations: {response.status_code}")
+            except requests.exceptions.HTTPError as e:
+                logger.error(f"Error fetching conversations: {e}")
                 break
         return {
             "total_count": reply_count + note_count,
@@ -115,26 +116,25 @@ class FreshdeskClient:
             logger.info(f"Fetching contact {requester_id} from API...")
             url = f"{self.base_url}/api/v2/contacts/{requester_id}"
             response = requests.get(url, headers=self.headers)
-
-            if response.status_code == 200:
+            try:
+                response.raise_for_status()
                 contact = response.json()
                 email = contact.get("email", "").lower()
 
                 # Check email suffix
                 internal_domains = ["cds-snc.ca", "canada.ca"]
                 email_suffix = email.split("@")[-1]
-
                 if email_suffix in internal_domains or email_suffix.endswith(".gc.ca"):
                     suffix = email_suffix
                 else:
                     suffix = "external"
-
                 self.contacts_cache[str(requester_id)] = suffix
-                return suffix
-            else:
-                logger.error(f"Error fetching contact: {response.status_code}")
-                return "unknown"
-
+            except requests.exceptions.HTTPError as e:
+                if response.status_code == 404:
+                    logger.warning(f"Contact {requester_id} not found")
+                else:
+                    logger.error(f"Error fetching contact: {e}")
+                self.contacts_cache[str(requester_id)] = "unknown"
         return self.contacts_cache[str(requester_id)]
 
     def get_tickets(self):
@@ -146,7 +146,8 @@ class FreshdeskClient:
         while page <= 10:  # API limit of 10 pages
             url = f"{self.base_url}/api/v2/search/tickets?query=\"updated_at:'{yesterday.strftime('%Y-%m-%d')}'\"&page={page}"
             response = requests.get(url, headers=self.headers)
-            if response.status_code == 200:
+            try:
+                response.raise_for_status()
                 tickets = response.json()
                 for ticket in tickets.get("results", []):
                     status_num = ticket.get("status")
@@ -198,8 +199,8 @@ class FreshdeskClient:
                 else:
                     logger.info("All tickets fetched")
                     break
-            else:
-                logger.error(f"Error fetching tickets: {response.status_code}")
+            except requests.exceptions.HTTPError as e:
+                logger.error(f"Error fetching tickets: {e}")
                 break
 
         return all_tickets
