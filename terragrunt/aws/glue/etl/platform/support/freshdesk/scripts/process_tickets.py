@@ -94,7 +94,12 @@ def get_days_tickets(day: datetime) -> pd.DataFrame:
     day_formatted = day.strftime("%Y-%m-%d")
     source_file_path = f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}{PARTITION_KEY}={day_formatted[:7]}/{day_formatted}.json"
     logger.info(f"Loading source JSON file: {source_file_path}")
-    return wr.s3.read_json(source_file_path)
+    new_tickets = pd.DataFrame()
+    try:
+        new_tickets = wr.s3.read_json(source_file_path)
+    except wr.exceptions.NoFilesFound:
+        logger.warning("No new tickets found.")
+    return new_tickets
 
 
 def get_existing_tickets(start_date: str) -> pd.DataFrame:
@@ -142,6 +147,10 @@ def process_tickets():
     # Get yesterday's tickets
     yesterday = datetime.now(UTC) - relativedelta(days=1)
     new_tickets = get_days_tickets(yesterday)
+
+    if new_tickets.empty:
+        logger.info("No new tickets found. Aborting ETL process.")
+        return
 
     # Check that the new tickets schema matches the expected schema
     glue_table_schema = wr.catalog.table(database=DATABASE_NAME_RAW, table=TABLE_NAME)
