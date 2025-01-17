@@ -37,7 +37,7 @@ resource "aws_glue_job" "forms_generate_test_data" {
 }
 
 #
-# Platform / Support / Generate test data
+# Platform / Support / Freshdesk
 #
 data "local_file" "platform_support_freshdesk" {
   filename = "${path.module}/etl/platform/support/freshdesk/scripts/process_tickets.py"
