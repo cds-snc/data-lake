@@ -36,12 +36,9 @@ DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME = args["table_name"]
 
-sparkContext = SparkContext()
-glueContext = GlueContext(sparkContext)
-job = Job(glueContext)
-job.init(JOB_NAME, args)
-
+glueContext = GlueContext(SparkContext.getOrCreate())
 logger = glueContext.get_logger()
+
 
 def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) -> bool:
     """
@@ -59,7 +56,6 @@ def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) ->
                 f"Validation failed: Column '{column_name}' type mismatch. Expected {column_type}"
             )
             return False
-
     return True
 
 
@@ -98,11 +94,13 @@ def get_days_tickets(day: datetime) -> pd.DataFrame:
     logger.info(f"Loading source JSON file: {source_file_path}")
     new_tickets = pd.DataFrame()
     try:
-        new_tickets = wr.s3.read_json(source_file_path, dtype = True)
+        new_tickets = wr.s3.read_json(source_file_path, dtype=True)
 
         # Ensure date columns are parsed correctly and all timezones are treated as UTC
         for date_column in ["created_at", "updated_at", "due_by", "fr_due_by"]:
-            new_tickets[date_column] = pd.to_datetime(new_tickets[date_column], errors="coerce")
+            new_tickets[date_column] = pd.to_datetime(
+                new_tickets[date_column], errors="coerce"
+            )
             new_tickets[date_column] = new_tickets[date_column].dt.tz_localize(None)
 
     except wr.exceptions.NoFilesFound:
@@ -125,7 +123,9 @@ def get_existing_tickets(start_date: str) -> pd.DataFrame:
                 lambda partition: partition[PARTITION_KEY] >= start_date_formatted
             ),
         )
-        existing_tickets["updated_at"] = existing_tickets["updated_at"].dt.tz_localize(None) # Treat all as UTC
+        existing_tickets["updated_at"] = existing_tickets["updated_at"].dt.tz_localize(
+            None
+        )  # Treat all as UTC
     except wr.exceptions.NoFilesFound:
         logger.warn("No existing data found. Starting fresh.")
 
@@ -189,6 +189,9 @@ def process_tickets():
     )
     logger.info("ETL process completed successfully.")
 
-process_tickets()
 
-job.commit()
+if __name__ == "__main__":
+    job = Job(glueContext)
+    job.init(JOB_NAME, args)
+    process_tickets()
+    job.commit()
