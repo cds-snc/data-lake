@@ -1,0 +1,48 @@
+{
+    "Job": {
+        "Name": "Platform / Support / Freshdesk",
+        "JobMode": "SCRIPT",
+        "JobRunQueuingEnabled": false,
+        "Description": "",
+        "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+        "CreatedOn": "2025-01-17T15:36:09.685000+00:00",
+        "LastModifiedOn": "2025-01-18T00:59:41.004000+00:00",
+        "ExecutionProperty": {
+            "MaxConcurrentRuns": 1
+        },
+        "Command": {
+            "Name": "glueetl",
+            "ScriptLocation": "s3://cds-data-lake-glue-production/platform/support/freshdesk/process_tickets.py",
+            "PythonVersion": "3"
+        },
+        "DefaultArguments": {
+            "--continuous-log-logGroup": "/aws-glue/jobs/encryption-at-rest/service-role/AWSGlueETL-DataLake/output",
+            "--database_name_raw": "platform_support_production_raw",
+            "--enable-continuous-log-filter": "true",
+            "--table_name": "platform_support_freshdesk",
+            "--transformed_prefix": "platform/support/freshdesk/",
+            "--database_name_transformed": "platform_support_production",
+            "--source_prefix": "platform/support/freshdesk/",
+            "--source_bucket": "cds-data-lake-raw-production",
+            "--python-modules-installer-option": "-r",
+            "--enable-metrics": "true",
+            "--enable-job-insights": "true",
+            "--additional-python-modules": "s3://cds-data-lake-glue-production/platform/support/freshdesk/requirements.txt",
+            "--enable-observability-metrics": "true",
+            "--transformed_bucket": "cds-data-lake-transformed-production",
+            "--enable-continuous-cloudwatch-log": "true",
+            "--job-language": "python",
+            "--continuous-log-logStreamPrefix": "platform_support_freshdesk",
+            "--enable-auto-scaling": "true"
+        },
+        "MaxRetries": 0,
+        "AllocatedCapacity": 10,
+        "Timeout": 15,
+        "MaxCapacity": 10.0,
+        "WorkerType": "G.1X",
+        "NumberOfWorkers": 10,
+        "SecurityConfiguration": "encryption-at-rest",
+        "GlueVersion": "5.0",
+        "ExecutionClass": "FLEX"
+    }
+}
