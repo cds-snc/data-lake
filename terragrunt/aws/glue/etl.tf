@@ -39,26 +39,39 @@ resource "aws_glue_job" "forms_generate_test_data" {
 #
 # Platform / Support / Freshdesk
 #
-data "local_file" "platform_support_freshdesk" {
+data "local_file" "platform_support_freshdesk_job" {
   filename = "${path.module}/etl/platform/support/freshdesk/scripts/process_tickets.py"
 }
 
-resource "aws_s3_object" "platform_support_freshdesk" {
+data "local_file" "platform_support_freshdesk_requirements" {
+  filename = "${path.module}/etl/platform/support/freshdesk/scripts/requirements.txt"
+}
+
+resource "aws_s3_object" "platform_support_freshdesk_job" {
   bucket = var.glue_bucket_name
   key    = "platform/support/freshdesk/process_tickets.py"
-  source = data.local_file.platform_support_freshdesk.filename
-  etag   = filemd5(data.local_file.platform_support_freshdesk.filename)
+  source = data.local_file.platform_support_freshdesk_job.filename
+  etag   = filemd5(data.local_file.platform_support_freshdesk_job.filename)
+}
+
+resource "aws_s3_object" "platform_support_freshdesk_requirements" {
+  bucket = var.glue_bucket_name
+  key    = "platform/support/freshdesk/requirements.txt"
+  source = data.local_file.platform_support_freshdesk_requirements.filename
+  etag   = filemd5(data.local_file.platform_support_freshdesk_requirements.filename)
 }
 
 resource "aws_glue_job" "platform_support_freshdesk" {
   name = "Platform / Support / Freshdesk"
 
+  glue_version           = "5.0"
   timeout                = 15 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+  execution_class        = "FLEX"
 
   command {
-    script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_support_freshdesk.key}"
+    script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_support_freshdesk_job.key}"
     python_version  = "3"
   }
 
@@ -67,9 +80,13 @@ resource "aws_glue_job" "platform_support_freshdesk" {
     "--continuous-log-logStreamPrefix"   = "platform_support_freshdesk"
     "--enable-continuous-cloudwatch-log" = "true"
     "--enable-continuous-log-filter"     = "true"
+    "--enable-auto-scaling"              = "true"
+    "--enable-job-insights"              = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
-    "--additional-python-modules"        = "awswrangler==3.11.0"
+    "--job-language"                     = "python"
+    "--python-modules-installer-option"  = "-r"
+    "--additional-python-modules"        = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_support_freshdesk_requirements.key}"
     "--source_bucket"                    = var.raw_bucket_name
     "--source_prefix"                    = "platform/support/freshdesk/"
     "--transformed_bucket"               = var.transformed_bucket_name
@@ -77,5 +94,15 @@ resource "aws_glue_job" "platform_support_freshdesk" {
     "--database_name_raw"                = aws_glue_catalog_database.platform_support_production_raw.name
     "--database_name_transformed"        = aws_glue_catalog_database.platform_support_production.name
     "--table_name"                       = "platform_support_freshdesk"
+  }
+}
+
+resource "aws_glue_trigger" "platform_support_freshdesk" {
+  name     = "Platform / Support / Freshdesk"
+  schedule = "cron(30 5 * * ? *)" # 5:30 UTC every day
+  type     = "SCHEDULED"
+
+  actions {
+    job_name = aws_glue_job.platform_support_freshdesk.name
   }
 }
