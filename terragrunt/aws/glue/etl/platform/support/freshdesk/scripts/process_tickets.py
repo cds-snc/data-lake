@@ -1,4 +1,3 @@
-import logging
 import sys
 
 from datetime import datetime, UTC
@@ -11,9 +10,6 @@ from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
-
-logger = logging.getLogger()
-logger.setLevel("INFO")
 
 args = getResolvedOptions(
     sys.argv,
@@ -40,6 +36,9 @@ DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME = args["table_name"]
 
+glueContext = GlueContext(SparkContext.getOrCreate())
+logger = glueContext.get_logger()
+
 
 def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) -> bool:
     """
@@ -57,7 +56,6 @@ def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) ->
                 f"Validation failed: Column '{column_name}' type mismatch. Expected {column_type}"
             )
             return False
-
     return True
 
 
@@ -96,9 +94,17 @@ def get_days_tickets(day: datetime) -> pd.DataFrame:
     logger.info(f"Loading source JSON file: {source_file_path}")
     new_tickets = pd.DataFrame()
     try:
-        new_tickets = wr.s3.read_json(source_file_path)
+        new_tickets = wr.s3.read_json(source_file_path, dtype=True)
+
+        # Ensure date columns are parsed correctly and all timezones are treated as UTC
+        for date_column in ["created_at", "updated_at", "due_by", "fr_due_by"]:
+            new_tickets[date_column] = pd.to_datetime(
+                new_tickets[date_column], errors="coerce"
+            )
+            new_tickets[date_column] = new_tickets[date_column].dt.tz_localize(None)
+
     except wr.exceptions.NoFilesFound:
-        logger.warning("No new tickets found.")
+        logger.warn("No new tickets found.")
     return new_tickets
 
 
@@ -117,8 +123,11 @@ def get_existing_tickets(start_date: str) -> pd.DataFrame:
                 lambda partition: partition[PARTITION_KEY] >= start_date_formatted
             ),
         )
+        existing_tickets["updated_at"] = existing_tickets["updated_at"].dt.tz_localize(
+            None
+        )  # Treat all as UTC
     except wr.exceptions.NoFilesFound:
-        logger.warning("No existing data found. Starting fresh.")
+        logger.warn("No existing data found. Starting fresh.")
 
     return existing_tickets
 
@@ -140,10 +149,14 @@ def merge_tickets(
         by=["id", "updated_at"], ascending=[True, False]
     )
     combined_tickets = combined_tickets.drop_duplicates(subset=["id"], keep="first")
+
     return combined_tickets
 
 
 def process_tickets():
+    """
+    Load the new tickets, validate the schema, and merge with existing data.
+    """
     # Get yesterday's tickets
     yesterday = datetime.now(UTC) - relativedelta(days=1)
     new_tickets = get_days_tickets(yesterday)
@@ -163,6 +176,7 @@ def process_tickets():
 
     # Merge the existing and new tickets and save
     combined_tickets = merge_tickets(existing_tickets, new_tickets)
+
     logger.info("Saving updated DataFrame to S3...")
     wr.s3.to_parquet(
         df=combined_tickets,
@@ -176,11 +190,8 @@ def process_tickets():
     logger.info("ETL process completed successfully.")
 
 
-sparkContext = SparkContext()
-glueContext = GlueContext(sparkContext)
-job = Job(glueContext)
-job.init(JOB_NAME, args)
-
-process_tickets()
-
-job.commit()
+if __name__ == "__main__":
+    job = Job(glueContext)
+    job.init(JOB_NAME, args)
+    process_tickets()
+    job.commit()

@@ -1,0 +1,49 @@
+name: ETL pull request tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "terragrunt/aws/glue/etl/**"
+      - ".github/workflows/etl-pull-request.yml"
+
+env:
+  ETL_BASE_PATH: terragrunt/aws/glue/etl
+
+jobs:
+  etl-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        etl:
+          - platform/support/freshdesk/scripts
+    steps:
+      - name: Audit DNS requests
+        uses: cds-snc/dns-proxy-action@main
+        env:
+          DNS_PROXY_FORWARDTOSENTINEL: "true"
+          DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+          DNS_PROXY_LOGANALYTICSSHAREDKEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: changes
+        with:
+          filters: |
+            etl:
+              - '${{ env.ETL_BASE_PATH }}/${{ matrix.etl }}/**'
+              - '.github/workflows/export-pull-request.yml'
+
+      - name: Setup python
+        if: steps.changes.outputs.etl == 'true'
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.13"
+
+      - name: Run PR tests
+        if: steps.changes.outputs.etl == 'true'
+        working-directory: ${{ env.ETL_BASE_PATH }}/${{ matrix.etl }}
+        run: make ARGS=--check pull_request
