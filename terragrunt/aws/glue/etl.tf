@@ -99,7 +99,7 @@ resource "aws_glue_job" "platform_support_freshdesk" {
 
 resource "aws_glue_trigger" "platform_support_freshdesk" {
   name     = "Platform / Support / Freshdesk"
-  schedule = "cron(30 5 * * ? *)" # 5:30 UTC every day
+  schedule = "cron(00 7 * * ? *)" # 7am UTC every day
   type     = "SCHEDULED"
 
   actions {
