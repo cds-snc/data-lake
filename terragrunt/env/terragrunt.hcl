@@ -12,7 +12,8 @@ inputs = {
     "arn:aws:iam::066023111852:role/SupersetAthenaRead-operations_aws_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-all",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_aws_production",
-    "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_forms_production"
+    "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_forms_production",
+    "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_support_production"
   ]
 }
 
