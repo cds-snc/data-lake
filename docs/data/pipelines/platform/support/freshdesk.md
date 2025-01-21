@@ -1,6 +1,6 @@
 # Platform / Support / Freshdesk
 ## Description
-The Freshdesk dataset provides information on user support tickets in [Parquet format](https://parquet.apache.org/). All user entered information and personally identifiable information (PII) has been removed from the dataset. The data is partitioned by month, and updated daily.
+The [Freshdesk](https://www.freshworks.com/freshdesk/) dataset provides information on user support tickets in [Parquet format](https://parquet.apache.org/). All user entered information and personally identifiable information (PII) has been removed from the dataset. The data is partitioned by month, and updated daily.
 
 This data pipeline creates the Glue data catalog table `platform_support_freshdesk` in the `platform_support_production` database.  It can be queried in Superset as follows:
 
@@ -46,14 +46,14 @@ graph TD
 ```
 
 ### Source data
-The [Freshdesk data export](https://github.com/cds-snc/data-lake/tree/6d3aea78d5d5a47d318ca66d37f0d4af6972fca4/export/platform/support/freshdesk) is run in the `DataLake-Production` account [ `platform-support-freshdesk-export` Lambda function](https://github.com/cds-snc/data-lake/tree/6d3aea78d5d5a47d318ca66d37f0d4af6972fca4/terragrunt/aws/export/platform/support/freshdesk) that is triggered each day.  On each run it saves any updated tickets from the previous day to the Raw S3 bucket in a `YYYY-MM-DD.json` file:
+The [Freshdesk data export](https://github.com/cds-snc/data-lake/tree/6d3aea78d5d5a47d318ca66d37f0d4af6972fca4/export/platform/support/freshdesk) is run in the `DataLake-Production` account's [ `platform-support-freshdesk-export` Lambda function](https://github.com/cds-snc/data-lake/tree/6d3aea78d5d5a47d318ca66d37f0d4af6972fca4/terragrunt/aws/export/platform/support/freshdesk) that is triggered each day.  On each run it saves any updated tickets from the previous day to the Raw S3 bucket in a `YYYY-MM-DD.json` file:
 
 ```
 cds-data-lake-raw-production/platform/support/freshdesk/month=YYYY-MM/YYYY-MM-DD.json
 ```
 
 ### Crawlers
-On the first of each month, an AWS Glue crawler run in the `DataLake-Production` AWS account to identify schema changes and update the Glue data catalog:
+On the first of each month, an AWS Glue crawler runs in the `DataLake-Production` AWS account to identify schema changes and update the Glue data catalog:
 
 - [Platform / Support / Freshdesk](https://github.com/cds-snc/data-lake/blob/6d3aea78d5d5a47d318ca66d37f0d4af6972fca4/terragrunt/aws/glue/crawlers.tf#L49-L79)
 

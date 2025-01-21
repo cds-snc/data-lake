@@ -4,7 +4,7 @@ Dataset describing how much was spent on Amazon Web Services (AWS) by CDS.
 
 Each row describes the cost of using a particular AWS service (i.e., a line item) within a billing period.
 
-This dataset is represented in [Superset](https://superset.cdssandbox.xyz/) as the Physical dataset [`cost_usage_report_by_account`](https://superset.cdssandbox.xyz/explore/?datasource_type=table&datasource_id=68). All of the Virtual datasets in the "Operations / AWS / Cost and Usage" group are derived from it.
+This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the Physical dataset [`cost_usage_report_by_account`](https://superset.cds-snc.ca/explore/?datasource_type=table&datasource_id=68). All of the Virtual datasets in the "Operations / AWS / Cost and Usage" group are derived from it.
 
 **Keywords:** AWS, Amazon, cost, usage, fees
 
