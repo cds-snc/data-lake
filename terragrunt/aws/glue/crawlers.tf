@@ -76,6 +76,8 @@ resource "aws_glue_crawler" "platform_support_freshdesk_production" {
       CreatePartitionIndex = true
       Version              = 1
   })
+
+  schedule = "cron(00 6 1 * ? *)" # 6am UTC check for schema changes on the first day of each month
 }
 
 #
