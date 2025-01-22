@@ -170,8 +170,8 @@ def process_tickets():
     if not validate_schema(new_tickets, glue_table_schema):
         raise ValueError("Schema validation failed. Aborting ETL process.")
 
-    # Load 4 months of existing ticket data
-    start_date = datetime.now(UTC) - relativedelta(months=4)
+    # Load 1 year of existing ticket data
+    start_date = datetime.now(UTC) - relativedelta(years=1)
     existing_tickets = get_existing_tickets(start_date)
 
     # Merge the existing and new tickets and save
