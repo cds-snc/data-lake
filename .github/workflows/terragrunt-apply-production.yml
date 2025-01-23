@@ -9,7 +9,7 @@ on:
       - "!terragrunt/aws/glue/etl/**/*.json"
       - "terragrunt/env/production/**"
       - "terragrunt/env/common/**"
-      - "terragrunt/env/terragrunt.hcl"
+      - "terragrunt/env/root.hcl"
       - ".github/workflows/terragrunt-apply-production.yml"
 
 env:
