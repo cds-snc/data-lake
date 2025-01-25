@@ -1,0 +1,177 @@
+import sys
+
+from datetime import datetime, UTC
+from dateutil.relativedelta import relativedelta
+
+import awswrangler as wr
+import pandas as pd
+
+
+SOURCE_BUCKET = "cds-data-lake-raw-production"
+SOURCE_PREFIX = "platform/support/freshdesk/"
+TRANSFORMED_BUCKET = "cds-data-lake-transformed-production"
+TRANSFORMED_PREFIX = "platform/support/freshdesk/"
+TRANSFORMED_PATH = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}"
+PARTITION_KEY = "month"
+DATABASE_NAME_RAW = "platform_support_production_raw"
+DATABASE_NAME_TRANSFORMED = "platform_support_production"
+TABLE_NAME = "platform_support_freshdesk"
+
+
+def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) -> bool:
+    """
+    Validate that the DataFrame conforms to the Glue table schema.
+    """
+    for _, row in glue_table_schema.iterrows():
+        column_name = row["Column Name"]
+        column_type = row["Type"]
+        if column_name not in dataframe.columns:
+            print(f"Validation failed: Missing column '{column_name}'")
+            return False
+
+        if not is_type_compatible(dataframe[column_name], column_type):
+            print(
+                f"Validation failed: Column '{column_name}' type mismatch. Expected {column_type}"
+            )
+            return False
+    return True
+
+
+def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
+    """
+    Check if a pandas Series is compatible with a Glue type.
+    """
+    glue_to_pandas = {
+        "string": pd.StringDtype(),
+        "int": pd.Int64Dtype(),
+        "bigint": pd.Int64Dtype(),
+        "double": float,
+        "float": float,
+        "boolean": bool,
+        "date": "datetime64[ns]",
+        "timestamp": "datetime64[ns]",
+        "array<string>": pd.StringDtype(),
+    }
+    expected_type = glue_to_pandas.get(glue_type.lower())
+    if expected_type is None:
+        print(f"Unknown Glue type '{glue_type}' for validation.")
+        return False
+    try:
+        series.astype(expected_type)
+    except (ValueError, TypeError):
+        return False
+    return True
+
+
+def get_days_tickets(day: datetime) -> pd.DataFrame:
+    """
+    Load the JSON file containing the tickets for a specific day.
+    """
+    month_formatted = day.strftime("%Y-%m")
+    source_file_path = f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}{PARTITION_KEY}={month_formatted}"
+    print(f"Loading source JSON file: {source_file_path}")
+    new_tickets = pd.DataFrame()
+    try:
+        new_tickets = wr.s3.read_json(source_file_path, dtype=True)
+
+        # Ensure date columns are parsed correctly and all timezones are treated as UTC
+        for date_column in ["created_at", "updated_at", "due_by", "fr_due_by"]:
+            new_tickets[date_column] = pd.to_datetime(
+                new_tickets[date_column], errors="coerce"
+            )
+            new_tickets[date_column] = new_tickets[date_column].dt.tz_localize(None)
+
+    except wr.exceptions.NoFilesFound:
+        print("No new tickets found.")
+    return new_tickets
+
+
+def get_existing_tickets(start_date: str) -> pd.DataFrame:
+    """
+    Load the existing transformed data from the S3 bucket.
+    """
+    start_date_formatted = start_date.strftime("%Y-%m")
+    print(f"Loading transformed data from {start_date_formatted} onwards...")
+    existing_tickets = pd.DataFrame()
+    try:
+        existing_tickets = wr.s3.read_parquet(
+            path=TRANSFORMED_PATH,
+            dataset=True,
+            partition_filter=(
+                lambda partition: partition[PARTITION_KEY] >= start_date_formatted
+            ),
+        )
+        existing_tickets["updated_at"] = existing_tickets["updated_at"].dt.tz_localize(
+            None
+        )  # Treat all as UTC
+    except wr.exceptions.NoFilesFound:
+        print("No existing data found. Starting fresh.")
+
+    return existing_tickets
+
+
+def merge_tickets(
+    existing_tickets: pd.DataFrame, new_tickets: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Merge the existing and new tickets DataFrames.
+    """
+    if existing_tickets.empty:
+        return new_tickets
+
+    existing_tickets["id"] = existing_tickets["id"].astype(str)
+    new_tickets["id"] = new_tickets["id"].astype(str)
+
+    combined_tickets = pd.concat([existing_tickets, new_tickets], ignore_index=True)
+    combined_tickets = combined_tickets.sort_values(
+        by=["id", "updated_at"], ascending=[True, False]
+    )
+    combined_tickets = combined_tickets.drop_duplicates(subset=["id"], keep="first")
+
+    return combined_tickets
+
+
+def process_tickets(date: datetime):
+    """
+    Load the new tickets, validate the schema, and merge with existing data.
+    """
+    new_tickets = get_days_tickets(date)
+
+    if new_tickets.empty:
+        print("No new tickets found. Aborting ETL process.")
+        return
+
+    # Check that the new tickets schema matches the expected schema
+    glue_table_schema = wr.catalog.table(database=DATABASE_NAME_RAW, table=TABLE_NAME)
+    if not validate_schema(new_tickets, glue_table_schema):
+        raise ValueError("Schema validation failed. Aborting ETL process.")
+
+    # Load 4 months of existing ticket data
+    start_date = date - relativedelta(months=4)
+    existing_tickets = get_existing_tickets(start_date)
+
+    # Merge the existing and new tickets and save
+    combined_tickets = merge_tickets(existing_tickets, new_tickets)
+
+    print("Saving updated DataFrame to S3...")
+    wr.s3.to_parquet(
+        df=combined_tickets,
+        path=TRANSFORMED_PATH,
+        dataset=True,
+        mode="overwrite_partitions",
+        database=DATABASE_NAME_TRANSFORMED,
+        table=TABLE_NAME,
+        partition_cols=[PARTITION_KEY],
+    )
+    print("ETL process completed successfully.")
+
+
+if __name__ == "__main__":
+    start_date = datetime(2025, 1, 1)
+    end_data = datetime(2025, 1, 1)
+    while start_date <= end_data:
+        print("============================================")
+        print(f"Processing tickets for {start_date.strftime('%Y-%m')}")
+        print("============================================")
+        process_tickets(start_date)
+        start_date += relativedelta(months=1)
