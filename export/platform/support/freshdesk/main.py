@@ -9,6 +9,7 @@ import logging
 import os
 
 from datetime import datetime, timedelta
+from time import sleep
 
 import boto3
 import requests
@@ -197,6 +198,7 @@ class FreshdeskClient:
                 if len(tickets.get("results", [])) == per_page:
                     logger.info(f"Fetching page {page + 1}...")
                     page += 1
+                    sleep(30)  # Avoid rate limiting
                 else:
                     logger.info("All tickets fetched")
                     break

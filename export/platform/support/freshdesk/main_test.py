@@ -135,7 +135,7 @@ class TestFreshdeskClient:
             assert ticket["conversations_total_count"] == 3
 
     def test_get_tickets_pagination(self, mock_freshdesk_client):
-        with patch("requests.get") as mock_get:
+        with patch("requests.get") as mock_get, patch("main.sleep") as mock_sleep:
             mock_get.return_value.status_code = 200
             mock_get.return_value.json.side_effect = [
                 {"results": [MOCK_TICKET for i in range(1, 31)]},
@@ -155,6 +155,7 @@ class TestFreshdeskClient:
 
             tickets = mock_freshdesk_client.get_tickets()
             assert len(tickets) == 64
+            assert mock_sleep.call_count == 2
 
 
 def test_upload_to_s3(mock_s3_client):
