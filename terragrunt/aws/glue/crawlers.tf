@@ -112,7 +112,7 @@ resource "aws_glue_crawler" "bes_crm_salesforce_production" {
   })
 
   schedule = "cron(00 7 1 * ? *)" # Check for schema changes each month
-  }
+}
 
 #
 # Operations / AWS / Cost and Usage Report
