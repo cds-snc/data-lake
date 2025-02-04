@@ -68,7 +68,7 @@ On the first of each month, AWS Glue crawlers run in the `DataLake-Production` A
 
 - [BES / CRM / Salesforce](https://github.com/cds-snc/data-lake/blob/468142031c7bdd1a2720def7d5ebb4e07fff4bef/terragrunt/aws/glue/crawlers.tf)
 
-These create and manage the following data catalog tables in the [`bes_crm_salesforce_production_raw` database](https://github.com/cds-snc/data-lake/blob/468142031c7bdd1a2720def7d5ebb4e07fff4bef/terragrunt/aws/glue/databases.tf#L6-L9):
+These create and manage the following data catalog tables in the [`bes_crm_salesforce_production_raw` database](terragrunt/aws/glue/databases.tf):
 
 - `bes_crm_salesforce_account`: Salesforce accounts data with no PII
 - ... more to come
