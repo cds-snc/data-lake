@@ -83,5 +83,5 @@ cds-data-lake-transformed-production/bes/crm/salesforce/*.parquet
 
 Additionally, a data catalog table is created in the `bes_crm_salesforce_production` database:
 
-- `bes_crm_salesforce_account`: Salesforce accounts data with no PII
+- `account`: Salesforce accounts data with no PII
 - ... more to come
