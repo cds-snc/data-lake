@@ -101,7 +101,7 @@ resource "aws_glue_crawler" "bes_crm_salesforce_production" {
     {
       CrawlerOutput = {
         Tables = {
-          TableThreshold = 1
+          TableThreshold = 10
         }
       }
       Grouping = {
