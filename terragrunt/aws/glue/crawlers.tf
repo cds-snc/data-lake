@@ -86,9 +86,7 @@ resource "aws_glue_crawler" "platform_support_freshdesk_production" {
 resource "aws_glue_crawler" "bes_crm_salesforce_production" {
   name          = "BES / CRM / Salesforce"
   description   = "Classify the CDS Salesforce CRM data"
-  database_name = aws_glue_catalog_database.bes_crm_salesforce_production.name
-  table_prefix  = "bes_crm_salesforce_"
-  classifiers   = [aws_glue_classifier.json_object_array.name]
+  database_name = aws_glue_catalog_database.bes_crm_salesforce_production_raw.name
 
   role                   = aws_iam_role.glue_crawler.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
@@ -103,9 +101,6 @@ resource "aws_glue_crawler" "bes_crm_salesforce_production" {
         Tables = {
           TableThreshold = 10
         }
-      }
-      Grouping = {
-        TableGroupingPolicy = "CombineCompatibleSchemas"
       }
       CreatePartitionIndex = true
       Version              = 1

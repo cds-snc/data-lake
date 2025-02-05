@@ -12,5 +12,5 @@ visibility to only those with Superset access.
 SELECT
   *
 FROM
-  bes_crm_salesforce_production.bes_crm_salesforce_account 
+  bes_crm_salesforce_production.account 
 LIMIT 10;
