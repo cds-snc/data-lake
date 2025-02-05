@@ -16,7 +16,7 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the P
 
 ## Provenance
 
-This dataset is extracted daily using a Salesforce python script running in GitHUb.  Each day the extract process downloads most Salesfoce tables from the CDS instance and upload them to an S3 bucket.  These tabels get overriden every day. 
+This dataset is extracted daily using a Salesforce Python script running in a GitHub workflow.  Each day the extract process downloads most Salesforce tables from the CDS instance and uploads them to an S3 bucket.  These table extracts get overridden every day. 
 
 More documentation on the pipeline can be found [here](../../../pipelines/bes/crm/salesforce.md).
 
