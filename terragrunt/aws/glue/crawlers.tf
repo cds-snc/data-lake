@@ -95,6 +95,17 @@ resource "aws_glue_crawler" "bes_crm_salesforce_production" {
     path = "s3://${var.raw_bucket_name}/bes/crm/salesforce"
   }
 
+  configuration = jsonencode(
+    {
+      CrawlerOutput = {
+        Tables = {
+          TableThreshold = 10
+        }
+      }
+      CreatePartitionIndex = true
+      Version              = 1
+  })
+
   schedule = "cron(00 7 1 * ? *)" # Check for schema changes each month
 }
 
