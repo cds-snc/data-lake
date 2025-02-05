@@ -81,6 +81,40 @@ resource "aws_glue_crawler" "platform_support_freshdesk_production" {
 }
 
 #
+# BES / CRM / Salesforce
+#
+resource "aws_glue_crawler" "bes_crm_salesforce_production" {
+  name          = "BES / CRM / Salesforce"
+  description   = "Classify the CDS Salesforce CRM data"
+  database_name = aws_glue_catalog_database.bes_crm_salesforce_production.name
+  table_prefix  = "bes_crm_salesforce_"
+  classifiers   = [aws_glue_classifier.json_object_array.name]
+
+  role                   = aws_iam_role.glue_crawler.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+
+  s3_target {
+    path = "s3://${var.raw_bucket_name}/bes/crm/salesforce"
+  }
+
+  configuration = jsonencode(
+    {
+      CrawlerOutput = {
+        Tables = {
+          TableThreshold = 10
+        }
+      }
+      Grouping = {
+        TableGroupingPolicy = "CombineCompatibleSchemas"
+      }
+      CreatePartitionIndex = true
+      Version              = 1
+  })
+
+  schedule = "cron(00 7 1 * ? *)" # Check for schema changes each month
+}
+
+#
 # Operations / AWS / Cost and Usage Report
 #
 resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {

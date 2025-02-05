@@ -2,7 +2,7 @@
 
 Adding new datasets to the data lake usually involves three steps:
 
-1. Add the new data to the [`Raw` bucket](https://github.com/cds-snc/data-lake/blob/main/terragrunt/aws/buckets/raw.tf).  Datasets must not contain any personally identifiable information (PII) or protected data.
+1. Add the new data to the [`Raw` bucket](https://github.com/cds-snc/data-lake/blob/main/terragrunt/aws/buckets/raw.tf).  Datasets must not contain any personally identifiable information (PII) or protected data. However, if they do contain PII, it must be deleted after processing.
 2. Define a Glue Crawler to infer the schema of the new dataset.
 3. Define a Glue ETL job to modify the data and write it to the [`Transformed` bucket](https://github.com/cds-snc/data-lake/blob/main/terragrunt/aws/buckets/transformed.tf).
 
@@ -48,7 +48,7 @@ Once the folder structure has been figured out, the new dataset can be moved int
 
 Once the data is in the `Raw` bucket, create a Terraform pull request (PR) to do the following:
 
-1. Define the new [Glue databases](https://github.com/cds-snc/data-lake/blob/main/terragrunt/aws/glue/databases.tf) that will hold the dataset's `Raw` and `Transfomred` schemas.  These are called "tables" in Glue.
+1. Define the new [Glue databases](https://github.com/cds-snc/data-lake/blob/main/terragrunt/aws/glue/databases.tf) that will hold the dataset's `Raw` and `Transformed` schemas.  These are called "tables" in Glue.
 1. Define the [Glue Crawler](https://github.com/cds-snc/data-lake/blob/main/terragrunt/aws/glue/crawlers.tf) that will infer the dataset's `Raw` schema.  As part of this, determine the schedule for crawler runs, which will depend on how often the `Raw` data is changing.
 1. Optional: update the IAM roles and cross-account access to allow Superset to access the new dataset.
 

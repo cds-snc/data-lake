@@ -31,13 +31,14 @@ resource "aws_s3_bucket_policy" "raw_bucket" {
 #
 data "aws_iam_policy_document" "raw_bucket" {
   statement {
-    sid    = "CostAndUsageReport"
+    sid    = "DataLakeRawBucketPolicy"
     effect = "Allow"
     principals {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::659087519042:role/BillingExtractTags",
-        "arn:aws:iam::659087519042:role/CostUsageReplicateToDataLake"
+        "arn:aws:iam::659087519042:role/CostUsageReplicateToDataLake",
+        "arn:aws:iam::563894450011:role/SalesforceReplicateToDataLake"
       ]
     }
     actions = [
