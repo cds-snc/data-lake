@@ -75,13 +75,13 @@ These create and manage the following data catalog tables in the [`bes_crm_sales
 
 ### Extract, Transform and Load (ETL) Jobs
 
-Each day, the [`BES / CRM / Salesforce` Glue ETL job](https://github.com/cds-snc/data-lake/blob/6d3aea78d5d5a47d318ca66d37f0d4af6972fca4/terragrunt/aws/glue/etl.tf#L39-L108) runs and fetches the Salesforce backup tables.  The resulting data is saved in the data lake's Transformed `cds-data-lake-transformed-production` S3 bucket:
+Each day, the `BES / CRM / Salesforce` Glue ETL job runs and fetches the Salesforce backup tables.  The resulting data is saved in the data lake's Transformed `cds-data-lake-transformed-production` S3 bucket:
 
 ```
 cds-data-lake-transformed-production/bes/crm/salesforce/*.parquet
 ```
 
-Additionally, a data catalog table is created in the [`bes_crm_salesforce_production` database](https://github.com/cds-snc/data-lake/blob/6d3aea78d5d5a47d318ca66d37f0d4af6972fca4/terragrunt/aws/glue/databases.tf#L6-L9):
+Additionally, a data catalog table is created in the `bes_crm_salesforce_production` database:
 
 - `bes_crm_salesforce_account`: Salesforce accounts data with no PII
 - ... more to come
