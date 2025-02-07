@@ -106,3 +106,73 @@ resource "aws_glue_trigger" "platform_support_freshdesk" {
     job_name = aws_glue_job.platform_support_freshdesk.name
   }
 }
+
+#
+# BES / CRM / Salesforce
+#
+data "local_file" "bes_crm_salesforce_job" {
+  filename = "${path.module}/etl/platform/support/freshdesk/scripts/process_tickets.py"
+}
+
+data "local_file" "bes_crm_salesforce_requirements" {
+  filename = "${path.module}/etl/platform/support/freshdesk/scripts/requirements.txt"
+}
+
+resource "aws_s3_object" "bes_crm_salesforce_job" {
+  bucket = var.glue_bucket_name
+  key    = "bes/crm/salesforce/process_salesforce.py"
+  source = data.local_file.bes_crm_salesforce_job.filename
+  etag   = filemd5(data.local_file.bes_crm_salesforce_job.filename)
+}
+
+resource "aws_s3_object" "bes_crm_salesforce_requirements" {
+  bucket = var.glue_bucket_name
+  key    = "bes/crm/salesforce/requirements.txt"
+  source = data.local_file.bes_crm_salesforce_requirements.filename
+  etag   = filemd5(data.local_file.bes_crm_salesforce_requirements.filename)
+}
+
+resource "aws_glue_job" "bes_crm_salesforce" {
+  name = "BES / CRM / Salesforce"
+
+  glue_version           = "5.0"
+  timeout                = 15 # minutes
+  role_arn               = aws_iam_role.glue_etl.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+  execution_class        = "FLEX"
+
+  command {
+    script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.bes_crm_salesforce_job.key}"
+    python_version  = "3"
+  }
+
+  default_arguments = {
+    "--continuous-log-logGroup"          = "/aws-glue/jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
+    "--continuous-log-logStreamPrefix"   = "bes_crm_salesforce"
+    "--enable-continuous-cloudwatch-log" = "true"
+    "--enable-continuous-log-filter"     = "true"
+    "--enable-auto-scaling"              = "true"
+    "--enable-job-insights"              = "true"
+    "--enable-metrics"                   = "true"
+    "--enable-observability-metrics"     = "true"
+    "--job-language"                     = "python"
+    "--python-modules-installer-option"  = "-r"
+    "--additional-python-modules"        = "s3://${var.glue_bucket_name}/${aws_s3_object.bes_crm_salesforce_requirements.key}"
+    "--source_bucket"                    = var.raw_bucket_name
+    "--source_prefix"                    = "bes/crm/salesforce/"
+    "--transformed_bucket"               = var.transformed_bucket_name
+    "--transformed_prefix"               = "bes/crm/salesforce/"
+    "--database_name_transformed"        = aws_glue_catalog_database.bes_crm_salesforce_production.name
+    "--table_name"                       = "account_opportunity"
+  }
+}
+
+resource "aws_glue_trigger" "bes_crm_salesforce" {
+  name     = "BES / CRM / Salesforce"
+  schedule = "cron(00 7 * * ? *)" # 7am UTC every day
+  type     = "SCHEDULED"
+
+  actions {
+    job_name = aws_glue_job.bes_crm_salesforce.name
+  }
+}
