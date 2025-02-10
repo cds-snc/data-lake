@@ -111,7 +111,7 @@ resource "aws_glue_trigger" "platform_support_freshdesk" {
 # BES / CRM / Salesforce
 #
 data "local_file" "bes_crm_salesforce_job" {
-  filename = "${path.module}/etl/platform/support/freshdesk/scripts/process_tickets.py"
+  filename = "${path.module}/etl/bes/crm/scripts/process_salesforce.py"
 }
 
 data "local_file" "bes_crm_salesforce_requirements" {
