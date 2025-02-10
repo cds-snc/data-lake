@@ -21,9 +21,9 @@ resource "aws_glue_security_configuration" "encryption_at_rest" {
 #
 # Platform / GC Forms / Forms
 #
-resource "aws_glue_crawler" "platform_gc_forms_forms_production" {
-  name          = "Platform / GC Forms / Forms"
-  description   = "Classify the GC Forms forms (template) data"
+resource "aws_glue_crawler" "platform_gc_forms_templates_production" {
+  name          = "Platform / GC Forms / Templates"
+  description   = "Classify the GC Forms template data"
   database_name = aws_glue_catalog_database.platform_gc_forms_production.name
   table_prefix  = "forms_"
 
@@ -31,7 +31,7 @@ resource "aws_glue_crawler" "platform_gc_forms_forms_production" {
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
-    path = "s3://${var.transformed_bucket_name}/platform/gc-forms/forms"
+    path = "s3://${var.transformed_bucket_name}/platform/gc-forms"
   }
 
   configuration = jsonencode(
