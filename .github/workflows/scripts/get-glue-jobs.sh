@@ -10,7 +10,7 @@ set -euo pipefail
 #
 
 # shellcheck disable=SC2016
-aws glue get-jobs --query 'join(`\n`, Jobs[].Name)' --output text |
+aws glue get-jobs --query 'join(`\n`, Jobs[?JobMode==`VISUAL`].Name)' --output text |
 while IFS= read -r name; do
   echo "Syncing job: $name"
   # Split the name on '/'
