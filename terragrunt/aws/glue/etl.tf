@@ -140,12 +140,12 @@ resource "aws_glue_job" "bes_crm_salesforce" {
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
   execution_class        = "FLEX"
-  max_capacity = 0.0625
+  max_capacity           = 0.0625
 
   command {
     script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.bes_crm_salesforce_job.key}"
     python_version  = "3"
-    name = "pythonshell"
+    name            = "pythonshell"
   }
 
   default_arguments = {
