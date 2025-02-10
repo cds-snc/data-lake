@@ -115,7 +115,7 @@ data "local_file" "bes_crm_salesforce_job" {
 }
 
 data "local_file" "bes_crm_salesforce_requirements" {
-  filename = "${path.module}/etl/platform/support/freshdesk/scripts/requirements.txt"
+  filename = "${path.module}/etl/bes/crm/scripts/requirements.txt"
 }
 
 resource "aws_s3_object" "bes_crm_salesforce_job" {
