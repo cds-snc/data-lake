@@ -34,12 +34,6 @@ glue_table = TABLE_NAME
 account_df = wr.s3.read_csv(path=source_path + "Account.csv")
 opportunity_df = wr.s3.read_csv(path=source_path + "Opportunity.csv")
 
-print("=== Account DataFrame Columns ===")
-print(account_df.columns)
-
-print("=== Opportunity DataFrame Columns ===")
-print(opportunity_df.columns)
-
 # Drop nulls to avoid join issues
 account_df.dropna(subset=["Id"], inplace=True)
 opportunity_df.dropna(subset=["AccountId"], inplace=True)
@@ -53,17 +47,11 @@ df_transformed = account_df.merge(
     opportunity_df, left_on="Id", right_on="AccountId", how="inner"
 )
 
-# Debug: Print joined columns
-print("=== Transformed Data Columns ===", df_transformed.columns)
-
+# Rename conflicting columns
 df_transformed = df_transformed.rename(columns={"Name_x": "AccountName","CreatedDate_x": "AccountCreatedDate","CreatedDate_y": "OpportunityCreatedDate", "Id_y": "OpportunityId", "Name_y": "OpportunityName"})
 
 # Select only required columns
 df_transformed = df_transformed[["AccountId", "AccountName", "AccountCreatedDate", "OpportunityId","OpportunityName","OpportunityCreatedDate","Product_to_Add__c"]]
-
-# Debug: Print first rows of transformed data
-print("=== Transformed Data ===")
-print(df_transformed.head())
 
 # Write to S3 in Parquet format
 wr.s3.to_parquet(
