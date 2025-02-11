@@ -1,10 +1,13 @@
+import sys
+
 import awswrangler as wr
 import pandas as pd
+
+from awsglue.utils import getResolvedOptions
 
 args = getResolvedOptions(
     sys.argv,
     [
-        "JOB_NAME",
         "source_bucket",
         "source_prefix",
         "transformed_bucket",
@@ -14,7 +17,6 @@ args = getResolvedOptions(
     ],
 )
 
-JOB_NAME = args["JOB_NAME"]
 SOURCE_BUCKET = args["source_bucket"]
 SOURCE_PREFIX = args["source_prefix"]
 TRANSFORMED_BUCKET = args["transformed_bucket"]
@@ -48,10 +50,12 @@ df_transformed = account_df.merge(
 )
 
 # Rename conflicting columns
-df_transformed = df_transformed.rename(columns={"Name_x": "AccountName","CreatedDate_x": "AccountCreatedDate","CreatedDate_y": "OpportunityCreatedDate", "Id_y": "OpportunityId", "Name_y": "OpportunityName"})
+df_transformed = df_transformed.rename(columns={"Name_x": "AccountName", "CreatedDate_x": "AccountCreatedDate",
+                                       "CreatedDate_y": "OpportunityCreatedDate", "Id_y": "OpportunityId", "Name_y": "OpportunityName"})
 
 # Select only required columns
-df_transformed = df_transformed[["AccountId", "AccountName", "AccountCreatedDate", "OpportunityId","OpportunityName","OpportunityCreatedDate","Product_to_Add__c"]]
+df_transformed = df_transformed[["AccountId", "AccountName", "AccountCreatedDate",
+                                 "OpportunityId", "OpportunityName", "OpportunityCreatedDate", "Product_to_Add__c"]]
 
 # Write to S3 in Parquet format
 wr.s3.to_parquet(
@@ -63,4 +67,5 @@ wr.s3.to_parquet(
     mode="overwrite"  # Replace existing table
 )
 
-print(f"Data successfully written to {destination_path} and registered in Glue table {glue_table}.")
+print(
+    f"Data successfully written to {destination_path} and registered in Glue table {glue_table}.")

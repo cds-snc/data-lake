@@ -114,22 +114,11 @@ data "local_file" "bes_crm_salesforce_job" {
   filename = "${path.module}/etl/bes/crm/scripts/process_salesforce.py"
 }
 
-data "local_file" "bes_crm_salesforce_requirements" {
-  filename = "${path.module}/etl/bes/crm/scripts/requirements.txt"
-}
-
 resource "aws_s3_object" "bes_crm_salesforce_job" {
   bucket = var.glue_bucket_name
   key    = "bes/crm/salesforce/process_salesforce.py"
   source = data.local_file.bes_crm_salesforce_job.filename
   etag   = filemd5(data.local_file.bes_crm_salesforce_job.filename)
-}
-
-resource "aws_s3_object" "bes_crm_salesforce_requirements" {
-  bucket = var.glue_bucket_name
-  key    = "bes/crm/salesforce/requirements.txt"
-  source = data.local_file.bes_crm_salesforce_requirements.filename
-  etag   = filemd5(data.local_file.bes_crm_salesforce_requirements.filename)
 }
 
 resource "aws_glue_job" "bes_crm_salesforce" {
@@ -139,12 +128,12 @@ resource "aws_glue_job" "bes_crm_salesforce" {
   timeout                = 15 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-  execution_class        = "FLEX"
-  max_capacity           = 0.0625
+
+  max_capacity = 0.0625
 
   command {
     script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.bes_crm_salesforce_job.key}"
-    python_version  = "3"
+    python_version  = "3.9"
     name            = "pythonshell"
   }
 
@@ -158,8 +147,6 @@ resource "aws_glue_job" "bes_crm_salesforce" {
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
     "--job-language"                     = "python"
-    "--python-modules-installer-option"  = "-r"
-    "--additional-python-modules"        = "s3://${var.glue_bucket_name}/${aws_s3_object.bes_crm_salesforce_requirements.key}"
     "--source_bucket"                    = var.raw_bucket_name
     "--source_prefix"                    = "bes/crm/salesforce/"
     "--transformed_bucket"               = var.transformed_bucket_name
