@@ -114,22 +114,11 @@ data "local_file" "bes_crm_salesforce_job" {
   filename = "${path.module}/etl/bes/crm/scripts/process_salesforce.py"
 }
 
-data "local_file" "bes_crm_salesforce_requirements" {
-  filename = "${path.module}/etl/bes/crm/scripts/requirements.txt"
-}
-
 resource "aws_s3_object" "bes_crm_salesforce_job" {
   bucket = var.glue_bucket_name
   key    = "bes/crm/salesforce/process_salesforce.py"
   source = data.local_file.bes_crm_salesforce_job.filename
   etag   = filemd5(data.local_file.bes_crm_salesforce_job.filename)
-}
-
-resource "aws_s3_object" "bes_crm_salesforce_requirements" {
-  bucket = var.glue_bucket_name
-  key    = "bes/crm/salesforce/requirements.txt"
-  source = data.local_file.bes_crm_salesforce_requirements.filename
-  etag   = filemd5(data.local_file.bes_crm_salesforce_requirements.filename)
 }
 
 resource "aws_glue_job" "bes_crm_salesforce" {
