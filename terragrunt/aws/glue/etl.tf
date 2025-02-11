@@ -135,10 +135,10 @@ resource "aws_s3_object" "bes_crm_salesforce_requirements" {
 resource "aws_glue_job" "bes_crm_salesforce" {
   name = "BES / CRM / Salesforce"
 
-  glue_version           = "5.0"
-  timeout                = 15 # minutes
-  role_arn               = aws_iam_role.glue_etl.arn
-  max_capacity           = 0.0625
+  glue_version = "5.0"
+  timeout      = 15 # minutes
+  role_arn     = aws_iam_role.glue_etl.arn
+  max_capacity = 0.0625
 
   command {
     script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.bes_crm_salesforce_job.key}"
