@@ -165,7 +165,7 @@ data "aws_iam_policy_document" "glue_kms" {
     resources = [
       "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/crawlers*",
       "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/jobs*",
-      "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/python-jobs*"
+      "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/python-jobs*",
       "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/sessions*"
     ]
   }
