@@ -21,29 +21,31 @@ resource "aws_glue_security_configuration" "encryption_at_rest" {
 #
 # Platform / GC Forms / Forms
 #
-resource "aws_glue_crawler" "platform_gc_forms_templates_production" {
+resource "aws_glue_crawler" "platform_gc_forms_templates_production_raw" {
   name          = "Platform / GC Forms / Templates"
-  description   = "Classify the GC Forms template data"
-  database_name = aws_glue_catalog_database.platform_gc_forms_production.name
-  table_prefix  = "forms_"
+  description   = "Classify the raw GC Forms template data"
+  database_name = aws_glue_catalog_database.platform_gc_forms_production_raw.name
+  table_prefix  = "platform_gc_forms_raw_"
 
   role                   = aws_iam_role.glue_crawler.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
-    path = "s3://${var.transformed_bucket_name}/platform/gc-forms"
+    path = "s3://${var.raw_bucket_name}/platform/gc-forms"
   }
 
   configuration = jsonencode(
     {
       CrawlerOutput = {
         Tables = {
-          TableThreshold = 3
+          TableThreshold = 4
         }
       }
       CreatePartitionIndex = true
       Version              = 1
   })
+
+  schedule = "cron(00 6 * * ? *)" # 6am UTC check for schema changes
 }
 
 #
