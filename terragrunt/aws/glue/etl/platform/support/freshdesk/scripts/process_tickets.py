@@ -1,20 +1,17 @@
+import logging
 import sys
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 
 import awswrangler as wr
 import pandas as pd
 
-from awsglue.context import GlueContext
-from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
-from pyspark.context import SparkContext
 
 args = getResolvedOptions(
     sys.argv,
     [
-        "JOB_NAME",
         "source_bucket",
         "source_prefix",
         "transformed_bucket",
@@ -25,7 +22,6 @@ args = getResolvedOptions(
     ],
 )
 
-JOB_NAME = args["JOB_NAME"]
 SOURCE_BUCKET = args["source_bucket"]
 SOURCE_PREFIX = args["source_prefix"]
 TRANSFORMED_BUCKET = args["transformed_bucket"]
@@ -36,8 +32,13 @@ DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME = args["table_name"]
 
-glueContext = GlueContext(SparkContext.getOrCreate())
-logger = glueContext.get_logger()
+# Initialize logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.INFO)
+handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+logger.addHandler(handler)
 
 
 def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) -> bool:
@@ -104,7 +105,7 @@ def get_days_tickets(day: datetime) -> pd.DataFrame:
             new_tickets[date_column] = new_tickets[date_column].dt.tz_localize(None)
 
     except wr.exceptions.NoFilesFound:
-        logger.warn("No new tickets found.")
+        logger.warning("No new tickets found.")
     return new_tickets
 
 
@@ -127,7 +128,7 @@ def get_existing_tickets(start_date: str) -> pd.DataFrame:
             None
         )  # Treat all as UTC
     except wr.exceptions.NoFilesFound:
-        logger.warn("No existing data found. Starting fresh.")
+        logger.warning("No existing data found. Starting fresh.")
 
     return existing_tickets
 
@@ -158,7 +159,7 @@ def process_tickets():
     Load the new tickets, validate the schema, and merge with existing data.
     """
     # Get yesterday's tickets
-    yesterday = datetime.now(UTC) - relativedelta(days=1)
+    yesterday = datetime.now(timezone.utc) - relativedelta(days=1)
     new_tickets = get_days_tickets(yesterday)
 
     if new_tickets.empty:
@@ -171,7 +172,7 @@ def process_tickets():
         raise ValueError("Schema validation failed. Aborting ETL process.")
 
     # Load 1 year of existing ticket data
-    start_date = datetime.now(UTC) - relativedelta(years=1)
+    start_date = datetime.now(timezone.utc) - relativedelta(years=1)
     existing_tickets = get_existing_tickets(start_date)
 
     # Merge the existing and new tickets and save
@@ -191,7 +192,4 @@ def process_tickets():
 
 
 if __name__ == "__main__":
-    job = Job(glueContext)
-    job.init(JOB_NAME, args)
     process_tickets()
-    job.commit()
