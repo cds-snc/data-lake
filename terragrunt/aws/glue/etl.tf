@@ -19,7 +19,7 @@ resource "aws_glue_job" "platform_support_freshdesk" {
   timeout                = 15 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-  max_capacity           = 0.0625
+  max_capacity           = 1
 
   command {
     script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_support_freshdesk_job.key}"

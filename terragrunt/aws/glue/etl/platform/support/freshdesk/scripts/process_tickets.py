@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 
 import awswrangler as wr
@@ -12,7 +12,6 @@ from awsglue.utils import getResolvedOptions
 args = getResolvedOptions(
     sys.argv,
     [
-        "JOB_NAME",
         "source_bucket",
         "source_prefix",
         "transformed_bucket",
@@ -23,7 +22,6 @@ args = getResolvedOptions(
     ],
 )
 
-JOB_NAME = args["JOB_NAME"]
 SOURCE_BUCKET = args["source_bucket"]
 SOURCE_PREFIX = args["source_prefix"]
 TRANSFORMED_BUCKET = args["transformed_bucket"]
@@ -34,7 +32,15 @@ DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME = args["table_name"]
 
+# Initialize logging
 logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.INFO)
+handler.setFormatter(
+    logging.Formatter("%(levelname)s: %(message)s")
+)
+logger.addHandler(handler)
 
 
 def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) -> bool:
@@ -155,7 +161,7 @@ def process_tickets():
     Load the new tickets, validate the schema, and merge with existing data.
     """
     # Get yesterday's tickets
-    yesterday = datetime.now(UTC) - relativedelta(days=1)
+    yesterday = datetime.now(timezone.utc) - relativedelta(days=1)
     new_tickets = get_days_tickets(yesterday)
 
     if new_tickets.empty:
@@ -168,7 +174,7 @@ def process_tickets():
         raise ValueError("Schema validation failed. Aborting ETL process.")
 
     # Load 1 year of existing ticket data
-    start_date = datetime.now(UTC) - relativedelta(years=1)
+    start_date = datetime.now(timezone.utc) - relativedelta(years=1)
     existing_tickets = get_existing_tickets(start_date)
 
     # Merge the existing and new tickets and save
