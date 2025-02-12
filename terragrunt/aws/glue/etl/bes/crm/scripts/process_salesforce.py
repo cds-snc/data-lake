@@ -76,3 +76,8 @@ wr.s3.to_parquet(
 
 print(
     f"Data successfully written to {destination_path} and registered in Glue table {glue_table}.")
+
+# Purge the raw data
+wr.s3.delete_objects(path=source_path)
+
+print(f"Source data at {source_path} has been deleted.")
