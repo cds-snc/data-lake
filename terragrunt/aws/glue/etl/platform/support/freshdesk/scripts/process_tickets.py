@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from datetime import datetime, UTC
@@ -6,10 +7,7 @@ from dateutil.relativedelta import relativedelta
 import awswrangler as wr
 import pandas as pd
 
-from awsglue.context import GlueContext
-from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
-from pyspark.context import SparkContext
 
 args = getResolvedOptions(
     sys.argv,
@@ -36,8 +34,7 @@ DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME = args["table_name"]
 
-glueContext = GlueContext(SparkContext.getOrCreate())
-logger = glueContext.get_logger()
+logger = logging.getLogger()
 
 
 def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) -> bool:
@@ -104,7 +101,7 @@ def get_days_tickets(day: datetime) -> pd.DataFrame:
             new_tickets[date_column] = new_tickets[date_column].dt.tz_localize(None)
 
     except wr.exceptions.NoFilesFound:
-        logger.warn("No new tickets found.")
+        logger.warning("No new tickets found.")
     return new_tickets
 
 
@@ -127,7 +124,7 @@ def get_existing_tickets(start_date: str) -> pd.DataFrame:
             None
         )  # Treat all as UTC
     except wr.exceptions.NoFilesFound:
-        logger.warn("No existing data found. Starting fresh.")
+        logger.warning("No existing data found. Starting fresh.")
 
     return existing_tickets
 
@@ -191,7 +188,4 @@ def process_tickets():
 
 
 if __name__ == "__main__":
-    job = Job(glueContext)
-    job.init(JOB_NAME, args)
     process_tickets()
-    job.commit()

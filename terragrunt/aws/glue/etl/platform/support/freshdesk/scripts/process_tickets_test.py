@@ -24,9 +24,6 @@ mock_args = {
 mock_glue_utils = Mock()
 mock_glue_utils.getResolvedOptions.return_value = mock_args
 sys.modules["awsglue.utils"] = mock_glue_utils
-sys.modules["awsglue.context"] = Mock()
-sys.modules["awsglue.job"] = Mock()
-sys.modules["pyspark.context"] = Mock()
 
 # flake8: noqa: E402
 from process_tickets import (
@@ -36,29 +33,6 @@ from process_tickets import (
     process_tickets,
     get_days_tickets,
 )
-
-
-# Mock the AWS Glue and PySpark dependencies
-@pytest.fixture
-def mock_glue_context():
-    mock_logger = Mock()
-    mock_logger.info = Mock()
-    mock_logger.error = Mock()
-    mock_logger.warn = Mock()
-
-    mock_context = Mock()
-    mock_context.get_logger.return_value = mock_logger
-    return mock_context
-
-
-@pytest.fixture
-def mock_spark_context():
-    return Mock()
-
-
-@pytest.fixture
-def mock_job():
-    return Mock()
 
 
 # Sample test data fixtures
@@ -172,7 +146,7 @@ def test_merge_tickets_with_duplicates():
 @patch("awswrangler.s3")
 @patch("awswrangler.catalog")
 def test_process_tickets(
-    mock_wr_catalog, mock_wr_s3, sample_tickets_df, glue_table_schema, mock_glue_context
+    mock_wr_catalog, mock_wr_s3, sample_tickets_df, glue_table_schema
 ):
     # Mock AWS Wrangler responses
     mock_wr_s3.read_json.return_value = sample_tickets_df
@@ -180,8 +154,7 @@ def test_process_tickets(
     mock_wr_s3.read_parquet.return_value = sample_tickets_df
 
     # Run the process
-    with patch("process_tickets.glueContext", mock_glue_context):
-        process_tickets()
+    process_tickets()
 
     # Verify the write operation was called
     mock_wr_s3.to_parquet.assert_called_once()
@@ -190,23 +163,20 @@ def test_process_tickets(
 # Test error handling
 @patch("awswrangler.s3")
 @patch("awswrangler.catalog")
-def test_process_tickets_no_new_data(
-    mock_wr_catalog, mock_wr_s3, glue_table_schema, mock_glue_context
-):
+def test_process_tickets_no_new_data(mock_wr_catalog, mock_wr_s3, glue_table_schema):
     # Mock empty response from S3
     mock_wr_s3.read_json.side_effect = NoFilesFound("Simulate no file for read_json")
     mock_wr_catalog.table.return_value = glue_table_schema
 
     # Run the process
-    with patch("process_tickets.glueContext", mock_glue_context):
-        process_tickets()
+    process_tickets()
 
     # Verify no write operation was attempted
     mock_wr_s3.to_parquet.assert_not_called()
 
 
 # Test date handling
-def test_get_days_tickets_date_handling(mock_glue_context):
+def test_get_days_tickets_date_handling():
     test_date = datetime(2024, 1, 1, tzinfo=UTC)
 
     with patch("awswrangler.s3.read_json") as mock_read_json:

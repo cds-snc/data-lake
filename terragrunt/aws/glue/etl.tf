@@ -5,22 +5,11 @@ data "local_file" "platform_support_freshdesk_job" {
   filename = "${path.module}/etl/platform/support/freshdesk/scripts/process_tickets.py"
 }
 
-data "local_file" "platform_support_freshdesk_requirements" {
-  filename = "${path.module}/etl/platform/support/freshdesk/scripts/requirements.txt"
-}
-
 resource "aws_s3_object" "platform_support_freshdesk_job" {
   bucket = var.glue_bucket_name
   key    = "platform/support/freshdesk/process_tickets.py"
   source = data.local_file.platform_support_freshdesk_job.filename
   etag   = filemd5(data.local_file.platform_support_freshdesk_job.filename)
-}
-
-resource "aws_s3_object" "platform_support_freshdesk_requirements" {
-  bucket = var.glue_bucket_name
-  key    = "platform/support/freshdesk/requirements.txt"
-  source = data.local_file.platform_support_freshdesk_requirements.filename
-  etag   = filemd5(data.local_file.platform_support_freshdesk_requirements.filename)
 }
 
 resource "aws_glue_job" "platform_support_freshdesk" {
@@ -30,15 +19,16 @@ resource "aws_glue_job" "platform_support_freshdesk" {
   timeout                = 15 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-  execution_class        = "FLEX"
+  max_capacity           = 0.0625
 
   command {
     script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_support_freshdesk_job.key}"
-    python_version  = "3"
+    python_version  = "3.9"
+    name            = "pythonshell"
   }
 
   default_arguments = {
-    "--continuous-log-logGroup"          = "/aws-glue/jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
+    "--continuous-log-logGroup"          = "/aws-glue/python-jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
     "--continuous-log-logStreamPrefix"   = "platform_support_freshdesk"
     "--enable-continuous-cloudwatch-log" = "true"
     "--enable-continuous-log-filter"     = "true"
@@ -47,8 +37,6 @@ resource "aws_glue_job" "platform_support_freshdesk" {
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
     "--job-language"                     = "python"
-    "--python-modules-installer-option"  = "-r"
-    "--additional-python-modules"        = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_support_freshdesk_requirements.key}"
     "--source_bucket"                    = var.raw_bucket_name
     "--source_prefix"                    = "platform/support/freshdesk/"
     "--transformed_bucket"               = var.transformed_bucket_name
