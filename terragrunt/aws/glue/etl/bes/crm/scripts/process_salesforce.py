@@ -57,6 +57,13 @@ df_transformed = df_transformed.rename(columns={"Name_x": "AccountName", "Create
 df_transformed = df_transformed[["AccountId", "AccountName", "AccountCreatedDate",
                                  "OpportunityId", "OpportunityName", "OpportunityCreatedDate", "Product_to_Add__c"]]
 
+# Ensure date columns are parsed correctly and all timezones are treated as UTC
+for date_column in ["AccountCreatedDate", "OpportunityCreatedDate"]:
+            df_transformed[date_column] = pd.to_datetime(
+                df_transformed[date_column], errors="coerce"
+            )
+            df_transformed[date_column] = df_transformed[date_column].dt.tz_localize(None)
+
 # Write to S3 in Parquet format
 wr.s3.to_parquet(
     df=df_transformed,
