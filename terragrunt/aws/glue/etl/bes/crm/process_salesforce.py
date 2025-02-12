@@ -50,19 +50,35 @@ df_transformed = account_df.merge(
 )
 
 # Rename conflicting columns
-df_transformed = df_transformed.rename(columns={"Name_x": "AccountName", "CreatedDate_x": "AccountCreatedDate",
-                                       "CreatedDate_y": "OpportunityCreatedDate", "Id_y": "OpportunityId", "Name_y": "OpportunityName"})
+df_transformed = df_transformed.rename(
+    columns={
+        "Name_x": "AccountName",
+        "CreatedDate_x": "AccountCreatedDate",
+        "CreatedDate_y": "OpportunityCreatedDate",
+        "Id_y": "OpportunityId",
+        "Name_y": "OpportunityName",
+    }
+)
 
 # Select only required columns
-df_transformed = df_transformed[["AccountId", "AccountName", "AccountCreatedDate",
-                                 "OpportunityId", "OpportunityName", "OpportunityCreatedDate", "Product_to_Add__c"]]
+df_transformed = df_transformed[
+    [
+        "AccountId",
+        "AccountName",
+        "AccountCreatedDate",
+        "OpportunityId",
+        "OpportunityName",
+        "OpportunityCreatedDate",
+        "Product_to_Add__c",
+    ]
+]
 
 # Ensure date columns are parsed correctly and all timezones are treated as UTC
 for date_column in ["AccountCreatedDate", "OpportunityCreatedDate"]:
-            df_transformed[date_column] = pd.to_datetime(
-                df_transformed[date_column], errors="coerce"
-            )
-            df_transformed[date_column] = df_transformed[date_column].dt.tz_localize(None)
+    df_transformed[date_column] = pd.to_datetime(
+        df_transformed[date_column], errors="coerce"
+    )
+    df_transformed[date_column] = df_transformed[date_column].dt.tz_localize(None)
 
 # Write to S3 in Parquet format
 wr.s3.to_parquet(
@@ -71,11 +87,12 @@ wr.s3.to_parquet(
     dataset=True,
     database=glue_database,  # Registers table in Glue
     table=glue_table,
-    mode="overwrite"  # Replace existing table
+    mode="overwrite",  # Replace existing table
 )
 
 print(
-    f"Data successfully written to {destination_path} and registered in Glue table {glue_table}.")
+    f"Data successfully written to {destination_path} and registered in Glue table {glue_table}."
+)
 
 # Purge the raw data
 wr.s3.delete_objects(path=source_path)
