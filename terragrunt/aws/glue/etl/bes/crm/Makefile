@@ -7,7 +7,7 @@ install_dev:
 lint:
 	flake8 --ignore=E501 *.py
 
-pull_request: install install_dev fmt lint
+pull_request: install_dev fmt lint
 
 .PHONY: \
 	fmt \
