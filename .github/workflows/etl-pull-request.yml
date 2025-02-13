@@ -18,6 +18,7 @@ jobs:
       matrix:
         etl:
           - bes/crm
+          - platform/gc_forms
           - platform/support/freshdesk
     steps:
       - name: Audit DNS requests
