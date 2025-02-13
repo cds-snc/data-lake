@@ -17,7 +17,8 @@ jobs:
       fail-fast: false
       matrix:
         etl:
-          - platform/support/freshdesk/scripts
+          - bes/crm
+          - platform/support/freshdesk
     steps:
       - name: Audit DNS requests
         uses: cds-snc/dns-proxy-action@main

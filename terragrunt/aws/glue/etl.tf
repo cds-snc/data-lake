@@ -2,7 +2,7 @@
 # Platform / Support / Freshdesk
 #
 data "local_file" "platform_support_freshdesk_job" {
-  filename = "${path.module}/etl/platform/support/freshdesk/scripts/process_tickets.py"
+  filename = "${path.module}/etl/platform/support/freshdesk/process_tickets.py"
 }
 
 resource "aws_s3_object" "platform_support_freshdesk_job" {
@@ -61,7 +61,7 @@ resource "aws_glue_trigger" "platform_support_freshdesk" {
 # BES / CRM / Salesforce
 #
 data "local_file" "bes_crm_salesforce_job" {
-  filename = "${path.module}/etl/bes/crm/scripts/process_salesforce.py"
+  filename = "${path.module}/etl/bes/crm/process_salesforce.py"
 }
 
 resource "aws_s3_object" "bes_crm_salesforce_job" {

@@ -1,6 +1,3 @@
-default:
-	python process_ticket_extract.py
-
 fmt:
 	black . $(ARGS)
 
