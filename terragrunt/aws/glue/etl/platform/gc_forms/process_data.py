@@ -8,9 +8,9 @@ import pandas as pd
 
 
 SOURCE_BUCKET = "cds-data-lake-raw-production"
-SOURCE_PREFIX = "platform/gc-forms/processed-data"
+SOURCE_PREFIX = "platform/gc-forms"
 TRANSFORMED_BUCKET = "cds-data-lake-transformed-production"
-TRANSFORMED_PREFIX = "platform/gc-forms/processed-data"
+TRANSFORMED_PREFIX = "platform/gc-forms"
 TRANSFORMED_PATH = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}"
 PARTITION_KEY = "month"
 DATABASE_NAME_RAW = "platform_gc_forms_production_raw"
@@ -103,11 +103,12 @@ def get_new_data(
         # Sort data by specified columns ascending, except for the timestamp column
         # which we sort descending.  This groups all duplicate items and allows us
         # to keep only the most recent duplicate.
-        data.sort_values(
-            by=sort_columns + ["timestamp"],
-            ascending=[True] * len(sort_columns) + [False],
-        )
-        data.drop_duplicates(subset=sort_columns, inplace=True, keep="first")
+        if sort_columns:
+            data.sort_values(
+                by=sort_columns + ["timestamp"],
+                ascending=[True] * len(sort_columns) + [False],
+            )
+            data.drop_duplicates(subset=sort_columns, inplace=True, keep="first")
 
         if partition_created_column:
             data["month"] = data[partition_created_column].dt.strftime("%Y-%m")
@@ -124,7 +125,14 @@ def process_data():
     """
     datasets = [
         {
-            "path": "template",
+            "path": "historical-data",
+            "date_columns": ["date"],
+            "sort_columns": None,
+            "partition_created_column": "date",
+            "partition_columns": ["month"],
+        },
+        {
+            "path": "processed-data/template",
             "date_columns": [
                 "ttl",
                 "api_created_at",
@@ -138,24 +146,26 @@ def process_data():
             "partition_columns": ["month"],
         },
         {
-            "path": "templateToUser",
+            "path": "processed-data/templateToUser",
             "date_columns": ["timestamp"],
             "sort_columns": ["templateid", "userid"],
             "partition_created_column": None,
             "partition_columns": None,
         },
         {
-            "path": "user",
+            "path": "processed-data/user",
             "date_columns": ["emailverified", "lastlogin", "createdat", "timestamp"],
             "sort_columns": ["id"],
-            "partition_created_column": "createdat",
+            "partition_created_column": "lastlogin",  # User created date is currently in this field
             "partition_columns": ["month"],
         },
     ]
 
     for dataset in datasets:
         path = dataset.get("path")
-        table_name = path.lower()
+        table_name = path.lower().replace("-", "_")
+        if "/" in table_name:
+            table_name = path.split("/", 1)[1]
 
         # Retreive the new data
         logger.info(f"Processing {path} data...")
