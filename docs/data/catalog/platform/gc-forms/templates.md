@@ -1,5 +1,10 @@
 # Platform / GC Forms / Templates
 
+### :warning: Note
+This dataset is still in testing and only a snapshot of Staging data is available in Superset. 
+
+---
+
 Dataset providing GC Forms template data.  There are 3 tables as part of this dataset:
 
 - `template`: the templates that are used by GC Forms to render the form users fill out and submit.
