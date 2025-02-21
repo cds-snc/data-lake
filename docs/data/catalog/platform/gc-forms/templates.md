@@ -8,10 +8,10 @@ This dataset is still in testing and only a snapshot of Staging data is availabl
 Dataset providing GC Forms template data.  There are 3 tables as part of this dataset:
 
 - `template`: the templates that are used by GC Forms to render the form users fill out and submit.
-- `templateToUser`: a mapping of templates to the users that created them.
-- `user`: the users that have created a template in GC Forms.
+- `templateToUser`: a many-to-many relationship of templates to their owners.
+- `user`: the users that have logged into GC Forms.
 
-No external user form submissions are part of this dataset. The only personally identifiable information (PII) is the template creator's name and Government of Canada email address in the `user` table.
+No external user form submissions are part of this dataset. The only personally identifiable information (PII) is the user name and Government of Canada email address.
 
 This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the following Physical datasets:
 
