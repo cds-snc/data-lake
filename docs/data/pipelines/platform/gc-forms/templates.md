@@ -37,7 +37,7 @@ A high level view is shown below with more details about each step following the
 ```mermaid
 graph TD
     %% Source Systems
-    FormsETL["`**GC Forms ETL**<br/>RDS 'Templates' and 'Users' tables`"]
+    FormsETL["`**GC Forms ETL**<br/>Database 'Templates' and 'Users' tables`"]
     
     %% Storage
     FormsS3["`**S3 Bucket**<br/>cds-forms-data-lake-bucket-production`"]
@@ -81,7 +81,9 @@ On the first of each month, an AWS Glue crawler runs in the `DataLake-Production
 
 This crawler creates and manages the following data catalog table in the [`platform_gc_forms_production_raw` database](https://github.com/cds-snc/data-lake/blob/b096d7f2b88aba91a0cb1d8e16985c5b1c42a01a/terragrunt/aws/glue/databases.tf#L6-L9):
 
-- `platform_gc_forms_production_raw`: GC Forms templates and the users that created them.
+- `platform_gc_forms_raw_template`: GC Forms template data.
+- `platform_gc_forms_raw_templatetouser`: mapping for templates to the users that created them.
+- `platform_gc_forms_raw_user`: GC Forms users that have created a template.
 
 ### Extract, Transform and Load (ETL) Jobs
 
@@ -95,4 +97,6 @@ cds-data-lake-transformed-production/platform/gc-forms/processed-data/user/month
 
 Additionally, a data catalog table is created in the [`platform_gc_forms_production` database](https://github.com/cds-snc/data-lake/blob/b096d7f2b88aba91a0cb1d8e16985c5b1c42a01a/terragrunt/aws/glue/databases.tf#L1-L4):
 
-- `platform_gc_forms_production`: deduplicated GC Forms templates and the users that created them.
+- `platform_gc_forms_template`: deduplicated GC Forms template data.
+- `platform_gc_forms_templatetouser`: deduplicated mapping for templates to the users that created them.
+- `platform_gc_forms_user`: deduplicated GC Forms users that have created a template.
