@@ -1,12 +1,12 @@
 # Platform / GC Forms / Templates
 
-Dataset providing GC Forms template, and template creator, data.  There are 3 tables as part of this dataset:
+Dataset providing GC Forms template data.  There are 3 tables as part of this dataset:
 
-- `template`: the form templates that are used by GC Forms to render the form users fill out and submit.
+- `template`: the templates that are used by GC Forms to render the form users fill out and submit.
 - `templateToUser`: a mapping of templates to the users that created them.
 - `user`: the users that have created a template in GC Forms.
 
-No external user form submissions are part of this dataset. The only personally identifiable information (PII) is template creator's name and Government of Canada email address in the `user` table.
+No external user form submissions are part of this dataset. The only personally identifiable information (PII) is the template creator's name and Government of Canada email address in the `user` table.
 
 This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the following Physical datasets:
 
@@ -25,8 +25,8 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the f
 This dataset is extracted daily from the GC Forms database's `Templates` and `Users` tables. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-forms/templates.md).
 
 * `Updated`: Daily
-* `Steward`: GC Forms / Platform Core Services
-* `Contact`: [Vivian Nobrega](mailto:vivian.nobrega@cds-snc.ca) / [Pat Heard](mailto:patrick.heard@cds-snc.ca)
+* `Steward`: GC Forms and Platform Core Services
+* `Contact`: [Vivian Nobrega](mailto:vivian.nobrega@cds-snc.ca) and [Pat Heard](mailto:patrick.heard@cds-snc.ca)
 * `Location`: 
 ```
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/template/month=YYYY-MM/*.parquet
@@ -46,25 +46,25 @@ Here's a descriptive list of the fields in each table:
 
 * `id` (varchar) - unique identifier for the template
 * `ttl` (timestamp) - time-to-live timestamp, after which the template will be removed.
-* `ispublished` (boolean) - indicates whether the form is published.
-* `created_at` (timestamp) - when the template was created.
-* `updated_at` (timestamp) - when the template was last updated.
-* `name` (varchar) - name of the form template.
-* `securityattribute` (varchar) - security attribute: [Protected A, Protected B, Unclassified].
+* `ispublished` (boolean) - indicates whether the template has been published.
+* `created_at` (timestamp) - date the template was created.
+* `updated_at` (timestamp) - date the template was last updated.
+* `name` (varchar) - name of the template.
+* `securityattribute` (varchar) - security classification of data collected by the template: [Protected A, Protected B, Unclassified].
 * `closingdate` (timestamp) - when the template was closed, or null if still open.
-* `formpurpose` (varchar) - purpose of the form: [Administrative,  Non-Administrative].
-* `publishdesc` (varchar) - reason for publishing the form, as described by the user.
-* `publishformtype` (varchar) - type of published form: [Collection of Feedback or Stats, Benefit Administration, Grants and Contributions, Regulatory Compliance, Organizational Operations, Other].
+* `formpurpose` (varchar) - purpose of the template: [Administrative,  Non-Administrative].
+* `publishdesc` (varchar) - reason for publishing the template, as described by the user.
+* `publishformtype` (varchar) - type of published template: [Collection of Feedback or Stats, Benefit Administration, Grants and Contributions, Regulatory Compliance, Organizational Operations, Other].
 * `publishreason` (varchar) - reason for publishing: [Ready for public use, Ready for internal use, Sharing for feedback or approval, Other].
-* `closeddetails` (varchar) - reason for closing the form.
-* `deliveryemaildestination` (varchar) - email destination for form delivery, null if email delivery not enabled.
+* `closeddetails` (varchar) - reason for closing the template to submissions.
+* `deliveryemaildestination` (varchar) - email destination for submission delivery, null if email delivery not enabled.
 * `api_created_at` (timestamp) - when API integration was enabled for the template, null if no API integration.
 * `api_id` (varchar) - API identifier, null if no API integration.
-* `deliveryoption` (integer) - form response delivery method: [0 = Download, 1 = Email, 2 = API, 99 = Error].
+* `deliveryoption` (integer) - template submission delivery method: [0 = Download, 1 = Email, 2 = API, 99 = Error].
 * `timestamp` (timestamp) - time of the last extract of the template record.
-* `titleen` (varchar) - form title in English.
-* `titlefr` (varchar) - form title in French.
-* `brand` (varchar) - branding used by the form template.
+* `titleen` (varchar) - template title in English.
+* `titlefr` (varchar) - template title in French.
+* `brand` (varchar) - branding used by the template.
 * `addresscomplete_count` (bigint) - count of address complete elements.
 * `checkbox_count` (bigint) - count of checkbox form elements.
 * `combobox_count` (bigint) - count of combobox form elements.
@@ -76,7 +76,7 @@ Here's a descriptive list of the fields in each table:
 * `richtext_count` (bigint) - count of rich text form elements.
 * `textarea_count` (bigint) - count of textarea form elements.
 * `textfield_count` (bigint) - count of text field form elements.
-* `saveandresume` (boolean) - indicates if form allows save and resume functionality.
+* `saveandresume` (boolean) - indicates if template allows save and resume functionality.
 * `month` (varchar) - partition key in the format of YYYY-MM.
 			
 ### Table: platform_gc_forms_templatetouser
@@ -97,5 +97,3 @@ Here's a descriptive list of the fields in each table:
 * `notes` (varchar) - additional notes about the user.
 * `timestamp` (timestamp) - time of the last extract of the user record.
 * `month` (varchar) - partition key in the format of YYYY-MM.
-
-
