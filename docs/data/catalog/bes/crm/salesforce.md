@@ -6,7 +6,7 @@ CRM stands for Customer Relationship Management.
 
 Dataset providing [CDS Salesforce](https://canadiandigitalservice.my.salesforce.com/) CRM data for CDS products and services.
 
-This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the Physical dataset `bes_crm_salesforce`.
+This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the Physical dataset `bes_crm_salesforce_production`.
 
 `Keywords`: Platform, Salesforces, crm, account
 
@@ -16,7 +16,7 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the P
 
 ## Provenance
 
-This dataset is extracted daily using a Salesforce Python script running in a GitHub workflow.  Each day the extract process downloads most Salesforce tables from the CDS instance and uploads them to an S3 bucket.  These table extracts get overridden every day. 
+This dataset is extracted daily using a Salesforce Python script running in a GitHub workflow.  Each day the extract process downloads most Salesforce tables from the CDS instance and uploads them to an S3 bucket.  These table extracts get overridden every day.
 
 More documentation on the pipeline can be found [here](../../../pipelines/bes/crm/salesforce.md).
 
@@ -27,13 +27,22 @@ More documentation on the pipeline can be found [here](../../../pipelines/bes/cr
 
 ## Fields
 
-Almost all fields are sourced directly from Salesforce's [tables](https://developers.freshdesk.com/api/#tickets)
+Currently, the [ETL script](../../../../../terragrunt/aws/glue/etl/bes/crm/process_salesforce.py) selectively extracts specific fields. This pipeline is a proof of concept demonstrating how Salesforce data can be surfaced through the Platform BI.
 
 A [query to return example data](examples/salesforce.sql) has also been provided.
 
-Here's a descriptive list of the Salesforce account table fields:
+Here's a descriptive list of the Salesforce `account_opportunity` table fields:
 
-* `id` (bigint) - Unique identifier for each account.
+| Field Name               | Type      | Description |
+|--------------------------|----------|-------------|
+| `accountid`             | string   | Unique identifier for each client account. |
+| `accountname`           | string   | Name of the client account. |
+| `accountcreateddate`    | timestamp | Date and time when the account was created. |
+| `opportunityid`        | string   | Unique identifier for each sales opportunity. |
+| `opportunityname`      | string   | Name of the sales opportunity. |
+| `opportunitycreateddate` | timestamp | Date and time when the opportunity was created. |
+| `product_to_add__c`    | string   | Product associated with the opportunity. |
+
 
 ## Notes
 
