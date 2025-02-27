@@ -30,14 +30,16 @@ For string columns with only a few options (i.e., factors), include what the pos
 
 A few field examples:
 
-* `id` (string) - version 4 UUID that identifies the user
-* `registration_date` (datetime) - when the user registered, in UTC
-* `age` (integer) - user's age at registration, in years
-* `first_name` (string) - user's first or given name
-* `user_hometown` (string) - user's home town
-* `height` (float) - user's height in centimeters, converted from feet/inches depending on user's localization settings
-* `pizza_opinion` (string) - how much the user indicated they like pizza, one of "Delicious", "It's Alright" or "Hate It". May be missing if user registered before June 20, 2022.
-* `first_time_login` (boolean) - has the user logged into their account after completing registration?
+| Field Name | Type | Description |
+|-------|------|-------------|
+| id | string | Version 4 UUID that identifies the user |
+| registration_date | datetime | When the user registered, in UTC |
+| age | integer | User's age at registration, in years |
+| first_name | string | User's first or given name |
+| user_hometown | string | User's home town |
+| height | float | User's height in centimeters, converted from feet/inches depending on user's localization settings |
+| pizza_opinion | string | How much the user indicated they like pizza, one of "Delicious", "It's Alright" or "Hate It". May be missing if user registered before June 20, 2022 |
+| first_time_login | boolean | Has the user logged into their account after completing registration? |
 
 
 ## Notes (optional)
