@@ -49,56 +49,62 @@ Here's a descriptive list of the fields in each table:
 
 ### Table: platform_gc_forms_template
 
-* `id` (varchar) - unique identifier for the template
-* `ttl` (timestamp) - time-to-live timestamp, after which the template will be removed.
-* `ispublished` (boolean) - indicates whether the template has been published.
-* `created_at` (timestamp) - date the template was created.
-* `updated_at` (timestamp) - date the template was last updated.
-* `name` (varchar) - name of the template.
-* `securityattribute` (varchar) - security classification of data collected by the template: [Protected A, Protected B, Unclassified].
-* `closingdate` (timestamp) - when the template was closed, or null if still open.
-* `formpurpose` (varchar) - purpose of the template: [Administrative,  Non-Administrative].
-* `publishdesc` (varchar) - reason for publishing the template, as described by the user.
-* `publishformtype` (varchar) - type of published template: [Collection of Feedback or Stats, Benefit Administration, Grants and Contributions, Regulatory Compliance, Organizational Operations, Other].
-* `publishreason` (varchar) - reason for publishing: [Ready for public use, Ready for internal use, Sharing for feedback or approval, Other].
-* `closeddetails` (varchar) - reason for closing the template to submissions.
-* `deliveryemaildestination` (varchar) - email destination for submission delivery, null if email delivery not enabled.
-* `api_created_at` (timestamp) - when API integration was enabled for the template, null if no API integration.
-* `api_id` (varchar) - API identifier, null if no API integration.
-* `deliveryoption` (integer) - template submission delivery method: [0 = Download, 1 = Email, 2 = API, 99 = Error].
-* `timestamp` (timestamp) - time of the last extract of the template record.
-* `titleen` (varchar) - template title in English.
-* `titlefr` (varchar) - template title in French.
-* `brand` (varchar) - branding used by the template.
-* `addresscomplete_count` (bigint) - count of address complete elements.
-* `checkbox_count` (bigint) - count of checkbox form elements.
-* `combobox_count` (bigint) - count of combobox form elements.
-* `dropdown_count` (bigint) - count of dropdown form elements.
-* `dynamicrow_count` (bigint) - count of dynamic row form elements.
-* `fileinput_count` (bigint) - count of file input form elements.
-* `formatteddate_count` (bigint) - count of formatted date elements.
-* `radio_count` (bigint) - count of radio button form elements.
-* `richtext_count` (bigint) - count of rich text form elements.
-* `textarea_count` (bigint) - count of textarea form elements.
-* `textfield_count` (bigint) - count of text field form elements.
-* `saveandresume` (boolean) - indicates if template allows save and resume functionality.
-* `month` (varchar) - partition key in the format of YYYY-MM.
+| Field | Type | Description |
+|-------|------|-------------|
+| id | string | Unique identifier for the template |
+| ttl | timestamp | Time-to-live timestamp, after which the template will be removed |
+| ispublished | boolean | Indicates whether the template has been published |
+| created_at | timestamp | Date the template was created |
+| updated_at | timestamp | Date the template was last updated |
+| name | string | Name of the template |
+| securityattribute | string | Security classification of data collected by the template: [Protected A, Protected B, Unclassified] |
+| closingdate | timestamp | When the template was closed, or null if still open |
+| formpurpose | string | Purpose of the template: [Administrative, Non-Administrative] |
+| publishdesc | string | Reason for publishing the template, as described by the user |
+| publishformtype | string | Type of published template: [Collection of Feedback or Stats, Benefit Administration, Grants and Contributions, Regulatory Compliance, Organizational Operations, Other] |
+| publishreason | string | Reason for publishing: [Ready for public use, Ready for internal use, Sharing for feedback or approval, Other] |
+| closeddetails | string | Reason for closing the template to submissions |
+| deliveryemaildestination | string | Email destination for submission delivery, null if email delivery not enabled |
+| api_created_at | timestamp | When API integration was enabled for the template, null if no API integration |
+| api_id | string | API identifier, null if no API integration |
+| deliveryoption | integer | Template submission delivery method: [0 = Download, 1 = Email, 2 = API, 99 = Error] |
+| timestamp | timestamp | Time of the last extract of the template record |
+| titleen | string | Template title in English |
+| titlefr | string | Template title in French |
+| brand | string | Branding used by the template |
+| addresscomplete_count | integer | Count of address complete elements |
+| checkbox_count | integer | Count of checkbox form elements |
+| combobox_count | integer | Count of combobox form elements |
+| dropdown_count | integer | Count of dropdown form elements |
+| dynamicrow_count | integer | Count of dynamic row form elements |
+| fileinput_count | integer | Count of file input form elements |
+| formatteddate_count | integer | Count of formatted date elements |
+| radio_count | integer | Count of radio button form elements |
+| richtext_count | integer | Count of rich text form elements |
+| textarea_count | integer | Count of textarea form elements |
+| textfield_count | integer | Count of text field form elements |
+| saveandresume | boolean | Indicates if template allows save and resume functionality |
+| month | string | Partition key in the format of YYYY-MM |
 			
 ### Table: platform_gc_forms_templatetouser
 
-* `templateid` (varchar) - template ID of the relationship.
-* `userid` (varchar) - user ID of the relationship.
-* `timestamp` (timestamp) - time of the last extract of the relationship record.
+| Field | Type | Description |
+|-------|------|-------------|
+| templateid | string | Template ID of the relationship |
+| userid | string | User ID of the relationship |
+| timestamp | timestamp | Time of the last extract of the relationship record |
 				
 ### Table: platform_gc_forms_user		
 
-* `id` (varchar) - unique identifier for the user.
-* `name` (varchar) - user's full name.
-* `email` (varchar) - user's Government of Canada email address.
-* `emailverified` (timestamp) - when the user's email was verified.
-* `lastlogin` (timestamp) - time of user's most recent login.
-* `active` (boolean) - indicates whether the user account is active.
-* `createdat` (timestamp) - when the user account was created.
-* `notes` (varchar) - additional notes about the user.
-* `timestamp` (timestamp) - time of the last extract of the user record.
-* `month` (varchar) - partition key in the format of YYYY-MM.
+| Field | Type | Description |
+|-------|------|-------------|
+| id | string | Unique identifier for the user |
+| name | string | User's full name |
+| email | string | User's Government of Canada email address |
+| emailverified | timestamp | When the user's email was verified |
+| lastlogin | timestamp | Time of user's most recent login |
+| active | boolean | Indicates whether the user account is active |
+| createdat | timestamp | When the user account was created |
+| notes | string | Additional notes about the user |
+| timestamp | timestamp | Time of the last extract of the user record |
+| month | string | Partition key in the format of YYYY-MM |
