@@ -40,6 +40,10 @@ resource "aws_cloudwatch_metric_alarm" "platform_support_freshdesk_export_errors
   threshold           = "0"
   treat_missing_data  = "notBreaching"
 
+  dimensions = {
+    FunctionName = local.freshdesk_lambda_name
+  }
+
   alarm_actions = [var.sns_topic_alarm_action_arn]
   ok_actions    = [var.sns_topic_ok_action_arn]
 }
