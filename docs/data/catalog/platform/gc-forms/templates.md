@@ -49,56 +49,56 @@ Here's a descriptive list of the fields in each table:
 
 ### Table: platform_gc_forms_template
 
-* `id` (varchar) - unique identifier for the template
+* `id` (string) - unique identifier for the template
 * `ttl` (timestamp) - time-to-live timestamp, after which the template will be removed.
 * `ispublished` (boolean) - indicates whether the template has been published.
 * `created_at` (timestamp) - date the template was created.
 * `updated_at` (timestamp) - date the template was last updated.
-* `name` (varchar) - name of the template.
-* `securityattribute` (varchar) - security classification of data collected by the template: [Protected A, Protected B, Unclassified].
+* `name` (string) - name of the template.
+* `securityattribute` (string) - security classification of data collected by the template: [Protected A, Protected B, Unclassified].
 * `closingdate` (timestamp) - when the template was closed, or null if still open.
-* `formpurpose` (varchar) - purpose of the template: [Administrative,  Non-Administrative].
-* `publishdesc` (varchar) - reason for publishing the template, as described by the user.
-* `publishformtype` (varchar) - type of published template: [Collection of Feedback or Stats, Benefit Administration, Grants and Contributions, Regulatory Compliance, Organizational Operations, Other].
-* `publishreason` (varchar) - reason for publishing: [Ready for public use, Ready for internal use, Sharing for feedback or approval, Other].
-* `closeddetails` (varchar) - reason for closing the template to submissions.
-* `deliveryemaildestination` (varchar) - email destination for submission delivery, null if email delivery not enabled.
+* `formpurpose` (string) - purpose of the template: [Administrative,  Non-Administrative].
+* `publishdesc` (string) - reason for publishing the template, as described by the user.
+* `publishformtype` (string) - type of published template: [Collection of Feedback or Stats, Benefit Administration, Grants and Contributions, Regulatory Compliance, Organizational Operations, Other].
+* `publishreason` (string) - reason for publishing: [Ready for public use, Ready for internal use, Sharing for feedback or approval, Other].
+* `closeddetails` (string) - reason for closing the template to submissions.
+* `deliveryemaildestination` (string) - email destination for submission delivery, null if email delivery not enabled.
 * `api_created_at` (timestamp) - when API integration was enabled for the template, null if no API integration.
-* `api_id` (varchar) - API identifier, null if no API integration.
+* `api_id` (string) - API identifier, null if no API integration.
 * `deliveryoption` (integer) - template submission delivery method: [0 = Download, 1 = Email, 2 = API, 99 = Error].
 * `timestamp` (timestamp) - time of the last extract of the template record.
-* `titleen` (varchar) - template title in English.
-* `titlefr` (varchar) - template title in French.
-* `brand` (varchar) - branding used by the template.
-* `addresscomplete_count` (bigint) - count of address complete elements.
-* `checkbox_count` (bigint) - count of checkbox form elements.
-* `combobox_count` (bigint) - count of combobox form elements.
-* `dropdown_count` (bigint) - count of dropdown form elements.
-* `dynamicrow_count` (bigint) - count of dynamic row form elements.
-* `fileinput_count` (bigint) - count of file input form elements.
-* `formatteddate_count` (bigint) - count of formatted date elements.
-* `radio_count` (bigint) - count of radio button form elements.
-* `richtext_count` (bigint) - count of rich text form elements.
-* `textarea_count` (bigint) - count of textarea form elements.
-* `textfield_count` (bigint) - count of text field form elements.
+* `titleen` (string) - template title in English.
+* `titlefr` (string) - template title in French.
+* `brand` (string) - branding used by the template.
+* `addresscomplete_count` (integer) - count of address complete elements.
+* `checkbox_count` (integer) - count of checkbox form elements.
+* `combobox_count` (integer) - count of combobox form elements.
+* `dropdown_count` (integer) - count of dropdown form elements.
+* `dynamicrow_count` (integer) - count of dynamic row form elements.
+* `fileinput_count` (integer) - count of file input form elements.
+* `formatteddate_count` (integer) - count of formatted date elements.
+* `radio_count` (integer) - count of radio button form elements.
+* `richtext_count` (integer) - count of rich text form elements.
+* `textarea_count` (integer) - count of textarea form elements.
+* `textfield_count` (integer) - count of text field form elements.
 * `saveandresume` (boolean) - indicates if template allows save and resume functionality.
-* `month` (varchar) - partition key in the format of YYYY-MM.
+* `month` (string) - partition key in the format of YYYY-MM.
 			
 ### Table: platform_gc_forms_templatetouser
 
-* `templateid` (varchar) - template ID of the relationship.
-* `userid` (varchar) - user ID of the relationship.
+* `templateid` (string) - template ID of the relationship.
+* `userid` (string) - user ID of the relationship.
 * `timestamp` (timestamp) - time of the last extract of the relationship record.
 				
 ### Table: platform_gc_forms_user		
 
-* `id` (varchar) - unique identifier for the user.
-* `name` (varchar) - user's full name.
-* `email` (varchar) - user's Government of Canada email address.
+* `id` (string) - unique identifier for the user.
+* `name` (string) - user's full name.
+* `email` (string) - user's Government of Canada email address.
 * `emailverified` (timestamp) - when the user's email was verified.
 * `lastlogin` (timestamp) - time of user's most recent login.
 * `active` (boolean) - indicates whether the user account is active.
 * `createdat` (timestamp) - when the user account was created.
-* `notes` (varchar) - additional notes about the user.
+* `notes` (string) - additional notes about the user.
 * `timestamp` (timestamp) - time of the last extract of the user record.
-* `month` (varchar) - partition key in the format of YYYY-MM.
+* `month` (string) - partition key in the format of YYYY-MM.

@@ -31,12 +31,12 @@ A [query to return example data](examples/freshdesk.sql) has also been provided.
 
 Here's a descriptive list of the Freshdesk ticket fields:
 
-* `id` (bigint) - Unique identifier for each support ticket.
-* `status` (bigint) - Numerical code representing the ticket's current status.
+* `id` (integer) - Unique identifier for each support ticket.
+* `status` (integer) - Numerical code representing the ticket's current status.
 * `status_label` (string) - Human-readable label for the ticket status (e.g., "Open", "Pending", "Resolved").
-* `priority` (bigint) - Numerical code indicating the ticket's priority level.
+* `priority` (integer) - Numerical code indicating the ticket's priority level.
 * `priority_label` (string) - Human-readable label for the priority level (e.g., "Low", "Medium", "High", "Urgent").
-* `source` (bigint) - Numerical code indicating how the ticket was created.
+* `source` (integer) - Numerical code indicating how the ticket was created.
 * `source_label` (string) - Human-readable label for the ticket source (e.g., "Email", "Phone", "Portal", "Chat").
 * `created_at` (timestamp) - Date and time when the ticket was initially created.
 * `updated_at` (timestamp) - Date and time of the most recent update to the ticket.
@@ -47,11 +47,11 @@ Here's a descriptive list of the Freshdesk ticket fields:
 * `spam` (boolean) - Indicates whether the ticket has been marked as spam.
 * `requester_email_suffix` (string) - Domain portion of the requester's email address.  For non Government of Canada users, this will have the value of `external`.
 * `type` (string) - Classification of the ticket type.
-* `product_id` (bigint) - Unique identifier for the product associated with the ticket.
+* `product_id` (integer) - Unique identifier for the product associated with the ticket.
 * `product_name` (string) - Name of the product associated with the ticket.
-* `conversations_total_count` (bigint) - Total number of messages in the ticket thread.
-* `conversations_reply_count` (bigint) - Number of replies to and from the user in the ticket thread.
-* `conversations_note_count` (bigint) - Number of internal notes from the support team added to the ticket.
+* `conversations_total_count` (integer) - Total number of messages in the ticket thread.
+* `conversations_reply_count` (integer) - Number of replies to and from the user in the ticket thread.
+* `conversations_note_count` (integer) - Number of internal notes from the support team added to the ticket.
 * `language` (string) - Primary language used in the ticket communication.
 * `province_or_territory` (string) - Canadian province or territory where the ticket originated.
 * `organization` (string) - Government of Canada department or crown corporation associated with the ticket requester.
