@@ -31,7 +31,7 @@ This dataset is extracted daily from the GC Forms database's `Templates` and `Us
 
 * `Updated`: Daily
 * `Steward`: GC Forms and Platform Core Services
-* `Contact`: [Vivian Nobrega](mailto:vivian.nobrega@cds-snc.ca) and [Pat Heard](mailto:patrick.heard@cds-snc.ca)
+* `Contact`: [Vivian Nobrega](mailto:vivian.nobrega@cds-snc.ca)
 * `Location`: 
 ```
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/template/month=YYYY-MM/*.parquet
