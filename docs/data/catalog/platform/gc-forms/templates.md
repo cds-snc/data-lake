@@ -30,7 +30,7 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the f
 This dataset is extracted daily from the GC Forms database's `Templates` and `Users` tables. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-forms/templates.md).
 
 * `Updated`: Daily
-* `Steward`: GC Forms and Platform Core Services
+* `Steward`: GC Forms
 * `Contact`: [Vivian Nobrega](mailto:vivian.nobrega@cds-snc.ca)
 * `Location`: 
 ```
