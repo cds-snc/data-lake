@@ -1,3 +1,9 @@
+module "platform_notify_export" {
+  source = "./platform/notify"
+
+  account_id = var.account_id
+}
+
 module "platform_support_freshdesk_export" {
   source = "./platform/support/freshdesk"
 

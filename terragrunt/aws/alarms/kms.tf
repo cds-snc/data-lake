@@ -7,6 +7,11 @@ resource "aws_kms_key" "cloudwatch" {
   policy              = data.aws_iam_policy_document.kms_cloudwatch.json
 }
 
+resource "aws_kms_alias" "cloudwatch" {
+  name          = "alias/sns-cloudwatch-alarms"
+  target_key_id = aws_kms_key.cloudwatch.key_id
+}
+
 data "aws_iam_policy_document" "kms_cloudwatch" {
   # checkov:skip=CKV_AWS_109: `resources = ["*"]` identifies the KMS key to which the key policy is attached
   # checkov:skip=CKV_AWS_111: `resources = ["*"]` identifies the KMS key to which the key policy is attached

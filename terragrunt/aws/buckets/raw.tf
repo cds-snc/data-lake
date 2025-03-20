@@ -31,12 +31,11 @@ resource "aws_s3_bucket_policy" "raw_bucket" {
 #
 data "aws_iam_policy_document" "raw_bucket" {
   statement {
-    sid    = "DataLakeRawBucketPolicy"
+    sid    = "ReplicateToBucket"
     effect = "Allow"
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::239043911459:role/NotifyPlatformDataLake",
         "arn:aws:iam::563894450011:role/SalesforceReplicateToDataLake",
         "arn:aws:iam::659087519042:role/BillingExtractTags",
         "arn:aws:iam::659087519042:role/CostUsageReplicateToDataLake",
@@ -50,6 +49,28 @@ data "aws_iam_policy_document" "raw_bucket" {
       "s3:PutObject",
       "s3:ReplicateObject",
       "s3:ReplicateDelete"
+    ]
+    resources = [
+      module.raw_bucket.s3_bucket_arn,
+      "${module.raw_bucket.s3_bucket_arn}/*"
+    ]
+  }
+
+  statement {
+    sid    = "RDSExportToBucket"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::239043911459:role/NotifyExportToPlatformDataLake",
+      ]
+    }
+    actions = [
+      "s3:PutObject*",
+      "s3:ListBucket",
+      "s3:GetObject*",
+      "s3:DeleteObject*",
+      "s3:GetBucketLocation"
     ]
     resources = [
       module.raw_bucket.s3_bucket_arn,
