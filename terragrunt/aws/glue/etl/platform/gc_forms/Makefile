@@ -1,5 +1,5 @@
 default:
-	python process_ticket_extract.py
+	python process_data.py
 
 fmt:
 	black . $(ARGS)
