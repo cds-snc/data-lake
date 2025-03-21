@@ -63,12 +63,22 @@ def glue_table_schema():
 
 
 def test_validate_schema_valid(sample_data_df, glue_table_schema):
-    assert validate_schema(sample_data_df, glue_table_schema) is True
+    assert validate_schema(sample_data_df, None, glue_table_schema) is True
 
 
 def test_validate_schema_missing_column(sample_data_df, glue_table_schema):
     df_missing_column = sample_data_df.drop("status", axis=1)
-    assert validate_schema(df_missing_column, glue_table_schema) is False
+    assert validate_schema(df_missing_column, None, glue_table_schema) is False
+
+
+def test_validate_schema_partition_column(sample_data_df, glue_table_schema):
+    df_with_parition_column = sample_data_df.copy()
+    df_with_parition_column["month"] = pd.to_datetime(
+        ["2024-01-01", "2024-01-02", "2024-01-03"]
+    )
+    assert (
+        validate_schema(df_with_parition_column, ["month"], glue_table_schema) is True
+    )
 
 
 def test_validate_schema_wrong_type(sample_data_df, glue_table_schema):
@@ -76,7 +86,7 @@ def test_validate_schema_wrong_type(sample_data_df, glue_table_schema):
     df_wrong_type["priority"] = pd.to_datetime(
         ["2024-01-04", "2024-01-05", "2024-01-06"]
     )
-    assert validate_schema(df_wrong_type, glue_table_schema) is False
+    assert validate_schema(df_wrong_type, None, glue_table_schema) is False
 
 
 def test_is_type_compatible():
