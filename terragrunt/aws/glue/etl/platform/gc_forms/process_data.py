@@ -26,9 +26,15 @@ handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 
 
-def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) -> bool:
+def validate_schema(
+    dataframe: pd.DataFrame,
+    non_source_columns: List[str],
+    glue_table_schema: pd.DataFrame,
+) -> bool:
     """
-    Validate that the DataFrame conforms to the Glue table schema.
+    Validate that the DataFrame conforms to the Glue table schema.  The `non_source_columns`
+    specifies extra columns that are allowed to be in the DataFrame but are not part of
+    the Glue schema.
     """
     for _, row in glue_table_schema.iterrows():
         column_name = row["Column Name"]
@@ -42,6 +48,13 @@ def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) ->
                 f"Validation failed: Column '{column_name}' type mismatch. Expected {column_type} but got {dataframe[column_name].dtype}"
             )
             return False
+
+    for column_name in dataframe.columns:
+        if column_name not in glue_table_schema["Column Name"].values:
+            if non_source_columns and column_name not in non_source_columns:
+                logger.error(f"Validation failed: Extra column '{column_name}'")
+                return False
+
     return True
 
 
@@ -104,11 +117,11 @@ def get_new_data(
         # which we sort descending.  This groups all duplicate items and allows us
         # to keep only the most recent duplicate.
         if sort_columns:
-            data.sort_values(
+            data = data.sort_values(
                 by=sort_columns + ["timestamp"],
                 ascending=[True] * len(sort_columns) + [False],
             )
-            data.drop_duplicates(subset=sort_columns, inplace=True, keep="first")
+            data = data.drop_duplicates(subset=sort_columns, keep="first")
 
         if partition_created_column:
             data["month"] = data[partition_created_column].dt.strftime("%Y-%m")
@@ -183,7 +196,10 @@ def process_data():
         glue_table_schema = wr.catalog.table(
             database=DATABASE_NAME_RAW, table=f"{TABLE_NAME_PREFIX}_raw_{table_name}"
         )
-        if not validate_schema(data, glue_table_schema):
+
+        if not validate_schema(
+            data, dataset.get("partition_columns"), glue_table_schema
+        ):
             raise ValueError(
                 f"Schema validation failed for {path}. Aborting ETL process."
             )

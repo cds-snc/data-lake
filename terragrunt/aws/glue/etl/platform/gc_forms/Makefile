@@ -1,5 +1,5 @@
 default:
-	python process_ticket_extract.py
+	python process_data.py
 
 fmt:
 	black . $(ARGS)
@@ -16,7 +16,7 @@ lint:
 pull_request: install install_dev fmt lint test
 
 test:
-	echo "No tests to run"
+	python -m pytest -s -vv .
 
 .PHONY: \
 	fmt \
