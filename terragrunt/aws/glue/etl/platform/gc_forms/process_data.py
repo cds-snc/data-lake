@@ -131,6 +131,28 @@ def get_new_data(
     return data
 
 
+def remove_old_data(path: str, table: str, partition_cols: List[str]):
+    """
+    Remove transformed data that was not exported today
+    """
+    data = wr.s3.read_parquet(
+        path=f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}/{path}/",
+        use_threads=True,
+        dataset=True,
+    )
+    yesterday = pd.Timestamp.today() - pd.Timedelta(days=1)
+    data = data[data["timestamp"] > yesterday]
+    wr.s3.to_parquet(
+        df=data,
+        path=f"{TRANSFORMED_PATH}/{path}/",
+        dataset=True,
+        mode="overwrite_partitions",
+        database=DATABASE_NAME_TRANSFORMED,
+        table=table,
+        partition_cols=partition_cols,
+    )
+
+
 def process_data():
     """
     Main ETL process to read data from S3, validate the schema, and save the
@@ -143,6 +165,7 @@ def process_data():
             "sort_columns": None,
             "partition_created_column": "date",
             "partition_columns": ["month"],
+            "prune_old_data": False,
         },
         {
             "path": "processed-data/template",
@@ -157,6 +180,7 @@ def process_data():
             "sort_columns": ["id"],
             "partition_created_column": "created_at",
             "partition_columns": ["month"],
+            "prune_old_data": True,
         },
         {
             "path": "processed-data/templateToUser",
@@ -164,6 +188,7 @@ def process_data():
             "sort_columns": ["templateid", "userid"],
             "partition_created_column": None,
             "partition_columns": None,
+            "prune_old_data": True,
         },
         {
             "path": "processed-data/user",
@@ -171,6 +196,7 @@ def process_data():
             "sort_columns": ["id"],
             "partition_created_column": "lastlogin",  # User created date is currently in this field
             "partition_columns": ["month"],
+            "prune_old_data": True,
         },
     ]
 
@@ -206,18 +232,27 @@ def process_data():
 
         # Save the transformed data back to S3
         logger.info(f"Saving new {path} DataFrame to S3...")
+        table = f"{TABLE_NAME_PREFIX}_{table_name}"
+        partition_cols = dataset.get("partition_columns")
         wr.s3.to_parquet(
             df=data,
             path=f"{TRANSFORMED_PATH}/{path}/",
             dataset=True,
             mode="overwrite_partitions",
             database=DATABASE_NAME_TRANSFORMED,
-            table=f"{TABLE_NAME_PREFIX}_{table_name}",
-            partition_cols=dataset.get("partition_columns"),
+            table=table,
+            partition_cols=partition_cols,
         )
+
+        # Remove transformed data that does not have a `timestamp` from today
+        # TODO: Better way to do this that does not involve reading all Transformed data
+        if dataset.get("prune_old_data"):
+            logger.info(f"Removing old {path} data...")
+            remove_old_data(path, table, partition_cols)
 
     logger.info("ETL process completed successfully.")
 
 
+# TODO: convert to Glue ETL job with job bookmarks
 if __name__ == "__main__":
     process_data()
