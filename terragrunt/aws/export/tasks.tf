@@ -1,5 +1,5 @@
 module "platform_notify_export" {
-  source = "./platform/notify"
+  source = "./platform/gc_notify"
 
   account_id = var.account_id
 }
