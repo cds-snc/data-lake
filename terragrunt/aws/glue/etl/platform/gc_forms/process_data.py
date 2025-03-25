@@ -142,15 +142,21 @@ def remove_old_data(path: str, table: str, partition_cols: List[str]):
     )
     yesterday = pd.Timestamp.today() - pd.Timedelta(days=1)
     data = data[data["timestamp"] > yesterday]
-    wr.s3.to_parquet(
-        df=data,
-        path=f"{TRANSFORMED_PATH}/{path}/",
-        dataset=True,
-        mode="overwrite_partitions",
-        database=DATABASE_NAME_TRANSFORMED,
-        table=table,
-        partition_cols=partition_cols,
-    )
+
+    # Check if there is any data left to save.  This is a safety mechanism to avoid
+    # removing all data if the Forms data sync fails.
+    if data.empty:
+        logger.error(f"No new {path} data found after pruning.")
+    else:
+        wr.s3.to_parquet(
+            df=data,
+            path=f"{TRANSFORMED_PATH}/{path}/",
+            dataset=True,
+            mode="overwrite_partitions",
+            database=DATABASE_NAME_TRANSFORMED,
+            table=table,
+            partition_cols=partition_cols,
+        )
 
 
 def process_data():
