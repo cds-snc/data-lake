@@ -49,7 +49,7 @@ resource "aws_glue_job" "platform_gc_forms_job" {
 
 resource "aws_glue_trigger" "platform_gc_forms_job" {
   name     = "Platform / GC Forms"
-  schedule = "cron(00 7 * * ? *)" # 7am UTC every day
+  schedule = "cron(00 2 * * ? *)" # 2am UTC every day
   type     = "SCHEDULED"
 
   actions {
