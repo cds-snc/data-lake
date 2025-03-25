@@ -292,10 +292,7 @@ def test_remove_old_data_empty_result(mock_timestamp, mock_wr_s3):
 
     remove_old_data("test-path", "test-table", ["month"])
 
-    args, kwargs = mock_wr_s3.to_parquet.call_args
-    filtered_df = kwargs["df"]
-
-    assert len(filtered_df) == 0
+    mock_wr_s3.to_parquet.assert_not_called()
 
 
 @patch("awswrangler.s3")
