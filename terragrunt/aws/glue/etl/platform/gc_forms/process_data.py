@@ -6,16 +6,30 @@ from typing import List
 import awswrangler as wr
 import pandas as pd
 
+from awsglue.utils import getResolvedOptions
 
-SOURCE_BUCKET = "cds-data-lake-raw-production"
-SOURCE_PREFIX = "platform/gc-forms"
-TRANSFORMED_BUCKET = "cds-data-lake-transformed-production"
-TRANSFORMED_PREFIX = "platform/gc-forms"
+args = getResolvedOptions(
+    sys.argv,
+    [
+        "source_bucket",
+        "source_prefix",
+        "transformed_bucket",
+        "transformed_prefix",
+        "database_name_raw",
+        "database_name_transformed",
+        "table_name_prefix",
+    ],
+)
+
+SOURCE_BUCKET = args["source_bucket"]
+SOURCE_PREFIX = args["source_prefix"]
+TRANSFORMED_BUCKET = args["transformed_bucket"]
+TRANSFORMED_PREFIX = args["transformed_prefix"]
 TRANSFORMED_PATH = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}"
 PARTITION_KEY = "month"
-DATABASE_NAME_RAW = "platform_gc_forms_production_raw"
-DATABASE_NAME_TRANSFORMED = "platform_gc_forms_production"
-TABLE_NAME_PREFIX = "platform_gc_forms"
+DATABASE_NAME_RAW = args["database_name_raw"]
+DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
+TABLE_NAME_PREFIX = args["table_name_prefix"]
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -94,17 +108,21 @@ def get_new_data(
     Reads the data from the specified path in S3 and returns a DataFrame.
     This method is responsible for ensuring the data types are correct and
     that only the most recent duplicate items are kept.
+
+    To limit unnecessary data processing, the data is filtered to only include
+    items that have been modified in the last 24 hours.
     """
     data = pd.DataFrame()
     try:
         logger.info(
             f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3..."
         )
+        yesterday = pd.Timestamp.today() - pd.Timedelta(days=1)
         data = wr.s3.read_parquet(
             path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/",
             use_threads=True,
             dataset=True,
-            # last_modified_begin=job.get_bookmark_values().get('last_modified')
+            last_modified_begin=yesterday,
         )
         data.columns = [col.lower() for col in data.columns]
 
@@ -127,7 +145,7 @@ def get_new_data(
             data["month"] = data[partition_created_column].dt.strftime("%Y-%m")
 
     except wr.exceptions.NoFilesFound:
-        logger.warning(f"No new {path} data found.")
+        logger.error(f"No new {path} data found.")
     return data
 
 
