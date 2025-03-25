@@ -1,11 +1,29 @@
 import pytest
+import sys
 
 from datetime import datetime, timedelta
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pandas as pd
 
 from awswrangler.exceptions import NoFilesFound
+
+# Create mock for getResolvedOptions that returns test arguments
+mock_args = {
+    "JOB_NAME": "test_job",
+    "source_bucket": "test-source-bucket",
+    "source_prefix": "test-source-prefix/",
+    "transformed_bucket": "test-transformed-bucket",
+    "transformed_prefix": "test-transformed-prefix/",
+    "database_name_raw": "test_raw_db",
+    "database_name_transformed": "test_transformed_db",
+    "table_name_prefix": "test_table",
+}
+
+# Mock the AWS Glue and PySpark modules
+mock_glue_utils = Mock()
+mock_glue_utils.getResolvedOptions.return_value = mock_args
+sys.modules["awsglue.utils"] = mock_glue_utils
 
 # flake8: noqa: E402
 from process_data import (
@@ -103,10 +121,14 @@ def test_is_type_compatible():
     assert is_type_compatible(pd.Series(["a", "b", "c"]), "unknown_type") is False
 
 
+@patch("pandas.Timestamp")
 @patch("awswrangler.s3")
-def test_get_new_data(mock_wr_s3, sample_data_df):
+def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
     # Mock AWS Wrangler response
     mock_wr_s3.read_parquet.return_value = sample_data_df
+    fixed_date = datetime(1970, 1, 2)
+    fixed_date_yesterday = datetime(1970, 1, 1)
+    mock_timestamp.today.return_value = fixed_date
 
     result = get_new_data(
         path="test-path",
@@ -120,6 +142,7 @@ def test_get_new_data(mock_wr_s3, sample_data_df):
         path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/test-path/",
         use_threads=True,
         dataset=True,
+        last_modified_begin=fixed_date_yesterday,
     )
 
     # Verify data is processed correctly
