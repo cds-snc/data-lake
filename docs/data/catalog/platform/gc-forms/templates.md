@@ -5,8 +5,9 @@ This dataset is still in testing and only a snapshot of Staging data is availabl
 
 ---
 
-Dataset providing GC Forms template data.  There are 3 tables as part of this dataset:
+Dataset providing GC Forms template data.  There are 4 tables as part of this dataset:
 
+- `historical_data`: one-time snapshot of published form data that was previously managed in an external source.
 - `template`: the templates that are used by GC Forms to render the form users fill out and submit.
 - `templateToUser`: a many-to-many relationship of templates to their owners.
 - `user`: the users that have logged into GC Forms.
@@ -15,6 +16,7 @@ No external user form submissions are part of this dataset. The only personally 
 
 This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the following Physical datasets:
 
+- `platform_gc_forms_historical_data`
 - `platform_gc_forms_template` 
 - `platform_gc_forms_templatetouser`
 - `platform_gc_forms_user`
@@ -27,13 +29,14 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the f
 
 ## Provenance
 
-This dataset is extracted daily from the GC Forms database's `Templates` and `Users` tables. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-forms/templates.md).
+With the exception of the `historical_data`, this dataset is extracted daily from the GC Forms database's `Templates` and `Users` tables. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-forms/templates.md).
 
 * `Updated`: Daily
 * `Steward`: GC Forms
 * `Contact`: [Vivian Nobrega](mailto:vivian.nobrega@cds-snc.ca)
 * `Location`: 
 ```
+s3://cds-data-lake-transformed-production/platform/gc-forms/historical-data/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/template/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/templateToUser/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/user/month=YYYY-MM/*.parquet
@@ -46,6 +49,26 @@ Almost all fields are sourced directly from the GC Forms database's `Templates` 
 [Queries to return example data](examples/templates.sql) have also been provided.
 
 Here's a descriptive list of the fields in each table:
+
+### Table: platform_gc_forms_historical_data
+
+| Field | Type | Description |
+|-------|------|-------------|
+| unique_id | string | Unique identifier for the historical record |
+| date | timestamp | Timestamp when the historical record was created |
+| metric | string | Type of historical record |
+| metric_format__from_metric_ | string | Format of the metric field (always "Number") |
+| unit_of_measurement | string | Unit used for measuring the metric |
+| department | string | Government department associated with the form |
+| client_email | string | Email address of the client who owns the form |
+| number_value | string | Numerical value of the metric (always "1") |
+| security_classification | string | Security classification of the form data (Protected A, Protected B, Unclassified) |
+| comment | string | Additional comments about the record |
+| publishing_description | string | Description provided when publishing the form |
+| published_form_type | string | Type of published form (Collection of Feedback, Benefit Administration, etc.) |
+| published_reason | string | Reason for publishing the form |
+| recorded_by | string | User who recorded this historical data entry |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_forms_template
 

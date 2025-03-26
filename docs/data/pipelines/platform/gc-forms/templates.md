@@ -10,6 +10,8 @@ The GC Forms `Templates` dataset provides information on form templates, and the
 
 There are no form submissions as part of this dataset and only the form owner's name and Government of Canada email address is available in the `users` table. The data is partitioned by month, and updated daily.  It can be queried in Superset as follows:
 
+Note that this dataset also contains a historical snapshot of published form information that was exported from a manually maintained external source.
+
 ```sql
 -- Templates
 SELECT 
@@ -37,13 +39,20 @@ SELECT
   template.*,
   user.*
 FROM 
-  platform_gc_forms_production.platform_gc_forms_template AS template
+  "platform_gc_forms_production.platform_gc_forms_template" AS template
 LEFT JOIN
-  platform_gc_forms_production.platform_gc_forms_templatetouser AS templateToUser
+  "platform_gc_forms_production.platform_gc_forms_templatetouser" AS templateToUser
   ON template.id = templateToUser.templateid
 LEFT JOIN
-  platform_gc_forms_production.platform_gc_forms_user AS user
+  "platform_gc_forms_production.platform_gc_forms_user" AS user
   ON user.id = templateToUser.userid
+LIMIT 10;
+
+-- Historical data export
+SELECT
+    *
+FROM
+    "platform_gc_forms_production.platform_gc_forms_historical_data"
 LIMIT 10;
 ```
 
