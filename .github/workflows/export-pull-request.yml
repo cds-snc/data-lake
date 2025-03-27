@@ -21,6 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         export:
+          - platform/gc_notify
           - platform/support/freshdesk
     steps:
       - name: Audit DNS requests
@@ -41,8 +42,13 @@ jobs:
               - 'export/${{ matrix.export }}/**'
               - '.github/workflows/export-pull-request.yml'
 
+      - name: Exit if no changes
+        if: steps.changes.outputs.export == 'false'
+        run: |
+          echo "No changes to test"
+          exit 0
+
       - name: Configure AWS credentials using OIDC
-        if: steps.changes.outputs.export == 'true'
         uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
         with:
           role-to-assume: arn:aws:iam::739275439843:role/data-lake-plan
@@ -50,16 +56,13 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
-        if: steps.changes.outputs.export == 'true'
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1 
 
       - name: Setup python
-        if: steps.changes.outputs.export == 'true'
         uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: "3.13"
 
       - name: Run PR tests
-        if: steps.changes.outputs.export == 'true'
         working-directory: ./export/${{ matrix.export }}
         run: make ARGS=--check pull_request
