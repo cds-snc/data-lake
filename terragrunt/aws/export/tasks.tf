@@ -1,8 +1,10 @@
 module "platform_notify_export" {
   source = "./platform/gc_notify"
 
-  account_id      = var.account_id
-  raw_bucket_name = var.raw_bucket_name
+  account_id                 = var.account_id
+  raw_bucket_name            = var.raw_bucket_name
+  sns_topic_alarm_action_arn = var.sns_topic_alarm_action_arn
+  sns_topic_ok_action_arn    = var.sns_topic_ok_action_arn
 
   billing_tag_value = var.billing_tag_value
 }

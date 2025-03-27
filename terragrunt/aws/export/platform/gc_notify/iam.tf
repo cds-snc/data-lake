@@ -34,6 +34,6 @@ data "aws_iam_policy_document" "platform_notify_rds_snapshot_exports" {
     actions = [
       "sts:AssumeRole",
     ]
-    resources = local.notify_rds_export_role_arns
+    resources = [local.gc_notify_rds_export_role_arn]
   }
 }

@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "platform_notify_rds_snapshot_exports_kms" {
 
     principals {
       type        = "AWS"
-      identifiers = local.notify_rds_export_role_arns
+      identifiers = [local.gc_notify_rds_export_role_arn]
     }
   }
 }
