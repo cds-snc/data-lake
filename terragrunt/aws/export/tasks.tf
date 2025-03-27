@@ -1,7 +1,10 @@
 module "platform_notify_export" {
   source = "./platform/gc_notify"
 
-  account_id = var.account_id
+  account_id      = var.account_id
+  raw_bucket_name = var.raw_bucket_name
+
+  billing_tag_value = var.billing_tag_value
 }
 
 module "platform_support_freshdesk_export" {
