@@ -1,5 +1,5 @@
 docker:
-	docker build --platform linux/amd64 --tag platform-support-freshdesk-export .
+	docker build --platform linux/arm64 --tag platform-support-freshdesk-export .
  
 fmt:
 	black . $(ARGS)

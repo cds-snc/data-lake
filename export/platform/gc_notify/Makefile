@@ -1,5 +1,5 @@
 docker:
-	docker build --platform linux/amd64 --tag platform-gc-notify-export .
+	docker build --platform linux/arm64 --tag platform-gc-notify-export .
  
 fmt:
 	black . $(ARGS)

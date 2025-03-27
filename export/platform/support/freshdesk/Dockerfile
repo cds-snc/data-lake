@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:2cb6ce5433f8ae6ddb114eeabc7b68c89b19017a57849f4e077a0cd3585e4e8c
+FROM public.ecr.aws/lambda/python:3.13@sha256:b281081b54f2b2df0ec1144ca128678fd0d4203eda3ee987c35e8bb64095b014
 
 COPY requirements.txt ${LAMBDA_TASK_ROOT}
 COPY main.py ${LAMBDA_TASK_ROOT}

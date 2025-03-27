@@ -15,7 +15,7 @@ env:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
   
 jobs:
   docker-build-push-deploy:
@@ -24,6 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - export: platform/gc_notify
+            lambda: platform-gc-notify-export
           - export: platform/support/freshdesk
             lambda: platform-support-freshdesk-export
 
@@ -46,8 +48,19 @@ jobs:
             - 'export/${{ matrix.export }}/**'
             - '.github/workflows/docker-apply-production.yml'
 
+    - name: Exit if no changes
+      if: steps.changes.outputs.export == 'false'
+      run: |
+        echo "No changes to test"
+        exit 0
+
+    - name: Setup QEMU
+      uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+
     - name: Configure AWS credentials using OIDC
-      if: steps.changes.outputs.export == 'true'
       uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
       with:
         role-to-assume: arn:aws:iam::739275439843:role/data-lake-apply
@@ -55,11 +68,9 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
-      if: steps.changes.outputs.export == 'true'
       uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
 
     - name: Build and push Docker image to Amazon ECR
-      if: steps.changes.outputs.export == 'true'
       working-directory: ./export/${{ matrix.export }}
       run: |
         make docker
@@ -69,11 +80,21 @@ jobs:
         docker push $REGISTRY/${{matrix.lambda}}:latest
 
     - name: Update Lambda Docker image
-      if: steps.changes.outputs.export == 'true'
       run: |
         aws lambda update-function-code \
           --function-name ${{matrix.lambda}} \
           --image-uri $REGISTRY/${{matrix.lambda}}:${{ env.TAG_VERSION }} > /dev/null 2>&1
         aws lambda wait function-updated \
           --function-name ${{matrix.lambda}}
+
+    - name: Docker generate SBOM
+      uses: cds-snc/security-tools/.github/actions/generate-sbom@34794baf2af592913bb5b51d8df4f8d0acc49b6f # v3.2.0
+      env:
+        TRIVY_DB_REPOSITORY: ${{ vars.TRIVY_DB_REPOSITORY }}
+      with:
+        docker_image: "$REGISTRY/${{matrix.lambda}}:${{ env.TAG_VERSION }}"
+        dockerfile_path: "./export/${{ matrix.export }}/Dockerfile"
+        platform: "linux/arm64"
+        sbom_name: "${{matrix.lambda}}"
+        token: "${{ secrets.GITHUB_TOKEN }}"
   
