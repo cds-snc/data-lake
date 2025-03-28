@@ -1,7 +1,7 @@
 import pytest
 import sys
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, patch
 
 import pandas as pd
@@ -31,6 +31,7 @@ from process_data import (
     is_type_compatible,
     get_new_data,
     process_data,
+    publish_metric,
     SOURCE_BUCKET,
     SOURCE_PREFIX,
 )
@@ -121,6 +122,44 @@ def test_is_type_compatible():
     assert is_type_compatible(pd.Series(["a", "b", "c"]), "unknown_type") is False
 
 
+@patch("process_data.datetime")
+@patch("process_data.logger")
+def test_publish_metric(mock_logger, mock_datetime):
+    mock_cloudwatch = Mock()
+    test_dataset = "test-dataset"
+    test_count = 100
+    test_processing_time = 5.25
+
+    fixed_timestamp = datetime(2025, 3, 28, 12, 0, 0, tzinfo=timezone.utc)
+    mock_datetime.now.return_value = fixed_timestamp
+
+    publish_metric(mock_cloudwatch, test_dataset, test_count, test_processing_time)
+
+    mock_cloudwatch.put_metric_data.assert_called_once_with(
+        Namespace="data-lake/etl/gc-forms",
+        MetricData=[
+            {
+                "MetricName": "ProcessedRecordCount",
+                "Dimensions": [{"Name": "Dataset", "Value": test_dataset}],
+                "Value": test_count,
+                "Timestamp": fixed_timestamp,
+                "Unit": "Count",
+            },
+            {
+                "MetricName": "ProcessingTime",
+                "Dimensions": [{"Name": "Dataset", "Value": test_dataset}],
+                "Value": test_processing_time,
+                "Timestamp": fixed_timestamp,
+                "Unit": "Seconds",
+            },
+        ],
+    )
+
+    mock_logger.info.assert_called_once_with(
+        f"Published metrics for {test_dataset}: {test_count} records in {test_processing_time:.2f}s"
+    )
+
+
 @patch("pandas.Timestamp")
 @patch("awswrangler.s3")
 def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
@@ -201,7 +240,9 @@ def test_get_new_data_no_files(mock_wr_s3):
 @patch("process_data.remove_old_data")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
+@patch("boto3.client")
 def test_process_data(
+    mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
     mock_remove_old_data,
@@ -209,6 +250,8 @@ def test_process_data(
     sample_data_df,
     glue_table_schema,
 ):
+    mock_cloudwatch = Mock()
+    mock_boto3_client.return_value = mock_cloudwatch
     mock_get_new_data.return_value = sample_data_df
     mock_wr_catalog.table.return_value = glue_table_schema
 
@@ -218,29 +261,41 @@ def test_process_data(
     assert mock_get_new_data.call_count == 4
     assert mock_wr_s3.to_parquet.call_count == 4
     assert mock_remove_old_data.call_count == 3
+    assert mock_cloudwatch.put_metric_data.call_count == 4
 
 
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
+@patch("boto3.client")
 def test_process_data_empty_dataset(
-    mock_wr_s3, mock_wr_catalog, mock_get_new_data, glue_table_schema
+    mock_boto3_client, mock_wr_s3, mock_wr_catalog, mock_get_new_data, glue_table_schema
 ):
+    mock_cloudwatch = Mock()
+    mock_boto3_client.return_value = mock_cloudwatch
     mock_get_new_data.return_value = pd.DataFrame()
     mock_wr_catalog.table.return_value = glue_table_schema
 
     process_data()
 
     mock_wr_s3.to_parquet.assert_not_called()
+    assert mock_cloudwatch.put_metric_data.call_count == 4
 
 
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
+@patch("boto3.client")
 def test_process_data_validation_failure(
-    mock_wr_s3, mock_wr_catalog, mock_get_new_data, sample_data_df, glue_table_schema
+    mock_boto3_client,
+    mock_wr_s3,
+    mock_wr_catalog,
+    mock_get_new_data,
+    sample_data_df,
+    glue_table_schema,
 ):
-    # Mock get_new_data to return sample data
+    mock_cloudwatch = Mock()
+    mock_boto3_client.return_value = mock_cloudwatch
     mock_get_new_data.return_value = sample_data_df
 
     # Mock table schema that will cause validation to fail (missing required column)
@@ -253,6 +308,7 @@ def test_process_data_validation_failure(
 
     # Verify to_parquet was not called
     mock_wr_s3.to_parquet.assert_not_called()
+    mock_cloudwatch.put_metric_data.assert_not_called()
 
 
 @patch("awswrangler.s3")

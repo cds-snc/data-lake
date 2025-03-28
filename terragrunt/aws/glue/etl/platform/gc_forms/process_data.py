@@ -1,9 +1,12 @@
 import logging
 import sys
+import time
 
+from datetime import datetime, timezone
 from typing import List
 
 import awswrangler as wr
+import boto3
 import pandas as pd
 
 from awsglue.utils import getResolvedOptions
@@ -177,6 +180,35 @@ def remove_old_data(path: str, table: str, partition_cols: List[str]):
         )
 
 
+def publish_metric(cloudwatch, dataset_name, count, processing_time):
+    """
+    Publish data processing metrics to CloudWatch
+    """
+    timestamp = datetime.now(timezone.utc)
+    cloudwatch.put_metric_data(
+        Namespace="data-lake/etl/gc-forms",
+        MetricData=[
+            {
+                "MetricName": "ProcessedRecordCount",
+                "Dimensions": [{"Name": "Dataset", "Value": dataset_name}],
+                "Value": count,
+                "Timestamp": timestamp,
+                "Unit": "Count",
+            },
+            {
+                "MetricName": "ProcessingTime",
+                "Dimensions": [{"Name": "Dataset", "Value": dataset_name}],
+                "Value": processing_time,
+                "Timestamp": timestamp,
+                "Unit": "Seconds",
+            },
+        ],
+    )
+    logger.info(
+        f"Published metrics for {dataset_name}: {count} records in {processing_time:.2f}s"
+    )
+
+
 def process_data():
     """
     Main ETL process to read data from S3, validate the schema, and save the
@@ -223,8 +255,10 @@ def process_data():
             "prune_old_data": True,
         },
     ]
+    cloudwatch = boto3.client("cloudwatch")
 
     for dataset in datasets:
+        start_time = time.time()
         path = dataset.get("path")
         table_name = path.lower().replace("-", "_")
         if "/" in table_name:
@@ -238,45 +272,46 @@ def process_data():
             dataset.get("sort_columns"),
             dataset.get("partition_created_column"),
         )
-        if data.empty:
-            logger.info(f"No new {path} data found.")
-            continue
+        if not data.empty:
+            glue_table_schema = wr.catalog.table(
+                database=DATABASE_NAME_RAW,
+                table=f"{TABLE_NAME_PREFIX}_raw_{table_name}",
+            )
+            if not validate_schema(
+                data, dataset.get("partition_columns"), glue_table_schema
+            ):
+                raise ValueError(
+                    f"Schema validation failed for {path}. Aborting ETL process."
+                )
 
-        # Validate the data schema
-        glue_table_schema = wr.catalog.table(
-            database=DATABASE_NAME_RAW, table=f"{TABLE_NAME_PREFIX}_raw_{table_name}"
-        )
-
-        if not validate_schema(
-            data, dataset.get("partition_columns"), glue_table_schema
-        ):
-            raise ValueError(
-                f"Schema validation failed for {path}. Aborting ETL process."
+            # Save the transformed data back to S3
+            logger.info(f"Saving new {path} DataFrame to S3...")
+            table = f"{TABLE_NAME_PREFIX}_{table_name}"
+            partition_cols = dataset.get("partition_columns")
+            wr.s3.to_parquet(
+                df=data,
+                path=f"{TRANSFORMED_PATH}/{path}/",
+                dataset=True,
+                mode="overwrite_partitions",
+                database=DATABASE_NAME_TRANSFORMED,
+                table=table,
+                partition_cols=partition_cols,
             )
 
-        # Save the transformed data back to S3
-        logger.info(f"Saving new {path} DataFrame to S3...")
-        table = f"{TABLE_NAME_PREFIX}_{table_name}"
-        partition_cols = dataset.get("partition_columns")
-        wr.s3.to_parquet(
-            df=data,
-            path=f"{TRANSFORMED_PATH}/{path}/",
-            dataset=True,
-            mode="overwrite_partitions",
-            database=DATABASE_NAME_TRANSFORMED,
-            table=table,
-            partition_cols=partition_cols,
-        )
+            # Remove transformed data that does not have a `timestamp` from today
+            # TODO: Better way to do this that does not involve reading all Transformed data
+            if dataset.get("prune_old_data"):
+                logger.info(f"Removing old {path} data...")
+                remove_old_data(path, table, partition_cols)
 
-        # Remove transformed data that does not have a `timestamp` from today
-        # TODO: Better way to do this that does not involve reading all Transformed data
-        if dataset.get("prune_old_data"):
-            logger.info(f"Removing old {path} data...")
-            remove_old_data(path, table, partition_cols)
+        else:
+            logger.info(f"No new {path} data found.")
+
+        processing_time = time.time() - start_time
+        publish_metric(cloudwatch, path, len(data), processing_time)
 
     logger.info("ETL process completed successfully.")
 
 
-# TODO: convert to Glue ETL job with job bookmarks
 if __name__ == "__main__":
     process_data()
