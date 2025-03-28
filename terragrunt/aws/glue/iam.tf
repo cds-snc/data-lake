@@ -90,7 +90,8 @@ data "aws_iam_policy_document" "glue_etl_combined" {
   source_policy_documents = [
     data.aws_iam_policy_document.s3_read_data_lake.json,
     data.aws_iam_policy_document.s3_write_data_lake.json,
-    data.aws_iam_policy_document.glue_kms.json
+    data.aws_iam_policy_document.glue_kms.json,
+    data.aws_iam_policy_document.cloudwatch_put_metrics.json
   ]
 }
 
@@ -182,6 +183,19 @@ data "aws_iam_policy_document" "s3_write_data_lake" {
       "${var.curated_bucket_arn}/*",
       "${var.transformed_bucket_arn}/*",
       "${var.raw_bucket_arn}/*"
+    ]
+  }
+}
+
+data "aws_iam_policy_document" "cloudwatch_put_metrics" {
+  statement {
+    sid    = "PutCloudWatchMetrics"
+    effect = "Allow"
+    actions = [
+      "cloudwatch:PutMetricData"
+    ]
+    resources = [
+      "*" # Only wildcard is allowed for this action
     ]
   }
 }
