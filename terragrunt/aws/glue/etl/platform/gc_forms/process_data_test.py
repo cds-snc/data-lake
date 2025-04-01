@@ -172,7 +172,6 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
     result = get_new_data(
         path="test-path",
         date_columns=["date", "timestamp", "created_at"],
-        sort_columns=["id"],
         partition_created_column="created_at",
     )
 
@@ -194,32 +193,6 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
 
 
 @patch("awswrangler.s3")
-def test_get_new_data_with_sorting(mock_wr_s3):
-    # Create data with duplicates to test sorting and deduplication
-    data_with_dupes = pd.DataFrame(
-        {
-            "id": ["1", "2", "1"],  # Duplicate ID 1
-            "timestamp": pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-03"]),
-            "date": pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-03"]),
-        }
-    )
-    mock_wr_s3.read_parquet.return_value = data_with_dupes
-
-    result = get_new_data(
-        path="test-path",
-        date_columns=["date", "timestamp"],
-        sort_columns=["id"],
-        partition_created_column=None,
-    )
-
-    # Should have dropped the duplicate with older timestamp
-    assert len(result) == 2
-    assert result[result["id"] == "1"]["timestamp"].iloc[0] == pd.Timestamp(
-        "2024-01-03"
-    )
-
-
-@patch("awswrangler.s3")
 def test_get_new_data_no_files(mock_wr_s3):
     # Mock no files found exception
     mock_wr_s3.read_parquet.side_effect = NoFilesFound("No files found")
@@ -227,7 +200,6 @@ def test_get_new_data_no_files(mock_wr_s3):
     result = get_new_data(
         path="test-path",
         date_columns=["date"],
-        sort_columns=["id"],
         partition_created_column="date",
     )
 
@@ -237,7 +209,6 @@ def test_get_new_data_no_files(mock_wr_s3):
 
 
 @patch("process_data.get_new_data")
-@patch("process_data.remove_old_data")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
@@ -245,7 +216,6 @@ def test_process_data(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
-    mock_remove_old_data,
     mock_get_new_data,
     sample_data_df,
     glue_table_schema,
@@ -260,7 +230,6 @@ def test_process_data(
     # Verify a call for each dataset
     assert mock_get_new_data.call_count == 4
     assert mock_wr_s3.to_parquet.call_count == 4
-    assert mock_remove_old_data.call_count == 3
     assert mock_cloudwatch.put_metric_data.call_count == 4
 
 
@@ -309,90 +278,3 @@ def test_process_data_validation_failure(
     # Verify to_parquet was not called
     mock_wr_s3.to_parquet.assert_not_called()
     mock_cloudwatch.put_metric_data.assert_not_called()
-
-
-@patch("awswrangler.s3")
-@patch("pandas.Timestamp")
-def test_remove_old_data_filters_correctly(mock_timestamp, mock_wr_s3):
-    today = datetime(2025, 3, 24)
-    yesterday = today - timedelta(days=1)
-    mock_timestamp.today.return_value = today
-
-    test_data = pd.DataFrame(
-        {
-            "timestamp": [
-                today,  # Today - keep
-                yesterday + timedelta(hours=1),  # Yesterday after cutoff - keep
-                yesterday - timedelta(hours=1),  # Yesterday before cutoff - remove
-                yesterday - timedelta(days=5),  # Old data - remove
-            ],
-            "value": [1, 2, 3, 4],
-        }
-    )
-
-    mock_wr_s3.read_parquet.return_value = test_data
-
-    from process_data import remove_old_data, TRANSFORMED_PATH
-
-    remove_old_data("test-path", "test-table", ["month"])
-
-    args, kwargs = mock_wr_s3.to_parquet.call_args
-    filtered_df = kwargs["df"]
-
-    assert len(filtered_df) == 2
-    assert 1 in filtered_df["value"].values
-    assert 2 in filtered_df["value"].values
-    assert 3 not in filtered_df["value"].values
-    assert 4 not in filtered_df["value"].values
-
-    mock_wr_s3.to_parquet.assert_called_once()
-
-
-@patch("awswrangler.s3")
-@patch("pandas.Timestamp")
-def test_remove_old_data_empty_result(mock_timestamp, mock_wr_s3):
-    today = datetime(2025, 3, 24)
-    yesterday = today - timedelta(days=1)
-    mock_timestamp.today.return_value = today
-
-    test_data = pd.DataFrame(
-        {
-            "timestamp": [
-                yesterday - timedelta(hours=1),
-                yesterday - timedelta(days=5),
-            ],
-            "value": [1, 2],
-        }
-    )
-
-    mock_wr_s3.read_parquet.return_value = test_data
-
-    from process_data import remove_old_data
-
-    remove_old_data("test-path", "test-table", ["month"])
-
-    mock_wr_s3.to_parquet.assert_not_called()
-
-
-@patch("awswrangler.s3")
-@patch("pandas.Timestamp")
-def test_remove_old_data_keep_all(mock_timestamp, mock_wr_s3):
-    today = datetime(2025, 3, 24)
-    yesterday = today - timedelta(days=1)
-    mock_timestamp.today.return_value = today
-
-    test_data = pd.DataFrame(
-        {"timestamp": [today, yesterday + timedelta(hours=1)], "value": [1, 2]}
-    )
-
-    mock_wr_s3.read_parquet.return_value = test_data
-
-    from process_data import remove_old_data
-
-    remove_old_data("test-path", "test-table", ["month"])
-
-    args, kwargs = mock_wr_s3.to_parquet.call_args
-    filtered_df = kwargs["df"]
-
-    assert len(filtered_df) == 2
-    assert set(filtered_df["value"].values) == {1, 2}
