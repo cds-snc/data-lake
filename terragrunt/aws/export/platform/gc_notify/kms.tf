@@ -45,5 +45,10 @@ data "aws_iam_policy_document" "platform_notify_rds_snapshot_exports_kms" {
       type        = "AWS"
       identifiers = [local.gc_notify_rds_export_role_arn]
     }
+
+    principals {
+      type        = "Service"
+      identifiers = ["glue.amazonaws.com"]
+    }
   }
 }

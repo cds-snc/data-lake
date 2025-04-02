@@ -51,6 +51,7 @@ resource "aws_glue_trigger" "platform_gc_forms_job" {
   name     = "Platform / GC Forms"
   schedule = "cron(00 2 * * ? *)" # 2am UTC every day
   type     = "SCHEDULED"
+  enabled  = false
 
   actions {
     job_name = aws_glue_job.platform_gc_forms_job.name
