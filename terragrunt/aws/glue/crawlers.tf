@@ -61,7 +61,8 @@ resource "aws_glue_crawler" "platform_gc_notify_production_raw" {
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
 
   s3_target {
-    path = "s3://${var.raw_bucket_name}/platform/gc-notify"
+    path       = "s3://${var.raw_bucket_name}/platform/gc-notify"
+    exclusions = ["**/*.json"]
   }
 
   configuration = jsonencode(
@@ -71,8 +72,11 @@ resource "aws_glue_crawler" "platform_gc_notify_production_raw" {
           TableThreshold = 14
         }
       }
+      Grouping = {
+        TableLevelConfiguration = 4
+      }
       CreatePartitionIndex = true
-      Version              = 1
+      Version              = 1.0
   })
 }
 

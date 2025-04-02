@@ -57,7 +57,8 @@ resource "aws_iam_policy" "glue_crawler" {
 data "aws_iam_policy_document" "glue_crawler_combined" {
   source_policy_documents = [
     data.aws_iam_policy_document.s3_read_data_lake.json,
-    data.aws_iam_policy_document.glue_kms.json
+    data.aws_iam_policy_document.glue_kms.json,
+    data.aws_iam_policy_document.gc_notify_rds_export_kms.json
   ]
 }
 
@@ -91,6 +92,7 @@ data "aws_iam_policy_document" "glue_etl_combined" {
     data.aws_iam_policy_document.s3_read_data_lake.json,
     data.aws_iam_policy_document.s3_write_data_lake.json,
     data.aws_iam_policy_document.glue_kms.json,
+    data.aws_iam_policy_document.gc_notify_rds_export_kms.json,
     data.aws_iam_policy_document.cloudwatch_put_metrics.json
   ]
 }
@@ -142,7 +144,6 @@ data "aws_iam_policy_document" "glue_kms" {
     sid    = "UseGlueKey"
     effect = "Allow"
     actions = [
-      "kms:CreateGrant",
       "kms:Decrypt",
       "kms:DescribeKey",
       "kms:Encrypt",
@@ -150,7 +151,6 @@ data "aws_iam_policy_document" "glue_kms" {
       "kms:GenerateDataKeyWithoutPlaintext",
       "kms:ReEncryptFrom",
       "kms:ReEncryptTo",
-      "kms:RetireGrant"
     ]
     resources = [
       aws_kms_key.aws_glue.arn
@@ -169,6 +169,30 @@ data "aws_iam_policy_document" "glue_kms" {
       "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/python-jobs*",
       "arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws-glue/sessions*"
     ]
+  }
+}
+
+data "aws_iam_policy_document" "gc_notify_rds_export_kms" {
+  statement {
+    sid    = "UseNotifyRdsExportKey"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+      "kms:Encrypt",
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:ReEncryptFrom",
+      "kms:ReEncryptTo",
+    ]
+    resources = [
+      "arn:aws:kms:${var.region}:${var.account_id}:key/*"
+    ]
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "kms:ResourceAliases"
+      values   = ["alias/platform-notify-rds-snapshot-exports"]
+    }
   }
 }
 
