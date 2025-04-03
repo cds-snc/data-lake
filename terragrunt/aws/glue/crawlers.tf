@@ -49,38 +49,6 @@ resource "aws_glue_crawler" "platform_gc_forms_templates_production_raw" {
 }
 
 #
-# Platform / GC Notify
-#
-resource "aws_glue_crawler" "platform_gc_notify_production_raw" {
-  name          = "Platform / GC Notify"
-  description   = "Classify the raw GC Notify data"
-  database_name = aws_glue_catalog_database.platform_gc_notify_production_raw.name
-  table_prefix  = "platform_gc_notify_raw_"
-
-  role                   = aws_iam_role.glue_crawler.arn
-  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-
-  s3_target {
-    path       = "s3://${var.raw_bucket_name}/platform/gc-notify"
-    exclusions = ["**/*.json"]
-  }
-
-  configuration = jsonencode(
-    {
-      CrawlerOutput = {
-        Tables = {
-          TableThreshold = 14
-        }
-      }
-      Grouping = {
-        TableLevelConfiguration = 4
-      }
-      CreatePartitionIndex = true
-      Version              = 1.0
-  })
-}
-
-#
 # Platform / Support / Freshdesk
 #
 resource "aws_glue_crawler" "platform_support_freshdesk_production" {

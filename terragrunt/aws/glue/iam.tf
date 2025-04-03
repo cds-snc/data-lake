@@ -57,8 +57,7 @@ resource "aws_iam_policy" "glue_crawler" {
 data "aws_iam_policy_document" "glue_crawler_combined" {
   source_policy_documents = [
     data.aws_iam_policy_document.s3_read_data_lake.json,
-    data.aws_iam_policy_document.glue_kms.json,
-    data.aws_iam_policy_document.gc_notify_rds_export_kms.json
+    data.aws_iam_policy_document.glue_kms.json
   ]
 }
 
