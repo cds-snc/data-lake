@@ -1,0 +1,23 @@
+{
+  "table_name": "login_events",
+  "partition_timestamp": "created_at",
+  "partition_cols": ["year", "month"],
+  "fields": [
+    {
+      "name": "id",
+      "type": "uuid"
+    },
+    {
+      "name": "user_id",
+      "type": "uuid"
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "updated_at",
+      "type": "timestamp"
+    }
+  ]
+}

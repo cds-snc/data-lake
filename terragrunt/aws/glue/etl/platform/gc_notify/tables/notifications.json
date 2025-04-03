@@ -1,0 +1,135 @@
+{
+  "table_name": "notifications",
+  "partition_timestamp": "created_at",
+  "partition_cols": ["year", "month"],
+  "fields": [
+    {
+      "name": "id",
+      "type": "uuid"
+    },
+    {
+      "name": "job_id",
+      "type": "uuid"
+    },
+    {
+      "name": "job_row_number",
+      "type": "integer"
+    },
+    {
+      "name": "service_id",
+      "type": "uuid"
+    },
+    {
+      "name": "template_id",
+      "type": "uuid"
+    },
+    {
+      "name": "template_version",
+      "type": "integer"
+    },
+    {
+      "name": "api_key_id",
+      "type": "uuid"
+    },
+    {
+      "name": "key_type",
+      "type": "varchar"
+    },
+    {
+      "name": "notification_type",
+      "type": "notification_type"
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "sent_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "updated_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "reference",
+      "type": "varchar"
+    },
+    {
+      "name": "billable_units",
+      "type": "integer"
+    },
+    {
+      "name": "client_reference",
+      "type": "varchar"
+    },
+    {
+      "name": "international",
+      "type": "boolean"
+    },
+    {
+      "name": "phone_prefix",
+      "type": "varchar"
+    },
+    {
+      "name": "rate_multiplier",
+      "type": "numeric"
+    },
+    {
+      "name": "notification_status",
+      "type": "text"
+    },
+    {
+      "name": "created_by_id",
+      "type": "uuid"
+    },
+    {
+      "name": "queue_name",
+      "type": "text"
+    },
+    {
+      "name": "feedback_type",
+      "type": "notification_feedback_types"
+    },
+    {
+      "name": "feedback_subtype",
+      "type": "notification_feedback_subtypes"
+    },
+    {
+      "name": "ses_feedback_id",
+      "type": "varchar"
+    },
+    {
+      "name": "ses_feedback_date",
+      "type": "timestamp"
+    },
+    {
+      "name": "sms_total_message_price",
+      "type": "float"
+    },
+    {
+      "name": "sms_total_carrier_fee",
+      "type": "float"
+    },
+    {
+      "name": "sms_iso_country_code",
+      "type": "varchar"
+    },
+    {
+      "name": "sms_carrier_name",
+      "type": "varchar"
+    },
+    {
+      "name": "sms_message_encoding",
+      "type": "varchar"
+    },
+    {
+      "name": "sms_origination_phone_number",
+      "type": "varchar"
+    },
+    {
+      "name": "feedback_reason",
+      "type": "varchar"
+    }
+  ]
+}

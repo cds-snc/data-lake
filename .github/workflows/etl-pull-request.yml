@@ -19,6 +19,7 @@ jobs:
         etl:
           - bes/crm
           - platform/gc_forms
+          - platform/gc_notify
           - platform/support/freshdesk
     steps:
       - name: Audit DNS requests

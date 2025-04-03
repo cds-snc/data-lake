@@ -1,0 +1,59 @@
+{
+    "table_name": "templates_history",
+    "partition_timestamp": "created_at",
+    "partition_cols": ["year", "month"],
+    "fields": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "template_type",
+        "type": "template_type"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "service_id",
+        "type": "uuid"
+      },
+      {
+        "name": "created_by_id",
+        "type": "uuid"
+      },
+      {
+        "name": "version",
+        "type": "integer"
+      },
+      {
+        "name": "archived",
+        "type": "boolean"
+      },
+      {
+        "name": "process_type",
+        "type": "varchar"
+      },
+      {
+        "name": "hidden",
+        "type": "boolean"
+      },
+      {
+        "name": "template_category_id",
+        "type": "uuid"
+      },
+      {
+        "name": "text_direction_rtl",
+        "type": "boolean"
+      }
+    ]
+  }
