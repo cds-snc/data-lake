@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import time
+import zipfile
 
 from datetime import datetime, timezone
 from typing import List, TypedDict
@@ -12,14 +13,29 @@ import boto3
 import pandas as pd
 import pyarrow.dataset as ds
 
+from awsglue.utils import getResolvedOptions
 
-SOURCE_BUCKET = "cds-data-lake-raw-production"
-SOURCE_PREFIX = "platform/gc-notify"
-TRANSFORMED_BUCKET = "cds-data-lake-transformed-production"
-TRANSFORMED_PREFIX = "platform/gc-notify"
+args = getResolvedOptions(
+    sys.argv,
+    [
+        "source_bucket",
+        "source_prefix",
+        "transformed_bucket",
+        "transformed_prefix",
+        "database_name_transformed",
+        "table_config_object",
+        "table_name_prefix",
+    ],
+)
+
+SOURCE_BUCKET = args["source_bucket"]
+SOURCE_PREFIX = args["source_prefix"]
+TRANSFORMED_BUCKET = args["transformed_bucket"]
+TRANSFORMED_PREFIX = args["transformed_prefix"]
 TRANSFORMED_PATH = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}"
-DATABASE_NAME_TRANSFORMED = "platform_gc_notify_production"
-TABLE_NAME_PREFIX = "platform_gc_notify"
+DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
+TABLE_CONFIG_OBJECT = args["table_config_object"]
+TABLE_NAME_PREFIX = args["table_name_prefix"]
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -192,7 +208,13 @@ def publish_metric(cloudwatch, dataset_name, count, processing_time):
 
 def get_dataset_config():
     datasets = []
-    tables_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tables")
+
+    current_dir = os.getcwd()
+    tables_dir = os.path.join(current_dir, "tables")
+    tables_zip = os.path.join(current_dir, "tables.zip")
+
+    with zipfile.ZipFile(tables_zip, "r") as zip_ref:
+        zip_ref.extractall(tables_dir)
 
     try:
         for filename in os.listdir(tables_dir):
@@ -226,6 +248,16 @@ def get_dataset_config():
     return datasets
 
 
+def download_s3_object(s3, s3_url, filename):
+    bucket_name = s3_url.split("/")[2]
+    object_key = "/".join(s3_url.split("/")[3:])
+    s3.download_file(
+        Bucket=bucket_name,
+        Key=object_key,
+        Filename=os.path.join(os.getcwd(), filename),
+    )
+
+
 def process_data():
     """
     Main ETL process to read data from S3, validate the schema, and save the
@@ -234,6 +266,9 @@ def process_data():
     today = datetime.now().strftime("%Y-%m-%d")
     path_prefix = f"notification-canada-ca-staging-cluster-{today}/NotificationCanadaCastaging/public."
     cloudwatch = boto3.client("cloudwatch")
+    s3 = boto3.client("s3")
+
+    download_s3_object(s3, TABLE_CONFIG_OBJECT, "tables.zip")
 
     datasets = get_dataset_config()
     for dataset in datasets:
