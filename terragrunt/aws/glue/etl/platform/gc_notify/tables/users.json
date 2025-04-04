@@ -1,0 +1,51 @@
+{
+    "table_name": "users",
+    "partition_timestamp": "created_at",
+    "partition_cols": ["year", "month"],
+    "fields": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "password_changed_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "logged_in_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "failed_login_count",
+        "type": "int"
+      },
+      {
+        "name": "state",
+        "type": "varchar"
+      },
+      {
+        "name": "platform_admin",
+        "type": "bool"
+      },
+      {
+        "name": "auth_type",
+        "type": "varchar"
+      },
+      {
+        "name": "blocked",
+        "type": "bool"
+      },
+      {
+        "name": "password_expired",
+        "type": "bool"
+      }
+    ]
+  }

@@ -1,0 +1,27 @@
+{
+    "table_name": "permissions",
+    "partition_timestamp": "created_at",
+    "partition_cols": ["year", "month"],
+    "fields": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "service_id",
+        "type": "uuid"
+      },
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "permission",
+        "type": "permission_types"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      }
+    ]
+  }

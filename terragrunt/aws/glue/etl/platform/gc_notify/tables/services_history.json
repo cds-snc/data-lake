@@ -1,0 +1,123 @@
+{
+    "table_name": "services_history",
+    "partition_timestamp": "created_at",
+    "partition_cols": ["year", "month"],
+    "fields": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "active",
+        "type": "boolean"
+      },
+      {
+        "name": "message_limit",
+        "type": "integer"
+      },
+      {
+        "name": "restricted",
+        "type": "boolean"
+      },
+      {
+        "name": "email_from",
+        "type": "text"
+      },
+      {
+        "name": "created_by_id",
+        "type": "uuid"
+      },
+      {
+        "name": "version",
+        "type": "integer"
+      },
+      {
+        "name": "research_mode",
+        "type": "boolean"
+      },
+      {
+        "name": "organisation_type",
+        "type": "varchar"
+      },
+      {
+        "name": "prefix_sms",
+        "type": "boolean"
+      },
+      {
+        "name": "crown",
+        "type": "boolean"
+      },
+      {
+        "name": "rate_limit",
+        "type": "integer"
+      },
+      {
+        "name": "consent_to_research",
+        "type": "boolean"
+      },
+      {
+        "name": "volume_email",
+        "type": "integer"
+      },
+      {
+        "name": "volume_sms",
+        "type": "integer"
+      },
+      {
+        "name": "count_as_live",
+        "type": "boolean"
+      },
+      {
+        "name": "go_live_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "go_live_user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "organisation_id",
+        "type": "uuid"
+      },
+      {
+        "name": "sending_domain",
+        "type": "text"
+      },
+      {
+        "name": "default_branding_is_french",
+        "type": "boolean"
+      },
+      {
+        "name": "sms_daily_limit",
+        "type": "integer"
+      },
+      {
+        "name": "organisation_notes",
+        "type": "varchar"
+      },
+      {
+        "name": "sensitive_service",
+        "type": "boolean"
+      },
+      {
+        "name": "email_annual_limit",
+        "type": "integer"
+      },
+      {
+        "name": "sms_annual_limit",
+        "type": "integer"
+      }
+    ]
+  }

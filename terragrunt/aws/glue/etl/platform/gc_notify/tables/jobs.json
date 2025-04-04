@@ -1,0 +1,83 @@
+{
+  "table_name": "jobs",
+  "partition_timestamp": "created_at",
+  "partition_cols": ["year", "month"],
+  "fields": [
+    {
+      "name": "id",
+      "type": "uuid"
+    },
+    {
+      "name": "original_file_name",
+      "type": "varchar"
+    },
+    {
+      "name": "service_id",
+      "type": "uuid"
+    },
+    {
+      "name": "template_id",
+      "type": "uuid"
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "updated_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "notification_count",
+      "type": "integer"
+    },
+    {
+      "name": "notifications_sent",
+      "type": "integer"
+    },
+    {
+      "name": "processing_started",
+      "type": "timestamp"
+    },
+    {
+      "name": "processing_finished",
+      "type": "timestamp"
+    },
+    {
+      "name": "created_by_id",
+      "type": "uuid"
+    },
+    {
+      "name": "template_version",
+      "type": "integer"
+    },
+    {
+      "name": "notifications_delivered",
+      "type": "integer"
+    },
+    {
+      "name": "notifications_failed",
+      "type": "integer"
+    },
+    {
+      "name": "job_status",
+      "type": "varchar"
+    },
+    {
+      "name": "scheduled_for",
+      "type": "timestamp"
+    },
+    {
+      "name": "archived",
+      "type": "boolean"
+    },
+    {
+      "name": "api_key_id",
+      "type": "uuid"
+    },
+    {
+      "name": "sender_id",
+      "type": "uuid"
+    }
+  ]
+}

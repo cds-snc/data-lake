@@ -1,0 +1,51 @@
+{
+    "table_name": "template_categories",
+    "partition_timestamp": "created_at",
+    "partition_cols": ["year", "month"],
+    "fields": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "name_en",
+        "type": "varchar"
+      },
+      {
+        "name": "name_fr",
+        "type": "varchar"
+      },
+      {
+        "name": "description_en",
+        "type": "varchar"
+      },
+      {
+        "name": "description_fr",
+        "type": "varchar"
+      },
+      {
+        "name": "sms_process_type",
+        "type": "varchar"
+      },
+      {
+        "name": "email_process_type",
+        "type": "varchar"
+      },
+      {
+        "name": "hidden",
+        "type": "boolean"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "sms_sending_vehicle",
+        "type": "sms_sending_vehicle"
+      }
+    ]
+  }

@@ -1,0 +1,59 @@
+{
+    "table_name": "organisation",
+    "partition_timestamp": "created_at",
+    "partition_cols": ["year", "month"],
+    "fields": [
+      {
+        "name": "id",
+        "type": "uuid"
+      },
+      {
+        "name": "name",
+        "type": "varchar"
+      },
+      {
+        "name": "active",
+        "type": "boolean"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "updated_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "email_branding_id",
+        "type": "uuid"
+      },
+      {
+        "name": "agreement_signed",
+        "type": "boolean"
+      },
+      {
+        "name": "agreement_signed_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "agreement_signed_by_id",
+        "type": "uuid"
+      },
+      {
+        "name": "agreement_signed_version",
+        "type": "float"
+      },
+      {
+        "name": "crown",
+        "type": "boolean"
+      },
+      {
+        "name": "organisation_type",
+        "type": "varchar"
+      },
+      {
+        "name": "default_branding_is_french",
+        "type": "boolean"
+      }
+    ]
+  }

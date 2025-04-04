@@ -1,0 +1,13 @@
+{
+    "table_name": "user_to_organisation",
+    "fields": [
+      {
+        "name": "user_id",
+        "type": "uuid"
+      },
+      {
+        "name": "organisation_id",
+        "type": "uuid"
+      }
+    ]
+  }
