@@ -72,17 +72,17 @@ resource "aws_s3_object" "platform_gc_notify_job" {
   etag   = filemd5(data.local_file.platform_gc_notify_job.filename)
 }
 
-data "archive_file" "platform_gc_notify_dependencies" {
+data "archive_file" "platform_gc_notify_tables" {
   type        = "zip"
   source_dir  = "${path.module}/etl/platform/gc_notify/tables"
   output_path = "${path.module}/etl/platform/gc_notify/tables.zip"
 }
 
-resource "aws_s3_object" "platform_gc_notify_dependencies" {
+resource "aws_s3_object" "platform_gc_notify_tables" {
   bucket = var.glue_bucket_name
-  key    = "platform/gc_notify/dependencies.zip"
-  source = data.archive_file.platform_gc_notify_dependencies.output_path
-  etag   = data.archive_file.platform_gc_notify_dependencies.output_md5
+  key    = "platform/gc_notify/tables.zip"
+  source = data.archive_file.platform_gc_notify_tables.output_path
+  etag   = data.archive_file.platform_gc_notify_tables.output_md5
 }
 
 resource "aws_glue_job" "platform_gc_notify_job" {
@@ -109,13 +109,13 @@ resource "aws_glue_job" "platform_gc_notify_job" {
     "--enable-job-insights"              = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
-    "--extra-py-files"                   = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_notify_dependencies.key}"
     "--job-language"                     = "python"
     "--source_bucket"                    = var.raw_bucket_name
     "--source_prefix"                    = "platform/gc-notify"
     "--transformed_bucket"               = var.transformed_bucket_name
     "--transformed_prefix"               = "platform/gc-notify"
     "--database_name_transformed"        = aws_glue_catalog_database.platform_gc_notify_production.name
+    "--table_config_object"              = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_notify_tables.key}"
     "--table_name_prefix"                = "platform_gc_notify"
   }
 }
