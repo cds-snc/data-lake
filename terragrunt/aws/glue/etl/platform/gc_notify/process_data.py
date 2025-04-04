@@ -12,14 +12,27 @@ import boto3
 import pandas as pd
 import pyarrow.dataset as ds
 
+from awsglue.utils import getResolvedOptions
 
-SOURCE_BUCKET = "cds-data-lake-raw-production"
-SOURCE_PREFIX = "platform/gc-notify"
-TRANSFORMED_BUCKET = "cds-data-lake-transformed-production"
-TRANSFORMED_PREFIX = "platform/gc-notify"
+args = getResolvedOptions(
+    sys.argv,
+    [
+        "source_bucket",
+        "source_prefix",
+        "transformed_bucket",
+        "transformed_prefix",
+        "database_name_transformed",
+        "table_name_prefix",
+    ],
+)
+
+SOURCE_BUCKET = args["source_bucket"]
+SOURCE_PREFIX = args["source_prefix"]
+TRANSFORMED_BUCKET = args["transformed_bucket"]
+TRANSFORMED_PREFIX = args["transformed_prefix"]
 TRANSFORMED_PATH = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}"
-DATABASE_NAME_TRANSFORMED = "platform_gc_notify_production"
-TABLE_NAME_PREFIX = "platform_gc_notify"
+DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
+TABLE_NAME_PREFIX = args["table_name_prefix"]
 
 # Initialize logging
 logger = logging.getLogger(__name__)
