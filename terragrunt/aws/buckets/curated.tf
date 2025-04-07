@@ -2,7 +2,7 @@
 # Holds enriched data that has been created by combining multiple transformed datasets
 #
 module "curated_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v10.3.2"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=v10.4.1"
   bucket_name       = "cds-data-lake-curated-${var.env}"
   billing_tag_value = var.billing_tag_value
 
