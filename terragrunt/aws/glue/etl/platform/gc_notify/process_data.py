@@ -119,6 +119,9 @@ def get_new_data(
     This method is responsible for ensuring the data types are correct.
     """
     data = pd.DataFrame()
+    field_names = [field["name"] for field in fields]
+    s3_path = f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/"
+
     try:
         logger.info(
             f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3..."
@@ -126,33 +129,27 @@ def get_new_data(
 
         # Only get new data since yesterday
         if incremental_load and partition_timestamp:
-            dataset = ds.dataset(
-                f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/", format="parquet"
-            )
-
-            # Filter for records newer than last processed timestamp
+            logger.info("Incremental data load...")
+            dataset = ds.dataset(s3_path, format="parquet")
             yesterday = pd.Timestamp().now().normalize() - pd.Timedelta(days=1)
             filter_expr = (
                 ds.field(partition_timestamp).cast("timestamp[ns]") > yesterday
             )
-            scanner = dataset.scanner(filter=filter_expr)
+            scanner = dataset.scanner(filter=filter_expr, columns=field_names)
             table = scanner.to_table()
             data = table.to_pandas()
 
         # If not incremental load, read all data
         else:
+            logger.info("Full data load...")
             data = wr.s3.read_parquet(
-                path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/",
+                path=s3_path,
                 use_threads=True,
                 dataset=True,
+                columns=field_names,
             )
 
         logger.info(f"Loaded {len(data)} new records")
-
-        # Remove all columns not in the fields list
-        data = data[
-            [field["name"] for field in fields if field["name"] in data.columns]
-        ]
 
         # Ensure timestamps are parsed correctly and all timezones are treated as UTC
         for field in fields:
@@ -162,15 +159,19 @@ def get_new_data(
                 data[date_column] = data[date_column].dt.tz_localize(None)
 
         # Define partition columns
-        partition_format = {
-            "day": "%Y-%m-%d",
-            "month": "%Y-%m",
-            "year": "%Y",
-        }
-        for partition in partition_cols or []:
-            data[partition] = data[partition_timestamp].dt.strftime(
-                partition_format[partition]
-            )
+        if partition_timestamp and partition_cols:
+            # Remove rows if they do not have the partition_timestamp column
+            data = data[~data[partition_timestamp].isna()]
+
+            partition_format = {
+                "day": "%Y-%m-%d",
+                "month": "%Y-%m",
+                "year": "%Y",
+            }
+            for partition in partition_cols:
+                data[partition] = data[partition_timestamp].dt.strftime(
+                    partition_format[partition]
+                )
 
     except wr.exceptions.NoFilesFound:
         logger.error(f"No new {path} data found.")
@@ -268,13 +269,17 @@ def process_data():
     cloudwatch = boto3.client("cloudwatch")
     s3 = boto3.client("s3")
 
+    # Download the table configuration file from S3
     download_s3_object(s3, TABLE_CONFIG_OBJECT, "tables.zip")
 
+    # Read the dataset configuration and start processing
     datasets = get_dataset_config()
     for dataset in datasets:
         start_time = time.time()
         table_name = dataset.get("table_name")
         path = f"{path_prefix}{table_name}"
+        partition_cols = dataset.get("partition_cols")
+        incremental_load = dataset.get("incremental_load", False)
 
         # Retreive the new data
         logger.info(f"Processing {table_name} data...")
@@ -282,7 +287,8 @@ def process_data():
             path,
             dataset.get("fields"),
             dataset.get("partition_timestamp"),
-            dataset.get("partition_cols"),
+            partition_cols,
+            incremental_load,
         )
         if not data.empty:
             if not validate_schema(data, dataset.get("fields")):
@@ -297,15 +303,16 @@ def process_data():
                 df=data,
                 path=f"{TRANSFORMED_PATH}/{table_name}/",
                 dataset=True,
-                mode="overwrite_partitions",
+                mode="append" if incremental_load else "overwrite_partitions",
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
-                partition_cols=dataset.get("partition_cols"),
+                partition_cols=partition_cols,
             )
 
         else:
             logger.error(f"No new {table_name} data found.")
 
+        # Publish metrics to CloudWatch
         processing_time = time.time() - start_time
         publish_metric(cloudwatch, path, len(data), processing_time)
 
