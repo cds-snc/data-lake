@@ -135,15 +135,16 @@ def load_data(
                         data[date_column] = data[date_column].dt.tz_localize(None)
 
                 # Define partition columns
-                partition_format = {
-                    "day": "%Y-%m-%d",
-                    "month": "%Y-%m",
-                    "year": "%Y",
-                }
-                for partition in partition_cols or []:
-                    data[partition] = data[partition_timestamp].dt.strftime(
-                        partition_format[partition]
-                    )
+                if partition_timestamp and partition_cols:
+                    partition_format = {
+                        "day": "%Y-%m-%d",
+                        "month": "%Y-%m",
+                        "year": "%Y",
+                    }
+                    for partition in partition_cols:
+                        data[partition] = data[partition_timestamp].dt.strftime(
+                            partition_format[partition]
+                        )
 
                 # Validate schema
                 if not validate_schema(data, fields):
