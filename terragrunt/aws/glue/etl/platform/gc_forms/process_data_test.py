@@ -95,12 +95,12 @@ def test_validate_schema_missing_column(sample_data_df, glue_table_schema):
 
 
 def test_validate_schema_partition_column(sample_data_df, glue_table_schema):
-    df_with_parition_column = sample_data_df.copy()
-    df_with_parition_column["month"] = pd.to_datetime(
+    df_with_partition_column = sample_data_df.copy()
+    df_with_partition_column["month"] = pd.to_datetime(
         ["2024-01-01", "2024-01-02", "2024-01-03"]
     )
     assert (
-        validate_schema(df_with_parition_column, None, ["month"], glue_table_schema)
+        validate_schema(df_with_partition_column, None, ["month"], glue_table_schema)
         is True
     )
 
