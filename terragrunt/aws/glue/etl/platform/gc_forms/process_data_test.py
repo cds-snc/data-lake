@@ -49,6 +49,7 @@ def sample_data_df():
             "updated_at": pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-03"]),
             "text_field": ["Test 1", "Test 2", "Test 3"],
             "status": ["open", "pending", "closed"],
+            "email": ["foo@bar.com", "boom@baz.com", None],
             "priority": [1, 2, 3],
         }
     )
@@ -66,6 +67,7 @@ def glue_table_schema():
                 "updated_at",
                 "text_field",
                 "status",
+                "email",
                 "priority",
             ],
             "Type": [
@@ -76,6 +78,7 @@ def glue_table_schema():
                 "timestamp",
                 "string",
                 "string",
+                "string",
                 "int",
             ],
         }
@@ -83,21 +86,30 @@ def glue_table_schema():
 
 
 def test_validate_schema_valid(sample_data_df, glue_table_schema):
-    assert validate_schema(sample_data_df, None, glue_table_schema) is True
+    assert validate_schema(sample_data_df, None, None, glue_table_schema) is True
 
 
 def test_validate_schema_missing_column(sample_data_df, glue_table_schema):
     df_missing_column = sample_data_df.drop("status", axis=1)
-    assert validate_schema(df_missing_column, None, glue_table_schema) is False
+    assert validate_schema(df_missing_column, None, None, glue_table_schema) is False
 
 
 def test_validate_schema_partition_column(sample_data_df, glue_table_schema):
-    df_with_parition_column = sample_data_df.copy()
-    df_with_parition_column["month"] = pd.to_datetime(
+    df_with_partition_column = sample_data_df.copy()
+    df_with_partition_column["month"] = pd.to_datetime(
         ["2024-01-01", "2024-01-02", "2024-01-03"]
     )
     assert (
-        validate_schema(df_with_parition_column, ["month"], glue_table_schema) is True
+        validate_schema(df_with_partition_column, None, ["month"], glue_table_schema)
+        is True
+    )
+
+
+def test_validate_schema_dropped_column(sample_data_df, glue_table_schema):
+    df_dropped_column = sample_data_df.drop("status", axis=1)
+    assert (
+        validate_schema(df_dropped_column, ["status"], ["month"], glue_table_schema)
+        is True
     )
 
 
@@ -106,7 +118,7 @@ def test_validate_schema_wrong_type(sample_data_df, glue_table_schema):
     df_wrong_type["priority"] = pd.to_datetime(
         ["2024-01-04", "2024-01-05", "2024-01-06"]
     )
-    assert validate_schema(df_wrong_type, None, glue_table_schema) is False
+    assert validate_schema(df_wrong_type, None, None, glue_table_schema) is False
 
 
 def test_is_type_compatible():
@@ -172,7 +184,10 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
     result = get_new_data(
         path="test-path",
         date_columns=["date", "timestamp", "created_at"],
-        partition_created_column="created_at",
+        drop_columns=["status"],
+        email_columns=["email"],
+        partition_columns=["year", "month"],
+        partition_timestamp="created_at",
     )
 
     # Verify S3 path was constructed correctly
@@ -185,7 +200,14 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
 
     # Verify data is processed correctly
     assert "month" in result.columns
+    assert "year" in result.columns
+    assert "status" not in result.columns
     assert len(result) == len(sample_data_df)
+
+    # Verify email columns are processed correctly
+    assert result["email"].iloc[0] == "bar.com"
+    assert result["email"].iloc[1] == "baz.com"
+    assert result["email"].iloc[2] is None
 
     # Test date columns TZ localization
     for date_column in ["date", "timestamp", "created_at"]:
@@ -200,7 +222,10 @@ def test_get_new_data_no_files(mock_wr_s3):
     result = get_new_data(
         path="test-path",
         date_columns=["date"],
-        partition_created_column="date",
+        drop_columns=None,
+        email_columns=None,
+        partition_columns=None,
+        partition_timestamp=None,
     )
 
     # Verify result is empty DataFrame
