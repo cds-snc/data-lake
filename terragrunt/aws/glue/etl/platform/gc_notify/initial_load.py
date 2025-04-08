@@ -121,7 +121,6 @@ def load_data(
                 batch_size=100000, columns=field_names
             ):
                 data = pa.Table.from_batches([batch]).to_pandas()
-                rows += len(data)
 
                 # Process timestamps
                 for field in fields:
@@ -136,6 +135,9 @@ def load_data(
 
                 # Define partition columns
                 if partition_timestamp and partition_cols:
+                    # Remove rows if they do not have the partition_timestamp column
+                    data = data[~data[partition_timestamp].isna()]
+
                     partition_format = {
                         "day": "%Y-%m-%d",
                         "month": "%Y-%m",
@@ -164,6 +166,7 @@ def load_data(
                     partition_cols=partition_cols,
                     existing_data_behavior="overwrite_or_ignore",
                 )
+                rows += len(data)
 
         return rows
 

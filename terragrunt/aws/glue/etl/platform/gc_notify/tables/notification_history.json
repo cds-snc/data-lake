@@ -2,6 +2,7 @@
   "table_name": "notification_history",
   "partition_timestamp": "created_at",
   "partition_cols": ["year", "month"],
+  "incremental_load": true,
   "fields": [
     {
       "name": "id",
