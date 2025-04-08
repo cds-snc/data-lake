@@ -45,6 +45,7 @@ logger.addHandler(handler)
 
 def validate_schema(
     dataframe: pd.DataFrame,
+    drop_columns: List[str],
     non_source_columns: List[str],
     glue_table_schema: pd.DataFrame,
 ) -> bool:
@@ -56,6 +57,10 @@ def validate_schema(
     for _, row in glue_table_schema.iterrows():
         column_name = row["Column Name"]
         column_type = row["Type"]
+
+        if drop_columns and column_name in drop_columns:
+            continue
+
         if column_name not in dataframe.columns:
             logger.error(f"Validation failed: Missing column '{column_name}'")
             return False
@@ -104,7 +109,10 @@ def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
 def get_new_data(
     path: str,
     date_columns: List[str],
-    partition_created_column: str = None,
+    drop_columns: List[str],
+    email_columns: List[str],
+    partition_columns: List[str],
+    partition_timestamp: str,
 ) -> pd.DataFrame:
     """
     Reads the data from the specified path in S3 and returns a DataFrame.
@@ -132,8 +140,25 @@ def get_new_data(
             data[date_column] = pd.to_datetime(data[date_column], errors="coerce")
             data[date_column] = data[date_column].dt.tz_localize(None)
 
-        if partition_created_column:
-            data["month"] = data[partition_created_column].dt.strftime("%Y-%m")
+        # Drop unwanted columns
+        if drop_columns:
+            data = data.drop(columns=drop_columns)
+
+        # Replace email addresses with only the email domain
+        if email_columns:
+            for column in email_columns:
+                data[column] = data[column].str.extract(r"@([^@]+)$", expand=False)
+
+        # Partition the data
+        if partition_timestamp and partition_columns:
+            partition_format = {
+                "month": "%Y-%m",
+                "year": "%Y",
+            }
+            for partition in partition_columns:
+                data[partition] = data[partition_timestamp].dt.strftime(
+                    partition_format[partition]
+                )
 
     except wr.exceptions.NoFilesFound:
         logger.error(f"No new {path} data found.")
@@ -178,8 +203,9 @@ def process_data():
         {
             "path": "historical-data",
             "date_columns": ["date"],
-            "partition_created_column": "date",
-            "partition_columns": ["month"],
+            "partition_timestamp": "date",
+            "partition_columns": ["year", "month"],
+            "email_columns": ["client_email"],
         },
         {
             "path": "processed-data/template",
@@ -191,20 +217,20 @@ def process_data():
                 "created_at",
                 "updated_at",
             ],
-            "partition_created_column": "created_at",
-            "partition_columns": ["month"],
+            "partition_timestamp": "created_at",
+            "partition_columns": ["year", "month"],
         },
         {
             "path": "processed-data/templateToUser",
             "date_columns": ["timestamp"],
-            "partition_created_column": None,
-            "partition_columns": None,
         },
         {
             "path": "processed-data/user",
             "date_columns": ["emailverified", "lastlogin", "createdat", "timestamp"],
-            "partition_created_column": "lastlogin",  # User created date is currently in this field
-            "partition_columns": ["month"],
+            "partition_timestamp": "lastlogin",  # User created date is currently in this field
+            "partition_columns": ["year", "month"],
+            "drop_columns": ["name"],
+            "email_columns": ["email"],
         },
     ]
     cloudwatch = boto3.client("cloudwatch")
@@ -219,9 +245,12 @@ def process_data():
         # Retreive the new data
         logger.info(f"Processing {path} data...")
         data = get_new_data(
-            path,
-            dataset.get("date_columns"),
-            dataset.get("partition_created_column"),
+            path=path,
+            date_columns=dataset.get("date_columns"),
+            drop_columns=dataset.get("drop_columns"),
+            email_columns=dataset.get("email_columns"),
+            partition_columns=dataset.get("partition_columns"),
+            partition_timestamp=dataset.get("partition_timestamp"),
         )
         if not data.empty:
             glue_table_schema = wr.catalog.table(
@@ -229,7 +258,10 @@ def process_data():
                 table=f"{TABLE_NAME_PREFIX}_raw_{table_name}",
             )
             if not validate_schema(
-                data, dataset.get("partition_columns"), glue_table_schema
+                dataframe=data,
+                drop_columns=dataset.get("drop_columns"),
+                non_source_columns=dataset.get("partition_columns"),
+                glue_table_schema=glue_table_schema,
             ):
                 raise ValueError(
                     f"Schema validation failed for {path}. Aborting ETL process."
@@ -243,7 +275,7 @@ def process_data():
                 df=data,
                 path=f"{TRANSFORMED_PATH}/{path}/",
                 dataset=True,
-                mode="overwrite_partitions",
+                mode="append",
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_cols,
