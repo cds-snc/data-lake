@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "raw_bucket" {
         "arn:aws:iam::563894450011:role/SalesforceReplicateToDataLake",
         "arn:aws:iam::659087519042:role/BillingExtractTags",
         "arn:aws:iam::659087519042:role/CostUsageReplicateToDataLake",
-        "arn:aws:iam::687401027353:role/FormsS3ReplicatePlatformDataLake",
+        "arn:aws:iam::957818836222:role/FormsS3ReplicatePlatformDataLake",
       ]
     }
     actions = [
