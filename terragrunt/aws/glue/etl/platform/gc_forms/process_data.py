@@ -123,10 +123,10 @@ def get_new_data(
     """
     data = pd.DataFrame()
     try:
-        logger.info(
-            f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3..."
-        )
         yesterday = pd.Timestamp.today(tz="UTC") - pd.Timedelta(days=1)
+        logger.info(
+            f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3 from {yesterday}..."
+        )
         data = wr.s3.read_parquet(
             path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/",
             use_threads=True,
