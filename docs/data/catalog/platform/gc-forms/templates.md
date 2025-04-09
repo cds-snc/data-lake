@@ -1,10 +1,5 @@
 # Platform / GC Forms / Templates
 
-### :warning: Note
-This dataset is still in testing and only a snapshot of Staging data is available in Superset. 
-
----
-
 Dataset providing GC Forms template data.  There are 4 tables as part of this dataset:
 
 - `historical_data`: one-time snapshot of published form data that was previously managed in an external source.
@@ -60,7 +55,7 @@ Here's a descriptive list of the fields in each table:
 | metric_format__from_metric_ | string | Format of the metric field (always "Number") |
 | unit_of_measurement | string | Unit used for measuring the metric |
 | department | string | Government department associated with the form |
-| client_email | string | Email address of the client who owns the form |
+| client_email | string | Email address domain of the client who owns the form |
 | number_value | string | Numerical value of the metric (always "1") |
 | security_classification | string | Security classification of the form data (Protected A, Protected B, Unclassified) |
 | comment | string | Additional comments about the record |
@@ -122,8 +117,7 @@ Here's a descriptive list of the fields in each table:
 | Field | Type | Description |
 |-------|------|-------------|
 | id | string | Unique identifier for the user |
-| name | string | User's full name |
-| email | string | User's Government of Canada email address |
+| email | string | User's Government of Canada email address domain |
 | emailverified | timestamp | When the user's email was verified |
 | lastlogin | timestamp | Time of user's most recent login |
 | active | boolean | Indicates whether the user account is active |

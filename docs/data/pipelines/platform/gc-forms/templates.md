@@ -1,10 +1,5 @@
 # Platform / GC Forms / Templates
 
-### :warning: Note
-This dataset is still in testing and only a snapshot of Staging data is available in Superset. 
-
----
-
 ## Description
 The GC Forms `Templates` dataset provides information on form templates, and the users that own them, in [Parquet format](https://parquet.apache.org/). The role of the form template is to control how the rendered form is presented to users for submission.
 
