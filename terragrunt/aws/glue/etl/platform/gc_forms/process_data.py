@@ -237,7 +237,14 @@ def process_data():
 
     for dataset in datasets:
         start_time = time.time()
+
         path = dataset.get("path")
+        date_columns = dataset.get("date_columns")
+        drop_columns = dataset.get("drop_columns")
+        email_columns = dataset.get("email_columns")
+        partition_columns = dataset.get("partition_columns")
+        partition_timestamp = dataset.get("partition_timestamp")
+
         table_name = path.lower().replace("-", "_")
         if "/" in table_name:
             table_name = path.split("/", 1)[1]
@@ -246,11 +253,11 @@ def process_data():
         logger.info(f"Processing {path} data...")
         data = get_new_data(
             path=path,
-            date_columns=dataset.get("date_columns"),
-            drop_columns=dataset.get("drop_columns"),
-            email_columns=dataset.get("email_columns"),
-            partition_columns=dataset.get("partition_columns"),
-            partition_timestamp=dataset.get("partition_timestamp"),
+            date_columns=date_columns,
+            drop_columns=drop_columns,
+            email_columns=email_columns,
+            partition_columns=partition_columns,
+            partition_timestamp=partition_timestamp,
         )
         if not data.empty:
             glue_table_schema = wr.catalog.table(
@@ -259,8 +266,8 @@ def process_data():
             )
             if not validate_schema(
                 dataframe=data,
-                drop_columns=dataset.get("drop_columns"),
-                non_source_columns=dataset.get("partition_columns"),
+                drop_columns=drop_columns,
+                non_source_columns=partition_columns,
                 glue_table_schema=glue_table_schema,
             ):
                 raise ValueError(
@@ -270,7 +277,6 @@ def process_data():
             # Save the transformed data back to S3
             logger.info(f"Saving new {path} DataFrame to S3...")
             table = f"{TABLE_NAME_PREFIX}_{table_name}"
-            partition_cols = dataset.get("partition_columns")
             wr.s3.to_parquet(
                 df=data,
                 path=f"{TRANSFORMED_PATH}/{path}/",
@@ -278,7 +284,7 @@ def process_data():
                 mode="append",
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
-                partition_cols=partition_cols,
+                partition_cols=partition_columns,
             )
 
         else:
