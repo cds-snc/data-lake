@@ -150,7 +150,7 @@ def get_new_data(
             for column in email_columns:
                 data[column] = data[column].str.extract(r"@([^@]+)$", expand=False)
 
-        # If field count columns, make sure they are present and intialized to 0
+        # If field count columns, make sure they are present and initialized to 0
         # Because of how the Forms ETL works, these columns may not be present in the
         # day's processed data export
         if field_count_columns:
