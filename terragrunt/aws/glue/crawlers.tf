@@ -44,8 +44,6 @@ resource "aws_glue_crawler" "platform_gc_forms_templates_production_raw" {
       CreatePartitionIndex = true
       Version              = 1
   })
-
-  schedule = "cron(00 6 * * ? *)" # 6am UTC check for schema changes
 }
 
 #
