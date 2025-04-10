@@ -50,6 +50,7 @@ def sample_data_df():
             "text_field": ["Test 1", "Test 2", "Test 3"],
             "status": ["open", "pending", "closed"],
             "email": ["foo@bar.com", "boom@baz.com", None],
+            "text_count": [3, 2, 1],
             "priority": [1, 2, 3],
         }
     )
@@ -68,6 +69,7 @@ def glue_table_schema():
                 "text_field",
                 "status",
                 "email",
+                "text_count",
                 "priority",
             ],
             "Type": [
@@ -79,6 +81,7 @@ def glue_table_schema():
                 "string",
                 "string",
                 "string",
+                "int",
                 "int",
             ],
         }
@@ -185,6 +188,7 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
         path="test-path",
         date_columns=["date", "timestamp", "created_at"],
         drop_columns=["status"],
+        field_count_columns=["text_count", "muffin_count"],
         email_columns=["email"],
         partition_columns=["year", "month"],
         partition_timestamp="created_at",
@@ -205,9 +209,11 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
     assert len(result) == len(sample_data_df)
 
     # Verify email columns are processed correctly
-    assert result["email"].iloc[0] == "bar.com"
-    assert result["email"].iloc[1] == "baz.com"
-    assert result["email"].iloc[2] is None
+    assert (result["email"].values == ["bar.com", "baz.com", None]).all()
+
+    # Verify field count columns are processed correctly
+    assert (result["text_count"].values == [3, 2, 1]).all()
+    assert (result["muffin_count"].values == [0, 0, 0]).all()
 
     # Test date columns TZ localization
     for date_column in ["date", "timestamp", "created_at"]:
@@ -223,6 +229,7 @@ def test_get_new_data_no_files(mock_wr_s3):
         path="test-path",
         date_columns=["date"],
         drop_columns=None,
+        field_count_columns=None,
         email_columns=None,
         partition_columns=None,
         partition_timestamp=None,
