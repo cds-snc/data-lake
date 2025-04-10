@@ -3,7 +3,7 @@ import sys
 import time
 
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
 
 import awswrangler as wr
 import boto3
@@ -109,11 +109,11 @@ def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
 def get_new_data(
     path: str,
     date_columns: List[str],
-    drop_columns: List[str],
-    email_columns: List[str],
-    field_count_columns: List[str],
-    partition_columns: List[str],
-    partition_timestamp: str,
+    drop_columns: Optional[List[str]],
+    email_columns: Optional[List[str]],
+    field_count_columns: Optional[List[str]],
+    partition_columns: Optional[List[str]],
+    partition_timestamp: Optional[str],
 ) -> pd.DataFrame:
     """
     Reads the data from the specified path in S3 and returns a DataFrame.
