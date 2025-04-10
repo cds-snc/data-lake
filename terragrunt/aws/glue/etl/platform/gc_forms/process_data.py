@@ -111,6 +111,7 @@ def get_new_data(
     date_columns: List[str],
     drop_columns: List[str],
     email_columns: List[str],
+    field_count_columns: List[str],
     partition_columns: List[str],
     partition_timestamp: str,
 ) -> pd.DataFrame:
@@ -148,6 +149,14 @@ def get_new_data(
         if email_columns:
             for column in email_columns:
                 data[column] = data[column].str.extract(r"@([^@]+)$", expand=False)
+
+        # If field count columns, make sure they are present and intialized to 0
+        # Because of how the Forms ETL works, these columns may not be present in the
+        # day's processed data export
+        if field_count_columns:
+            for column in field_count_columns:
+                if column not in data.columns:
+                    data[column] = 0
 
         # Partition the data
         if partition_timestamp and partition_columns:
@@ -217,6 +226,19 @@ def process_data():
                 "created_at",
                 "updated_at",
             ],
+            "field_count_columns": [
+                "checkbox_count",
+                "combobox_count",
+                "dropdown_count",
+                "dynamicrow_count",
+                "fileinput_count",
+                "formatteddate_count",
+                "radio_count",
+                "richtext_count",
+                "textarea_count",
+                "textfield_count",
+                "addresscomplete_count",
+            ],
             "partition_timestamp": "created_at",
             "partition_columns": ["year", "month"],
         },
@@ -242,6 +264,7 @@ def process_data():
         date_columns = dataset.get("date_columns")
         drop_columns = dataset.get("drop_columns")
         email_columns = dataset.get("email_columns")
+        field_count_columns = dataset.get("field_count_columns")
         partition_columns = dataset.get("partition_columns")
         partition_timestamp = dataset.get("partition_timestamp")
 
@@ -256,6 +279,7 @@ def process_data():
             date_columns=date_columns,
             drop_columns=drop_columns,
             email_columns=email_columns,
+            field_count_columns=field_count_columns,
             partition_columns=partition_columns,
             partition_timestamp=partition_timestamp,
         )
@@ -285,6 +309,7 @@ def process_data():
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_columns,
+                schema_evolution=False,
             )
 
         else:
