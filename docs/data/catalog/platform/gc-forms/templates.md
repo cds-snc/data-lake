@@ -7,7 +7,7 @@ Dataset providing GC Forms template data.  There are 4 tables as part of this da
 - `templateToUser`: a many-to-many relationship of templates to their owners.
 - `user`: the users that have logged into GC Forms.
 
-No external user form submissions are part of this dataset. The only personally identifiable information (PII) is the user name and Government of Canada email address.
+No external user form submissions or personally identifiable information (PII) are part of this dataset.
 
 This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the following Physical datasets:
 
