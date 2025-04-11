@@ -128,7 +128,6 @@ def load_data(
                         date_column = field["name"]
                         data[date_column] = pd.to_datetime(
                             data[date_column],
-                            format="%Y-%m-%d %H:%M:%S.%f",
                             errors="coerce",
                         )
                         data[date_column] = data[date_column].dt.tz_localize(None)
