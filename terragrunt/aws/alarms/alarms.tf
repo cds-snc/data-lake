@@ -65,7 +65,7 @@ resource "aws_cloudwatch_metric_alarm" "glue_etl_error" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
-  alarm_name          = "glue-job-failures"
+  alarm_name          = "glue-job-failures-with-change"
   alarm_description   = "Glue Job state has changed to `Failure`, `Timeout` or `Error`."
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "1"
