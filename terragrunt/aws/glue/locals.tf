@@ -5,6 +5,7 @@ locals {
   glue_catalog_databases = [
     aws_glue_catalog_database.operations_aws_production.name,
     aws_glue_catalog_database.platform_gc_forms_production.name,
+    aws_glue_catalog_database.platform_gc_notify_production.name,
     aws_glue_catalog_database.platform_support_production.name,
     aws_glue_catalog_database.bes_crm_salesforce_production.name,
   ]
