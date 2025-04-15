@@ -13,7 +13,7 @@ locals {
     enabled = true
     prefix  = "platform/gc-notify/"
     expiration = {
-      days = "1"
+      days = "3"
     }
   }
   # Cleanup old versions and incomplete uploads
