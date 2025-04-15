@@ -28,6 +28,13 @@ args = getResolvedOptions(
     ],
 )
 
+# Specifies the date to start the incremental load from
+YESTERDAY = (pd.Timestamp.now().normalize() - pd.Timedelta(days=1)).strftime(
+    "%Y-%m-%d %H:%M:%S.%f"
+)
+INCREMENTAL_LOAD_FROM_DATE = args.get("incremental_load_from_date", YESTERDAY)
+
+# Data source and target
 SOURCE_BUCKET = args["source_bucket"]
 SOURCE_PREFIX = args["source_prefix"]
 TRANSFORMED_BUCKET = args["transformed_bucket"]
@@ -112,7 +119,7 @@ def get_new_data(
     fields: List[Field],
     partition_timestamp: str = None,
     partition_cols: List[str] = None,
-    incremental_load: bool = False,
+    incremental_load_from_date: str = None,
 ) -> pd.DataFrame:
     """
     Reads the data from the specified path in S3 and returns a DataFrame.
@@ -128,13 +135,12 @@ def get_new_data(
         )
 
         # Only get new data since yesterday
-        if incremental_load and partition_timestamp:
+        if incremental_load_from_date and partition_timestamp:
             logger.info("Incremental data load...")
             dataset = ds.dataset(s3_path, format="parquet")
-            yesterday = pd.Timestamp().now().normalize() - pd.Timedelta(days=1)
-            filter_expr = (
-                ds.field(partition_timestamp).cast("timestamp[ns]") > yesterday
-            )
+            filter_expr = ds.field(partition_timestamp).cast(
+                "timestamp[ns]"
+            ) > pd.Timestamp(incremental_load_from_date)
             scanner = dataset.scanner(filter=filter_expr, columns=field_names)
             table = scanner.to_table()
             data = table.to_pandas()
@@ -160,9 +166,6 @@ def get_new_data(
 
         # Define partition columns
         if partition_timestamp and partition_cols:
-            # Remove rows if they do not have the partition_timestamp column
-            data = data[~data[partition_timestamp].isna()]
-
             partition_format = {
                 "day": "%Y-%m-%d",
                 "month": "%Y-%m",
@@ -288,7 +291,7 @@ def process_data():
             dataset.get("fields"),
             dataset.get("partition_timestamp"),
             partition_cols,
-            incremental_load,
+            INCREMENTAL_LOAD_FROM_DATE if incremental_load else None,
         )
         if not data.empty:
             if not validate_schema(data, dataset.get("fields")):
