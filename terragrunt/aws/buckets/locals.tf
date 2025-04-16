@@ -7,6 +7,15 @@ locals {
       days = "30"
     }
   }
+  # GC Notify expire old export data
+  lifecycle_expire_gc_notify = {
+    id      = "expire_gc_notify"
+    enabled = true
+    prefix  = "platform/gc-notify/"
+    expiration = {
+      days = "3"
+    }
+  }
   # Cleanup old versions and incomplete uploads
   lifecycle_remove_noncurrent_versions = {
     id                                     = "remove_noncurrent_versions"

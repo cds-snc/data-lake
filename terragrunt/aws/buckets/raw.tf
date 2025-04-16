@@ -13,7 +13,8 @@ module "raw_bucket" {
 
   lifecycle_rule = [
     local.lifecycle_remove_noncurrent_versions,
-    local.lifecycle_transition_storage
+    local.lifecycle_transition_storage,
+    local.lifecycle_expire_gc_notify
   ]
 
   versioning = {
