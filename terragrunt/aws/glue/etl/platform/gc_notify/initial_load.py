@@ -16,12 +16,15 @@ import time
 
 from typing import List, TypedDict
 
+import awswrangler as wr
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-SOURCE_PATH = os.getenv("SOURCE_PATH")
-TRANSFORMED_PATH = os.getenv("TRANSFORMED_PATH")
+SOURCE_LOCAL_PATH = os.getenv("SOURCE_LOCAL_PATH")
+TRANSFORMED_S3_PATH = os.getenv("TRANSFORMED_S3_PATH")
+GLUE_TABLE_NAME_PREFIX = os.getenv("GLUE_TABLE_NAME_PREFIX")
+GLUE_DATABASE_NAME_TRANSFORMED = os.getenv("GLUE_DATABASE_NAME_TRANSFORMED")
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -60,9 +63,9 @@ def validate_schema(
     return True
 
 
-def is_type_compatible(series: pd.Series, field_type: str) -> bool:
+def postgres_to_pandas_type(field_type: str) -> str:
     """
-    Check if a pandas Series is compatible with a given data type.
+    Convert PostgreSQL data types to pandas data types.
     """
     postgres_to_pandas = {
         "notification_feedback_types": pd.StringDtype(),
@@ -76,13 +79,20 @@ def is_type_compatible(series: pd.Series, field_type: str) -> bool:
         "text": pd.StringDtype(),
         "int": pd.Int64Dtype(),
         "integer": pd.Int64Dtype(),
-        "numeric": float,
-        "float": float,
+        "numeric": pd.Float64Dtype(),
+        "float": pd.Float64Dtype(),
         "bool": pd.BooleanDtype(),
         "boolean": pd.BooleanDtype(),
         "timestamp": "datetime64[ns]",
     }
-    expected_type = postgres_to_pandas.get(field_type)
+    return postgres_to_pandas.get(field_type, field_type)
+
+
+def is_type_compatible(series: pd.Series, field_type: str) -> bool:
+    """
+    Check if a pandas Series is compatible with a given data type.
+    """
+    expected_type = postgres_to_pandas_type(field_type)
     if expected_type is None:
         logger.error(f"Unknown Glue type '{field_type}' for validation.")
         return False
@@ -122,15 +132,18 @@ def load_data(
             ):
                 data = pa.Table.from_batches([batch]).to_pandas()
 
-                # Process timestamps
+                # Ensure all columns have the correct type
                 for field in fields:
-                    if field["type"] == "timestamp":
-                        date_column = field["name"]
-                        data[date_column] = pd.to_datetime(
-                            data[date_column],
+                    field_name = field["name"]
+                    field_type = postgres_to_pandas_type(field["type"])
+                    if field_type == "datetime64[ns]":
+                        data[field_name] = pd.to_datetime(
+                            data[field_name],
                             errors="coerce",
                         )
-                        data[date_column] = data[date_column].dt.tz_localize(None)
+                        data[field_name] = data[field_name].dt.tz_localize(None)
+                    else:
+                        data[field_name] = data[field_name].astype(field_type)
 
                 # Define partition columns
                 if partition_timestamp and partition_cols:
@@ -155,15 +168,16 @@ def load_data(
 
                 logger.info(f"Saving {len(data)} records to {table_name}...")
 
-                # Create local dir and save
-                output_dir = f"{TRANSFORMED_PATH}/{table_name}/"
-                os.makedirs(output_dir, exist_ok=True)
-                table_pa = pa.Table.from_pandas(data)
-                pq.write_to_dataset(
-                    table_pa,
-                    root_path=output_dir,
+                # Save to S3
+                table = f"{GLUE_TABLE_NAME_PREFIX}_{table_name}"
+                wr.s3.to_parquet(
+                    df=data,
+                    path=f"{TRANSFORMED_S3_PATH}/{table_name}/",
+                    dataset=True,
+                    mode="append",
+                    database=GLUE_DATABASE_NAME_TRANSFORMED,
+                    table=table,
                     partition_cols=partition_cols,
-                    existing_data_behavior="overwrite_or_ignore",
                 )
                 rows += len(data)
 
@@ -225,7 +239,7 @@ def initial_load():
     for dataset in datasets:
         start_time = time.time()
         table_name = dataset.get("table_name")
-        path = f"{SOURCE_PATH}/public.{table_name}"
+        path = f"{SOURCE_LOCAL_PATH}/public.{table_name}"
 
         logger.info(f"Loading {table_name} data...")
         rows = load_data(
