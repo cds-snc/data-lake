@@ -9,6 +9,7 @@ inputs = {
   region                 = "ca-central-1"
   superset_iam_role_arns = [
     "arn:aws:iam::066023111852:role/SupersetAthenaRead-operations_aws_production",
+    "arn:aws:iam::066023111852:role/SupersetAthenaRead-platform_gc_forms_production",
     "arn:aws:iam::066023111852:role/SupersetAthenaRead-platform_support_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_aws_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_forms_production",
