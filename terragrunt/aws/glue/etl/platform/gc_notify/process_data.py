@@ -81,11 +81,11 @@ def validate_schema(
     return True
 
 
-def is_type_compatible(series: pd.Series, field_type: str) -> bool:
+def postgres_to_pandas_type(field_type: str) -> str:
     """
-    Check if a pandas Series is compatible with a given data type.
+    Convert PostgreSQL data types to pandas data types.
     """
-    glue_to_pandas = {
+    postgres_to_pandas = {
         "notification_feedback_types": pd.StringDtype(),
         "notification_feedback_subtypes": pd.StringDtype(),
         "notification_type": pd.StringDtype(),
@@ -97,13 +97,20 @@ def is_type_compatible(series: pd.Series, field_type: str) -> bool:
         "text": pd.StringDtype(),
         "int": pd.Int64Dtype(),
         "integer": pd.Int64Dtype(),
-        "numeric": float,
-        "float": float,
+        "numeric": pd.Float64Dtype(),
+        "float": pd.Float64Dtype(),
         "bool": pd.BooleanDtype(),
         "boolean": pd.BooleanDtype(),
         "timestamp": "datetime64[ns]",
     }
-    expected_type = glue_to_pandas.get(field_type)
+    return postgres_to_pandas.get(field_type, field_type)
+
+
+def is_type_compatible(series: pd.Series, field_type: str) -> bool:
+    """
+    Check if a pandas Series is compatible with a given data type.
+    """
+    expected_type = postgres_to_pandas_type(field_type)
     if expected_type is None:
         logger.error(f"Unknown Glue type '{field_type}' for validation.")
         return False
@@ -154,15 +161,20 @@ def get_new_data(
                 dataset=True,
                 columns=field_names,
             )
-
         logger.info(f"Loaded {len(data)} new records")
 
-        # Ensure timestamps are parsed correctly and all timezones are treated as UTC
+        # Ensure all columns have the correct type
         for field in fields:
-            if field["type"] == "timestamp":
-                date_column = field["name"]
-                data[date_column] = pd.to_datetime(data[date_column], errors="coerce")
-                data[date_column] = data[date_column].dt.tz_localize(None)
+            field_name = field["name"]
+            field_type = postgres_to_pandas_type(field["type"])
+            if field_type == "datetime64[ns]":
+                data[field_name] = pd.to_datetime(
+                    data[field_name],
+                    errors="coerce",
+                )
+                data[field_name] = data[field_name].dt.tz_localize(None)
+            else:
+                data[field_name] = data[field_name].astype(field_type)
 
         # Define partition columns
         if partition_timestamp and partition_cols:
@@ -310,6 +322,7 @@ def process_data():
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_cols,
+                schema_evolution=False,
             )
 
         else:
