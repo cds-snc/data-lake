@@ -31,8 +31,8 @@ args = getResolvedOptions(
 # Specifies the defautal date to start and end the incremental load from
 # which is all of yesterday's data
 today = pd.Timestamp.now().normalize()
-YESTERDAY_MIDNIGHT = (today - pd.Timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S.%f")
-TODAY_MIDNIGHT = today.strftime("%Y-%m-%d %H:%M:%S.%f")
+YESTERDAY_MIDNIGHT = (today - pd.Timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+TODAY_MIDNIGHT = today.strftime("%Y-%m-%d %H:%M:%S")
 INCREMENTAL_DATE_FROM = args.get("incremental_date_from", YESTERDAY_MIDNIGHT)
 INCREMENTAL_DATE_TO = args.get("incremental_date_to", TODAY_MIDNIGHT)
 
@@ -146,13 +146,11 @@ def get_new_data(
 
         # Only get new data within the time range
         if date_from and date_to and partition_timestamp:
-            date_from = pd.Timestamp(date_from)
-            date_to = pd.Timestamp(date_to)
             logger.info(f"Incremental data load from {date_from} to {date_to}...")
             dataset = ds.dataset(s3_path, format="parquet")
-            filter_expr = (
-                ds.field(partition_timestamp).cast("timestamp[ns]") >= date_from
-            ) & (ds.field(partition_timestamp).cast("timestamp[ns]") < date_to)
+            filter_expr = (ds.field(partition_timestamp) >= date_from) & (
+                ds.field(partition_timestamp) < date_to
+            )
             scanner = dataset.scanner(filter=filter_expr, columns=field_names)
             table = scanner.to_table()
             data = table.to_pandas()
