@@ -32,7 +32,7 @@ args = getResolvedOptions(
 # which is all of yesterday's data
 today = pd.Timestamp.now().normalize()
 YESTERDAY_MIDNIGHT = (today - pd.Timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S.%f")
-TODAY_MIDNIGHT = today.strftime.strftime("%Y-%m-%d %H:%M:%S.%f")
+TODAY_MIDNIGHT = today.strftime("%Y-%m-%d %H:%M:%S.%f")
 INCREMENTAL_DATE_FROM = args.get("incremental_date_from", YESTERDAY_MIDNIGHT)
 INCREMENTAL_DATE_TO = args.get("incremental_date_to", TODAY_MIDNIGHT)
 
