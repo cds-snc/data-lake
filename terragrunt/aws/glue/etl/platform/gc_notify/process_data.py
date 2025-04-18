@@ -28,11 +28,13 @@ args = getResolvedOptions(
     ],
 )
 
-# Specifies the date to start the incremental load from
-YESTERDAY = (pd.Timestamp.now().normalize() - pd.Timedelta(days=1)).strftime(
-    "%Y-%m-%d %H:%M:%S.%f"
-)
-INCREMENTAL_LOAD_FROM_DATE = args.get("incremental_load_from_date", YESTERDAY)
+# Specifies the defautal date to start and end the incremental load from
+# which is all of yesterday's data
+today = pd.Timestamp.now().normalize()
+YESTERDAY_MIDNIGHT = (today - pd.Timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S.%f")
+TODAY_MIDNIGHT = today.strftime.strftime("%Y-%m-%d %H:%M:%S.%f")
+INCREMENTAL_DATE_FROM = args.get("incremental_date_from", YESTERDAY_MIDNIGHT)
+INCREMENTAL_DATE_TO = args.get("incremental_date_to", TODAY_MIDNIGHT)
 
 # Data source and target
 SOURCE_BUCKET = args["source_bucket"]
@@ -126,7 +128,8 @@ def get_new_data(
     fields: List[Field],
     partition_timestamp: str = None,
     partition_cols: List[str] = None,
-    incremental_load_from_date: str = None,
+    date_from: str = None,
+    date_to: str = None,
 ) -> pd.DataFrame:
     """
     Reads the data from the specified path in S3 and returns a DataFrame.
@@ -141,18 +144,20 @@ def get_new_data(
             f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3..."
         )
 
-        # Only get new data since yesterday
-        if incremental_load_from_date and partition_timestamp:
-            logger.info("Incremental data load...")
+        # Only get new data within the time range
+        if date_from and date_to and partition_timestamp:
+            date_from = pd.Timestamp(date_from)
+            date_to = pd.Timestamp(date_to)
+            logger.info(f"Incremental data load from {date_from} to {date_to}...")
             dataset = ds.dataset(s3_path, format="parquet")
-            filter_expr = ds.field(partition_timestamp).cast(
-                "timestamp[ns]"
-            ) > pd.Timestamp(incremental_load_from_date)
+            filter_expr = (
+                ds.field(partition_timestamp).cast("timestamp[ns]") >= date_from
+            ) & (ds.field(partition_timestamp).cast("timestamp[ns]") < date_to)
             scanner = dataset.scanner(filter=filter_expr, columns=field_names)
             table = scanner.to_table()
             data = table.to_pandas()
 
-        # If not incremental load, read all data
+        # Read all data
         else:
             logger.info("Full data load...")
             data = wr.s3.read_parquet(
@@ -303,7 +308,8 @@ def process_data():
             dataset.get("fields"),
             dataset.get("partition_timestamp"),
             partition_cols,
-            INCREMENTAL_LOAD_FROM_DATE if incremental_load else None,
+            INCREMENTAL_DATE_FROM if incremental_load else None,
+            INCREMENTAL_DATE_TO if incremental_load else None,
         )
         if not data.empty:
             if not validate_schema(data, dataset.get("fields")):
