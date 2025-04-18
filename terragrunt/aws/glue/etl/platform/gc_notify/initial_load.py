@@ -85,7 +85,7 @@ def postgres_to_pandas_type(field_type: str) -> str:
         "boolean": pd.BooleanDtype(),
         "timestamp": "datetime64[ns]",
     }
-    return postgres_to_pandas.get(field_type, field_type)
+    return postgres_to_pandas.get(field_type)
 
 
 def is_type_compatible(series: pd.Series, field_type: str) -> bool:
@@ -94,7 +94,7 @@ def is_type_compatible(series: pd.Series, field_type: str) -> bool:
     """
     expected_type = postgres_to_pandas_type(field_type)
     if expected_type is None:
-        logger.error(f"Unknown Glue type '{field_type}' for validation.")
+        logger.error(f"Unknown Postgres type '{field_type}' for validation.")
         return False
     try:
         series.astype(expected_type)
