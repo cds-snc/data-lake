@@ -103,6 +103,24 @@ def is_type_compatible(series: pd.Series, field_type: str) -> bool:
     return True
 
 
+def parse_dates(date_series):
+    """
+    Parse date strings into pandas datetime objects.
+    Handles both standard and non-standard formats.
+    """
+    # Try standard format first with milliseconds
+    result = pd.to_datetime(date_series, format="%Y-%m-%d %H:%M:%S.%f", errors="coerce")
+
+    # Find rows that failed parsing
+    mask = result.isna()
+    if mask.any():
+        result[mask] = pd.to_datetime(
+            date_series[mask], format="%Y-%m-%d %H:%M:%S", errors="coerce"
+        )
+
+    return result
+
+
 def load_data(
     table_name: str,
     path: str,
@@ -128,7 +146,7 @@ def load_data(
 
             # Read in chunks
             for batch in parquet_file.iter_batches(
-                batch_size=100000, columns=field_names
+                batch_size=500000, columns=field_names
             ):
                 data = pa.Table.from_batches([batch]).to_pandas()
 
@@ -137,10 +155,7 @@ def load_data(
                     field_name = field["name"]
                     field_type = postgres_to_pandas_type(field["type"])
                     if field_type == "datetime64[ns]":
-                        data[field_name] = pd.to_datetime(
-                            data[field_name],
-                            errors="coerce",
-                        )
+                        data[field_name] = parse_dates(data[field_name])
                         data[field_name] = data[field_name].dt.tz_localize(None)
                     else:
                         data[field_name] = data[field_name].astype(field_type)
