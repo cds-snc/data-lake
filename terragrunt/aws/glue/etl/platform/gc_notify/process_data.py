@@ -28,11 +28,13 @@ args = getResolvedOptions(
     ],
 )
 
-# Specifies the date to start the incremental load from
-YESTERDAY = (pd.Timestamp.now().normalize() - pd.Timedelta(days=1)).strftime(
-    "%Y-%m-%d %H:%M:%S.%f"
-)
-INCREMENTAL_LOAD_FROM_DATE = args.get("incremental_load_from_date", YESTERDAY)
+# Specifies the defautal date to start and end the incremental load from
+# which is all of yesterday's data
+today = pd.Timestamp.now().normalize()
+YESTERDAY_MIDNIGHT = (today - pd.Timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+TODAY_MIDNIGHT = today.strftime("%Y-%m-%d %H:%M:%S")
+INCREMENTAL_DATE_FROM = args.get("incremental_date_from", YESTERDAY_MIDNIGHT)
+INCREMENTAL_DATE_TO = args.get("incremental_date_to", TODAY_MIDNIGHT)
 
 # Data source and target
 SOURCE_BUCKET = args["source_bucket"]
@@ -81,11 +83,11 @@ def validate_schema(
     return True
 
 
-def is_type_compatible(series: pd.Series, field_type: str) -> bool:
+def postgres_to_pandas_type(field_type: str) -> str | None:
     """
-    Check if a pandas Series is compatible with a given data type.
+    Convert PostgreSQL data types to pandas data types.
     """
-    glue_to_pandas = {
+    postgres_to_pandas = {
         "notification_feedback_types": pd.StringDtype(),
         "notification_feedback_subtypes": pd.StringDtype(),
         "notification_type": pd.StringDtype(),
@@ -97,15 +99,22 @@ def is_type_compatible(series: pd.Series, field_type: str) -> bool:
         "text": pd.StringDtype(),
         "int": pd.Int64Dtype(),
         "integer": pd.Int64Dtype(),
-        "numeric": float,
-        "float": float,
+        "numeric": pd.Float64Dtype(),
+        "float": pd.Float64Dtype(),
         "bool": pd.BooleanDtype(),
         "boolean": pd.BooleanDtype(),
         "timestamp": "datetime64[ns]",
     }
-    expected_type = glue_to_pandas.get(field_type)
+    return postgres_to_pandas.get(field_type)
+
+
+def is_type_compatible(series: pd.Series, field_type: str) -> bool:
+    """
+    Check if a pandas Series is compatible with a given data type.
+    """
+    expected_type = postgres_to_pandas_type(field_type)
     if expected_type is None:
-        logger.error(f"Unknown Glue type '{field_type}' for validation.")
+        logger.error(f"Unknown Postgres type '{field_type}' for validation.")
         return False
     try:
         series.astype(expected_type)
@@ -119,7 +128,8 @@ def get_new_data(
     fields: List[Field],
     partition_timestamp: str = None,
     partition_cols: List[str] = None,
-    incremental_load_from_date: str = None,
+    date_from: str = None,
+    date_to: str = None,
 ) -> pd.DataFrame:
     """
     Reads the data from the specified path in S3 and returns a DataFrame.
@@ -134,18 +144,18 @@ def get_new_data(
             f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3..."
         )
 
-        # Only get new data since yesterday
-        if incremental_load_from_date and partition_timestamp:
-            logger.info("Incremental data load...")
+        # Only get new data within the time range
+        if date_from and date_to and partition_timestamp:
+            logger.info(f"Incremental data load from {date_from} to {date_to}...")
             dataset = ds.dataset(s3_path, format="parquet")
-            filter_expr = ds.field(partition_timestamp).cast(
-                "timestamp[ns]"
-            ) > pd.Timestamp(incremental_load_from_date)
+            filter_expr = (ds.field(partition_timestamp) >= date_from) & (
+                ds.field(partition_timestamp) < date_to
+            )
             scanner = dataset.scanner(filter=filter_expr, columns=field_names)
             table = scanner.to_table()
             data = table.to_pandas()
 
-        # If not incremental load, read all data
+        # Read all data
         else:
             logger.info("Full data load...")
             data = wr.s3.read_parquet(
@@ -154,15 +164,20 @@ def get_new_data(
                 dataset=True,
                 columns=field_names,
             )
-
         logger.info(f"Loaded {len(data)} new records")
 
-        # Ensure timestamps are parsed correctly and all timezones are treated as UTC
+        # Ensure all columns have the correct type
         for field in fields:
-            if field["type"] == "timestamp":
-                date_column = field["name"]
-                data[date_column] = pd.to_datetime(data[date_column], errors="coerce")
-                data[date_column] = data[date_column].dt.tz_localize(None)
+            field_name = field["name"]
+            field_type = postgres_to_pandas_type(field["type"])
+            if field_type == "datetime64[ns]":
+                data[field_name] = pd.to_datetime(
+                    data[field_name],
+                    errors="coerce",
+                )
+                data[field_name] = data[field_name].dt.tz_localize(None)
+            else:
+                data[field_name] = data[field_name].astype(field_type)
 
         # Define partition columns
         if partition_timestamp and partition_cols:
@@ -291,7 +306,8 @@ def process_data():
             dataset.get("fields"),
             dataset.get("partition_timestamp"),
             partition_cols,
-            INCREMENTAL_LOAD_FROM_DATE if incremental_load else None,
+            INCREMENTAL_DATE_FROM if incremental_load else None,
+            INCREMENTAL_DATE_TO if incremental_load else None,
         )
         if not data.empty:
             if not validate_schema(data, dataset.get("fields")):
@@ -310,6 +326,7 @@ def process_data():
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_cols,
+                schema_evolution=False,
             )
 
         else:
