@@ -292,7 +292,7 @@ def get_incremental_load_date_from(data_retention_days: int) -> pd.Timestamp:
     all data within the overwritten month partition(s) while respecting the data retention policy.
     """
     today = pd.Timestamp.now().normalize()
-    month_start = today - pd.DateOffset(days=data_retention_days).replace(day=1)
+    month_start = (today - pd.DateOffset(days=data_retention_days)).replace(day=1)
     return month_start
 
 
@@ -319,7 +319,7 @@ def process_data():
         incremental_load = dataset.get("incremental_load", False)
         retention_days = dataset.get("retention_days", 0)
 
-        # Retreive the new data
+        # Retrieve the new data
         logger.info(f"Processing {table_name} data...")
         data = get_new_data(
             path,
