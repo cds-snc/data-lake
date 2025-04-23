@@ -284,7 +284,7 @@ def download_s3_object(s3, s3_url, filename):
     )
 
 
-def get_incremental_load_date_from(data_retention_days: int) -> pd.Timestamp:
+def get_incremental_load_date_from(data_retention_days: int) -> str:
     """
     Get the date from which to load incremental data.  This will always be the beginning of
     the month that is today minus the retention days.  The reason for this is because we
@@ -293,7 +293,7 @@ def get_incremental_load_date_from(data_retention_days: int) -> pd.Timestamp:
     """
     today = pd.Timestamp.now().normalize()
     month_start = (today - pd.DateOffset(days=data_retention_days)).replace(day=1)
-    return month_start
+    return month_start.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def process_data():
