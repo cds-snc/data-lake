@@ -3,6 +3,7 @@
   "partition_timestamp": "created_at",
   "partition_cols": ["year", "month"],
   "incremental_load": true,
+  "retention_days": 7,
   "fields": [
     {
       "name": "id",

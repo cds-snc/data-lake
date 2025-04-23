@@ -28,14 +28,6 @@ args = getResolvedOptions(
     ],
 )
 
-# Specifies the defautal date to start and end the incremental load from
-# which is all of yesterday's data
-today = pd.Timestamp.now().normalize()
-YESTERDAY_MIDNIGHT = (today - pd.Timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
-TODAY_MIDNIGHT = today.strftime("%Y-%m-%d %H:%M:%S")
-INCREMENTAL_DATE_FROM = args.get("incremental_date_from", YESTERDAY_MIDNIGHT)
-INCREMENTAL_DATE_TO = args.get("incremental_date_to", TODAY_MIDNIGHT)
-
 # Data source and target
 SOURCE_BUCKET = args["source_bucket"]
 SOURCE_PREFIX = args["source_prefix"]
@@ -147,7 +139,6 @@ def get_new_data(
     partition_timestamp: str = None,
     partition_cols: List[str] = None,
     date_from: str = None,
-    date_to: str = None,
 ) -> pd.DataFrame:
     """
     Reads the data from the specified path in S3 and returns a DataFrame.
@@ -163,12 +154,10 @@ def get_new_data(
         )
 
         # Only get new data within the time range
-        if date_from and date_to and partition_timestamp:
-            logger.info(f"Incremental data load from {date_from} to {date_to}...")
+        if date_from and partition_timestamp:
+            logger.info(f"Incremental data load from {date_from}...")
             dataset = ds.dataset(s3_path, format="parquet")
-            filter_expr = (ds.field(partition_timestamp) >= date_from) & (
-                ds.field(partition_timestamp) < date_to
-            )
+            filter_expr = ds.field(partition_timestamp) >= date_from
             scanner = dataset.scanner(filter=filter_expr, columns=field_names)
             table = scanner.to_table()
             data = table.to_pandas()
@@ -283,6 +272,9 @@ def get_dataset_config():
 
 
 def download_s3_object(s3, s3_url, filename):
+    """
+    Download an S3 object to a local file.
+    """
     bucket_name = s3_url.split("/")[2]
     object_key = "/".join(s3_url.split("/")[3:])
     s3.download_file(
@@ -290,6 +282,18 @@ def download_s3_object(s3, s3_url, filename):
         Key=object_key,
         Filename=os.path.join(os.getcwd(), filename),
     )
+
+
+def get_incremental_load_date_from(data_retention_days: int) -> pd.Timestamp:
+    """
+    Get the date from which to load incremental data.  This will always be the beginning of
+    the month that is today minus the retention days.  The reason for this is because we
+    perform a month partition overwrite and need to make sure that we are loading
+    all data within the overwritten month partition(s) while respecting the data retention policy.
+    """
+    today = pd.Timestamp.now().normalize()
+    month_start = today - pd.DateOffset(days=data_retention_days).replace(day=1)
+    return month_start
 
 
 def process_data():
@@ -313,6 +317,7 @@ def process_data():
         path = f"{path_prefix}{table_name}"
         partition_cols = dataset.get("partition_cols")
         incremental_load = dataset.get("incremental_load", False)
+        retention_days = dataset.get("retention_days", 0)
 
         # Retreive the new data
         logger.info(f"Processing {table_name} data...")
@@ -321,8 +326,11 @@ def process_data():
             dataset.get("fields"),
             dataset.get("partition_timestamp"),
             partition_cols,
-            INCREMENTAL_DATE_FROM if incremental_load else None,
-            INCREMENTAL_DATE_TO if incremental_load else None,
+            date_from=(
+                get_incremental_load_date_from(retention_days)
+                if incremental_load
+                else None
+            ),
         )
         if not data.empty:
             if not validate_schema(data, dataset.get("fields")):
@@ -337,7 +345,7 @@ def process_data():
                 df=data,
                 path=f"{TRANSFORMED_PATH}/{table_name}/",
                 dataset=True,
-                mode="append" if incremental_load else "overwrite_partitions",
+                mode="overwrite_partitions",
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_cols,
