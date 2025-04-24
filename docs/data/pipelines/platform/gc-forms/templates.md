@@ -3,11 +3,18 @@
 ## Description
 The GC Forms `Templates` dataset provides information on form templates, and the users that own them, in [Parquet format](https://parquet.apache.org/). The role of the form template is to control how the rendered form is presented to users for submission.
 
-There are no form submissions as part of this dataset and only the form owner's name and Government of Canada email address is available in the `users` table. The data is partitioned by month, and updated daily.  It can be queried in Superset as follows:
+There is no form submission data as part of this dataset and only the form owner's name and Government of Canada email address is available in the `users` table. The data is partitioned by month, and updated daily.  It can be queried in Superset as follows:
 
 Note that this dataset also contains a historical snapshot of published form information that was exported from a manually maintained external source.
 
 ```sql
+-- Submission IDs per template
+SELECT 
+    * 
+FROM 
+    "platform_gc_forms_production"."platform_gc_forms_submissions" 
+LIMIT 10;
+
 -- Templates
 SELECT 
     * 
@@ -61,7 +68,7 @@ A high level view is shown below with more details about each step following the
 ```mermaid
 graph TD
     %% Source Systems
-    FormsETL["`**GC Forms ETL**<br/>Database 'Templates' and 'Users' tables`"]
+    FormsETL["`**GC Forms ETL**<br/>Database 'Templates' and 'Users' tables<br/>Lambda 'Submission' logs`"]
     
     %% Storage
     FormsS3["`**S3 Bucket**<br/>cds-forms-data-lake-bucket-production`"]
@@ -91,8 +98,9 @@ graph TD
 ```
 
 ### Source data
-The source of this dataset is the GC Forms database's `Templates` and `Users` tables.  [A nightly ETL job](https://github.com/cds-snc/forms-terraform/blob/main/aws/glue/jobs.tf) runs in the `Forms-Production` AWS account that extracts, transforms and loads data into an S3 bucket.  An [S3 replication rule](https://github.com/cds-snc/forms-terraform/blob/main/aws/glue/s3.tf#L1-L13) then handles moving this data into the Data Lake's Raw bucket.
+The source of this dataset is the GC Forms database's `Templates` and `Users` tables and the `Submission` Lambda function's logs.  [A nightly ETL job](https://github.com/cds-snc/forms-terraform/blob/main/aws/glue/jobs.tf) runs in the `Forms-Production` AWS account that extracts, transforms and loads data into an S3 bucket.  An [S3 replication rule](https://github.com/cds-snc/forms-terraform/blob/main/aws/glue/s3.tf#L1-L13) then handles moving this data into the Data Lake's Raw bucket.
 ```
+cds-data-lake-raw-production/platform/gc-forms/processed-data/submissions/*.parquet
 cds-data-lake-raw-production/platform/gc-forms/processed-data/template/*.parquet
 cds-data-lake-raw-production/platform/gc-forms/processed-data/templateToUser/*.parquet
 cds-data-lake-raw-production/platform/gc-forms/processed-data/user/*.parquet
@@ -108,9 +116,10 @@ On the first of each month, an AWS Glue crawler runs in the `DataLake-Production
 
 - [Platform / GC Forms / Templates](https://github.com/cds-snc/data-lake/blob/b096d7f2b88aba91a0cb1d8e16985c5b1c42a01a/terragrunt/aws/glue/crawlers.tf#L24-L49)
 
-This crawler creates and manages the following data catalog table in the [`platform_gc_forms_production_raw` database](https://github.com/cds-snc/data-lake/blob/b096d7f2b88aba91a0cb1d8e16985c5b1c42a01a/terragrunt/aws/glue/databases.tf#L6-L9):
+This crawler creates and manages the following data catalog tables in the [`platform_gc_forms_production_raw` database](https://github.com/cds-snc/data-lake/blob/b096d7f2b88aba91a0cb1d8e16985c5b1c42a01a/terragrunt/aws/glue/databases.tf#L6-L9):
 
 - `platform_gc_forms_raw_historical_data`: GC Forms historical published form data.
+- `platform_gc_forms_raw_submissions`: one-to-many relationship of templates to their submission IDs (no user submitted data).
 - `platform_gc_forms_raw_template`: GC Forms template data.
 - `platform_gc_forms_raw_templatetouser`: many-to-many relationship of templates to their owners.
 - `platform_gc_forms_raw_user`: GC Forms users that have logged into the service.
@@ -121,6 +130,7 @@ Each day, the `Platform / GC Forms / Templates` Glue ETL job runs and updates ex
 
 ```
 cds-data-lake-transformed-production/platform/gc-forms/historical-data/month=YYYY-MM/*.parquet
+cds-data-lake-transformed-production/platform/gc-forms/processed-data/submissions/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-forms/processed-data/template/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-forms/processed-data/templateToUser/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-forms/processed-data/user/month=YYYY-MM/*.parquet
@@ -129,6 +139,7 @@ cds-data-lake-transformed-production/platform/gc-forms/processed-data/user/month
 Additionally, a data catalog table is created in the [`platform_gc_forms_production` database](https://github.com/cds-snc/data-lake/blob/b096d7f2b88aba91a0cb1d8e16985c5b1c42a01a/terragrunt/aws/glue/databases.tf#L1-L4):
 
 - `platform_gc_forms_historical_data`: GC Forms historical published form data.
-- `platform_gc_forms_template`: deduplicated GC Forms template data.
-- `platform_gc_forms_templatetouser`: deduplicated many-to-many relationship of templates to their owners.
-- `platform_gc_forms_user`: deduplicated GC Forms users that have logged into the service.
+- `platform_gc_forms_submissions`: one-to-many relationship of templates to their submission IDs (no user submitted data).
+- `platform_gc_forms_template`: GC Forms template data.
+- `platform_gc_forms_templatetouser`: many-to-many relationship of templates to their owners.
+- `platform_gc_forms_user`: GC Forms users that have logged into the service.

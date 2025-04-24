@@ -9,6 +9,13 @@ The example dataset is provided as a query instead of a CSV to limit
 visibility to only those with Superset access.
 */
 
+-- Submissions
+SELECT 
+    * 
+FROM 
+    "platform_gc_forms_production"."platform_gc_forms_submissions" 
+LIMIT 10;
+
 -- Templates
 SELECT 
     * 
