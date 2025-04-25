@@ -66,6 +66,7 @@ Here's a descriptive list of the fields in each table:
 | published_form_type | string | Type of published form (Collection of Feedback, Benefit Administration, etc.) |
 | published_reason | string | Reason for publishing the form |
 | recorded_by | string | User who recorded this historical data entry |
+| year | string | Partition key in the format of YYYY |
 | month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_forms_submissions
@@ -113,6 +114,7 @@ Here's a descriptive list of the fields in each table:
 | textarea_count | integer | Count of textarea form elements |
 | textfield_count | integer | Count of text field form elements |
 | saveandresume | boolean | Indicates if template allows save and resume functionality |
+| year | string | Partition key in the format of YYYY |
 | month | string | Partition key in the format of YYYY-MM |
 			
 ### Table: platform_gc_forms_templatetouser
@@ -134,5 +136,7 @@ Here's a descriptive list of the fields in each table:
 | active | boolean | Indicates whether the user account is active |
 | createdat | timestamp | When the user account was created |
 | notes | string | Additional notes about the user |
+| canpublish | boolean | Indicates if the user can publish forms |
 | timestamp | timestamp | Time of the last extract of the user record |
+| year | string | Partition key in the format of YYYY |
 | month | string | Partition key in the format of YYYY-MM |
