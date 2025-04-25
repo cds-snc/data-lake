@@ -1,8 +1,9 @@
 # Platform / GC Forms / Templates
 
-Dataset providing GC Forms template data.  There are 4 tables as part of this dataset:
+Dataset providing GC Forms template data.  There are five tables as part of this dataset:
 
 - `historical_data`: one-time snapshot of published form data that was previously managed in an external source.
+- `submissions`: one-to-many relationship of templates to their submission IDs (no user submitted data).
 - `template`: the templates that are used by GC Forms to render the form users fill out and submit.
 - `templateToUser`: a many-to-many relationship of templates to their owners.
 - `user`: the users that have logged into GC Forms.
@@ -12,6 +13,7 @@ No external user form submissions or personally identifiable information (PII) a
 This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the following Physical datasets:
 
 - `platform_gc_forms_historical_data`
+- `platform_gc_forms_submissions` 
 - `platform_gc_forms_template` 
 - `platform_gc_forms_templatetouser`
 - `platform_gc_forms_user`
@@ -32,6 +34,7 @@ With the exception of the `historical_data`, this dataset is extracted daily fro
 * `Location`: 
 ```
 s3://cds-data-lake-transformed-production/platform/gc-forms/historical-data/month=YYYY-MM/*.parquet
+s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/submissions/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/template/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/templateToUser/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/user/month=YYYY-MM/*.parquet
@@ -63,7 +66,16 @@ Here's a descriptive list of the fields in each table:
 | published_form_type | string | Type of published form (Collection of Feedback, Benefit Administration, etc.) |
 | published_reason | string | Reason for publishing the form |
 | recorded_by | string | User who recorded this historical data entry |
+| year | string | Partition key in the format of YYYY |
 | month | string | Partition key in the format of YYYY-MM |
+
+### Table: platform_gc_forms_submissions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| submission_id | string | Submission ID of the relationship |
+| form_id | string | Template ID of the relationship |
+| timestamp | timestamp | Time of the last extract of the relationship record |
 
 ### Table: platform_gc_forms_template
 
@@ -102,6 +114,7 @@ Here's a descriptive list of the fields in each table:
 | textarea_count | integer | Count of textarea form elements |
 | textfield_count | integer | Count of text field form elements |
 | saveandresume | boolean | Indicates if template allows save and resume functionality |
+| year | string | Partition key in the format of YYYY |
 | month | string | Partition key in the format of YYYY-MM |
 			
 ### Table: platform_gc_forms_templatetouser
@@ -123,5 +136,7 @@ Here's a descriptive list of the fields in each table:
 | active | boolean | Indicates whether the user account is active |
 | createdat | timestamp | When the user account was created |
 | notes | string | Additional notes about the user |
+| canpublish | boolean | Indicates if the user can publish forms |
 | timestamp | timestamp | Time of the last extract of the user record |
+| year | string | Partition key in the format of YYYY |
 | month | string | Partition key in the format of YYYY-MM |
