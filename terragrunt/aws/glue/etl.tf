@@ -119,6 +119,16 @@ resource "aws_glue_job" "platform_gc_notify_job" {
   }
 }
 
+resource "aws_glue_trigger" "platform_gc_notify_job" {
+  name     = "Platform / GC Notify"
+  schedule = "cron(0 5 * * ? *)" # Daily at 5am UTC
+  type     = "SCHEDULED"
+
+  actions {
+    job_name = aws_glue_job.platform_gc_notify_job.name
+  }
+}
+
 #
 # Platform / Support / Freshdesk
 #

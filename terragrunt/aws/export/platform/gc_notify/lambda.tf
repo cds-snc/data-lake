@@ -5,7 +5,7 @@ module "platform_gc_notify_export" {
   source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.4.1"
 
   lambda_name                = local.gc_notify_lambda_name
-  lambda_schedule_expression = "cron(0 8 ? * 1 *)" # Weekly, Monday at 8am UTC for testing
+  lambda_schedule_expression = "cron(0 4 ? * * *)" # Daily at 4am UTC
   lambda_timeout             = "60"
   lambda_architectures       = ["arm64"]
 
