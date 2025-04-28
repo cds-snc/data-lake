@@ -44,7 +44,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terragrunt plan buckets
-        uses: cds-snc/terraform-plan@56630b0c2bcbe4e9b641f5332ea0288893e1f764 # v3.4.1
+        uses: cds-snc/terraform-plan@28de868605a2499187505c82b4f199abd8877b26 # v3.4.2
         with:
           directory: "terragrunt/env/production/buckets"
           comment-delete: "true"
@@ -53,7 +53,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan glue
-        uses: cds-snc/terraform-plan@56630b0c2bcbe4e9b641f5332ea0288893e1f764 # v3.4.1
+        uses: cds-snc/terraform-plan@28de868605a2499187505c82b4f199abd8877b26 # v3.4.2
         with:
           directory: "terragrunt/env/production/glue"
           comment-delete: "true"
@@ -62,7 +62,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan athena
-        uses: cds-snc/terraform-plan@56630b0c2bcbe4e9b641f5332ea0288893e1f764 # v3.4.1
+        uses: cds-snc/terraform-plan@28de868605a2499187505c82b4f199abd8877b26 # v3.4.2
         with:
           directory: "terragrunt/env/production/athena"
           comment-delete: "true"
@@ -71,7 +71,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@56630b0c2bcbe4e9b641f5332ea0288893e1f764 # v3.4.1
+        uses: cds-snc/terraform-plan@28de868605a2499187505c82b4f199abd8877b26 # v3.4.2
         with:
           directory: "terragrunt/env/production/alarms"
           comment-delete: "true"
@@ -80,7 +80,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan export
-        uses: cds-snc/terraform-plan@56630b0c2bcbe4e9b641f5332ea0288893e1f764 # v3.4.1
+        uses: cds-snc/terraform-plan@28de868605a2499187505c82b4f199abd8877b26 # v3.4.2
         with:
           directory: "terragrunt/env/production/export"
           comment-delete: "true"
