@@ -75,7 +75,7 @@ def validate_schema(
     return True
 
 
-def postgres_to_pandas_type(field_type: str) -> str | None:
+def postgres_to_pandas_type(field_type: str) -> str:
     """
     Convert PostgreSQL data types to pandas data types.
     """
@@ -177,9 +177,13 @@ def get_new_data(
         for field in fields:
             field_name = field["name"]
             field_type = postgres_to_pandas_type(field["type"])
+            # Make sure dates are parsed correctly with UTC timezone
             if field_type == "datetime64[ns]":
                 data[field_name] = parse_dates(data[field_name])
                 data[field_name] = data[field_name].dt.tz_localize(None)
+            # Handles a bug with Pandas and object conversion to Float
+            elif field_type == pd.Float64Dtype.name:
+                data[field_name] = data[field_name].astype("string").astype(field_type)
             else:
                 data[field_name] = data[field_name].astype(field_type)
 
