@@ -64,7 +64,6 @@ data "aws_iam_policy_document" "raw_bucket" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::296255494825:role/NotifyExportToPlatformDataLake",
-        
       ]
     }
     actions = [
