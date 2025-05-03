@@ -2,7 +2,7 @@
 # Freshdesk export via a scheduled Lambda function
 #
 module "platform_support_freshdesk_export" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.4.1"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.4.2"
 
   lambda_name                = local.freshdesk_lambda_name
   lambda_schedule_expression = "cron(0 5 * * ? *)" # 5am UTC every day
