@@ -132,75 +132,64 @@ def load_data(
     Reads the data in chunks from local parquet files, validates the schema,
     and saves the transformed data to the target directory.
     """
-    try:
+    rows = 0
+    field_names = [field["name"] for field in fields]
+    logger.info(f"Reading {path} data...")
 
-        rows = 0
-        field_names = [field["name"] for field in fields]
-        logger.info(f"Reading {path} data...")
+    # Find all parquet files in the directory
+    parquet_files = glob.glob(os.path.join(path, "**/*.parquet"), recursive=True)
 
-        # Find all parquet files in the directory
-        parquet_files = glob.glob(os.path.join(path, "**/*.parquet"), recursive=True)
+    for file_path in parquet_files:
+        parquet_file = pq.ParquetFile(file_path)
 
-        for file_path in parquet_files:
-            parquet_file = pq.ParquetFile(file_path)
+        # Read in chunks
+        for batch in parquet_file.iter_batches(batch_size=500000, columns=field_names):
+            data = pa.Table.from_batches([batch]).to_pandas()
 
-            # Read in chunks
-            for batch in parquet_file.iter_batches(
-                batch_size=500000, columns=field_names
-            ):
-                data = pa.Table.from_batches([batch]).to_pandas()
+            # Ensure all columns have the correct type
+            for field in fields:
+                field_name = field["name"]
+                field_type = postgres_to_pandas_type(field["type"])
+                if field_type == "datetime64[ns]":
+                    data[field_name] = parse_dates(data[field_name])
+                    data[field_name] = data[field_name].dt.tz_localize(None)
+                else:
+                    data[field_name] = data[field_name].astype(field_type)
 
-                # Ensure all columns have the correct type
-                for field in fields:
-                    field_name = field["name"]
-                    field_type = postgres_to_pandas_type(field["type"])
-                    if field_type == "datetime64[ns]":
-                        data[field_name] = parse_dates(data[field_name])
-                        data[field_name] = data[field_name].dt.tz_localize(None)
-                    else:
-                        data[field_name] = data[field_name].astype(field_type)
-
-                # Define partition columns
-                if partition_timestamp and partition_cols:
-                    # Remove rows if they do not have the partition_timestamp column
-                    data = data[~data[partition_timestamp].isna()]
-
-                    partition_format = {
-                        "day": "%Y-%m-%d",
-                        "month": "%Y-%m",
-                        "year": "%Y",
-                    }
-                    for partition in partition_cols:
-                        data[partition] = data[partition_timestamp].dt.strftime(
-                            partition_format[partition]
-                        )
-
-                # Validate schema
-                if not validate_schema(data, fields):
-                    raise ValueError(
-                        f"Schema validation failed for {table_name}. Aborting ETL process."
+            # Define partition columns
+            if partition_timestamp and partition_cols:
+                partition_format = {
+                    "day": "%Y-%m-%d",
+                    "month": "%Y-%m",
+                    "year": "%Y",
+                }
+                for partition in partition_cols:
+                    data[partition] = data[partition_timestamp].dt.strftime(
+                        partition_format[partition]
                     )
 
-                logger.info(f"Saving {len(data)} records to {table_name}...")
-
-                # Save to S3
-                table = f"{GLUE_TABLE_NAME_PREFIX}_{table_name}"
-                wr.s3.to_parquet(
-                    df=data,
-                    path=f"{TRANSFORMED_S3_PATH}/{table_name}/",
-                    dataset=True,
-                    mode="append",
-                    database=GLUE_DATABASE_NAME_TRANSFORMED,
-                    table=table,
-                    partition_cols=partition_cols,
+            # Validate schema
+            if not validate_schema(data, fields):
+                raise ValueError(
+                    f"Schema validation failed for {table_name}. Aborting ETL process."
                 )
-                rows += len(data)
 
-        return rows
+            logger.info(f"Saving {len(data)} records to {table_name}...")
 
-    except Exception as e:
-        logger.error(f"Error processing {path} data: {str(e)}")
-        return 0
+            # Save to S3
+            table = f"{GLUE_TABLE_NAME_PREFIX}_{table_name}"
+            wr.s3.to_parquet(
+                df=data,
+                path=f"{TRANSFORMED_S3_PATH}/{table_name}/",
+                dataset=True,
+                mode="append",
+                database=GLUE_DATABASE_NAME_TRANSFORMED,
+                table=table,
+                partition_cols=partition_cols,
+            )
+            rows += len(data)
+
+    return rows
 
 
 def get_dataset_config():

@@ -16,7 +16,7 @@ lint:
 pull_request: install install_dev fmt lint test
 
 test:
-	@echo "No tests ... (╯°□°)╯︵ ┻━┻"
+	python -m pytest -s -vv .
 
 .PHONY: \
 	fmt \
