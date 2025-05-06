@@ -3,11 +3,11 @@
 ## Description
 The GC Notify dataset is an export of the following database tables in [Parquet format](https://parquet.apache.org/):
 
-- `jobs`: Processing tasks for email and SMS sending operations
+- `jobs`: Batch jobs for email and SMS notification sending
 - `login_events`: Records of user login activity
 - `notification_history`: Historical record of all notifications
-- `notifications`: Core table containing email and SMS notifications within their services retention period
-- `organisation`: Organizations that use the notification service
+- `notifications`: Core table containing email and SMS notifications within their service's retention period
+- `organisation`: Organizations that use GC Notify
 - `permissions`: User permissions that determine access levels within the system
 - `services`: Notification services used to send communications
 - `services_history`: Historical record of changes made to notification services
@@ -200,11 +200,11 @@ cds-data-lake-transformed-production/platform/gc-notify/users/year=YYYY/month=YY
 
 Additionally, data catalog tables are created in the [`platform_gc_notify_production` database](https://github.com/cds-snc/data-lake/blob/318387c230a3ec2b271492129b8066289e7160b3/terragrunt/aws/glue/databases.tf#L11-L14):
 
-- `platform_gc_notify_jobs`: Processing tasks for email and SMS sending operations
+- `platform_gc_notify_jobs`: Batch jobs for email and SMS notification sending
 - `platform_gc_notify_login_events`: Records of user login activity
 - `platform_gc_notify_notification_history`: Historical record of all notifications
-- `platform_gc_notify_notifications`: Core table containing email and SMS notifications within their services retention period
-- `platform_gc_notify_organisation`: Organizations that use the notification service
+- `platform_gc_notify_notifications`: Core table containing email and SMS notifications within their service's retention period
+- `platform_gc_notify_organisation`: Organizations that use GC Notify
 - `platform_gc_notify_permissions`: User permissions that determine access levels within the system
 - `platform_gc_notify_services`: Notification services used to send communications
 - `platform_gc_notify_services_history`: Historical record of changes made to notification services

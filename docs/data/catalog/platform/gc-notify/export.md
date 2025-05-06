@@ -2,11 +2,11 @@
 
 Dataset providing GC Notify data.  There are fourteen tables as part of this dataset:
 
-- `jobs`: Processing tasks for email and SMS sending operations
+- `jobs`: Batch jobs for email and SMS notification sending
 - `login_events`: Records of user login activity
 - `notification_history`: Historical record of all notifications
-- `notifications`: Core table containing email and SMS notifications within their services retention period
-- `organisation`: Organizations that use the notification service
+- `notifications`: Core table containing email and SMS notifications within their service's retention period
+- `organisation`: Organizations that use GC Notify
 - `permissions`: User permissions that determine access levels within the system
 - `services`: Notification services used to send communications
 - `services_history`: Historical record of changes made to notification services
@@ -44,7 +44,7 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the f
 
 ## Provenance
 
-This dataset is extracted daily from the GC Notify database's automated snapshot. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-notify/export.md).
+This dataset is exported daily from the GC Notify database's automated snapshots. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-notify/export.md).
 
 * `Updated`: Daily
 * `Steward`: GC Notify
@@ -98,6 +98,8 @@ Here's a descriptive list of the fields in each table:
 | archived | bool | Flag indicating whether the job has been archived. |
 | api_key_id | uuid | Foreign key referencing the API key used to create this job. |
 | sender_id | uuid | Sender identity used for this job. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_login_events
 
@@ -107,6 +109,8 @@ Here's a descriptive list of the fields in each table:
 | user_id | uuid | Foreign key referencing the user that logged in. |
 | created_at | timestamp | Date and time when the login event was created. |
 | updated_at | timestamp | Date and time when the login event was updated. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_notification_history
 
@@ -131,7 +135,7 @@ Here's a descriptive list of the fields in each table:
 | phone_prefix | varchar | Country code prefix for phone numbers in SMS notifications. |
 | rate_multiplier | numeric | Pricing multiplier applied to SMS notifications based on the billable_units. |
 | notification_status | text | Status of the notification. |
-| created_by_id | uuid | Identifier for the user or that initiated the notification. |
+| created_by_id | uuid | Identifier for the user that initiated the notification. |
 | queue_name | text | Name of the processing queue this notification was handled by. |
 | feedback_type | notification_feedback_types | Category of delivery feedback received. |
 | feedback_subtype | notification_feedback_subtypes | More specific feedback classification. |
@@ -144,6 +148,8 @@ Here's a descriptive list of the fields in each table:
 | sms_message_encoding | varchar | Character encoding used for the SMS message. |
 | sms_origination_phone_number | varchar | Phone number that sent the SMS message. |
 | feedback_reason | varchar | Pinpoint failure reason when an SMS message cannot be delivered. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_notifications
 
@@ -168,7 +174,7 @@ Here's a descriptive list of the fields in each table:
 | phone_prefix | varchar | Country code prefix for phone numbers in SMS notifications. |
 | rate_multiplier | numeric | Pricing multiplier applied to SMS notifications based on the billable_units. |
 | notification_status | text | Status of the notification. |
-| created_by_id | uuid | Identifier for the user or that initiated the notification. |
+| created_by_id | uuid | Identifier for the user that initiated the notification. |
 | queue_name | text | Name of the processing queue this notification was handled by. |
 | feedback_type | notification_feedback_types | Category of delivery feedback received. |
 | feedback_subtype | notification_feedback_subtypes | More specific feedback classification. |
@@ -181,6 +187,8 @@ Here's a descriptive list of the fields in each table:
 | sms_message_encoding | varchar | Character encoding used for the SMS message. |
 | sms_origination_phone_number | varchar | Phone number that sent the SMS message. |
 | feedback_reason | varchar | Pinpoint failure reason when an SMS message cannot be delivered. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_organisation
 
@@ -199,6 +207,8 @@ Here's a descriptive list of the fields in each table:
 | crown | bool | Indicates whether this is a Crown Corporation. |
 | organisation_type | varchar | Type of the organisation. |
 | default_branding_is_french | bool | Indicates whether the default branding for this organisation uses French. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_permissions
 
@@ -209,6 +219,8 @@ Here's a descriptive list of the fields in each table:
 | user_id | uuid | Foreign key reference to the user the permission has been granted to. |
 | permission | permission_types | The permission that has been granted. |
 | created_at | timestamp | Date and time when the permission was assigned. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_services
 
@@ -243,6 +255,8 @@ Here's a descriptive list of the fields in each table:
 | sensitive_service | bool | Indicates if this service handles sensitive or protected information. |
 | email_annual_limit | integer | Maximum number of email notifications this service can send annually. |
 | sms_annual_limit | integer | Maximum number of SMS notifications this service can send annually. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_services_history
 
@@ -277,6 +291,8 @@ Here's a descriptive list of the fields in each table:
 | sensitive_service | bool | Indicates if this service handles sensitive or protected information. |
 | email_annual_limit | integer | Maximum number of email notifications this service can send annually. |
 | sms_annual_limit | integer | Maximum number of SMS notifications this service can send annually. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_template_categories
 
@@ -293,6 +309,8 @@ Here's a descriptive list of the fields in each table:
 | created_at | timestamp | Date and time when this template category was created. |
 | updated_at | timestamp | Date and time when this template category was last updated. |
 | sms_sending_vehicle | sms_sending_vehicle | Defines if templates in this category use a short or long code for sending. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_templates
 
@@ -311,6 +329,8 @@ Here's a descriptive list of the fields in each table:
 | hidden | bool | Indicates whether the template should be hidden in the interface. |
 | template_category_id | uuid | Foreign key reference to the category this template belongs to. |
 | text_direction_rtl | bool | Indicates whether the template content should be rendered right-to-left. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_templates_history
 
@@ -329,6 +349,8 @@ Here's a descriptive list of the fields in each table:
 | hidden | bool | Indicates whether the template should be hidden in the interface. |
 | template_category_id | uuid | Foreign key reference to the category this template belongs to. |
 | text_direction_rtl | bool | Indicates whether the template content should be rendered right-to-left. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
 
 ### Table: platform_gc_notify_user_to_organisation
 
@@ -359,4 +381,5 @@ Here's a descriptive list of the fields in each table:
 | auth_type | varchar | 2FA authentication method used by this user (email_auth, sms_auth). |
 | blocked | bool | Indicates whether the user is currently blocked from accessing the system. |
 | password_expired | bool | Indicates whether the user's password has expired and needs to be reset. |
-
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
