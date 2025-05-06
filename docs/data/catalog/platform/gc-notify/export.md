@@ -7,7 +7,7 @@ Dataset providing GC Notify data.  There are fourteen tables as part of this dat
 - `notification_history`: Historical record of all notifications
 - `notifications`: Core table containing email and SMS notifications within their service's retention period
 - `organisation`: Organizations that use GC Notify
-- `permissions`: User permissions that determine access levels within the system
+- `permissions`: User permissions granted within a service
 - `services`: Notification services used to send communications
 - `services_history`: Historical record of changes made to notification services
 - `template_categories`: Categories for organizing notification templates

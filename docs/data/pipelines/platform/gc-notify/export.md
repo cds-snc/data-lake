@@ -8,7 +8,7 @@ The GC Notify dataset is an export of the following database tables in [Parquet 
 - `notification_history`: Historical record of all notifications
 - `notifications`: Core table containing email and SMS notifications within their service's retention period
 - `organisation`: Organizations that use GC Notify
-- `permissions`: User permissions that determine access levels within the system
+- `permissions`: User permissions granted within a service
 - `services`: Notification services used to send communications
 - `services_history`: Historical record of changes made to notification services
 - `template_categories`: Categories for organizing notification templates
@@ -18,7 +18,7 @@ The GC Notify dataset is an export of the following database tables in [Parquet 
 - `user_to_service`: Mapping between users and their services
 - `users`: Users accounts within the system
 
-There is no personally identifiable information (PII) included in this dataset. The data updated daily and partitioned by year and month using the `created_at` date.  It can be queried in Superset as follows:
+There is no personally identifiable information (PII) included in this dataset. The data is updated daily and partitioned by year and month using the `created_at` date.  It can be queried in Superset as follows:
 
 ```sql
 -- Jobs
@@ -205,7 +205,7 @@ Additionally, data catalog tables are created in the [`platform_gc_notify_produc
 - `platform_gc_notify_notification_history`: Historical record of all notifications
 - `platform_gc_notify_notifications`: Core table containing email and SMS notifications within their service's retention period
 - `platform_gc_notify_organisation`: Organizations that use GC Notify
-- `platform_gc_notify_permissions`: User permissions that determine access levels within the system
+- `platform_gc_notify_permissions`: User permissions granted within a service
 - `platform_gc_notify_services`: Notification services used to send communications
 - `platform_gc_notify_services_history`: Historical record of changes made to notification services
 - `platform_gc_notify_template_categories`: Categories for organizing notification templates
