@@ -18,7 +18,7 @@ The GC Notify dataset is an export of the following database tables in [Parquet 
 - `user_to_service`: Mapping between users and their services
 - `users`: Users accounts within the system
 
-There is no personally identifiable information (PII) included in this dataset. The data is partitioned by year and month, and updated daily.  It can be queried in Superset as follows:
+There is no personally identifiable information (PII) included in this dataset. The data updated daily and partitioned by year and month using the `created_at` date.  It can be queried in Superset as follows:
 
 ```sql
 -- Jobs
