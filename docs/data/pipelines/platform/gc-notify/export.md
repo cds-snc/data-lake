@@ -179,7 +179,9 @@ cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-productio
 
 ### Extract, Transform and Load (ETL) Jobs
 
-Each day, the `Platform / GC Notify` Glue ETL job runs and updates existing data as well as adding new data. The resulting dataset is saved in the Data Lake's Transformed `cds-data-lake-transformed-production` S3 bucket:
+Each day, the `Platform / GC Notify` Glue ETL job runs and updates existing data as well as adding new data. The resulting dataset is saved in the Data Lake's Transformed `cds-data-lake-transformed-production` S3 bucket.
+
+Note that for all data except for the `notification_history` table, it is a full data overwrite each day.  For `notification_history` data, an incremental load is performed that loads only the most recent month's partition of data.
 
 ```
 cds-data-lake-transformed-production/platform/gc-notify/jobs/year=YYYY/month=YYYY-MM/*.parquet
