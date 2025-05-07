@@ -5,10 +5,21 @@ import datetime
 import sys
 from unittest.mock import Mock, patch, mock_open, ANY
 
+sys.modules["pyspark"] = Mock()
+sys.modules["pyspark.context"] = Mock()
+sys.modules["pyspark.context"].SparkContext = Mock()
+sys.modules["pyspark.context"].SparkContext.getOrCreate = Mock(return_value=Mock())
+
 sys.modules["awsglue"] = Mock()
+sys.modules["awsglue.context"] = Mock()
+sys.modules["awsglue.context"].GlueContext = Mock()
+sys.modules["awsglue.job"] = Mock()
+sys.modules["awsglue.job"].Job = Mock()
+
 sys.modules["awsglue.utils"] = Mock()
 sys.modules["awsglue.utils"].getResolvedOptions = Mock()
 sys.modules["awsglue.utils"].getResolvedOptions.return_value = {
+    "JOB_NAME": "test_job",
     "source_bucket": "test-source-bucket",
     "source_prefix": "test-source-prefix",
     "transformed_bucket": "test-transformed-bucket",
@@ -384,7 +395,9 @@ def test_get_incremental_load_date_from(mock_timestamp):
 @patch("process_data.wr.s3.to_parquet")
 @patch("process_data.time.time")
 @patch("process_data.datetime")
+@patch("process_data.Job")
 def test_process_data(
+    mock_job,
     mock_datetime,
     mock_time,
     mock_to_parquet,
@@ -447,7 +460,9 @@ def test_process_data(
 @patch("process_data.validate_schema")
 @patch("process_data.boto3.client")
 @patch("process_data.download_s3_object")
+@patch("process_data.Job")
 def test_process_data_schema_validation_failure(
+    mock_job,
     mock_download_s3_object,
     mock_boto3_client,
     mock_validate_schema,
