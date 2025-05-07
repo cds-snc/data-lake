@@ -1,5 +1,9 @@
 # Dataset name
 
+* `Schedule`: The schedule of pipeline runs. If manual, indicate "Manual"
+* `Steward`: Who is responsible for the pipeline. This can be a person or an organization.
+* `Contact`: Email address or Slack handle of where queries should be directed
+
 ## Description
 
 A simple description of the dataset explaining what it is. 

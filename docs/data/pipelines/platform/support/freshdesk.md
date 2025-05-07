@@ -1,4 +1,9 @@
 # Platform / Support / Freshdesk
+
+* `Schedule`: Daily
+* `Steward`: Platform Core Services
+* `Contact`: Slack channel #platform-core-services
+
 ## Description
 The [Freshdesk](https://www.freshworks.com/freshdesk/) dataset provides information on user support tickets in [Parquet format](https://parquet.apache.org/). All user entered information and personally identifiable information (PII) has been removed from the dataset. The data is partitioned by month, and updated daily.
 

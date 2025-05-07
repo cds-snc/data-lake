@@ -1,9 +1,13 @@
 # Platform / GC Forms / Templates
 
+* `Schedule`: Daily
+* `Steward`: Platform Core Services
+* `Contact`: Slack channel #platform-core-services
+
 ## Description
 The GC Forms `Templates` dataset provides information on form templates, and the users that own them, in [Parquet format](https://parquet.apache.org/). The role of the form template is to control how the rendered form is presented to users for submission.
 
-There is no form submission data as part of this dataset and only the form owner's name and Government of Canada email address is available in the `users` table. The data is partitioned by month, and updated daily.  It can be queried in Superset as follows:
+There is no form submission data as part of this dataset and only the form owner's Government of Canada email address domain is available in the `users` table. The data is partitioned by month, and updated daily.  It can be queried in Superset as follows:
 
 Note that this dataset also contains a historical snapshot of published form information that was exported from a manually maintained external source.
 

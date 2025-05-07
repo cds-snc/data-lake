@@ -1,5 +1,9 @@
 # Platform / GC Notify
 
+* `Schedule`: Daily
+* `Steward`: Platform Core Services
+* `Contact`: Slack channel #platform-core-services
+
 ## Description
 The GC Notify dataset is an export of the following database tables in [Parquet format](https://parquet.apache.org/):
 
