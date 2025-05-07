@@ -16,6 +16,7 @@ sys.modules["awsglue.utils"].getResolvedOptions.return_value = {
     "database_name_transformed": "test_database_transformed",
     "table_config_object": "s3://test-config-bucket/test-config-key",
     "table_name_prefix": "test_prefix",
+    "target_env": "test",
 }
 
 
@@ -418,7 +419,7 @@ def test_process_data(
     assert mock_get_new_data.call_count == 2
 
     mock_get_new_data.assert_any_call(
-        f"notification-canada-ca-staging-cluster-2024-05-15/NotificationCanadaCastaging/public.notifications",
+        f"notification-canada-ca-test-cluster-2024-05-15/NotificationCanadaCatest/public.notifications",
         sample_dataset_config[0]["fields"],
         sample_dataset_config[0]["partition_timestamp"],
         sample_dataset_config[0]["partition_cols"],
@@ -426,7 +427,7 @@ def test_process_data(
     )
 
     mock_get_new_data.assert_any_call(
-        f"notification-canada-ca-staging-cluster-2024-05-15/NotificationCanadaCastaging/public.templates",
+        f"notification-canada-ca-test-cluster-2024-05-15/NotificationCanadaCatest/public.templates",
         sample_dataset_config[1]["fields"],
         sample_dataset_config[1]["partition_timestamp"],
         sample_dataset_config[1]["partition_cols"],

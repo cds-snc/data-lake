@@ -25,6 +25,7 @@ args = getResolvedOptions(
         "database_name_transformed",
         "table_config_object",
         "table_name_prefix",
+        "target_env",
     ],
 )
 
@@ -37,6 +38,7 @@ TRANSFORMED_PATH = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}"
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_CONFIG_OBJECT = args["table_config_object"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
+TARGET_ENV = args["target_env"]
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -306,7 +308,7 @@ def process_data():
     transformed data back to S3.
     """
     today = datetime.now().strftime("%Y-%m-%d")
-    path_prefix = f"notification-canada-ca-staging-cluster-{today}/NotificationCanadaCastaging/public."
+    path_prefix = f"notification-canada-ca-{TARGET_ENV}-cluster-{today}/NotificationCanadaCa{TARGET_ENV}/public."
     cloudwatch = boto3.client("cloudwatch")
     s3 = boto3.client("s3")
 
