@@ -1,4 +1,9 @@
 # Operations / AWS / Cost and Usage Report
+
+* `Schedule`: Daily
+* `Steward`: Platform Core Services
+* `Contact`: Slack channel #platform-core-services
+
 ## Description
 The AWS [Cost and Usage Report (CUR) 2.0](https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html) provides detailed billing data exports in  [Parquet format](https://parquet.apache.org/).  It contains line items for all AWS services usage with resource tags, pricing, and cost allocation data. The data is partitioned by time period and account ID, and updated daily.
 

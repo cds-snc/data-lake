@@ -3,6 +3,10 @@
 ### :warning: Note
 This dataset is still in testing and only a snapshot of Staging data is available in Superset.
 
+* `Schedule`: Daily
+* `Steward`: Platform Core Services
+* `Contact`: Slack channel #platform-core-services
+
 ## Description
 The [Salesforce](https://canadiandigitalservice.my.salesforce.com/) dataset provides information on customer/client/partner accounts. All user entered information and personally identifiable information (PII) has been removed from the dataset.
 
