@@ -116,6 +116,7 @@ resource "aws_glue_job" "platform_gc_notify_job" {
     "--database_name_transformed"        = aws_glue_catalog_database.platform_gc_notify_production.name
     "--table_config_object"              = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_notify_tables.key}"
     "--table_name_prefix"                = "platform_gc_notify"
+    "--target_env"                       = "production"
   }
 }
 
