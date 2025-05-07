@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import sys
 import time
@@ -13,11 +12,15 @@ import boto3
 import pandas as pd
 import pyarrow.dataset as ds
 
+from awsglue.context import GlueContext
+from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
 
 args = getResolvedOptions(
     sys.argv,
     [
+        "JOB_NAME",
         "source_bucket",
         "source_prefix",
         "transformed_bucket",
@@ -29,7 +32,7 @@ args = getResolvedOptions(
     ],
 )
 
-# Data source and target
+JOB_NAME = args["JOB_NAME"]
 SOURCE_BUCKET = args["source_bucket"]
 SOURCE_PREFIX = args["source_prefix"]
 TRANSFORMED_BUCKET = args["transformed_bucket"]
@@ -40,13 +43,8 @@ TABLE_CONFIG_OBJECT = args["table_config_object"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
 TARGET_ENV = args["target_env"]
 
-# Initialize logging
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
-logger.addHandler(handler)
+glueContext = GlueContext(SparkContext.getOrCreate())
+logger = glueContext.get_logger()
 
 
 class Field(TypedDict):
@@ -369,4 +367,7 @@ def process_data():
 
 
 if __name__ == "__main__":
+    job = Job(glueContext)
+    job.init(JOB_NAME, args)
     process_data()
+    job.commit()

@@ -71,6 +71,17 @@ resource "aws_s3_object" "platform_gc_notify_job" {
   etag   = filemd5(data.local_file.platform_gc_notify_job.filename)
 }
 
+data "local_file" "platform_gc_notify_requirements" {
+  filename = "${path.module}/etl/platform/gc_notify/requirements.txt"
+}
+
+resource "aws_s3_object" "platform_gc_notify_requirements" {
+  bucket = var.glue_bucket_name
+  key    = "platform/gc_notify/requirements.txt"
+  source = data.local_file.platform_gc_notify_requirements.filename
+  etag   = filemd5(data.local_file.platform_gc_notify_requirements.filename)
+}
+
 data "archive_file" "platform_gc_notify_tables" {
   type        = "zip"
   source_dir  = "${path.module}/etl/platform/gc_notify/tables"
@@ -91,16 +102,16 @@ resource "aws_glue_job" "platform_gc_notify_job" {
   timeout                = 30 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-  max_capacity           = 1
+  worker_type            = "G.2X"
+  number_of_workers      = 2
 
   command {
     script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_notify_job.key}"
-    python_version  = "3.9"
-    name            = "pythonshell"
+    python_version  = "3"
   }
 
   default_arguments = {
-    "--continuous-log-logGroup"          = "/aws-glue/python-jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
+    "--continuous-log-logGroup"          = "/aws-glue/jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
     "--continuous-log-logStreamPrefix"   = "platform_gc_notify"
     "--enable-continuous-cloudwatch-log" = "true"
     "--enable-continuous-log-filter"     = "true"
@@ -109,6 +120,8 @@ resource "aws_glue_job" "platform_gc_notify_job" {
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
     "--job-language"                     = "python"
+    "--python-modules-installer-option"  = "-r"
+    "--additional-python-modules"        = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_notify_requirements.key}"
     "--source_bucket"                    = var.raw_bucket_name
     "--source_prefix"                    = "platform/gc-notify"
     "--transformed_bucket"               = var.transformed_bucket_name
