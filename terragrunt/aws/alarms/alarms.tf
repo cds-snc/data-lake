@@ -90,11 +90,13 @@ resource "aws_cloudwatch_metric_alarm" "platform_gc_forms_etl_user_processed_rec
   comparison_operator = "LessThanLowerOrGreaterThanUpperThreshold"
   threshold_metric_id = "processed_records_expected"
   evaluation_periods  = 1
+  treat_missing_data  = "notBreaching"
 
   metric_query {
-    id         = "processed_records_expected"
-    expression = "ANOMALY_DETECTION_BAND(processed_records)"
-    label      = "Processed Records (Expected)"
+    id          = "processed_records_expected"
+    expression  = "ANOMALY_DETECTION_BAND(processed_records)"
+    label       = "Processed Records (Expected)"
+    return_data = "true"
   }
 
   metric_query {
