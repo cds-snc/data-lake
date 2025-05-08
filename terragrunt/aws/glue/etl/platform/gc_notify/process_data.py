@@ -361,7 +361,7 @@ def process_data():
 
         # Publish metrics to CloudWatch
         processing_time = time.time() - start_time
-        publish_metric(cloudwatch, path, len(data), processing_time)
+        publish_metric(cloudwatch, table_name, len(data), processing_time)
 
     logger.info("ETL process completed successfully.")
 
