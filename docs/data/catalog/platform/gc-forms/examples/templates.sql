@@ -13,7 +13,10 @@ visibility to only those with Superset access.
 SELECT 
     * 
 FROM 
-    "platform_gc_forms_production"."platform_gc_forms_submissions" 
+    "platform_gc_forms_production"."platform_gc_forms_submissions"
+WHERE timestamp =
+    (SELECT MAX(timestamp)
+     FROM "platform_gc_forms_production"."platform_gc_forms_submissions")
 LIMIT 10;
 
 -- Templates
@@ -21,32 +24,41 @@ SELECT
     * 
 FROM 
     "platform_gc_forms_production"."platform_gc_forms_template" 
+WHERE timestamp =
+    (SELECT MAX(timestamp)
+     FROM "platform_gc_forms_production"."platform_gc_forms_template")
 LIMIT 10;
 
 -- Mapping of templates to their owners
 SELECT 
     * 
 FROM 
-    "platform_gc_forms_production"."platform_gc_forms_templatetouser" 
+    "platform_gc_forms_production"."platform_gc_forms_templatetouser"
+WHERE timestamp =
+    (SELECT MAX(timestamp)
+     FROM "platform_gc_forms_production"."platform_gc_forms_templatetouser")
 LIMIT 10;
 
 -- Users that have logged into GC Forms
 SELECT 
     * 
 FROM 
-    "platform_gc_forms_production"."platform_gc_forms_user" 
+    "platform_gc_forms_production"."platform_gc_forms_user"
+WHERE timestamp =
+    (SELECT MAX(timestamp)
+     FROM "platform_gc_forms_production"."platform_gc_forms_user")
 LIMIT 10;
 
 -- Templates with their associated owner user
-SELECT 
-  template.*,
-  user.*
-FROM 
-  platform_gc_forms_production.platform_gc_forms_template AS template
-LEFT JOIN
-  platform_gc_forms_production.platform_gc_forms_templatetouser AS templateToUser
-  ON template.id = templateToUser.templateid
-LEFT JOIN
-  platform_gc_forms_production.platform_gc_forms_user AS user
-  ON user.id = templateToUser.userid
+SELECT template.*,
+       user.*
+FROM "platform_gc_forms_production"."platform_gc_forms_template" AS template
+LEFT JOIN "platform_gc_forms_production"."platform_gc_forms_templatetouser" AS templateToUser ON template.id = templateToUser.templateid
+LEFT JOIN "platform_gc_forms_production"."platform_gc_forms_user" AS user ON user.id = templateToUser.userid
+WHERE template.timestamp =
+    (SELECT MAX(timestamp)
+     FROM "platform_gc_forms_production"."platform_gc_forms_template")
+  AND user.timestamp =
+    (SELECT MAX(timestamp)
+     FROM "platform_gc_forms_production"."platform_gc_forms_user")
 LIMIT 10;
