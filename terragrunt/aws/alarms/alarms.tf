@@ -94,7 +94,7 @@ resource "aws_cloudwatch_metric_alarm" "platform_gc_forms_etl_user_processed_rec
 
   metric_query {
     id          = "processed_records_expected"
-    expression  = "ANOMALY_DETECTION_BAND(processed_records)"
+    expression  = "ANOMALY_DETECTION_BAND(processed_records, 0.5)" # standard deviations
     label       = "Processed Records (Expected)"
     return_data = "true"
   }
