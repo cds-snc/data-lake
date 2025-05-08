@@ -84,6 +84,36 @@ resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "platform_gc_forms_etl_user_processed_record_anomaly" {
+  alarm_name          = "platform-gc-forms-etl-user-processed-record-anomaly"
+  alarm_description   = "'Platform / GC Forms' ETL job anomaly detection for the 'user' dataset."
+  comparison_operator = "LessThanLowerOrGreaterThanUpperThreshold"
+  threshold_metric_id = "processed_records_expected"
+  evaluation_periods  = 1
+
+  metric_query {
+    id         = "processed_records_expected"
+    expression = "ANOMALY_DETECTION_BAND(processed_records)"
+    label      = "Processed Records (Expected)"
+  }
+
+  metric_query {
+    id          = "processed_records"
+    return_data = "true"
+    metric {
+      metric_name = "ProcessedRecordCount"
+      namespace   = "data-lake/etl/gc-forms"
+      period      = 86400 # 1 day
+      stat        = "Sum"
+      unit        = "Count"
+
+      dimensions = {
+        Dataset = "processed-data/user"
+      }
+    }
+  }
+}
+
 #
 # Log Insight queries
 #
