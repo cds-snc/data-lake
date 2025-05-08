@@ -18,6 +18,17 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the f
 - `platform_gc_forms_templatetouser`
 - `platform_gc_forms_user`
 
+## :warning: Note
+This is a time series dataset.  Each day, an entirely new extract of all Forms data is added.  To retrieve only the latest extract's data, use the `timestamp` field of the tables:
+
+```sql
+SELECT *
+FROM "platform_gc_forms_production"."platform_gc_forms_template"
+WHERE timestamp =
+    (SELECT MAX(timestamp)
+     FROM "platform_gc_forms_production"."platform_gc_forms_template");
+```
+
 `Keywords`: Platform, GC Forms, templates
 
 ---
