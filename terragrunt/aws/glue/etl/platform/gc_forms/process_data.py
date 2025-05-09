@@ -254,7 +254,7 @@ def process_data():
         {
             "path": "processed-data/user",
             "date_columns": ["emailverified", "lastlogin", "createdat", "timestamp"],
-            "partition_timestamp": "lastlogin",  # User created date is currently in this field
+            "partition_timestamp": "lastlogin",  # User created date is currently in this field.
             "partition_columns": ["year", "month"],
             "drop_columns": ["name"],
             "email_columns": ["email"],
