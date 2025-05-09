@@ -245,6 +245,7 @@ def process_data():
             ],
             "partition_timestamp": "created_at",
             "partition_columns": ["year", "month"],
+            "email_columns": ["deliveryemaildestination"],
         },
         {
             "path": "processed-data/templateToUser",
