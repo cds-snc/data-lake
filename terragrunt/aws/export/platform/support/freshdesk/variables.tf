@@ -3,6 +3,11 @@ variable "billing_tag_value" {
   type        = string
 }
 
+variable "env" {
+  description = "The environment for the resources."
+  type        = string
+}
+
 variable "freshdesk_api_key" {
   description = "The Freshdesk API key to use for data exports."
   type        = string

@@ -1,4 +1,6 @@
 locals {
+  is_production = var.env == "production"
+
   # To grant a Superset IAM role access to a Glue catalog database, the role ARN must end with the database name:
   # - arn:aws:iam::123456789012:role/SupersetAthenaRead-datatabase_name
   # The Superset role ARNs are managed by the `superset_iam_role_arns` input variable.
