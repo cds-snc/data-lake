@@ -1,0 +1,227 @@
+{
+    "Job": {
+        "Name": "Email-HistoricalFix",
+        "JobMode": "VISUAL",
+        "JobRunQueuingEnabled": false,
+        "Description": "",
+        "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+        "CreatedOn": "2025-05-09T17:02:24.060000+00:00",
+        "LastModifiedOn": "2025-05-09T18:41:10.984000+00:00",
+        "ExecutionProperty": {
+            "MaxConcurrentRuns": 1
+        },
+        "Command": {
+            "Name": "glueetl",
+            "ScriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Email-HistoricalFix.py",
+            "PythonVersion": "3"
+        },
+        "DefaultArguments": {
+            "--enable-metrics": "true",
+            "--enable-spark-ui": "true",
+            "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
+            "--enable-job-insights": "true",
+            "--enable-observability-metrics": "true",
+            "--enable-glue-datacatalog": "true",
+            "--enable-continuous-cloudwatch-log": "true",
+            "--job-bookmark-option": "job-bookmark-disable",
+            "--job-language": "python",
+            "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/"
+        },
+        "MaxRetries": 0,
+        "AllocatedCapacity": 10,
+        "Timeout": 480,
+        "MaxCapacity": 10.0,
+        "WorkerType": "G.1X",
+        "NumberOfWorkers": 10,
+        "GlueVersion": "5.0",
+        "CodeGenConfigurationNodes": {
+            "node-1746816021518": {
+                "S3CatalogTarget": {
+                    "Name": "AWS Glue Data Catalog",
+                    "Inputs": [
+                        "node-1746815971184"
+                    ],
+                    "PartitionKeys": [],
+                    "Table": "platform_gc_forms_template",
+                    "Database": "platform_gc_forms_production",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": false
+                    }
+                }
+            },
+            "node-1746806268467": {
+                "CatalogSource": {
+                    "Name": "AWS Glue Data Catalog",
+                    "Database": "platform_gc_forms_production",
+                    "Table": "platform_gc_forms_template"
+                }
+            },
+            "node-1746809691789": {
+                "CustomCode": {
+                    "Name": "Anonymize Email",
+                    "Inputs": [
+                        "node-1746806268467"
+                    ],
+                    "Code": "import pyspark.sql.functions as F\n\n# Convert the input DynamicFrameCollection to a DataFrame\ndf_in = dfc.select(list(dfc.keys())[0]).toDF()\n\n# Anonymize the email: keep only the domain part\ndf_transformed = df_in.withColumn(\"deliveryemaildestination\", F.split(F.col(\"deliveryemaildestination\"), \"@\").getItem(1))\n\n# Convert back to DynamicFrame\ndyf_transformed = DynamicFrame.fromDF(df_transformed, glueContext, \"dyf_transformed\")\n\n# Return as a new DynamicFrameCollection\nreturn DynamicFrameCollection({\"output\": dyf_transformed}, glueContext)\n",
+                    "ClassName": "MyTransform",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "ttl",
+                                    "Type": "timestamp"
+                                },
+                                {
+                                    "Name": "ispublished",
+                                    "Type": "boolean"
+                                },
+                                {
+                                    "Name": "created_at",
+                                    "Type": "timestamp"
+                                },
+                                {
+                                    "Name": "updated_at",
+                                    "Type": "timestamp"
+                                },
+                                {
+                                    "Name": "name",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "securityattribute",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "closingdate",
+                                    "Type": "timestamp"
+                                },
+                                {
+                                    "Name": "formpurpose",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "publishdesc",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "publishformtype",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "publishreason",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "closeddetails",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "saveandresume",
+                                    "Type": "boolean"
+                                },
+                                {
+                                    "Name": "deliveryemaildestination",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "api_created_at",
+                                    "Type": "timestamp"
+                                },
+                                {
+                                    "Name": "api_id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "deliveryoption",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "timestamp",
+                                    "Type": "timestamp"
+                                },
+                                {
+                                    "Name": "titleen",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "titlefr",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "brand",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "addresscomplete_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "checkbox_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "combobox_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "dropdown_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "dynamicrow_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "fileinput_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "formatteddate_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "radio_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "richtext_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "textarea_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "textfield_count",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "year",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "month",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1746815971184": {
+                "SelectFromCollection": {
+                    "Name": "Select From Collection",
+                    "Inputs": [
+                        "node-1746809691789"
+                    ],
+                    "Index": 0
+                }
+            }
+        },
+        "ExecutionClass": "STANDARD"
+    }
+}
