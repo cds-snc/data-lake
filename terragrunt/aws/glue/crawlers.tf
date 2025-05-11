@@ -77,7 +77,8 @@ resource "aws_glue_crawler" "platform_support_freshdesk_production" {
       Version              = 1
   })
 
-  schedule = "cron(00 6 1-10 * ? *)" # 6am UTC check for schema changes on the first 10 days of each month
+  # 6am UTC check for schema changes on the first 10 days of each month
+  schedule = local.is_production ? "cron(00 6 1-10 * ? *)" : null
 }
 
 #
@@ -107,7 +108,8 @@ resource "aws_glue_crawler" "operations_aws_production_cost_usage_report" {
       Version              = 1
   })
 
-  schedule = "cron(00 7 1-10 * ? *)" # Run for the first 10 days of each month to create the new partition key
+  # Run for the first 10 days of each month to create the new partition key
+  schedule = local.is_production ? "cron(00 7 1-10 * ? *)" : null
 }
 
 #
@@ -138,7 +140,8 @@ resource "aws_glue_crawler" "operations_aws_production_account_tags" {
       Version              = 1
   })
 
-  schedule = "cron(00 7 1 * ? *)" # Check for schema changes each month
+  # Check for schema changes each month
+  schedule = local.is_production ? "cron(00 7 1 * ? *)" : null
 }
 
 # JSON classifier for arrays of objects
