@@ -8,6 +8,11 @@ variable "billing_tag_value" {
   type        = string
 }
 
+variable "env" {
+  description = "The environment for the resources."
+  type        = string
+}
+
 variable "raw_bucket_name" {
   description = "The name of the Raw bucket"
   type        = string
