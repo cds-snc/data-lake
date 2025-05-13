@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows:
       - "Docker build, push and deploy Production"
+      - "Docker build, push and deploy Staging"
       - "Glue Job Sync"
       - "Terragrunt apply PRODUCTION"
       - "Terragrunt apply STAGING"
