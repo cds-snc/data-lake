@@ -1,0 +1,72 @@
+name: "Terragrunt apply STAGING"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "terragrunt/aws/**"
+      - "!terragrunt/aws/glue/etl/**/*.json"
+      - "terragrunt/env/staging/**"
+      - "terragrunt/env/common/**"
+      - "terragrunt/env/root.hcl"
+      - ".github/workflows/terragrunt-apply-staging.yml"
+
+env:
+  AWS_REGION: ca-central-1
+  CONFTEST_VERSION: 0.27.0
+  TERRAFORM_VERSION: 1.11.4
+  TERRAGRUNT_VERSION: 0.68.6
+  TF_INPUT: false
+  TF_VAR_cloudwatch_alarm_slack_webhook: ${{ secrets.STAGING_SLACK_WEBHOOK_OPS }}
+  TF_VAR_freshdesk_api_key: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terragrunt-apply-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup terraform tools
+        uses: cds-snc/terraform-tools-setup@v1
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
+        with:
+          role-to-assume: arn:aws:iam::454671348950:role/data-lake-apply
+          role-session-name: TFApply
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terragrunt apply buckets
+        working-directory: terragrunt/env/staging/buckets
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply glue
+        working-directory: terragrunt/env/staging/glue
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply athena
+        working-directory: terragrunt/env/staging/athena
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply alarms
+        working-directory: terragrunt/env/staging/alarms
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply export
+        working-directory: terragrunt/env/staging/export
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Report deployment to Sentinel
+        if: always()
+        uses: cds-snc/sentinel-forward-data-action@main
+        with:
+          input_data: '{"product": "data-lake", "sha": "${{ github.sha }}", "version": "Infrastructure ${{ github.sha }}", "repository": "${{ github.repository }}", "environment": "staging", "status": "${{ job.status }}"}'
+          log_type: CDS_Product_Deployment_Data
+          log_analytics_workspace_id: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+          log_analytics_workspace_key: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
