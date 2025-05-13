@@ -11,6 +11,16 @@ locals {
     aws_glue_catalog_database.platform_support_production.name,
     aws_glue_catalog_database.bes_crm_salesforce_production.name,
   ]
+
+  # Filter out any Glue databases without a corresponding Superset IAM role
+  glue_catalog_databases_superset_access = toset([
+    for database_name in local.glue_catalog_databases : database_name
+    if length([
+      for arn in var.superset_iam_role_arns : arn
+      if endswith(arn, database_name)
+    ]) > 0
+  ])
+
   glue_crawler_log_group_name = "/aws-glue/crawlers-role${aws_iam_role.glue_crawler.path}${aws_iam_role.glue_crawler.name}-${aws_glue_security_configuration.encryption_at_rest.name}"
   glue_etl_log_group_name     = "/aws-glue/jobs/${aws_glue_security_configuration.encryption_at_rest.name}-role${aws_iam_role.glue_crawler.path}${aws_iam_role.glue_etl.name}"
 }

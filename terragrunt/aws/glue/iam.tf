@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "cross_account_access_combined" {
 }
 
 data "aws_iam_policy_document" "cross_account_access" {
-  for_each = toset(local.glue_catalog_databases)
+  for_each = local.glue_catalog_databases_superset_access
 
   statement {
     sid = "SupersetReadAccess${join("", [for word in split("_", replace(each.value, "/[^a-zA-Z0-9_]/", "")) : title(word)])}"
