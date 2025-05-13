@@ -5,12 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "terragrunt/aws/**"
-      - "!terragrunt/aws/glue/etl/**/*.json"
-      - "terragrunt/env/production/**"
-      - "terragrunt/env/common/**"
-      - "terragrunt/env/root.hcl"
-      - ".github/workflows/terragrunt-plan-production.yml"
+      - "version.txt"
 
 env:
   AWS_REGION: ca-central-1
@@ -39,7 +34,7 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
         with:
-          role-to-assume: arn:aws:iam::739275439843:role/data-lake-plan
+          role-to-assume: arn:aws:iam::${{ vars.PROD_AWS_ACCOUNT_ID }}:role/data-lake-plan
           role-session-name: TFPlan
           aws-region: ${{ env.AWS_REGION }}
 
