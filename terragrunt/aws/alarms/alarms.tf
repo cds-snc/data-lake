@@ -105,7 +105,7 @@ resource "aws_cloudwatch_metric_alarm" "anomaly_detection" {
   metric_query {
     id          = "expected_value"
     expression  = "ANOMALY_DETECTION_BAND(actual_value, ${each.value.standard_deviation})"
-    label       = "Processed Records (Expected)"
+    label       = "${each.value.metric_name} (Expected)"
     return_data = "true"
   }
 
