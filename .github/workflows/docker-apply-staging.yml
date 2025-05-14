@@ -46,12 +46,12 @@ jobs:
         filters: |
           export:
             - 'export/${{ matrix.export }}/**'
-            - '.github/workflows/docker-apply-production.yml'
+            - '.github/workflows/docker-apply-staging.yml'
 
     - name: Exit if no changes
       if: steps.changes.outputs.export == 'false'
       run: |
-        echo "No changes to test"
+        echo "No changes to deploy"
         exit 0
 
     - name: Setup QEMU
