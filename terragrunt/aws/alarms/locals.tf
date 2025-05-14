@@ -31,21 +31,21 @@ locals {
     {
       name               = "platform-gc-notify-etl-notification-history-processed-record"
       namespace          = "data-lake/etl/gc-notify"
-      dataset            = "processed-data/notification_history"
+      dataset            = "notification_history"
       metric_name        = "ProcessedRecordCount"
       standard_deviation = 1
     },
     {
       name               = "platform-gc-notify-etl-notifications-processed-record"
       namespace          = "data-lake/etl/gc-notify"
-      dataset            = "processed-data/notifications"
+      dataset            = "notifications"
       metric_name        = "ProcessedRecordCount"
       standard_deviation = 1
     },
     {
       name               = "platform-gc-notify-etl-users-processed-record"
       namespace          = "data-lake/etl/gc-notify"
-      dataset            = "processed-data/users"
+      dataset            = "users"
       metric_name        = "ProcessedRecordCount"
       standard_deviation = 0.5
     }
