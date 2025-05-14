@@ -2,7 +2,7 @@ import pytest
 import sys
 
 from datetime import datetime, UTC
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock
 
 import pandas as pd
 
@@ -32,6 +32,7 @@ from process_tickets import (
     merge_tickets,
     process_tickets,
     get_days_tickets,
+    publish_metric,
 )
 
 
@@ -143,15 +144,20 @@ def test_merge_tickets_with_duplicates():
 
 
 # Test the main process with mocked AWS services
+@patch("boto3.client")
 @patch("awswrangler.s3")
 @patch("awswrangler.catalog")
 def test_process_tickets(
-    mock_wr_catalog, mock_wr_s3, sample_tickets_df, glue_table_schema
+    mock_wr_catalog, mock_wr_s3, mock_boto3_client, sample_tickets_df, glue_table_schema
 ):
     # Mock AWS Wrangler responses
     mock_wr_s3.read_json.return_value = sample_tickets_df
     mock_wr_catalog.table.return_value = glue_table_schema
     mock_wr_s3.read_parquet.return_value = sample_tickets_df
+
+    # Mock CloudWatch client
+    mock_cloudwatch = MagicMock()
+    mock_boto3_client.return_value = mock_cloudwatch
 
     # Run the process
     process_tickets()
@@ -159,20 +165,50 @@ def test_process_tickets(
     # Verify the write operation was called
     mock_wr_s3.to_parquet.assert_called_once()
 
+    # Verify CloudWatch metrics were published
+    mock_cloudwatch.put_metric_data.assert_called_once()
+    call_args = mock_cloudwatch.put_metric_data.call_args[1]
+    assert call_args["Namespace"] == "data-lake/etl/freshdesk"
+
+    # Check that metrics include record count and processing time
+    metrics = call_args["MetricData"]
+    assert len(metrics) == 2
+    assert any(m["MetricName"] == "ProcessedRecordCount" for m in metrics)
+    assert any(m["MetricName"] == "ProcessingTime" for m in metrics)
+
 
 # Test error handling
+@patch("boto3.client")
 @patch("awswrangler.s3")
 @patch("awswrangler.catalog")
-def test_process_tickets_no_new_data(mock_wr_catalog, mock_wr_s3, glue_table_schema):
+def test_process_tickets_no_new_data(
+    mock_wr_catalog, mock_wr_s3, mock_boto3_client, glue_table_schema
+):
     # Mock empty response from S3
     mock_wr_s3.read_json.side_effect = NoFilesFound("Simulate no file for read_json")
     mock_wr_catalog.table.return_value = glue_table_schema
+
+    # Mock CloudWatch client
+    mock_cloudwatch = MagicMock()
+    mock_boto3_client.return_value = mock_cloudwatch
 
     # Run the process
     process_tickets()
 
     # Verify no write operation was attempted
     mock_wr_s3.to_parquet.assert_not_called()
+
+    # Verify CloudWatch metrics were still published with zero count
+    mock_cloudwatch.put_metric_data.assert_called_once()
+    call_args = mock_cloudwatch.put_metric_data.call_args[1]
+    metric_data = call_args["MetricData"]
+
+    # Find the record count metric
+    record_count_metric = next(
+        m for m in metric_data if m["MetricName"] == "ProcessedRecordCount"
+    )
+    # Expect zero records when no file is found
+    assert record_count_metric["Value"] == 0
 
 
 # Test date handling
@@ -198,3 +234,79 @@ def test_get_days_tickets_date_handling():
         assert result["updated_at"].dt.tz is None
         assert result["due_by"].dt.tz is None
         assert result["fr_due_by"].dt.tz is None
+
+
+# Test CloudWatch metrics functionality
+def test_publish_metric():
+    # Mock the CloudWatch client
+    mock_cloudwatch = MagicMock()
+
+    # Call the function with test parameters
+    dataset_name = "test-dataset"
+    count = 42
+    processing_time = 3.14
+
+    # Execute the function with our test parameters
+    publish_metric(mock_cloudwatch, dataset_name, count, processing_time)
+
+    # Assert CloudWatch client was called with correct parameters
+    mock_cloudwatch.put_metric_data.assert_called_once()
+
+    # Get the actual call arguments
+    call_args = mock_cloudwatch.put_metric_data.call_args[1]
+
+    # Verify namespace is correct
+    assert call_args["Namespace"] == "data-lake/etl/freshdesk"
+
+    # Verify metrics data
+    metric_data = call_args["MetricData"]
+    assert len(metric_data) == 2  # Should be two metrics
+
+    # Verify record count metric
+    record_metric = next(
+        m for m in metric_data if m["MetricName"] == "ProcessedRecordCount"
+    )
+    assert record_metric["Value"] == count
+    assert record_metric["Unit"] == "Count"
+    assert record_metric["Dimensions"][0]["Name"] == "Dataset"
+    assert record_metric["Dimensions"][0]["Value"] == dataset_name
+
+    # Verify processing time metric
+    time_metric = next(m for m in metric_data if m["MetricName"] == "ProcessingTime")
+    assert time_metric["Value"] == processing_time
+    assert time_metric["Unit"] == "Seconds"
+    assert time_metric["Dimensions"][0]["Name"] == "Dataset"
+    assert time_metric["Dimensions"][0]["Value"] == dataset_name
+
+
+def test_publish_metric_with_mocked_timestamp():
+    # Mock the CloudWatch client
+    mock_cloudwatch = MagicMock()
+
+    # Mock datetime.now to return a fixed time
+    fixed_datetime = datetime(2024, 1, 15, 12, 0, 0, tzinfo=UTC)
+
+    with patch("process_tickets.datetime") as mock_datetime:
+        # Configure the mock to return our fixed datetime
+        mock_datetime.now.return_value = fixed_datetime
+        # Pass through the timezone attribute
+        mock_datetime.timezone = UTC
+
+        # Call the function with test parameters
+        dataset_name = "test-dataset"
+        count = 100
+        processing_time = 5.0
+
+        # Execute the function
+        publish_metric(mock_cloudwatch, dataset_name, count, processing_time)
+
+        # Verify CloudWatch client was called with correct parameters
+        mock_cloudwatch.put_metric_data.assert_called_once()
+
+        # Get the actual call arguments
+        call_args = mock_cloudwatch.put_metric_data.call_args[1]
+        metric_data = call_args["MetricData"]
+
+        # Verify the timestamps match our fixed datetime
+        for metric in metric_data:
+            assert metric["Timestamp"] == fixed_datetime

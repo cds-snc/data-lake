@@ -1,10 +1,12 @@
 import logging
 import sys
+import time
 
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 
 import awswrangler as wr
+import boto3
 import pandas as pd
 
 from awsglue.utils import getResolvedOptions
@@ -154,41 +156,79 @@ def merge_tickets(
     return combined_tickets
 
 
+def publish_metric(cloudwatch, dataset_name, count, processing_time):
+    """
+    Publish data processing metrics to CloudWatch
+    """
+    timestamp = datetime.now(timezone.utc)
+    cloudwatch.put_metric_data(
+        Namespace="data-lake/etl/freshdesk",
+        MetricData=[
+            {
+                "MetricName": "ProcessedRecordCount",
+                "Dimensions": [{"Name": "Dataset", "Value": dataset_name}],
+                "Value": count,
+                "Timestamp": timestamp,
+                "Unit": "Count",
+            },
+            {
+                "MetricName": "ProcessingTime",
+                "Dimensions": [{"Name": "Dataset", "Value": dataset_name}],
+                "Value": processing_time,
+                "Timestamp": timestamp,
+                "Unit": "Seconds",
+            },
+        ],
+    )
+    logger.info(
+        f"Published metrics for {dataset_name}: {count} records in {processing_time:.2f}s"
+    )
+
+
 def process_tickets():
     """
     Load the new tickets, validate the schema, and merge with existing data.
     """
+    cloudwatch = boto3.client("cloudwatch")
+    start_time = time.time()
+
     # Get yesterday's tickets
     yesterday = datetime.now(timezone.utc) - relativedelta(days=1)
     new_tickets = get_days_tickets(yesterday)
 
-    if new_tickets.empty:
+    if not new_tickets.empty:
+
+        # Check that the new tickets schema matches the expected schema
+        glue_table_schema = wr.catalog.table(
+            database=DATABASE_NAME_RAW, table=TABLE_NAME
+        )
+        if not validate_schema(new_tickets, glue_table_schema):
+            raise ValueError("Schema validation failed. Aborting ETL process.")
+
+        # Load 1 year of existing ticket data
+        start_date = datetime.now(timezone.utc) - relativedelta(years=1)
+        existing_tickets = get_existing_tickets(start_date)
+
+        # Merge the existing and new tickets and save
+        combined_tickets = merge_tickets(existing_tickets, new_tickets)
+
+        logger.info("Saving updated DataFrame to S3...")
+        wr.s3.to_parquet(
+            df=combined_tickets,
+            path=TRANSFORMED_PATH,
+            dataset=True,
+            mode="overwrite_partitions",
+            database=DATABASE_NAME_TRANSFORMED,
+            table=TABLE_NAME,
+            partition_cols=[PARTITION_KEY],
+        )
+        logger.info("ETL process completed successfully.")
+    else:
         logger.info("No new tickets found. Aborting ETL process.")
-        return
 
-    # Check that the new tickets schema matches the expected schema
-    glue_table_schema = wr.catalog.table(database=DATABASE_NAME_RAW, table=TABLE_NAME)
-    if not validate_schema(new_tickets, glue_table_schema):
-        raise ValueError("Schema validation failed. Aborting ETL process.")
-
-    # Load 1 year of existing ticket data
-    start_date = datetime.now(timezone.utc) - relativedelta(years=1)
-    existing_tickets = get_existing_tickets(start_date)
-
-    # Merge the existing and new tickets and save
-    combined_tickets = merge_tickets(existing_tickets, new_tickets)
-
-    logger.info("Saving updated DataFrame to S3...")
-    wr.s3.to_parquet(
-        df=combined_tickets,
-        path=TRANSFORMED_PATH,
-        dataset=True,
-        mode="overwrite_partitions",
-        database=DATABASE_NAME_TRANSFORMED,
-        table=TABLE_NAME,
-        partition_cols=[PARTITION_KEY],
-    )
-    logger.info("ETL process completed successfully.")
+    # Publish metrics to CloudWatch
+    processing_time = time.time() - start_time
+    publish_metric(cloudwatch, "new_tickets", len(new_tickets), processing_time)
 
 
 if __name__ == "__main__":
