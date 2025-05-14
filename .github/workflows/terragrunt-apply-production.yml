@@ -31,9 +31,13 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722 # v4.1.0
         with:
-          role-to-assume: arn:aws:iam::${{ vars.PROD_AWS_ACCOUNT_ID }}:role/data-lake-apply
+          role-to-assume: arn:aws:iam::${{ vars.PROD_AWS_ACCOUNT_ID }}:role/data-lake-release
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terragrunt apply oidc
+        working-directory: terragrunt/env/production/oidc
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply buckets
         working-directory: terragrunt/env/production/buckets
