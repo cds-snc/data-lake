@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.1](https://github.com/cds-snc/data-lake/compare/v1.2.0...v1.2.1) (2025-05-15)
+
+
+### Documentation
+
+* update Forms `deliveryemaildestination` description ([#256](https://github.com/cds-snc/data-lake/issues/256)) ([4efda9c](https://github.com/cds-snc/data-lake/commit/4efda9c978a7b6f512e04ccb14823e0771fbf6d0))
+
+
+### Miscellaneous Chores
+
+* enable anomaly detection alarm actions ([#258](https://github.com/cds-snc/data-lake/issues/258)) ([094890e](https://github.com/cds-snc/data-lake/commit/094890e549e5b407c15000e2885a22aa5cf49b79))
+
 ## [1.2.0](https://github.com/cds-snc/data-lake/compare/v1.1.0...v1.2.0) (2025-05-14)
 
 
