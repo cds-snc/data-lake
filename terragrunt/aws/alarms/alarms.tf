@@ -102,6 +102,9 @@ resource "aws_cloudwatch_metric_alarm" "anomaly_detection" {
   evaluation_periods  = 1
   treat_missing_data  = "notBreaching"
 
+  alarm_actions = [aws_sns_topic.cloudwatch_alarm_action.arn]
+  ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
+
   metric_query {
     id          = "expected_value"
     expression  = "ANOMALY_DETECTION_BAND(actual_value, ${each.value.standard_deviation})"
