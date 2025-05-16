@@ -288,15 +288,15 @@ def download_s3_object(s3, s3_url, filename):
     )
 
 
-def get_incremental_load_date_from(data_retention_days: int) -> str:
+def get_incremental_load_date_from(data_look_back_days: int) -> str:
     """
     Get the date from which to load incremental data.  This will always be the beginning of
-    the month that is today minus the retention days.  The reason for this is because we
+    the month that is today minus the look back days.  The reason for this is because we
     perform a month partition overwrite and need to make sure that we are loading
     all data within the overwritten month partition(s) while respecting the data retention policy.
     """
     today = pd.Timestamp.now().normalize()
-    month_start = (today - pd.DateOffset(days=data_retention_days)).replace(day=1)
+    month_start = (today - pd.DateOffset(days=data_look_back_days)).replace(day=1)
     return month_start.strftime("%Y-%m-%d %H:%M:%S")
 
 
@@ -321,7 +321,7 @@ def process_data():
         path = f"{path_prefix}{table_name}"
         partition_cols = dataset.get("partition_cols")
         incremental_load = dataset.get("incremental_load", False)
-        retention_days = dataset.get("retention_days", 0)
+        look_back_days = dataset.get("look_back_days", 0)
 
         # Retrieve the new data
         logger.info(f"Processing {table_name} data...")
@@ -331,7 +331,7 @@ def process_data():
             dataset.get("partition_timestamp"),
             partition_cols,
             date_from=(
-                get_incremental_load_date_from(retention_days)
+                get_incremental_load_date_from(look_back_days)
                 if incremental_load
                 else None
             ),
