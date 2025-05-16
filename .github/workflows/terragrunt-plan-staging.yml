@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - "terragrunt/aws/**"
-      - "!terragrunt/aws/glue/etl/**/*.json"
       - "terragrunt/env/staging/**"
       - "terragrunt/env/common/**"
       - "terragrunt/env/root.hcl"
@@ -42,6 +41,15 @@ jobs:
           role-to-assume: arn:aws:iam::454671348950:role/data-lake-plan
           role-session-name: TFPlan
           aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terragrunt plan oidc
+        uses: cds-snc/terraform-plan@28de868605a2499187505c82b4f199abd8877b26 # v3.4.2
+        with:
+          directory: "terragrunt/env/staging/oidc"
+          comment-delete: "true"
+          comment-title: "Staging: oidc 🔑"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
 
       - name: Terragrunt plan buckets
         uses: cds-snc/terraform-plan@28de868605a2499187505c82b4f199abd8877b26 # v3.4.2

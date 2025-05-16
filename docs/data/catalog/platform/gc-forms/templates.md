@@ -105,7 +105,7 @@ Here's a descriptive list of the fields in each table:
 | publishformtype | string | Type of published template: [Collection of Feedback or Stats, Benefit Administration, Grants and Contributions, Regulatory Compliance, Organizational Operations, Other] |
 | publishreason | string | Reason for publishing: [Ready for public use, Ready for internal use, Sharing for feedback or approval, Other] |
 | closeddetails | string | Reason for closing the template to submissions |
-| deliveryemaildestination | string | Email destination for submission delivery, null if email delivery not enabled |
+| deliveryemaildestination | string | Email domain from the delivery destination email address, or null if email delivery is not enabled |
 | api_created_at | timestamp | When API integration was enabled for the template, null if no API integration |
 | api_id | string | API identifier, null if no API integration |
 | deliveryoption | integer | Template submission delivery method: [0 = Download, 1 = Email, 2 = API, 99 = Error] |
