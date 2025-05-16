@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/cds-snc/data-lake/compare/v1.2.1...v1.2.2) (2025-05-16)
+
+
+### Bug Fixes
+
+* delay Notify ETL by 3 hours after RDS export ([#259](https://github.com/cds-snc/data-lake/issues/259)) ([a4fddd1](https://github.com/cds-snc/data-lake/commit/a4fddd1951797715d0c6ef35c2eb8898adb19109))
+* increase the look back days for the `notification_history` load ([#261](https://github.com/cds-snc/data-lake/issues/261)) ([54dcc57](https://github.com/cds-snc/data-lake/commit/54dcc5793b58df2be1d7aaf41f30fc07a240b2be))
+
 ## [1.2.1](https://github.com/cds-snc/data-lake/compare/v1.2.0...v1.2.1) (2025-05-15)
 
 
