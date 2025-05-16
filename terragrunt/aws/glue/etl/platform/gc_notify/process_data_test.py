@@ -111,7 +111,7 @@ def sample_dataset_config():
                 {"name": "status", "type": "text"},
             ],
             "incremental_load": True,
-            "retention_days": 90,
+            "look_back_days": 90,
         },
         {
             "table_name": "templates",
@@ -123,7 +123,7 @@ def sample_dataset_config():
                 {"name": "created_at", "type": "timestamp"},
             ],
             "incremental_load": False,
-            "retention_days": 0,
+            "look_back_days": 0,
         },
     ]
 
