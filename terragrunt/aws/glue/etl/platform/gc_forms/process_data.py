@@ -125,7 +125,9 @@ def get_new_data(
     data = pd.DataFrame()
     try:
         # yesterday = pd.Timestamp.today(tz="UTC") - pd.Timedelta(days=1)
-        yesterday = pd.Timestamp("2025-05-15T00:00:00Z")  # hardcoded value for one off testing
+        yesterday = pd.Timestamp(
+            "2025-05-15T00:00:00Z"
+        )  # hardcoded value for one off testing
         logger.info(
             f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3 from {yesterday}..."
         )
@@ -292,7 +294,7 @@ def process_data():
             )
         except Exception as e:
             logger.error(f"Failed to process {path}: {e}")
-            continue  
+            continue
 
         if not data.empty:
             glue_table_schema = wr.catalog.table(
