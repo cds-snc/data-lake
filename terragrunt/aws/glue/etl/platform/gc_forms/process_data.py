@@ -109,6 +109,7 @@ def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
         return False
     return True
 
+
 def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     """
     Validate the DataFrame using the specified Great Expectations checkpoint.
@@ -286,7 +287,7 @@ def process_data(datasets=None):
                 "partition_timestamp": "created_at",
                 "partition_columns": ["year", "month"],
                 "email_columns": ["deliveryemaildestination"],
-                "gx_checkpoint": "forms-template_checkpoint"
+                "gx_checkpoint": "forms-template_checkpoint",
             },
             {
                 "path": "processed-data/templateToUser",
@@ -294,7 +295,12 @@ def process_data(datasets=None):
             },
             {
                 "path": "processed-data/user",
-                "date_columns": ["emailverified", "lastlogin", "createdat", "timestamp"],
+                "date_columns": [
+                    "emailverified",
+                    "lastlogin",
+                    "createdat",
+                    "timestamp",
+                ],
                 "partition_timestamp": "lastlogin",  # User created date is currently in this field.
                 "partition_columns": ["year", "month"],
                 "drop_columns": ["name"],
@@ -344,13 +350,14 @@ def process_data(datasets=None):
                     table=f"{TABLE_NAME_PREFIX}_raw_{table_name}",
                 )
                 if not validate_schema(
-                        dataframe=data,
-                        drop_columns=drop_columns,
-                        non_source_columns=partition_columns,
-                        glue_table_schema=glue_table_schema):
+                    dataframe=data,
+                    drop_columns=drop_columns,
+                    non_source_columns=partition_columns,
+                    glue_table_schema=glue_table_schema,
+                ):
                     raise ValueError(
                         f"Schema validation failed for {path}. Aborting ETL process."
-                        )
+                    )
 
             # Save the transformed data back to S3
             logger.info(f"Saving new {path} DataFrame to S3...")
