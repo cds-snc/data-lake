@@ -180,9 +180,10 @@ def test_publish_metric(mock_logger, mock_datetime):
 def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
     # Mock AWS Wrangler response
     mock_wr_s3.read_parquet.return_value = sample_data_df
-    fixed_date = datetime(1970, 1, 2)
-    fixed_date_yesterday = datetime(1970, 1, 1)
-    mock_timestamp.today.return_value = fixed_date
+    # fixed_date = datetime(1970, 1, 2)
+    # fixed_date_yesterday = datetime(1970, 1, 1)
+    # mock_timestamp.today.return_value = fixed_date
+    hardcoded_date = pd.Timestamp("2025-05-15T00:00:00Z")
 
     result = get_new_data(
         path="test-path",
@@ -199,7 +200,7 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
         path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/test-path/",
         use_threads=True,
         dataset=True,
-        last_modified_begin=fixed_date_yesterday,
+        last_modified_begin=hardcoded_date,
     )
 
     # Verify data is processed correctly
