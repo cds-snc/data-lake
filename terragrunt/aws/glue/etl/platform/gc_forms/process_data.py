@@ -219,10 +219,10 @@ def process_data():
             "partition_columns": ["year", "month"],
             "email_columns": ["client_email"],
         },
-        {
-            "path": "processed-data/submissions",
-            "date_columns": ["timestamp"],
-        },
+        ##{
+        ##    "path": "processed-data/submissions",
+        ##    "date_columns": ["timestamp"],
+        ## },
         {
             "path": "processed-data/template",
             "date_columns": [
