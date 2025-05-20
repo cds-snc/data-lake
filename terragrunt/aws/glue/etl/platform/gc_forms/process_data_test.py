@@ -261,9 +261,9 @@ def test_process_data(
     process_data()
 
     # Verify a call for each dataset
-    assert mock_get_new_data.call_count == 5
-    assert mock_wr_s3.to_parquet.call_count == 5
-    assert mock_cloudwatch.put_metric_data.call_count == 5
+    assert mock_get_new_data.call_count == 4
+    assert mock_wr_s3.to_parquet.call_count == 4
+    assert mock_cloudwatch.put_metric_data.call_count == 4
 
 
 @patch("process_data.get_new_data")
@@ -281,7 +281,7 @@ def test_process_data_empty_dataset(
     process_data()
 
     mock_wr_s3.to_parquet.assert_not_called()
-    assert mock_cloudwatch.put_metric_data.call_count == 5
+    assert mock_cloudwatch.put_metric_data.call_count == 4
 
 
 @patch("process_data.get_new_data")
