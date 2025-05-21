@@ -6,3 +6,4 @@
 .terraform
 *.tfstate
 *.tfvars
+*.ge_store_backend_id
