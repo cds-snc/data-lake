@@ -9,7 +9,12 @@ variable "glue_crawler_log_group_name" {
   type        = string
 }
 
-variable "glue_etl_log_group_name" {
-  description = "The name of the Glue ETL CloudWatch log group."
+variable "glue_etl_pythonshell_log_group_name" {
+  description = "The name of the Glue ETL CloudWatch log group used by `pythonshell` jobs."
+  type        = string
+}
+
+variable "glue_etl_spark_log_group_name" {
+  description = "The name of the Glue ETL CloudWatch log group used by `spark` jobs."
   type        = string
 }
