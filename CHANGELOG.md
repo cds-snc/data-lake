@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/cds-snc/data-lake/compare/v1.2.2...v1.2.3) (2025-05-21)
+
+
+### Bug Fixes
+
+* added notificationinterval field ([#263](https://github.com/cds-snc/data-lake/issues/263)) ([a6b6378](https://github.com/cds-snc/data-lake/commit/a6b6378a23316ecf91fb4f0c3e0ce06a4277bccf))
+
 ## [1.2.2](https://github.com/cds-snc/data-lake/compare/v1.2.1...v1.2.2) (2025-05-16)
 
 
