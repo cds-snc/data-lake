@@ -4,6 +4,8 @@ import time
 
 from datetime import datetime, timezone
 from typing import List, Optional
+import zipfile
+
 
 import awswrangler as wr
 import boto3
@@ -25,6 +27,7 @@ args = getResolvedOptions(
         "database_name_raw",
         "database_name_transformed",
         "table_name_prefix",
+        "table_config_object"
     ],
 )
 
@@ -37,6 +40,8 @@ PARTITION_KEY = "month"
 DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
+TABLE_CONFIG_OBJECT = args["table_config_object"]
+
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -242,12 +247,39 @@ def publish_metric(cloudwatch, dataset_name, count, processing_time):
         f"Published metrics for {dataset_name}: {count} records in {processing_time:.2f}s"
     )
 
+def download_s3_object(s3, s3_url, filename):
+    """
+    Download an S3 object to a local file.
+    """
+    bucket_name = s3_url.split("/")[2]
+    object_key = "/".join(s3_url.split("/")[3:])
+    current_dir = os.getcwd()
+    s3.download_file(
+        Bucket=bucket_name,
+        Key=object_key,
+        Filename=os.path.join(current_dir, filename),
+    )
+
+    gx_zip = os.path.join(current_dir, os.path.basename(filename) )
+    gx_dir = os.path.join(current_dir, os.path.splitext(gx_zip)[0] )
+    
+    
+
+    with zipfile.ZipFile(gx_zip, "r") as zip_ref:
+        zip_ref.extractall(gx_dir)
+
+
 
 def process_data(datasets=None):
     """
     Main ETL process to read data from S3, validate the schema, and save the
     transformed data back to S3.
     """
+
+
+    download_s3_object(s3, TABLE_CONFIG_OBJECT, "tables.zip")
+
+
     if datasets is None:
         datasets = [
             {

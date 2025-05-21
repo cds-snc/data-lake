@@ -29,7 +29,7 @@ stores:
     class_name: ValidationsStore
     store_backend:
       class_name: TupleFilesystemStoreBackend
-      base_directory: uncommitted/validations/
+      base_directory: ${VALIDATIONS_STORE_BASE_DIRECTORY}
 
   checkpoint_store:
     class_name: CheckpointStore
@@ -51,7 +51,7 @@ data_docs_sites:
     class_name: SiteBuilder
     store_backend:
       class_name: TupleFilesystemStoreBackend
-      base_directory: uncommitted/data_docs/local_site/
+      base_directory: ${DATA_DOCS_BASE_DIRECTORY}
     site_index_builder:
       class_name: DefaultSiteIndexBuilder
 anonymous_usage_statistics:

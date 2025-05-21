@@ -12,6 +12,19 @@ resource "aws_s3_object" "platform_gc_forms_job" {
   etag   = filemd5(data.local_file.platform_gc_forms_job.filename)
 }
 
+data "archive_file" "platform_gc_forms_gx" {
+  type        = "zip"
+  source_dir  = "${path.module}/etl/platform/gc_forms/gx"
+  output_path = "${path.module}/etl/platform/gc_forms/gx.zip"
+}
+
+resource "aws_s3_object" "platform_gc_forms_gx" {
+  bucket = var.glue_bucket_name
+  key    = "platform/gc_forms/gx.zip"
+  source = data.archive_file.platform_gc_forms_gx.output_path
+  etag   = data.archive_file.platform_gc_forms_gx.output_md5
+}
+
 resource "aws_glue_job" "platform_gc_forms_job" {
   name = "Platform / GC Forms"
 
@@ -41,6 +54,7 @@ resource "aws_glue_job" "platform_gc_forms_job" {
     "--source_prefix"                    = "platform/gc-forms"
     "--transformed_bucket"               = var.transformed_bucket_name
     "--transformed_prefix"               = "platform/gc-forms"
+    "--table_config_object"              = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_forms_gx.key}"
     "--database_name_raw"                = aws_glue_catalog_database.platform_gc_forms_production_raw.name
     "--database_name_transformed"        = aws_glue_catalog_database.platform_gc_forms_production.name
     "--table_name_prefix"                = "platform_gc_forms"
