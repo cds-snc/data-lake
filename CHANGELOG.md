@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.2.4](https://github.com/cds-snc/data-lake/compare/v1.2.3...v1.2.4) (2025-05-21)
+
+
+### Bug Fixes
+
+* rollback notificationinterval one-time fix ([#265](https://github.com/cds-snc/data-lake/issues/265)) ([2a22b0c](https://github.com/cds-snc/data-lake/commit/2a22b0c12d53723c17c5d700f903364ea32b4b58))
+
+
+### Miscellaneous Chores
+
+* remove anomaly detection alarms ([#267](https://github.com/cds-snc/data-lake/issues/267)) ([d6b33e3](https://github.com/cds-snc/data-lake/commit/d6b33e3193238b166c0461380adde5d22e9cae00))
+
+## [1.2.3](https://github.com/cds-snc/data-lake/compare/v1.2.2...v1.2.3) (2025-05-21)
+
+
+### Bug Fixes
+
+* added notificationinterval field ([#263](https://github.com/cds-snc/data-lake/issues/263)) ([a6b6378](https://github.com/cds-snc/data-lake/commit/a6b6378a23316ecf91fb4f0c3e0ce06a4277bccf))
+
 ## [1.2.2](https://github.com/cds-snc/data-lake/compare/v1.2.1...v1.2.2) (2025-05-16)
 
 
