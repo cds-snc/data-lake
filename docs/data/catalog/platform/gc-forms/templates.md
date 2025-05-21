@@ -113,6 +113,7 @@ Here's a descriptive list of the fields in each table:
 | titleen | string | Template title in English |
 | titlefr | string | Template title in French |
 | brand | string | Branding used by the template |
+| notificationsinterval | integer | Interval between notifications in minutes |
 | addresscomplete_count | integer | Count of address complete elements |
 | checkbox_count | integer | Count of checkbox form elements |
 | combobox_count | integer | Count of combobox form elements |
