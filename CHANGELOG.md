@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.5](https://github.com/cds-snc/data-lake/compare/v1.2.4...v1.2.5) (2025-05-21)
+
+
+### Bug Fixes
+
+* CloudWatch metric filter alarms for ETL jobs ([#269](https://github.com/cds-snc/data-lake/issues/269)) ([dd0434d](https://github.com/cds-snc/data-lake/commit/dd0434d5ae5e47e430c3bef99c71c3e3fba7e1bc))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#244](https://github.com/cds-snc/data-lake/issues/244)) ([b58f2bc](https://github.com/cds-snc/data-lake/commit/b58f2bc446071eb0487f0daefb3818ce0179c1d7))
+* **deps:** update all patch dependencies ([#262](https://github.com/cds-snc/data-lake/issues/262)) ([4286396](https://github.com/cds-snc/data-lake/commit/4286396321a457b62237d3b136be92a69a769e80))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to 76a2d99 ([#243](https://github.com/cds-snc/data-lake/issues/243)) ([344a2ff](https://github.com/cds-snc/data-lake/commit/344a2fff6f914072f96333e6b37f517dee40b5e6))
+
 ## [1.2.4](https://github.com/cds-snc/data-lake/compare/v1.2.3...v1.2.4) (2025-05-21)
 
 

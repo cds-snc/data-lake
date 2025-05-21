@@ -27,7 +27,7 @@ args = getResolvedOptions(
         "database_name_raw",
         "database_name_transformed",
         "table_name_prefix",
-        "table_config_object"
+        "gx_config_object",
     ],
 )
 
@@ -40,8 +40,7 @@ PARTITION_KEY = "month"
 DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
-TABLE_CONFIG_OBJECT = args["table_config_object"]
-
+GX_CONFIG_OBJECT = args["gx_config_object"]
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -122,6 +121,7 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     """
     gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
     context = DataContext(gx_context_path)
+
     result = context.run_checkpoint(
         checkpoint_name=checkpoint_name,
         batch_request={
@@ -129,7 +129,6 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
             "batch_identifiers": {"default_identifier_name": "runtime_batch"},
         },
     )
-
     if not result["success"]:
         logger.error(f"Validation failed for checkpoint '{checkpoint_name}'")
         # Print detailed failed expectations
@@ -248,6 +247,7 @@ def publish_metric(cloudwatch, dataset_name, count, processing_time):
         f"Published metrics for {dataset_name}: {count} records in {processing_time:.2f}s"
     )
 
+
 def download_s3_object(s3, s3_url, filename):
     """
     Download an S3 object to a local file.
@@ -261,14 +261,11 @@ def download_s3_object(s3, s3_url, filename):
         Filename=os.path.join(current_dir, filename),
     )
 
-    gx_zip = os.path.join(current_dir, os.path.basename(filename) )
-    gx_dir = os.path.join(current_dir, os.path.splitext(gx_zip)[0] )
-    
-    
+    gx_zip = os.path.join(current_dir, os.path.basename(filename))
+    gx_dir = os.path.join(current_dir, os.path.splitext(gx_zip)[0])
 
     with zipfile.ZipFile(gx_zip, "r") as zip_ref:
         zip_ref.extractall(gx_dir)
-
 
 
 def process_data(datasets=None):
@@ -276,10 +273,8 @@ def process_data(datasets=None):
     Main ETL process to read data from S3, validate the schema, and save the
     transformed data back to S3.
     """
-
-
-    download_s3_object(s3, TABLE_CONFIG_OBJECT, "tables.zip")
-
+    s3 = boto3.client("s3")
+    download_s3_object(s3, GX_CONFIG_OBJECT, "tables.zip")
 
     if datasets is None:
         datasets = [

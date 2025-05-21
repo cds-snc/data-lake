@@ -29,7 +29,7 @@ stores:
     class_name: ValidationsStore
     store_backend:
       class_name: TupleFilesystemStoreBackend
-      base_directory: ${VALIDATIONS_STORE_BASE_DIRECTORY}
+      base_directory: uncommitted/validations
 
   checkpoint_store:
     class_name: CheckpointStore
@@ -40,10 +40,12 @@ stores:
 
   evaluation_parameter_store:
     class_name: EvaluationParameterStore
+
 expectations_store_name: expectations_store
 validations_store_name: validations_store
 checkpoint_store_name: checkpoint_store
 evaluation_parameter_store_name: evaluation_parameter_store
+
 plugins_directory:
 notebooks:
 data_docs_sites:
@@ -51,7 +53,7 @@ data_docs_sites:
     class_name: SiteBuilder
     store_backend:
       class_name: TupleFilesystemStoreBackend
-      base_directory: ${DATA_DOCS_BASE_DIRECTORY}
+      base_directory: uncommitted/data_docs/local_site/
     site_index_builder:
       class_name: DefaultSiteIndexBuilder
 anonymous_usage_statistics:

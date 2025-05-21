@@ -2,9 +2,7 @@
   "name": "data-lake",
   "image": "mcr.microsoft.com/devcontainers/base:bullseye@sha256:76a2d99e1e5aacfbf0e148656ed31110c70ffed074f6e141295d8b65b1b25702",
   "containerEnv": {
-    "SHELL": "/bin/zsh",
-    "VALIDATIONS_STORE_BASE_DIRECTORY": "uncommitted/validations/",
-    "DATA_DOCS_BASE_DIRECTORY": "uncommitted/data_docs/local_site/"
+    "SHELL": "/bin/zsh"
   },
   "features": {
     "ghcr.io/devcontainers/features/aws-cli:1": {

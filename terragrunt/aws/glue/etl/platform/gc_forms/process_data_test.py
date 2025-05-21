@@ -18,6 +18,7 @@ mock_args = {
     "database_name_raw": "test_raw_db",
     "database_name_transformed": "test_transformed_db",
     "table_name_prefix": "test_table",
+    "gx_config_object": "s3://test-config-bucket/test-config-key",
 }
 
 # Mock the AWS Glue and PySpark modules
@@ -355,6 +356,7 @@ def test_get_new_data_no_files(mock_wr_s3):
     assert result.empty
 
 
+@patch("process_data.download_s3_object")
 @patch("process_data.validate_with_gx", return_value=True)
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
@@ -366,6 +368,7 @@ def test_process_data(
     mock_wr_catalog,
     mock_get_new_data,
     mock_validate_with_gx,
+    mock_s3,
     sample_data_df,
     glue_table_schema,
 ):
@@ -382,6 +385,7 @@ def test_process_data(
     assert mock_cloudwatch.put_metric_data.call_count == 5
 
 
+@patch("process_data.download_s3_object")
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
@@ -391,6 +395,7 @@ def test_process_data_validation_success(
     mock_wr_s3,
     mock_wr_catalog,
     mock_get_new_data,
+    mock_s3,
     sample_data_df,
     glue_table_schema,
 ):
@@ -437,12 +442,18 @@ def test_process_data_validation_success(
     assert mock_cloudwatch.put_metric_data.call_count == 1
 
 
+@patch("process_data.download_s3_object")
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
 def test_process_data_empty_dataset(
-    mock_boto3_client, mock_wr_s3, mock_wr_catalog, mock_get_new_data, glue_table_schema
+    mock_boto3_client,
+    mock_wr_s3,
+    mock_wr_catalog,
+    mock_get_new_data,
+    mock_s3,
+    glue_table_schema,
 ):
     mock_cloudwatch = Mock()
     mock_boto3_client.return_value = mock_cloudwatch
@@ -455,6 +466,7 @@ def test_process_data_empty_dataset(
     assert mock_cloudwatch.put_metric_data.call_count == 5
 
 
+@patch("process_data.download_s3_object")
 @patch("process_data.validate_with_gx", return_value=True)
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
@@ -466,6 +478,7 @@ def test_process_data_validation_failure(
     mock_wr_catalog,
     mock_get_new_data,
     mock_validate_with_gx,
+    mock_s3,
     sample_data_df,
     glue_table_schema,
 ):
@@ -486,6 +499,7 @@ def test_process_data_validation_failure(
     mock_cloudwatch.put_metric_data.assert_not_called()
 
 
+@patch("process_data.download_s3_object")
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
@@ -495,9 +509,11 @@ def test_process_data_validation_failure_great_expectations_bad_schema(
     mock_wr_s3,
     mock_wr_catalog,
     mock_get_new_data,
+    mock_s3,
     sample_data_df,
     glue_table_schema,
 ):
+    # Mock CloudWatch client
     mock_cloudwatch = Mock()
     mock_boto3_client.return_value = mock_cloudwatch
 
@@ -544,15 +560,17 @@ def test_process_data_validation_failure_great_expectations_bad_schema(
     assert mock_cloudwatch.put_metric_data.call_count == 0
 
 
+@patch("process_data.download_s3_object")
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
-def test_process_data_validation_failure_great_expectations_bad_schema(
+def test_process_data_validation_failure_great_expectations_bad_schema_duplication(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
     mock_get_new_data,
+    mock_s3,
     sample_data_df,
     glue_table_schema,
 ):

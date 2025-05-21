@@ -54,10 +54,10 @@ resource "aws_glue_job" "platform_gc_forms_job" {
     "--source_prefix"                    = "platform/gc-forms"
     "--transformed_bucket"               = var.transformed_bucket_name
     "--transformed_prefix"               = "platform/gc-forms"
-    "--table_config_object"              = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_forms_gx.key}"
     "--database_name_raw"                = aws_glue_catalog_database.platform_gc_forms_production_raw.name
     "--database_name_transformed"        = aws_glue_catalog_database.platform_gc_forms_production.name
     "--table_name_prefix"                = "platform_gc_forms"
+    "--gx_config_object"                 = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_forms_gx.key}"
   }
 }
 

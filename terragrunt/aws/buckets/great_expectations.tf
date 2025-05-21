@@ -9,7 +9,8 @@ module "gx_bucket" {
   }
 
   lifecycle_rule = [
-    local.lifecycle_remove_noncurrent_versions
+    local.lifecycle_remove_noncurrent_versions,
+    local.lifecycle_transition_storage
   ]
 
   versioning = {

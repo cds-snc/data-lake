@@ -37,3 +37,12 @@ variable "transformed_bucket_name" {
   description = "The name of the Transformed bucket"
   type        = string
 }
+
+variable "gx_bucket_arn" {
+  description = "The ARN of the Grreat Expectations bucket"
+  type        = string
+}
+variable "gx_bucket_name" {
+  description = "The name of the Grreat Expectations bucket"
+  type        = string
+}
