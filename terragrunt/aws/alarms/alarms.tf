@@ -84,51 +84,6 @@ resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "anomaly_detection" {
-  for_each = var.env == "production" ? tomap({
-    for alarm in local.anomaly_detection_alarms :
-    alarm.name => {
-      metric_name        = alarm.metric_name
-      namespace          = alarm.namespace
-      dataset            = alarm.dataset
-      standard_deviation = alarm.standard_deviation
-    }
-  }) : tomap({})
-
-  alarm_name          = "anomaly-${each.key}"
-  alarm_description   = "Anomaly detection for '${each.value.namespace} / ${each.value.dataset} / ${each.value.metric_name}'"
-  comparison_operator = "LessThanLowerOrGreaterThanUpperThreshold"
-  threshold_metric_id = "expected_value"
-  evaluation_periods  = 1
-  treat_missing_data  = "notBreaching"
-
-  alarm_actions = [aws_sns_topic.cloudwatch_alarm_action.arn]
-  ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
-
-  metric_query {
-    id          = "expected_value"
-    expression  = "ANOMALY_DETECTION_BAND(actual_value, ${each.value.standard_deviation})"
-    label       = "${each.value.metric_name} (Expected)"
-    return_data = "true"
-  }
-
-  metric_query {
-    id          = "actual_value"
-    return_data = "true"
-    metric {
-      metric_name = each.value.metric_name
-      namespace   = each.value.namespace
-      period      = 86400 # 1 day
-      stat        = "Sum"
-      unit        = "Count"
-
-      dimensions = {
-        Dataset = each.value.dataset
-      }
-    }
-  }
-}
-
 #
 # Log Insight queries
 #
