@@ -184,7 +184,6 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
     fixed_date_yesterday = datetime(1970, 1, 1)
     mock_timestamp.today.return_value = fixed_date
 
-
     result = get_new_data(
         path="test-path",
         date_columns=["date", "timestamp", "created_at"],
