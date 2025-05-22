@@ -185,7 +185,7 @@
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
-        "regex": "^[a-b0-9]{1,25}$"
+        "regex": "^[a-z0-9]{1,25}$"
       },
       "meta": {
         "description": "id should be exactly 24 characters long (e.g., clsbvg7z20068xd82jp1jf7sd)"

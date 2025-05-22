@@ -13,7 +13,7 @@ import pandas as pd
 
 from awsglue.utils import getResolvedOptions
 
-from great_expectations.data_context import DataContext
+import great_expectations as gx
 import os
 
 
@@ -120,7 +120,7 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     Logs detailed errors if validation fails.
     """
     gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
-    context = DataContext(gx_context_path)
+    context = gx.get_context(context_root_dir=gx_context_path)
 
     result = context.run_checkpoint(
         checkpoint_name=checkpoint_name,
