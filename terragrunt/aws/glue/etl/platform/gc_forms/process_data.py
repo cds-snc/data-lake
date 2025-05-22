@@ -120,7 +120,7 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     Logs detailed errors if validation fails.
     """
     gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
-    context = gx.get_context(context_root_dir=gx_context_path)
+    context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
 
     result = context.run_checkpoint(
         checkpoint_name=checkpoint_name,
