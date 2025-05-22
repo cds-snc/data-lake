@@ -129,6 +129,8 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
             "batch_identifiers": {"default_identifier_name": "runtime_batch"},
         },
     )
+    context.build_data_docs(site_names=["local_site"])
+
     if not result["success"]:
         logger.error(f"Validation failed for checkpoint '{checkpoint_name}'")
         # Print detailed failed expectations

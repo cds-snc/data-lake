@@ -56,6 +56,15 @@ data_docs_sites:
       base_directory: uncommitted/data_docs/local_site/
     site_index_builder:
       class_name: DefaultSiteIndexBuilder
+  s3_site:
+    class_name: SiteBuilder
+    store_backend:
+      class_name: TupleS3StoreBackend
+      bucket: ${gx_s3_bucket}
+      prefix: data-docs/
+    site_index_builder:
+      class_name: DefaultSiteIndexBuilder
+
 anonymous_usage_statistics:
   data_context_id: d6a4a38e-d07f-4d6f-b2b2-55261164ee47
   enabled: false
