@@ -19,12 +19,12 @@ variable "glue_bucket_name" {
 }
 
 variable "gx_bucket_arn" {
-  description = "The ARN of the Grreat Expectations bucket"
+  description = "The ARN of the Great Expectations bucket"
   type        = string
 }
 
 variable "gx_bucket_name" {
-  description = "The name of the Grreat Expectations bucket"
+  description = "The name of the Great Expectations bucket"
   type        = string
 }
 
