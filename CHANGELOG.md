@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/cds-snc/data-lake/compare/v1.2.5...v1.3.0) (2025-05-22)
+
+
+### Features
+
+* add s3 bucket for great_expectations ([#270](https://github.com/cds-snc/data-lake/issues/270)) ([76ec6ae](https://github.com/cds-snc/data-lake/commit/76ec6ae2e7e47f0b78f2eed7cd1179d706d441c5))
+
+
+### Bug Fixes
+
+* skip missing Forms historical data error alarms ([#273](https://github.com/cds-snc/data-lake/issues/273)) ([219c57c](https://github.com/cds-snc/data-lake/commit/219c57c878f9e54970e57929f0f7b0c55140db18))
+
 ## [1.2.5](https://github.com/cds-snc/data-lake/compare/v1.2.4...v1.2.5) (2025-05-21)
 
 
