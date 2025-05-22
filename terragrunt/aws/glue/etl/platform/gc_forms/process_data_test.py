@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import Mock, patch
 
 import pandas as pd
+import os
 
 from awswrangler.exceptions import NoFilesFound
 
@@ -36,6 +37,11 @@ from process_data import (
     SOURCE_BUCKET,
     SOURCE_PREFIX,
 )
+
+
+@pytest.fixture(autouse=True, scope="session")
+def disable_ge_usage_stats():
+    os.environ["GE_USAGE_STATS"] = "FALSE"
 
 
 # Sample test data fixtures
