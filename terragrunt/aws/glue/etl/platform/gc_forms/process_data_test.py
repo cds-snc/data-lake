@@ -39,7 +39,6 @@ from process_data import (
 )
 
 
-
 # Sample test data fixtures
 @pytest.fixture
 def sample_data_df():
