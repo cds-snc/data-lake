@@ -1,0 +1,228 @@
+{
+  "expectation_suite_name": "forms-template_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "id", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "ttl", "type_list": ["datetime64[ns]", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "ispublished", "type_list": ["bool", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "created_at", "type_list": ["datetime64[ns]", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "updated_at", "type_list": ["datetime64[ns]", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "name", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "securityattribute", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "closingdate", "type_list": ["datetime64[ns]", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "formpurpose", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "publishdesc", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "publishformtype", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "publishreason", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "closeddetails", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "saveandresume", "type_list": ["bool", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "deliveryemaildestination", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "api_created_at", "type_list": ["datetime64[ns]", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "api_id", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "deliveryoption", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "timestamp", "type_list": ["datetime64[ns]", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "titleen", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "titlefr", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "brand", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "checkbox_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "combobox_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "dropdown_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "dynamicrow_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "fileinput_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "formatteddate_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "radio_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "richtext_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "textarea_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "textfield_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "addresscomplete_count", "type_list": ["int", "int64", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "year", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": { "column": "month", "type_list": ["str", "object"] },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": { "column": "id" },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "id",
+        "regex": "^[a-z0-9]{1,25}$"
+      },
+      "meta": {
+        "description": "id should be 1 to 25 characters long (e.g., clsbvg7z20068xd82jp1jf7sd)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "securityattribute",
+        "value_set": ["Protected A", "Unclassified", "Protected B"]
+      },
+      "meta": {
+        "description": "securityattribute must be one of: Protected A, Unclassified, Protected B"
+      }
+    },
+     {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "year",
+        "regex": "^\\d{4}$"
+      },
+      "meta": {
+        "description": "year should be a 4-digit year (e.g., 2024)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "month",
+        "regex": "^\\d{4}-\\d{2}$"
+      },
+      "meta": {
+        "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
+      }
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.22"
+  }
+}

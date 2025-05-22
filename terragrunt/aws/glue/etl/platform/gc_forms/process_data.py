@@ -4,12 +4,18 @@ import time
 
 from datetime import datetime, timezone
 from typing import List, Optional
+import zipfile
+
 
 import awswrangler as wr
 import boto3
 import pandas as pd
 
 from awsglue.utils import getResolvedOptions
+
+import great_expectations as gx
+import os
+
 
 args = getResolvedOptions(
     sys.argv,
@@ -21,6 +27,7 @@ args = getResolvedOptions(
         "database_name_raw",
         "database_name_transformed",
         "table_name_prefix",
+        "gx_config_object",
     ],
 )
 
@@ -33,6 +40,7 @@ PARTITION_KEY = "month"
 DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
+GX_CONFIG_OBJECT = args["gx_config_object"]
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -103,6 +111,42 @@ def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
         series.astype(expected_type)
     except (ValueError, TypeError):
         return False
+    return True
+
+
+def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
+    """
+    Validate the DataFrame using the specified Great Expectations checkpoint.
+    Logs detailed errors if validation fails.
+    """
+    gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
+    context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
+
+    result = context.run_checkpoint(
+        checkpoint_name=checkpoint_name,
+        batch_request={
+            "runtime_parameters": {"batch_data": dataframe},
+            "batch_identifiers": {"default_identifier_name": "runtime_batch"},
+        },
+    )
+    if not result["success"]:
+        logger.error(f"Validation failed for checkpoint '{checkpoint_name}'")
+        # Print detailed failed expectations
+        for run_result in result["run_results"].values():
+            validation_result = run_result["validation_result"]
+            for res in validation_result["results"]:
+                if not res["success"]:
+                    expectation_type = res["expectation_config"]["expectation_type"]
+                    column = res["expectation_config"]["kwargs"].get("column", "")
+                    result_details = res.get("result", {})
+                    unexpected_count = result_details.get("unexpected_count", "")
+                    unexpected_values = result_details.get("unexpected_list", "")
+                    logger.error(
+                        f"Failed expectation: {expectation_type} on column '{column}'. "
+                        f"Unexpected count: {unexpected_count}. Unexpected values: {unexpected_values}"
+                    )
+        return False
+    logger.info(f"Validation succeeded for checkpoint '{checkpoint_name}'.")
     return True
 
 
@@ -204,63 +248,93 @@ def publish_metric(cloudwatch, dataset_name, count, processing_time):
     )
 
 
-def process_data():
+def download_s3_object(s3, s3_url, filename):
+    """
+    Download an S3 object to a local file.
+    """
+    bucket_name = s3_url.split("/")[2]
+    object_key = "/".join(s3_url.split("/")[3:])
+    current_dir = os.getcwd()
+    s3.download_file(
+        Bucket=bucket_name,
+        Key=object_key,
+        Filename=os.path.join(current_dir, filename),
+    )
+
+    gx_zip = os.path.join(current_dir, os.path.basename(filename))
+    gx_dir = os.path.join(current_dir, os.path.splitext(gx_zip)[0])
+
+    with zipfile.ZipFile(gx_zip, "r") as zip_ref:
+        zip_ref.extractall(gx_dir)
+
+
+def process_data(datasets=None):
     """
     Main ETL process to read data from S3, validate the schema, and save the
     transformed data back to S3.
     """
-    datasets = [
-        {
-            "path": "historical-data",
-            "date_columns": ["date"],
-            "partition_timestamp": "date",
-            "partition_columns": ["year", "month"],
-            "email_columns": ["client_email"],
-        },
-        {
-            "path": "processed-data/submissions",
-            "date_columns": ["timestamp"],
-        },
-        {
-            "path": "processed-data/template",
-            "date_columns": [
-                "ttl",
-                "api_created_at",
-                "timestamp",
-                "closingdate",
-                "created_at",
-                "updated_at",
-            ],
-            "field_count_columns": [
-                "checkbox_count",
-                "combobox_count",
-                "dropdown_count",
-                "dynamicrow_count",
-                "fileinput_count",
-                "formatteddate_count",
-                "radio_count",
-                "richtext_count",
-                "textarea_count",
-                "textfield_count",
-                "addresscomplete_count",
-            ],
-            "partition_timestamp": "created_at",
-            "partition_columns": ["year", "month"],
-            "email_columns": ["deliveryemaildestination"],
-        },
-        {
-            "path": "processed-data/templateToUser",
-            "date_columns": ["timestamp"],
-        },
-        {
-            "path": "processed-data/user",
-            "date_columns": ["emailverified", "lastlogin", "createdat", "timestamp"],
-            "partition_timestamp": "lastlogin",  # User created date is currently in this field.
-            "partition_columns": ["year", "month"],
-            "drop_columns": ["name"],
-            "email_columns": ["email"],
-        },
-    ]
+    s3 = boto3.client("s3")
+    download_s3_object(s3, GX_CONFIG_OBJECT, "gx.zip")
+
+    if datasets is None:
+        datasets = [
+            {
+                "path": "historical-data",
+                "date_columns": ["date"],
+                "partition_timestamp": "date",
+                "partition_columns": ["year", "month"],
+                "email_columns": ["client_email"],
+            },
+            {
+                "path": "processed-data/submissions",
+                "date_columns": ["timestamp"],
+            },
+            {
+                "path": "processed-data/template",
+                "date_columns": [
+                    "ttl",
+                    "api_created_at",
+                    "timestamp",
+                    "closingdate",
+                    "created_at",
+                    "updated_at",
+                ],
+                "field_count_columns": [
+                    "checkbox_count",
+                    "combobox_count",
+                    "dropdown_count",
+                    "dynamicrow_count",
+                    "fileinput_count",
+                    "formatteddate_count",
+                    "radio_count",
+                    "richtext_count",
+                    "textarea_count",
+                    "textfield_count",
+                    "addresscomplete_count",
+                ],
+                "partition_timestamp": "created_at",
+                "partition_columns": ["year", "month"],
+                "email_columns": ["deliveryemaildestination"],
+                "gx_checkpoint": "forms-template_checkpoint",
+            },
+            {
+                "path": "processed-data/templateToUser",
+                "date_columns": ["timestamp"],
+            },
+            {
+                "path": "processed-data/user",
+                "date_columns": [
+                    "emailverified",
+                    "lastlogin",
+                    "createdat",
+                    "timestamp",
+                ],
+                "partition_timestamp": "lastlogin",  # User created date is currently in this field.
+                "partition_columns": ["year", "month"],
+                "drop_columns": ["name"],
+                "email_columns": ["email"],
+            },
+        ]
     cloudwatch = boto3.client("cloudwatch")
 
     for dataset in datasets:
@@ -273,6 +347,7 @@ def process_data():
         field_count_columns = dataset.get("field_count_columns")
         partition_columns = dataset.get("partition_columns")
         partition_timestamp = dataset.get("partition_timestamp")
+        gx_checkpoint = dataset.get("gx_checkpoint")
 
         table_name = path.lower().replace("-", "_")
         if "/" in table_name:
@@ -295,19 +370,27 @@ def process_data():
             continue
 
         if not data.empty:
-            glue_table_schema = wr.catalog.table(
-                database=DATABASE_NAME_RAW,
-                table=f"{TABLE_NAME_PREFIX}_raw_{table_name}",
-            )
-            if not validate_schema(
-                dataframe=data,
-                drop_columns=drop_columns,
-                non_source_columns=partition_columns,
-                glue_table_schema=glue_table_schema,
-            ):
-                raise ValueError(
-                    f"Schema validation failed for {path}. Aborting ETL process."
+            # We prioritize data validation with Great Expectations if a checkpoint is provided
+            # Otherwise, we fall back to Glue schema validation
+            if gx_checkpoint:
+                if not validate_with_gx(data, gx_checkpoint):
+                    raise ValueError(
+                        f"Great Expectations validation failed for {path}. Aborting ETL process."
+                    )
+            else:
+                glue_table_schema = wr.catalog.table(
+                    database=DATABASE_NAME_RAW,
+                    table=f"{TABLE_NAME_PREFIX}_raw_{table_name}",
                 )
+                if not validate_schema(
+                    dataframe=data,
+                    drop_columns=drop_columns,
+                    non_source_columns=partition_columns,
+                    glue_table_schema=glue_table_schema,
+                ):
+                    raise ValueError(
+                        f"Schema validation failed for {path}. Aborting ETL process."
+                    )
 
             # Save the transformed data back to S3
             logger.info(f"Saving new {path} DataFrame to S3...")
@@ -320,7 +403,7 @@ def process_data():
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_columns,
-                schema_evolution=False,
+                schema_evolution=True,
             )
 
         else:

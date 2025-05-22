@@ -6,3 +6,7 @@
 .terraform
 *.tfstate
 *.tfvars
+*.ge_store_backend_id
+
+# MacOS
+.DS_Store
