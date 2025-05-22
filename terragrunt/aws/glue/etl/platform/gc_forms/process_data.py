@@ -274,7 +274,7 @@ def process_data(datasets=None):
     transformed data back to S3.
     """
     s3 = boto3.client("s3")
-    download_s3_object(s3, GX_CONFIG_OBJECT, "tables.zip")
+    download_s3_object(s3, GX_CONFIG_OBJECT, "gx.zip")
 
     if datasets is None:
         datasets = [
@@ -403,7 +403,7 @@ def process_data(datasets=None):
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_columns,
-                schema_evolution=False,
+                schema_evolution=True,
             )
 
         else:

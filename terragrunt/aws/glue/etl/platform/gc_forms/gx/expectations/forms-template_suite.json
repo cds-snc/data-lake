@@ -2,21 +2,6 @@
   "expectation_suite_name": "forms-template_suite",
   "expectations": [
     {
-      "expectation_type": "expect_table_columns_to_match_set",
-      "kwargs": {
-        "column_set": [
-          "id", "ttl", "ispublished", "created_at", "updated_at", "name", "securityattribute",
-          "closingdate", "formpurpose", "publishdesc", "publishformtype", "publishreason",
-          "closeddetails", "saveandresume", "deliveryemaildestination", "api_created_at",
-          "api_id", "deliveryoption", "timestamp", "titleen", "titlefr", "brand",
-          "checkbox_count", "combobox_count", "dropdown_count", "dynamicrow_count",
-          "fileinput_count", "formatteddate_count", "radio_count", "richtext_count",
-          "textarea_count", "textfield_count", "addresscomplete_count", "year", "month"
-        ]
-      },
-      "meta": {}
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_type_list",
       "kwargs": { "column": "id", "type_list": ["str", "object"] },
       "meta": {}
