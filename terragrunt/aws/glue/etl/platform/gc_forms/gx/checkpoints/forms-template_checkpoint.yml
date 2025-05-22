@@ -15,8 +15,6 @@ action_list:
   - name: store_evaluation_params
     action:
       class_name: StoreEvaluationParametersAction
-  ## Below is to create the docs website - without this the results will be saved in a json but not shown in the docs (/uncommitted folder).
-  ## We probably dont need to create the docs, but I am putting this simply as a FYI so you can experiment with it.
   - name: update_data_docs 
     action:
       class_name: UpdateDataDocsAction
