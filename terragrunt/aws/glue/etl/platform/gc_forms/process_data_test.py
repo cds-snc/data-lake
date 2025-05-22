@@ -39,10 +39,6 @@ from process_data import (
 )
 
 
-@pytest.fixture(autouse=True, scope="session")
-def disable_ge_usage_stats():
-    os.environ["GE_USAGE_STATS"] = "FALSE"
-
 
 # Sample test data fixtures
 @pytest.fixture
