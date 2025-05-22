@@ -188,7 +188,7 @@
         "regex": "^[a-z0-9]{1,25}$"
       },
       "meta": {
-        "description": "id should be exactly 24 characters long (e.g., clsbvg7z20068xd82jp1jf7sd)"
+        "description": "id should be 1 to 25 characters long (e.g., clsbvg7z20068xd82jp1jf7sd)"
       }
     },
     {
