@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/cds-snc/data-lake/compare/v1.3.0...v1.4.0) (2025-05-22)
+
+
+### Features
+
+* great expectations on Gc Forms ([#272](https://github.com/cds-snc/data-lake/issues/272)) ([ece4b47](https://github.com/cds-snc/data-lake/commit/ece4b4736bcb2e0c6fa6017f542ab48817a9626a))
+
+
+### Bug Fixes
+
+* Missing terraform output statement ([#275](https://github.com/cds-snc/data-lake/issues/275)) ([32fdae9](https://github.com/cds-snc/data-lake/commit/32fdae978202a6582a0d17d3fadc565c39f49a71))
+
 ## [1.3.0](https://github.com/cds-snc/data-lake/compare/v1.2.5...v1.3.0) (2025-05-22)
 
 
