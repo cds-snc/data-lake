@@ -113,19 +113,3 @@ resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
     RuleName = aws_cloudwatch_event_rule.glue_job_failure.name
   }
 }
-
-#
-# Log Insight queries
-#
-resource "aws_cloudwatch_query_definition" "glue_crawler_errors" {
-  name = "Glue Crawler - ERRORS"
-
-  log_group_names = [var.glue_crawler_log_group_name]
-
-  query_string = <<-QUERY
-    fields @timestamp, @message, @logStream
-    | filter @message like /${local.glue_crawler_metric_filter_error_pattern}/
-    | sort @timestamp desc
-    | limit 100
-  QUERY
-}
