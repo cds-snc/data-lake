@@ -40,7 +40,8 @@ resource "aws_glue_job" "platform_gc_forms_job" {
     name            = "pythonshell"
   }
 
-  default_arguments = {
+ default_arguments = {
+    "--additional-python-modules"        = "great_expectations==0.18.22"
     "--continuous-log-logGroup"          = "/aws-glue/python-jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
     "--continuous-log-logStreamPrefix"   = "platform_gc_forms"
     "--enable-continuous-cloudwatch-log" = "true"
@@ -49,6 +50,7 @@ resource "aws_glue_job" "platform_gc_forms_job" {
     "--enable-job-insights"              = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
+    "--gx_config_object"                 = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_forms_gx.key}"
     "--job-language"                     = "python"
     "--source_bucket"                    = var.raw_bucket_name
     "--source_prefix"                    = "platform/gc-forms"
@@ -57,7 +59,6 @@ resource "aws_glue_job" "platform_gc_forms_job" {
     "--database_name_raw"                = aws_glue_catalog_database.platform_gc_forms_production_raw.name
     "--database_name_transformed"        = aws_glue_catalog_database.platform_gc_forms_production.name
     "--table_name_prefix"                = "platform_gc_forms"
-    "--gx_config_object"                 = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_forms_gx.key}"
   }
 }
 
