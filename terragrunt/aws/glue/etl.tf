@@ -40,7 +40,7 @@ resource "aws_glue_job" "platform_gc_forms_job" {
     name            = "pythonshell"
   }
 
- default_arguments = {
+  default_arguments = {
     "--additional-python-modules"        = "great_expectations==0.18.22"
     "--continuous-log-logGroup"          = "/aws-glue/python-jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
     "--continuous-log-logStreamPrefix"   = "platform_gc_forms"
