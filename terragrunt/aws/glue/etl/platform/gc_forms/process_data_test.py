@@ -49,7 +49,7 @@ def sample_data_df():
                 "aaaa1bbbb03f8ymf83jd75nd4",
                 "aaaa1bbbb03f8ymf83jd75nd5",
             ],
-            "ttl": [pd.NaT, pd.NaT, pd.NaT],
+            "ttl": [pd.Timestamp("2025-03-30 19:47:26.804000"), pd.NaT, pd.NaT],
             "ispublished": [True, False, False],
             "created_at": [
                 pd.Timestamp("2023-08-30 17:54:56"),
@@ -68,11 +68,11 @@ def sample_data_df():
             ],
             "securityattribute": ["Protected A", "Protected A", "Protected A"],
             "closingdate": [pd.NaT, pd.NaT, pd.NaT],
-            "formpurpose": ["", "", ""],
+            "formpurpose": ["TEST", "", ""],
             "publishdesc": ["TEST", "", ""],
-            "publishformtype": ["", "", ""],
-            "publishreason": ["", "", ""],
-            "closeddetails": ["", "", ""],
+            "publishformtype": ["TEST", "", ""],
+            "publishreason": ["TEST", "", ""],
+            "closeddetails": ["TEST", "", ""],
             "saveandresume": [False, False, False],
             "deliveryemaildestination": ["foo.bar@bar.com", "barbaz@baz.com", None],
             "api_created_at": [
@@ -80,7 +80,7 @@ def sample_data_df():
                 pd.NaT,
                 pd.NaT,
             ],
-            "api_id": ["", "", ""],
+            "api_id": ["TEST", "", ""],
             "deliveryoption": [0, 0, 0],
             "timestamp": [
                 pd.Timestamp("2025-04-09 00:01:58"),
@@ -113,7 +113,7 @@ def sample_data_df():
             "textarea_count": [61, 0, 0],
             "textfield_count": [4, 0, 2],
             "addresscomplete_count": [0, 0, 0],
-            "notificationsinterval": [0, 0, 0],
+            "notificationsinterval": [None, None, 0],
             "year": ["2023", "2024", "2024"],
             "month": ["2023-08", "2024-01", "2024-06"],
         }
@@ -569,7 +569,7 @@ def test_process_data_validation_failure_great_expectations_missing_column(
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
-def test_process_data_validation_failure_great_expectations_bad_schema_negative_count(
+def test_process_data_validation_failure_great_expectations_bad_schema_str_count(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
@@ -582,7 +582,7 @@ def test_process_data_validation_failure_great_expectations_bad_schema_negative_
     mock_boto3_client.return_value = mock_cloudwatch
 
     bad_data_df = sample_data_df.copy()
-    bad_data_df["checkbox_count"] = -1  # negative value for checkbox_count
+    bad_data_df["checkbox_count"] = "1"  # string value
     mock_get_new_data.return_value = bad_data_df
     mock_wr_catalog.table.return_value = glue_table_schema
 
