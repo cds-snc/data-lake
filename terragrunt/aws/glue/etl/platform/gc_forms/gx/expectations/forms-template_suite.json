@@ -2,206 +2,1367 @@
   "expectation_suite_name": "forms-template_suite",
   "expectations": [
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "id", "type_list": ["str", "object"] },
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "ttl",
+        "min_value": "2020-01-01 00:00:00.000000",
+        "parse_strings_as_datetimes": false
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "ttl", "type_list": ["datetime64[ns]", "object"] },
+      "kwargs": {
+        "column": "ttl",
+        "type_list": [
+          "DATE",
+          "TIME",
+          "DATETIME",
+          "DATETIME2",
+          "DATETIME64",
+          "SMALLDATETIME",
+          "DATETIMEOFFSET",
+          "TIMESTAMP",
+          "Timestamp",
+          "TimestampType",
+          "TimestampType()",
+          "DateType",
+          "DateType()",
+          "datetime64",
+          "datetime64[ns]",
+          "timedelta[ns]",
+          "<M8[ns]",
+          "Date",
+          "Date32",
+          "DateTime",
+          "DateTime64"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "ispublished",
+        "value_set": [true, false, 0, 1, "true", "false", "True", "False", "0", "1"]
+      },
+      "meta": {
+        "description": "ispublished should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "created_at",
+        "min_value": "2020-01-01 00:00:00",
+        "parse_strings_as_datetimes": false
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "ispublished", "type_list": ["bool", "object"] },
+      "kwargs": {
+        "column": "created_at",
+        "type_list": [
+          "DATE",
+          "TIME",
+          "DATETIME",
+          "DATETIME2",
+          "DATETIME64",
+          "SMALLDATETIME",
+          "DATETIMEOFFSET",
+          "TIMESTAMP",
+          "Timestamp",
+          "TimestampType",
+          "TimestampType()",
+          "DateType",
+          "DateType()",
+          "datetime64",
+          "datetime64[ns]",
+          "timedelta[ns]",
+          "<M8[ns]",
+          "Date",
+          "Date32",
+          "DateTime",
+          "DateTime64"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "updated_at",
+        "min_value": "2020-01-01 00:00:00",
+        "parse_strings_as_datetimes": false
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "created_at", "type_list": ["datetime64[ns]", "object"] },
+      "kwargs": {
+        "column": "updated_at",
+        "type_list": [
+          "DATE",
+          "TIME",
+          "DATETIME",
+          "DATETIME2",
+          "DATETIME64",
+          "SMALLDATETIME",
+          "DATETIMEOFFSET",
+          "TIMESTAMP",
+          "Timestamp",
+          "TimestampType",
+          "TimestampType()",
+          "DateType",
+          "DateType()",
+          "datetime64",
+          "datetime64[ns]",
+          "timedelta[ns]",
+          "<M8[ns]",
+          "Date",
+          "Date32",
+          "DateTime",
+          "DateTime64"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "closingdate",
+        "min_value": "2020-01-01 00:00:00",
+        "parse_strings_as_datetimes": false
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "updated_at", "type_list": ["datetime64[ns]", "object"] },
+      "kwargs": {
+        "column": "closingdate",
+        "type_list": [
+          "DATE",
+          "TIME",
+          "DATETIME",
+          "DATETIME2",
+          "DATETIME64",
+          "SMALLDATETIME",
+          "DATETIMEOFFSET",
+          "TIMESTAMP",
+          "Timestamp",
+          "TimestampType",
+          "TimestampType()",
+          "DateType",
+          "DateType()",
+          "datetime64",
+          "datetime64[ns]",
+          "timedelta[ns]",
+          "<M8[ns]",
+          "Date",
+          "Date32",
+          "DateTime",
+          "DateTime64"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "saveandresume",
+        "value_set": [true, false, 0, 1, "true", "false", "True", "False", "0", "1"]
+      },
+      "meta": {
+        "description": "saveandresume should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "api_created_at",
+        "min_value": "2020-01-01 00:00:00.000000",
+        "parse_strings_as_datetimes": false
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "name", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "api_created_at",
+        "type_list": [
+          "DATE",
+          "TIME",
+          "DATETIME",
+          "DATETIME2",
+          "DATETIME64",
+          "SMALLDATETIME",
+          "DATETIMEOFFSET",
+          "TIMESTAMP",
+          "Timestamp",
+          "TimestampType",
+          "TimestampType()",
+          "DateType",
+          "DateType()",
+          "datetime64",
+          "datetime64[ns]",
+          "timedelta[ns]",
+          "<M8[ns]",
+          "Date",
+          "Date32",
+          "DateTime",
+          "DateTime64"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "securityattribute", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "deliveryoption",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int16Dtype",
+          "Int32Dtype",
+          "Int64Dtype",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8",
+          "Uint8",
+          "Uint16",
+          "Uint32",
+          "Uint64",
+          "Uint128",
+          "Uint256",
+          "Int8",
+          "Int16",
+          "Int32",
+          "Int64",
+          "Int128",
+          "Int256"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "timestamp",
+        "min_value": "2020-01-01 00:00:00",
+        "parse_strings_as_datetimes": false
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "closingdate", "type_list": ["datetime64[ns]", "object"] },
+      "kwargs": {
+        "column": "timestamp",
+        "type_list": [
+          "DATE",
+          "TIME",
+          "DATETIME",
+          "DATETIME2",
+          "DATETIME64",
+          "SMALLDATETIME",
+          "DATETIMEOFFSET",
+          "TIMESTAMP",
+          "Timestamp",
+          "TimestampType",
+          "TimestampType()",
+          "DateType",
+          "DateType()",
+          "datetime64",
+          "datetime64[ns]",
+          "timedelta[ns]",
+          "<M8[ns]",
+          "Date",
+          "Date32",
+          "DateTime",
+          "DateTime64"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "formpurpose", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "checkbox_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "publishdesc", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "combobox_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "publishformtype", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "dropdown_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "publishreason", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "dynamicrow_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "closeddetails", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "fileinput_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "saveandresume", "type_list": ["bool", "object"] },
+      "kwargs": {
+        "column": "formatteddate_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "deliveryemaildestination", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "radio_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "api_created_at", "type_list": ["datetime64[ns]", "object"] },
+      "kwargs": {
+        "column": "richtext_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "api_id", "type_list": ["str", "object"] },
+      "kwargs": {
+        "column": "textarea_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "deliveryoption", "type_list": ["int", "int64", "object"] },
+      "kwargs": {
+        "column": "textfield_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "timestamp", "type_list": ["datetime64[ns]", "object"] },
+      "kwargs": {
+        "column": "notificationsinterval",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "titleen", "type_list": ["str", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "titlefr", "type_list": ["str", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "brand", "type_list": ["str", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "checkbox_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "combobox_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "dropdown_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "dynamicrow_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "fileinput_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "formatteddate_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "radio_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "richtext_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "textarea_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "textfield_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "addresscomplete_count", "type_list": ["int", "int64", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "year", "type_list": ["str", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": { "column": "month", "type_list": ["str", "object"] },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_unique",
-      "kwargs": { "column": "id" },
+      "kwargs": {
+        "column": "addresscomplete_count",
+        "type_list": [
+          "BIGINT",
+          "BYTEINT",
+          "ByteType()",
+          "DECIMAL",
+          "DOUBLE",
+          "DOUBLE_PRECISION",
+          "DecimalType()",
+          "DoubleType",
+          "DoubleType()",
+          "FLOAT",
+          "FLOAT4",
+          "FLOAT64",
+          "FLOAT8",
+          "Float32",
+          "Float64",
+          "FloatType",
+          "FloatType()",
+          "INT",
+          "INT64",
+          "INTEGER",
+          "Int128",
+          "Int16",
+          "Int16Dtype",
+          "Int256",
+          "Int32",
+          "Int32Dtype",
+          "Int64",
+          "Int64Dtype",
+          "Int8",
+          "Int8Dtype",
+          "IntegerType",
+          "IntegerType()",
+          "LongType",
+          "LongType()",
+          "NUMERIC",
+          "REAL",
+          "SMALLINT",
+          "ShortType()",
+          "TINYINT",
+          "UInt16Dtype",
+          "UInt32Dtype",
+          "UInt64Dtype",
+          "UInt8Dtype",
+          "Uint128",
+          "Uint16",
+          "Uint256",
+          "Uint32",
+          "Uint64",
+          "Uint8",
+          "float",
+          "float16",
+          "float32",
+          "float64",
+          "float_",
+          "int",
+          "int16",
+          "int32",
+          "int64",
+          "int8",
+          "int_",
+          "integer",
+          "number",
+          "uint16",
+          "uint32",
+          "uint64",
+          "uint8"
+        ]
+      },
       "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
-        "regex": "^[a-z0-9]{1,25}$"
+        "regex": ".*"
       },
       "meta": {
-        "description": "id should be 1 to 25 characters long (e.g., clsbvg7z20068xd82jp1jf7sd)"
+        "description": "id should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "name",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "name should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "securityattribute",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "securityattribute should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "formpurpose",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "formpurpose should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "publishdesc",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "publishdesc should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "publishformtype",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "publishformtype should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "publishreason",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "publishreason should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "closeddetails",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "closeddetails should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "deliveryemaildestination",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "deliveryemaildestination should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "api_id",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "api_id should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "titleen",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "titleen should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "titlefr",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "titlefr should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "brand",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "brand should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "id",
+        "regex": "^[a-z0-9]{1,30}$"
+      },
+      "meta": {
+        "description": "id should be 1 to 30 characters long (e.g., clsbvg7z20068xd82jp1jf7sd)"
       }
     },
     {
       "expectation_type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "securityattribute",
-        "value_set": ["Protected A", "Unclassified", "Protected B"]
+        "value_set": [
+          "Protected A",
+          "Unclassified",
+          "Protected B"
+        ]
       },
       "meta": {
         "description": "securityattribute must be one of: Protected A, Unclassified, Protected B"
       }
     },
-     {
+    {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "year",
@@ -220,6 +1381,102 @@
       "meta": {
         "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
       }
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "checkbox_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "combobox_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "dropdown_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "dynamicrow_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "fileinput_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "formatteddate_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "radio_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "richtext_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "textarea_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "textfield_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "notificationsinterval",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
+        "column": "addresscomplete_count",
+        "min_value": 0
+      },
+      "meta": {}
     }
   ],
   "meta": {

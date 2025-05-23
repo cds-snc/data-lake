@@ -137,13 +137,13 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
             for res in validation_result["results"]:
                 if not res["success"]:
                     expectation_type = res["expectation_config"]["expectation_type"]
-                    column = res["expectation_config"]["kwargs"].get("column", "")
+                    expectation_definition = res["expectation_config"]["kwargs"]
+                    column = expectation_definition.get("column", "")
                     result_details = res.get("result", {})
-                    unexpected_count = result_details.get("unexpected_count", "")
-                    unexpected_values = result_details.get("unexpected_list", "")
                     logger.error(
                         f"Failed expectation: {expectation_type} on column '{column}'. "
-                        f"Unexpected count: {unexpected_count}. Unexpected values: {unexpected_values}"
+                        f"Expectation definition: {expectation_definition}"
+                        f"Run details {result_details}"
                     )
         return False
     logger.info(f"Validation succeeded for checkpoint '{checkpoint_name}'.")
@@ -254,7 +254,7 @@ def download_s3_object(s3, s3_url, filename):
     """
     bucket_name = s3_url.split("/")[2]
     object_key = "/".join(s3_url.split("/")[3:])
-    current_dir = os.getcwd()
+    current_dir = os.path.dirname(__file__)
     s3.download_file(
         Bucket=bucket_name,
         Key=object_key,

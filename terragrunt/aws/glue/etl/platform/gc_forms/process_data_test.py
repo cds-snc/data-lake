@@ -113,6 +113,7 @@ def sample_data_df():
             "textarea_count": [61, 0, 0],
             "textfield_count": [4, 0, 2],
             "addresscomplete_count": [0, 0, 0],
+            "notificationsinterval": [0, 0, 0],
             "year": ["2023", "2024", "2024"],
             "month": ["2023-08", "2024-01", "2024-06"],
         }
@@ -157,6 +158,7 @@ def glue_table_schema():
                 "textarea_count",
                 "textfield_count",
                 "addresscomplete_count",
+                "notificationsinterval",
                 "year",
                 "month",
             ],
@@ -194,6 +196,7 @@ def glue_table_schema():
                 "bigint",  # textarea_count
                 "bigint",  # textfield_count
                 "bigint",  # addresscomplete_count
+                "int",  # notificationsinterval
                 "string",  # year
                 "string",  # month
             ],
@@ -505,7 +508,7 @@ def test_process_data_validation_failure(
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
-def test_process_data_validation_failure_great_expectations_bad_schema(
+def test_process_data_validation_failure_great_expectations_missing_column(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
@@ -566,7 +569,7 @@ def test_process_data_validation_failure_great_expectations_bad_schema(
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
-def test_process_data_validation_failure_great_expectations_bad_schema_duplication(
+def test_process_data_validation_failure_great_expectations_bad_schema_negative_count(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
@@ -579,7 +582,7 @@ def test_process_data_validation_failure_great_expectations_bad_schema_duplicati
     mock_boto3_client.return_value = mock_cloudwatch
 
     bad_data_df = sample_data_df.copy()
-    bad_data_df["id"] = "clly1etu400f8ym65ksznfid5"  # Duplicated ID
+    bad_data_df["checkbox_count"] = -1  # negative value for checkbox_count
     mock_get_new_data.return_value = bad_data_df
     mock_wr_catalog.table.return_value = glue_table_schema
 
