@@ -253,9 +253,7 @@ def get_metrics(cloudwatch, metric_namespace, metric_name, dataset_name, days):
         values = [point["Maximum"] for point in datapoints]
         metrics = np.array(values)
 
-        logger.info(
-            f"Retrieved {metrics} metrics for {dataset_name} from CloudWatch."
-        )
+        logger.info(f"Retrieved {metrics} metrics for {dataset_name} from CloudWatch.")
         return metrics
 
     except Exception as e:
@@ -323,6 +321,10 @@ def detect_anomalies(row_count, historical_data, standard_deviation_threshold):
     Detect anomalies by checking if the latest value falls within
     a certain number of standard deviations from the mean.
     """
+    if historical_data is None or len(historical_data) == 0:
+        logger.error("No historical data available for anomaly detection.")
+        return False
+
     mean = np.mean(historical_data)
     standard_deviation = np.std(historical_data, ddof=1)
 

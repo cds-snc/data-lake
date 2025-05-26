@@ -1,6 +1,7 @@
 import pytest
 import json
 import pandas as pd
+import numpy as np
 import datetime
 import sys
 from unittest.mock import Mock, patch, mock_open, ANY
@@ -53,8 +54,14 @@ from process_data import (
     get_dataset_config,
     download_s3_object,
     get_incremental_load_date_from,
+    get_metrics,
+    detect_anomalies,
     process_data,
     Field,
+    METRIC_NAMESPACE,
+    METRIC_NAME,
+    ANOMALY_LOOKBACK_DAYS,
+    ANOMALY_STANDARD_DEVIATION,
 )
 
 
@@ -275,28 +282,23 @@ def test_publish_metric(mock_datetime):
     )
     mock_cloudwatch = Mock()
 
-    publish_metric(mock_cloudwatch, "test_dataset", 100, 5.5)
+    publish_metric(
+        mock_cloudwatch, METRIC_NAMESPACE, "ProcessedRecordCount", "test_dataset", 100
+    )
 
     mock_cloudwatch.put_metric_data.assert_called_once()
     put_metric_args = mock_cloudwatch.put_metric_data.call_args[1]
-    assert put_metric_args["Namespace"] == "data-lake/etl/gc-notify"
+    assert put_metric_args["Namespace"] == METRIC_NAMESPACE
 
     metric_data = put_metric_args["MetricData"]
-    assert len(metric_data) == 2
+    assert len(metric_data) == 1
 
-    record_count_metric = metric_data[0]
-    assert record_count_metric["MetricName"] == "ProcessedRecordCount"
-    assert record_count_metric["Dimensions"][0]["Name"] == "Dataset"
-    assert record_count_metric["Dimensions"][0]["Value"] == "test_dataset"
-    assert record_count_metric["Value"] == 100
-    assert record_count_metric["Unit"] == "Count"
-
-    processing_time_metric = metric_data[1]
-    assert processing_time_metric["MetricName"] == "ProcessingTime"
-    assert processing_time_metric["Dimensions"][0]["Name"] == "Dataset"
-    assert processing_time_metric["Dimensions"][0]["Value"] == "test_dataset"
-    assert processing_time_metric["Value"] == 5.5
-    assert processing_time_metric["Unit"] == "Seconds"
+    record_metric = metric_data[0]
+    assert record_metric["MetricName"] == "ProcessedRecordCount"
+    assert record_metric["Dimensions"][0]["Name"] == "Dataset"
+    assert record_metric["Dimensions"][0]["Value"] == "test_dataset"
+    assert record_metric["Value"] == 100
+    assert record_metric["Unit"] == "Count"
 
 
 @patch("process_data.zipfile.ZipFile")
@@ -392,15 +394,17 @@ def test_get_incremental_load_date_from(mock_timestamp):
 @patch("process_data.get_dataset_config")
 @patch("process_data.get_new_data")
 @patch("process_data.validate_schema")
+@patch("process_data.get_metrics")
+@patch("process_data.detect_anomalies")
 @patch("process_data.wr.s3.to_parquet")
-@patch("process_data.time.time")
 @patch("process_data.datetime")
 @patch("process_data.Job")
 def test_process_data(
     mock_job,
     mock_datetime,
-    mock_time,
     mock_to_parquet,
+    mock_detect_anomalies,
+    mock_get_metrics,
     mock_validate_schema,
     mock_get_new_data,
     mock_get_dataset_config,
@@ -413,11 +417,12 @@ def test_process_data(
     mock_datetime_obj = Mock()
     mock_datetime_obj.strftime.return_value = "2024-05-15"
     mock_datetime.now.return_value = mock_datetime_obj
-    mock_time.side_effect = [1000, 1050, 1100, 1150]
 
     mock_s3 = Mock()
     mock_cloudwatch = Mock()
     mock_boto3_client.side_effect = [mock_cloudwatch, mock_s3]
+    mock_get_metrics.return_value = np.array([100, 110, 90])
+    mock_detect_anomalies.return_value = False
 
     mock_get_dataset_config.return_value = sample_dataset_config
     mock_get_new_data.side_effect = [sample_dataframe, pd.DataFrame()]
@@ -452,12 +457,42 @@ def test_process_data(
     )
     mock_to_parquet.assert_called_once()
 
+    assert mock_get_metrics.call_count == 2
+    mock_get_metrics.assert_any_call(
+        mock_cloudwatch,
+        METRIC_NAMESPACE,
+        METRIC_NAME,
+        "notifications",
+        ANOMALY_LOOKBACK_DAYS,
+    )
+    mock_get_metrics.assert_any_call(
+        mock_cloudwatch,
+        METRIC_NAMESPACE,
+        METRIC_NAME,
+        "templates",
+        ANOMALY_LOOKBACK_DAYS,
+    )
+
+    assert mock_detect_anomalies.call_count == 2
+
+    call_args_list = mock_detect_anomalies.call_args_list
+
+    assert call_args_list[0][0][0] == len(sample_dataframe)
+    assert np.array_equal(call_args_list[0][0][1], np.array([100, 110, 90]))
+    assert call_args_list[0][0][2] == ANOMALY_STANDARD_DEVIATION
+
+    assert call_args_list[1][0][0] == 0
+    assert np.array_equal(call_args_list[1][0][1], np.array([100, 110, 90]))
+    assert call_args_list[1][0][2] == ANOMALY_STANDARD_DEVIATION
+
     assert mock_cloudwatch.put_metric_data.call_count == 2
 
 
 @patch("process_data.get_dataset_config")
 @patch("process_data.get_new_data")
 @patch("process_data.validate_schema")
+@patch("process_data.get_metrics")
+@patch("process_data.detect_anomalies")
 @patch("process_data.boto3.client")
 @patch("process_data.download_s3_object")
 @patch("process_data.Job")
@@ -465,6 +500,8 @@ def test_process_data_schema_validation_failure(
     mock_job,
     mock_download_s3_object,
     mock_boto3_client,
+    mock_detect_anomalies,
+    mock_get_metrics,
     mock_validate_schema,
     mock_get_new_data,
     mock_get_dataset_config,
@@ -475,6 +512,8 @@ def test_process_data_schema_validation_failure(
     mock_s3 = Mock()
     mock_cloudwatch = Mock()
     mock_boto3_client.side_effect = [mock_cloudwatch, mock_s3]
+    mock_get_metrics.return_value = np.array([100, 110, 90])
+    mock_detect_anomalies.return_value = False
 
     mock_get_dataset_config.return_value = [sample_dataset_config[0]]
     mock_get_new_data.return_value = sample_dataframe
@@ -482,3 +521,92 @@ def test_process_data_schema_validation_failure(
 
     with pytest.raises(ValueError, match="Schema validation failed for notifications"):
         process_data()
+
+
+@patch("process_data.datetime")
+def test_get_metrics(mock_datetime):
+    fixed_now = datetime.datetime(2025, 5, 15, 12, 0, 0, tzinfo=datetime.timezone.utc)
+    fixed_start = datetime.datetime(2025, 5, 1, 12, 0, 0, tzinfo=datetime.timezone.utc)
+    mock_datetime.now.return_value = fixed_now
+    mock_datetime.timedelta.return_value = fixed_now - fixed_start
+
+    mock_cloudwatch = Mock()
+    mock_cloudwatch.get_metric_statistics.return_value = {
+        "Datapoints": [
+            {"Timestamp": "2025-05-01T00:00:00Z", "Maximum": 100},
+            {"Timestamp": "2025-05-02T00:00:00Z", "Maximum": 150},
+            {"Timestamp": "2025-05-03T00:00:00Z", "Maximum": 125},
+        ]
+    }
+
+    result = get_metrics(
+        mock_cloudwatch, METRIC_NAMESPACE, METRIC_NAME, "test_table", 14
+    )
+
+    mock_cloudwatch.get_metric_statistics.assert_called_once_with(
+        Namespace=METRIC_NAMESPACE,
+        MetricName=METRIC_NAME,
+        Dimensions=[{"Name": "Dataset", "Value": "test_table"}],
+        StartTime=fixed_now - mock_datetime.timedelta(),
+        EndTime=fixed_now,
+        Period=86400,
+        Statistics=["Maximum"],
+    )
+
+    # Check the result contains the expected values
+    assert isinstance(result, np.ndarray)
+    assert list(result) == [100, 150, 125]
+
+
+@patch("process_data.logger")
+def test_get_metrics_exception_handling(mock_logger):
+    mock_cloudwatch = Mock()
+    mock_cloudwatch.get_metric_statistics.side_effect = Exception("Test exception")
+
+    result = get_metrics(
+        mock_cloudwatch, METRIC_NAMESPACE, METRIC_NAME, "test_table", 14
+    )
+
+    mock_logger.error.assert_called_once()
+    assert "Error fetching CloudWatch metric data" in mock_logger.error.call_args[0][0]
+    assert result is None
+
+
+def test_detect_anomalies_normal_data():
+    historical_data = np.array([100, 110, 105, 95, 108])
+    row_count = 107
+
+    result = detect_anomalies(row_count, historical_data, 2.0)
+
+    assert result == False
+
+
+@patch("process_data.logger")
+def test_detect_anomalies_outlier(mock_logger):
+    historical_data = np.array([100, 110, 105, 95, 108])
+    row_count = 200
+
+    result = detect_anomalies(row_count, historical_data, 2.0)
+
+    assert result == True
+    mock_logger.error.assert_called_once()
+    assert "Anomaly: Latest value" in mock_logger.error.call_args[0][0]
+
+
+def test_detect_anomalies_zero_standard_deviation():
+    historical_data = np.array([100, 100, 100, 100])
+    row_count = 110
+
+    result = detect_anomalies(row_count, historical_data, 2.0)
+
+    assert result == False
+
+
+def test_detect_anomalies_empty_history():
+    """Test anomaly detection with empty historical data."""
+    historical_data = np.array([])
+    row_count = 100
+
+    result = detect_anomalies(row_count, historical_data, 2.0)
+
+    assert result == False
