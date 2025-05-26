@@ -211,8 +211,12 @@ def get_new_data(
 
 
 def publish_metric(
-    cloudwatch, metric_namespace, metric_name, dataset_name, metric_value
-):
+    cloudwatch: boto3.client,
+    metric_namespace: str,
+    metric_name: str,
+    dataset_name: str,
+    metric_value: float,
+) -> None:
     """
     Publish data processing metrics to CloudWatch
     """
@@ -233,7 +237,16 @@ def publish_metric(
     )
 
 
-def get_metrics(cloudwatch, metric_namespace, metric_name, dataset_name, days):
+def get_metrics(
+    cloudwatch: boto3.client,
+    metric_namespace: str,
+    metric_name: str,
+    dataset_name: str,
+    days: int,
+) -> np.ndarray:
+    """
+    Retrieve historical metrics from CloudWatch for a specific dataset.
+    """
     end_time = datetime.now(timezone.utc)
     start_time = end_time - timedelta(days=days)
 
@@ -303,7 +316,7 @@ def get_dataset_config():
     return datasets
 
 
-def download_s3_object(s3, s3_url, filename):
+def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
     """
     Download an S3 object to a local file.
     """
@@ -316,7 +329,9 @@ def download_s3_object(s3, s3_url, filename):
     )
 
 
-def detect_anomalies(row_count, historical_data, standard_deviation_threshold):
+def detect_anomalies(
+    row_count: int, historical_data: np.ndarray, standard_deviation_threshold: float
+) -> bool:
     """
     Detect anomalies by checking if the latest value falls within
     a certain number of standard deviations from the mean.
