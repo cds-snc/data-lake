@@ -28,6 +28,7 @@ args = getResolvedOptions(
         "database_name_transformed",
         "table_name_prefix",
         "gx_config_object",
+        "target_gx_bucket",
     ],
 )
 
@@ -41,6 +42,7 @@ DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
 GX_CONFIG_OBJECT = args["gx_config_object"]
+TARGET_GX_BUCKET = args["target_gx_bucket"]
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -114,6 +116,27 @@ def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
     return True
 
 
+def configure_data_docs_site(context: gx.DataContext, target_gx_bucket: str = None):
+    """
+    Configure the data_docs_sites store_backend in the GE context.
+    Uses S3 if target_gx_bucket is provided, otherwise uses local filesystem.
+    """
+    if target_gx_bucket:
+        store_backend = {
+            "class_name": "TupleS3StoreBackend",
+            "bucket": target_gx_bucket,
+            "prefix": "data_docs/local_site/",
+        }
+    else:
+        store_backend = {
+            "class_name": "TupleFilesystemStoreBackend",
+            "base_directory": "uncommitted/data_docs/local_site/",
+        }
+
+    # Update context configuration using public API
+    context.config.data_docs_sites["local_site"]["store_backend"] = store_backend
+
+
 def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     """
     Validate the DataFrame using the specified Great Expectations checkpoint.
@@ -121,6 +144,8 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     """
     gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
     context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
+
+    configure_data_docs_site(context, TARGET_GX_BUCKET)
 
     result = context.run_checkpoint(
         checkpoint_name=checkpoint_name,

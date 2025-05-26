@@ -133,7 +133,8 @@ data "aws_iam_policy_document" "s3_read_data_lake" {
       "${var.curated_bucket_arn}/*",
       "${var.glue_bucket_arn}/*",
       "${var.raw_bucket_arn}/*",
-      "${var.transformed_bucket_arn}/*"
+      "${var.transformed_bucket_arn}/*",
+      "${var.gx_bucket_arn}/*"
     ]
   }
 }
@@ -205,7 +206,8 @@ data "aws_iam_policy_document" "s3_write_data_lake" {
     resources = [
       "${var.curated_bucket_arn}/*",
       "${var.transformed_bucket_arn}/*",
-      "${var.raw_bucket_arn}/*"
+      "${var.raw_bucket_arn}/*",
+      "${var.gx_bucket_arn}/*"
     ]
   }
 }
