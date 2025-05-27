@@ -86,10 +86,25 @@ resource "aws_iam_policy" "glue_etl" {
   policy = data.aws_iam_policy_document.glue_etl_combined.json
 }
 
+data "aws_iam_policy_document" "s3_write_gx" {
+  statement {
+    sid = "WriteGxS3Buckets"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      "${var.gx_bucket_arn}/*"
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "glue_etl_combined" {
   source_policy_documents = [
     data.aws_iam_policy_document.s3_read_data_lake.json,
     data.aws_iam_policy_document.s3_write_data_lake.json,
+    data.aws_iam_policy_document.s3_write_gx.json,
     data.aws_iam_policy_document.glue_kms.json,
     data.aws_iam_policy_document.gc_notify_rds_export_kms.json,
     data.aws_iam_policy_document.cloudwatch_metrics.json
