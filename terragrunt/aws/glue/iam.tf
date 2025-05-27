@@ -92,7 +92,7 @@ data "aws_iam_policy_document" "glue_etl_combined" {
     data.aws_iam_policy_document.s3_write_data_lake.json,
     data.aws_iam_policy_document.glue_kms.json,
     data.aws_iam_policy_document.gc_notify_rds_export_kms.json,
-    data.aws_iam_policy_document.cloudwatch_put_metrics.json
+    data.aws_iam_policy_document.cloudwatch_metrics.json
   ]
 }
 
@@ -210,12 +210,14 @@ data "aws_iam_policy_document" "s3_write_data_lake" {
   }
 }
 
-data "aws_iam_policy_document" "cloudwatch_put_metrics" {
+data "aws_iam_policy_document" "cloudwatch_metrics" {
   statement {
-    sid    = "PutCloudWatchMetrics"
+    sid    = "CloudWatchMetrics"
     effect = "Allow"
     actions = [
-      "cloudwatch:PutMetricData"
+      "cloudwatch:GetMetricData",
+      "cloudwatch:GetMetricStatistics",
+      "cloudwatch:PutMetricData",
     ]
     resources = [
       "*" # Only wildcard is allowed for this action
