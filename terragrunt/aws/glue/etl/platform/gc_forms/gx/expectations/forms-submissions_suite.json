@@ -1,0 +1,363 @@
+{
+  "expectation_suite_name": "forms-submissions_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "id",
+        "regex": "^[a-z0-9]{1,30}$"
+      },
+      "meta": {
+        "description": "id should be 1 to 30 characters long (e.g., clsbvg7z20068xd82jp1jf7sd)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "ttl",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "ttl",
+        "min_value": "2020-01-01 00:00:00",
+        "parse_strings_as_datetimes": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "ispublished",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "ispublished should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "created_at",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "created_at should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "updated_at",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "updated_at should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "name",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "name should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "securityattribute",
+        "value_set": [
+          "Protected A",
+          "Unclassified",
+          "Protected B"
+        ]
+      },
+      "meta": {
+        "description": "securityattribute must be one of: Protected A, Unclassified, Protected B"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "closingdate",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "closingdate should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "formpurpose",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "formpurpose should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "publishdesc",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "publishdesc should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "publishformtype",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "publishformtype should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "publishreason",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "publishreason should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "closeddetails",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "closeddetails should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "saveandresume",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "saveandresume should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "deliveryemaildestination",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "deliveryemaildestination should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "api_created_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "api_created_at",
+        "min_value": "2020-01-01 00:00:00",
+        "parse_strings_as_datetimes": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "api_id",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "api_id should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "deliveryoption",
+        "value_set": [
+          0,
+          1,
+          2
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "timestamp",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "timestamp",
+        "min_value": "2020-01-01 00:00:00",
+        "parse_strings_as_datetimes": false
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "titleen",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "titleen should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "titlefr",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "titlefr should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "brand",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "brand should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "addresscomplete_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "checkbox_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "combobox_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "dropdown_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "dynamicrow_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "fileinput_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "formatteddate_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "radio_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "richtext_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "textarea_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "textfield_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "notificationsinterval",
+        "min_value": 0
+      },
+      "meta": {}
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.22"
+  }
+}
