@@ -122,7 +122,8 @@ def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
     """
 
     if "test" not in target_gx_bucket:
-        # Configure all stores to use S3
+        logger.info("Writting to S3")
+
         stores_config = {
             "expectations_store": {
                 "class_name": "ExpectationsStore",
@@ -159,8 +160,7 @@ def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
             context.config.stores[store_name] = store_config
 
     else:
-        # Local filesystem configuration remains unchanged
-        # since the defaults already use local filesystem
+        logger.info("Writting Locally")
         pass
 
 
