@@ -59,7 +59,6 @@ resource "aws_glue_job" "platform_gc_forms_job" {
     "--database_name_raw"                = aws_glue_catalog_database.platform_gc_forms_production_raw.name
     "--database_name_transformed"        = aws_glue_catalog_database.platform_gc_forms_production.name
     "--table_name_prefix"                = "platform_gc_forms"
-    "--target_gx_bucket"                 = var.gx_bucket_name
   }
 }
 

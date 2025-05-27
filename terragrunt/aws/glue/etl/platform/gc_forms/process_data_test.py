@@ -20,7 +20,6 @@ mock_args = {
     "database_name_transformed": "test_transformed_db",
     "table_name_prefix": "test_table",
     "gx_config_object": "s3://test-config-bucket/test-config-key",
-    "target_gx_bucket": "",
 }
 
 # Mock the AWS Glue and PySpark modules
@@ -35,7 +34,7 @@ from process_data import (
     get_new_data,
     process_data,
     publish_metric,
-    configure_data_docs_site,
+    configure_gx_stores,
     SOURCE_BUCKET,
     SOURCE_PREFIX,
 )
@@ -627,7 +626,7 @@ def test_process_data_validation_failure_great_expectations_bad_schema_str_count
     assert mock_cloudwatch.put_metric_data.call_count == 0
 
 
-@patch("process_data.configure_data_docs_site")  # Add this patch
+@patch("process_data.configure_gx_stores")
 @patch("process_data.download_s3_object")
 @patch("process_data.get_new_data")
 @patch("awswrangler.catalog")
@@ -647,10 +646,10 @@ def test_process_data_sitedocs_s3_write_attempt(
     mock_get_new_data.return_value = sample_data_df
     mock_wr_catalog.table.return_value = glue_table_schema
 
-    # Force update_data_docs_site_config to use test-bucket
+    # Force update_data_docs_site_config to use a livebucket
     def update_config(yml_path, target_gx_bucket=None):
         # Always use test-bucket regardless of input
-        return configure_data_docs_site(yml_path, "test-bucket")
+        return configure_gx_stores(yml_path, "raw-bucket")
 
     mock_update_config.side_effect = update_config
 

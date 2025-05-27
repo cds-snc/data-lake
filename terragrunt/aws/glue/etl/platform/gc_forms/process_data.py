@@ -28,7 +28,6 @@ args = getResolvedOptions(
         "database_name_transformed",
         "table_name_prefix",
         "gx_config_object",
-        "target_gx_bucket",
     ],
 )
 
@@ -42,7 +41,7 @@ DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
 GX_CONFIG_OBJECT = args["gx_config_object"]
-TARGET_GX_BUCKET = args["target_gx_bucket"]
+
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -116,25 +115,53 @@ def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
     return True
 
 
-def configure_data_docs_site(context: gx.DataContext, target_gx_bucket: str = None):
+def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
     """
-    Configure the data_docs_sites store_backend in the GE context.
-    Uses S3 if target_gx_bucket is provided, otherwise uses local filesystem.
+    Configure all Great Expectations stores to use S3 if target_gx_bucket is provided,
+    otherwise use local filesystem.
     """
-    if target_gx_bucket:
-        store_backend = {
-            "class_name": "TupleS3StoreBackend",
-            "bucket": target_gx_bucket,
-            "prefix": "data_docs/local_site/",
-        }
-    else:
-        store_backend = {
-            "class_name": "TupleFilesystemStoreBackend",
-            "base_directory": "uncommitted/data_docs/local_site/",
+
+    if "test" not in target_gx_bucket:
+        # Configure all stores to use S3
+        stores_config = {
+            "expectations_store": {
+                "class_name": "ExpectationsStore",
+                "store_backend": {
+                    "class_name": "TupleS3StoreBackend",
+                    "bucket": target_gx_bucket,
+                    "prefix": "platform/gc-forms/data-validation/expectations/",
+                },
+            },
+            "validations_store": {
+                "class_name": "ValidationsStore",
+                "store_backend": {
+                    "class_name": "TupleS3StoreBackend",
+                    "bucket": target_gx_bucket,
+                    "prefix": "platform/gc-forms/data-validation/validations/",
+                },
+            },
+            "checkpoint_store": {
+                "class_name": "CheckpointStore",
+                "store_backend": {
+                    "class_name": "TupleS3StoreBackend",
+                    "bucket": target_gx_bucket,
+                    "prefix": "platform/gc-forms/data-validation/checkpoints/",
+                    "suppress_store_backend_id": True,
+                },
+            },
+            "evaluation_parameter_store": {
+                "class_name": "EvaluationParameterStore",
+            },
         }
 
-    # Update context configuration using public API
-    context.config.data_docs_sites["local_site"]["store_backend"] = store_backend
+        # Update all stores
+        for store_name, store_config in stores_config.items():
+            context.config.stores[store_name] = store_config
+
+    else:
+        # Local filesystem configuration remains unchanged
+        # since the defaults already use local filesystem
+        pass
 
 
 def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
@@ -145,7 +172,7 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
     context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
 
-    configure_data_docs_site(context, TARGET_GX_BUCKET)
+    configure_gx_stores(context, SOURCE_BUCKET)
 
     result = context.run_checkpoint(
         checkpoint_name=checkpoint_name,
