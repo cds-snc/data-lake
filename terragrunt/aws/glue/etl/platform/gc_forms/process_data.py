@@ -276,7 +276,13 @@ def get_new_data(
     return data
 
 
-def publish_metric(cloudwatch, metric_namespace, metric_name, dataset_name, count):
+def publish_metric(
+    cloudwatch: boto3.client,
+    metric_namespace: str,
+    metric_name: str,
+    dataset_name: str,
+    count: int,
+) -> None:
     """
     Publish data processing metrics to CloudWatch
     """
@@ -362,7 +368,7 @@ def detect_anomalies(
     return is_anomaly
 
 
-def download_s3_object(s3, s3_url, filename):
+def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
     """
     Download an S3 object to a local file.
     """
@@ -382,7 +388,7 @@ def download_s3_object(s3, s3_url, filename):
         zip_ref.extractall(gx_dir)
 
 
-def process_data(datasets=None):
+def process_data(datasets: Optional[List[dict]] = None) -> None:
     """
     Main ETL process to read data from S3, validate the schema, and save the
     transformed data back to S3.
