@@ -20,7 +20,6 @@ mock_args = {
     "database_name_transformed": "test_transformed_db",
     "table_name_prefix": "test_table",
     "gx_config_object": "s3://test-config-bucket/test-config-key",
-    "target_gx_bucket": "",
 }
 
 # Mock the AWS Glue and PySpark modules
@@ -35,7 +34,7 @@ from process_data import (
     get_new_data,
     process_data,
     publish_metric,
-    configure_data_docs_site,
+    configure_gx_stores,
     SOURCE_BUCKET,
     SOURCE_PREFIX,
 )
@@ -625,73 +624,3 @@ def test_process_data_validation_failure_great_expectations_bad_schema_str_count
     assert mock_get_new_data.call_count == 1
     assert mock_wr_s3.to_parquet.call_count == 0
     assert mock_cloudwatch.put_metric_data.call_count == 0
-
-
-@patch("process_data.configure_data_docs_site")  # Add this patch
-@patch("process_data.download_s3_object")
-@patch("process_data.get_new_data")
-@patch("awswrangler.catalog")
-@patch("awswrangler.s3")
-@patch("boto3.client")
-def test_process_data_sitedocs_s3_write_attempt(
-    mock_boto3_client,
-    mock_wr_s3,
-    mock_wr_catalog,
-    mock_get_new_data,
-    mock_s3,
-    mock_update_config,
-    sample_data_df,
-    glue_table_schema,
-):
-    # Setup basic mocks
-    mock_get_new_data.return_value = sample_data_df
-    mock_wr_catalog.table.return_value = glue_table_schema
-
-    # Force update_data_docs_site_config to use test-bucket
-    def update_config(yml_path, target_gx_bucket=None):
-        # Always use test-bucket regardless of input
-        return configure_data_docs_site(yml_path, "test-bucket")
-
-    mock_update_config.side_effect = update_config
-
-    s3_mock = Mock()
-    s3_mock.put_object.side_effect = Exception("Unable to locate credentials")
-    mock_boto3_client.return_value = s3_mock
-    # Run the process expecting the credentials error
-
-    with pytest.raises(Exception) as excinfo:
-        process_data(
-            datasets=[
-                {
-                    "path": "processed-data/template",
-                    "date_columns": [
-                        "ttl",
-                        "api_created_at",
-                        "timestamp",
-                        "closingdate",
-                        "created_at",
-                        "updated_at",
-                    ],
-                    "field_count_columns": [
-                        "checkbox_count",
-                        "combobox_count",
-                        "dropdown_count",
-                        "dynamicrow_count",
-                        "fileinput_count",
-                        "formatteddate_count",
-                        "radio_count",
-                        "richtext_count",
-                        "textarea_count",
-                        "textfield_count",
-                        "addresscomplete_count",
-                    ],
-                    "partition_timestamp": "created_at",
-                    "partition_columns": ["year", "month"],
-                    "email_columns": ["deliveryemaildestination"],
-                    "gx_checkpoint": "forms-template_checkpoint",
-                }
-            ]
-        )
-
-    # Verify the error message
-    assert "Unable to locate credentials" in str(excinfo.value)
