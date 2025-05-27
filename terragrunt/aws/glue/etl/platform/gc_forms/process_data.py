@@ -1,15 +1,14 @@
 import logging
 import sys
-import time
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 import zipfile
-
 
 import awswrangler as wr
 import boto3
 import pandas as pd
+import numpy as np
 
 from awsglue.utils import getResolvedOptions
 
@@ -42,6 +41,12 @@ DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
 GX_CONFIG_OBJECT = args["gx_config_object"]
 
+
+# Anomaly detection configuration
+METRIC_NAMESPACE = "data-lake/etl/gc-forms"
+METRIC_NAME = "ProcessedRecordCount"
+ANOMALY_LOOKBACK_DAYS = 14
+ANOMALY_STANDARD_DEVIATION = 2.0
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -271,33 +276,90 @@ def get_new_data(
     return data
 
 
-def publish_metric(cloudwatch, dataset_name, count, processing_time):
+def publish_metric(cloudwatch, metric_namespace, metric_name, dataset_name, count):
     """
     Publish data processing metrics to CloudWatch
     """
     timestamp = datetime.now(timezone.utc)
     cloudwatch.put_metric_data(
-        Namespace="data-lake/etl/gc-forms",
+        Namespace=metric_namespace,
         MetricData=[
             {
-                "MetricName": "ProcessedRecordCount",
+                "MetricName": metric_name,
                 "Dimensions": [{"Name": "Dataset", "Value": dataset_name}],
                 "Value": count,
                 "Timestamp": timestamp,
                 "Unit": "Count",
             },
-            {
-                "MetricName": "ProcessingTime",
-                "Dimensions": [{"Name": "Dataset", "Value": dataset_name}],
-                "Value": processing_time,
-                "Timestamp": timestamp,
-                "Unit": "Seconds",
-            },
         ],
     )
-    logger.info(
-        f"Published metrics for {dataset_name}: {count} records in {processing_time:.2f}s"
-    )
+    logger.info(f"Published metrics for {dataset_name}: {count} records")
+
+
+def get_metrics(
+    cloudwatch: boto3.client,
+    metric_namespace: str,
+    metric_name: str,
+    dataset_name: str,
+    days: int,
+) -> np.ndarray:
+    """
+    Retrieve historical metrics from CloudWatch for a specific dataset.
+    """
+    end_time = datetime.now(timezone.utc)
+    start_time = end_time - timedelta(days=days)
+
+    try:
+        response = cloudwatch.get_metric_statistics(
+            Namespace=metric_namespace,
+            MetricName=metric_name,
+            Dimensions=[{"Name": "Dataset", "Value": dataset_name}],
+            StartTime=start_time,
+            EndTime=end_time,
+            Period=86400,  # 1 day
+            Statistics=["Maximum"],
+        )
+
+        # Sort by timestamp and extract values
+        datapoints = sorted(response["Datapoints"], key=lambda x: x["Timestamp"])
+        values = [point["Maximum"] for point in datapoints]
+        metrics = np.array(values)
+
+        logger.info(
+            f"Retrieved {len(metrics)} metrics for {dataset_name} from CloudWatch."
+        )
+        return metrics
+
+    except Exception as e:
+        logger.error(f"Error fetching CloudWatch metric data: {e}")
+        return None
+
+
+def detect_anomalies(
+    row_count: int, historical_data: np.ndarray, standard_deviation_threshold: float
+) -> bool:
+    """
+    Detect anomalies by checking if the latest value falls within
+    a certain number of standard deviations from the mean.
+    """
+    if historical_data is None or len(historical_data) == 0:
+        logger.error("No historical data available for anomaly detection.")
+        return False
+
+    mean = np.mean(historical_data)
+    standard_deviation = np.std(historical_data, ddof=1)
+
+    z_score = 0
+    if standard_deviation != 0:
+        z_score = (row_count - mean) / standard_deviation
+
+    is_anomaly = abs(z_score) > standard_deviation_threshold
+    if is_anomaly:
+        logger.error(
+            f"Anomaly: Latest value {row_count}, mean: {mean:.2f}, "
+            f"stdev: {standard_deviation:.2f}, z_score: {z_score:.2f}"
+        )
+    return is_anomaly
 
 
 def download_s3_object(s3, s3_url, filename):
@@ -325,6 +387,7 @@ def process_data(datasets=None):
     Main ETL process to read data from S3, validate the schema, and save the
     transformed data back to S3.
     """
+    cloudwatch = boto3.client("cloudwatch")
     s3 = boto3.client("s3")
     download_s3_object(s3, GX_CONFIG_OBJECT, "gx.zip")
 
@@ -387,11 +450,8 @@ def process_data(datasets=None):
                 "email_columns": ["email"],
             },
         ]
-    cloudwatch = boto3.client("cloudwatch")
 
     for dataset in datasets:
-        start_time = time.time()
-
         path = dataset.get("path")
         date_columns = dataset.get("date_columns")
         drop_columns = dataset.get("drop_columns")
@@ -461,9 +521,19 @@ def process_data(datasets=None):
         else:
             logger.info(f"No new {path} data found.")
 
-        processing_time = time.time() - start_time
-        publish_metric(cloudwatch, path, len(data), processing_time)
+        # Check for anomalies in rows of data processed
+        # by comparing with previous data processed metrics
+        historical_data = get_metrics(
+            cloudwatch,
+            METRIC_NAMESPACE,
+            METRIC_NAME,
+            path,
+            ANOMALY_LOOKBACK_DAYS,
+        )
 
+        row_count = len(data)
+        detect_anomalies(row_count, historical_data, ANOMALY_STANDARD_DEVIATION)
+        publish_metric(cloudwatch, METRIC_NAMESPACE, METRIC_NAME, path, row_count)
     logger.info("ETL process completed successfully.")
 
 
