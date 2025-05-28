@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.4.0](https://github.com/cds-snc/data-lake/compare/v1.3.0...v1.4.0) (2025-05-28)
+
+
+### Features
+
+* add anomaly detection to Freshdesk dataset ([#288](https://github.com/cds-snc/data-lake/issues/288)) ([1e1ada9](https://github.com/cds-snc/data-lake/commit/1e1ada9f5c38d5a435e568d93c43c2ef6b498882))
+* add anomaly detection to GC Forms dataset ([#285](https://github.com/cds-snc/data-lake/issues/285)) ([7e2662b](https://github.com/cds-snc/data-lake/commit/7e2662b10e5cb0671b71b0cfcc3f915051617847))
+* Add new expectations ([#289](https://github.com/cds-snc/data-lake/issues/289)) ([bd94d11](https://github.com/cds-snc/data-lake/commit/bd94d119a45dd5b6c893420eaf6dae609f37969e))
+* add Notify dataset anomaly detection ([#282](https://github.com/cds-snc/data-lake/issues/282)) ([48a3094](https://github.com/cds-snc/data-lake/commit/48a3094d2074d02f2c0aee20506cc8686bce4279))
+* great expectations on Gc Forms ([#272](https://github.com/cds-snc/data-lake/issues/272)) ([ece4b47](https://github.com/cds-snc/data-lake/commit/ece4b4736bcb2e0c6fa6017f542ab48817a9626a))
+* save raw GX results to raw data ([#286](https://github.com/cds-snc/data-lake/issues/286)) ([19ebd4b](https://github.com/cds-snc/data-lake/commit/19ebd4b36677dfe7c2c9fe357c7061160b0185e1))
+* write site-docs to s3 bucket ([#283](https://github.com/cds-snc/data-lake/issues/283)) ([f84d9fb](https://github.com/cds-snc/data-lake/commit/f84d9fb67fdeddde7105501a55b0e5a9d3babb9d))
+
+
+### Bug Fixes
+
+* great expectation bugs ([#277](https://github.com/cds-snc/data-lake/issues/277)) ([0417d40](https://github.com/cds-snc/data-lake/commit/0417d405be088a3ff1c2d6f45cf69c3f0c316331))
+* gx not saving output to s3 ([#287](https://github.com/cds-snc/data-lake/issues/287)) ([5174bf3](https://github.com/cds-snc/data-lake/commit/5174bf3155e16ec3754e16f55ba1893d03f3fe0d))
+* Missing terraform output statement ([#275](https://github.com/cds-snc/data-lake/issues/275)) ([32fdae9](https://github.com/cds-snc/data-lake/commit/32fdae978202a6582a0d17d3fadc565c39f49a71))
+* updated devcontainer tf version ([#284](https://github.com/cds-snc/data-lake/issues/284)) ([7175283](https://github.com/cds-snc/data-lake/commit/7175283413b51c32abe0a196cb7428282b54bcc9))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#281](https://github.com/cds-snc/data-lake/issues/281)) ([fab7d07](https://github.com/cds-snc/data-lake/commit/fab7d071b19f29c1ddebd89a4d3cb24cf7e7df60))
+* **deps:** update aws-actions/configure-aws-credentials action to v4.2.1 ([#278](https://github.com/cds-snc/data-lake/issues/278)) ([0fa19d2](https://github.com/cds-snc/data-lake/commit/0fa19d2d6b74a770145c0a27724860f0327bebbe))
+* **deps:** update dependency boto3 to v1.38.18 ([#279](https://github.com/cds-snc/data-lake/issues/279)) ([322e672](https://github.com/cds-snc/data-lake/commit/322e672bb4eb03b5c67890abe4b0671ebdd1566f))
+* **deps:** update terraform hashicorp/terraform to v1.12.0 ([#280](https://github.com/cds-snc/data-lake/issues/280)) ([8297c72](https://github.com/cds-snc/data-lake/commit/8297c72be47282a3330106d3ad4d61fb5fb98b2d))
+
 ## [1.3.0](https://github.com/cds-snc/data-lake/compare/v1.2.5...v1.3.0) (2025-05-22)
 
 
