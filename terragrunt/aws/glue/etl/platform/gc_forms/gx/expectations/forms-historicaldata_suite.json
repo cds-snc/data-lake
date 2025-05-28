@@ -2,6 +2,19 @@
   "expectation_suite_name": "forms-historicaldata_suite",
   "expectations": [
     {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": ["unique_id", "date", "metric", "metric_format__from_metric_",
+       "unit_of_measurement", "client_name", "client_email", "text_value",
+       "comment", "publishing_description", "published_form_type",
+       "published_reason", "recorded_by", "year", "month"],
+        "exact_match": false
+      },
+      "meta": {
+        "description": "Ensure required columns are present, allowing extra columns"
+      }
+    },
+    {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "unique_id",

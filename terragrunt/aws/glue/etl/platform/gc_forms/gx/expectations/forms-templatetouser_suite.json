@@ -1,6 +1,16 @@
 {
   "expectation_suite_name": "forms-templatetouser_suite",
   "expectations": [
+     {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": ["templateid", "userid", "timestamp"],
+        "exact_match": false
+      },
+      "meta": {
+        "description": "Ensure required columns are present, allowing extra columns"
+      }
+    },
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
