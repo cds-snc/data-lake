@@ -38,7 +38,7 @@ TABLE_NAME = args["table_name"]
 METRIC_NAMESPACE = "data-lake/etl/freshdesk"
 METRIC_NAME = "ProcessedRecordCount"
 ANOMALY_LOOKBACK_DAYS = 14
-ANOMALY_STANDARD_DEVIATION = 2.0
+ANOMALY_STANDARD_DEVIATION = 3.0
 
 # Initialize logging
 logger = logging.getLogger()
@@ -216,6 +216,10 @@ def get_metrics(
         datapoints = sorted(response["Datapoints"], key=lambda x: x["Timestamp"])
         values = [point["Maximum"] for point in datapoints]
         metrics = np.array(values)
+
+        # There is strong seasonality in the data, so we remove any 0 values,
+        # as they indicate no data was recorded
+        metrics = metrics[metrics > 0]
 
         logger.info(f"Retrieved {metrics} metrics for {dataset_name} from CloudWatch.")
         return metrics
