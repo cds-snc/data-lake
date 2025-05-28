@@ -1,24 +1,24 @@
 {
-  "expectation_suite_name": "forms-submissions_suite",
+  "expectation_suite_name": "forms-templatetouser_suite",
   "expectations": [
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
-        "column": "submission_id",
+        "column": "templateid",
         "regex": ".*"
       },
       "meta": {
-        "description": "submission_id should be string-like"
+        "description": "templateid should be string-like"
       }
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
-        "column": "form_id",
+        "column": "userid",
         "regex": ".*"
       },
       "meta": {
-        "description": "form_id should be string-like"
+        "description": "userid should be string-like"
       }
     },
     {

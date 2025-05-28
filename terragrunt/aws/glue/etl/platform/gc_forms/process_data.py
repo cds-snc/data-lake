@@ -336,10 +336,12 @@ def process_data(datasets=None):
                 "partition_timestamp": "date",
                 "partition_columns": ["year", "month"],
                 "email_columns": ["client_email"],
+                "gx_checkpoint": "forms-historicaldata_checkpoint",
             },
             {
                 "path": "processed-data/submissions",
                 "date_columns": ["timestamp"],
+                "gx_checkpoint": "forms-submissions_checkpoint",
             },
             {
                 "path": "processed-data/template",
@@ -372,6 +374,7 @@ def process_data(datasets=None):
             {
                 "path": "processed-data/templateToUser",
                 "date_columns": ["timestamp"],
+                "gx_checkpoint": "forms-templatetouser_checkpoint",
             },
             {
                 "path": "processed-data/user",
@@ -385,6 +388,7 @@ def process_data(datasets=None):
                 "partition_columns": ["year", "month"],
                 "drop_columns": ["name"],
                 "email_columns": ["email"],
+                "gx_checkpoint": "forms-user_checkpoint",
             },
         ]
     cloudwatch = boto3.client("cloudwatch")
