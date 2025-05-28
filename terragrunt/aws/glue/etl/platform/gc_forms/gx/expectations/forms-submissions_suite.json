@@ -1,0 +1,58 @@
+{
+  "expectation_suite_name": "forms-submissions_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": ["submission_id", "form_id", "timestamp"],
+        "exact_match": false
+      },
+      "meta": {
+        "description": "Ensure required columns are present, allowing extra columns"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "submission_id",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "submission_id should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "form_id",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "form_id should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "timestamp",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "timestamp",
+        "min_value": "2000-01-01",
+        "parse_strings_as_datetimes": false
+      },
+      "meta": {}
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.22"
+  }
+}

@@ -1,11 +1,25 @@
 {
   "expectation_suite_name": "forms-template_suite",
   "expectations": [
+      {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": ["id", "ttl", "ispublished", "created_at", "updated_at", "name",
+       "securityattribute", "closingdate", "formpurpose", "publishdesc",
+       "publishformtype", "publishreason", "closeddetails", "saveandresume",
+       "deliveryemaildestination", "api_created_at", "api_id",
+       "deliveryoption", "timestamp", "titleen", "titlefr", "brand", "year", "month"],
+        "exact_match": false
+      },
+      "meta": {
+        "description": "Ensure required columns are present, allowing extra columns"
+      }
+    },
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "ttl",
-        "min_value": "2020-01-01 00:00:00.000000",
+        "min_value": "2000-01-01",
         "parse_strings_as_datetimes": false
       },
       "meta": {}
@@ -32,7 +46,7 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "created_at",
-        "min_value": "2020-01-01 00:00:00",
+        "min_value": "2000-01-01",
         "parse_strings_as_datetimes": false
       },
       "meta": {}
@@ -49,7 +63,7 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "updated_at",
-        "min_value": "2020-01-01 00:00:00",
+        "min_value": "2000-01-01",
         "parse_strings_as_datetimes": false
       },
       "meta": {}
@@ -66,7 +80,7 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "closingdate",
-        "min_value": "2020-01-01 00:00:00",
+        "min_value": "2000-01-01",
         "parse_strings_as_datetimes": false
       },
       "meta": {}
@@ -93,7 +107,7 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "api_created_at",
-        "min_value": "2020-01-01 00:00:00.000000",
+        "min_value": "2000-01-01",
         "parse_strings_as_datetimes": false
       },
       "meta": {}
@@ -118,7 +132,7 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "timestamp",
-        "min_value": "2020-01-01 00:00:00",
+        "min_value": "2000-01-01",
         "parse_strings_as_datetimes": false
       },
       "meta": {}

@@ -30,12 +30,10 @@ sys.modules["awsglue.utils"] = mock_glue_utils
 
 # flake8: noqa: E402
 from process_data import (
-    validate_schema,
-    is_type_compatible,
     get_new_data,
     process_data,
     publish_metric,
-    configure_gx_stores,
+    validate_with_gx,
     get_metrics,
     detect_anomalies,
     SOURCE_BUCKET,
@@ -45,6 +43,39 @@ from process_data import (
     ANOMALY_LOOKBACK_DAYS,
     ANOMALY_STANDARD_DEVIATION,
 )
+
+
+@pytest.fixture
+def datasets_params():
+    datasets_params = {
+        "path": "processed-data/template",
+        "date_columns": [
+            "ttl",
+            "api_created_at",
+            "timestamp",
+            "closingdate",
+            "created_at",
+            "updated_at",
+        ],
+        "field_count_columns": [
+            "checkbox_count",
+            "combobox_count",
+            "dropdown_count",
+            "dynamicrow_count",
+            "fileinput_count",
+            "formatteddate_count",
+            "radio_count",
+            "richtext_count",
+            "textarea_count",
+            "textfield_count",
+            "addresscomplete_count",
+        ],
+        "partition_timestamp": "created_at",
+        "partition_columns": ["year", "month"],
+        "email_columns": ["deliveryemaildestination"],
+        "gx_checkpoint": "forms-template_checkpoint",
+    }
+    return datasets_params
 
 
 # Sample test data fixtures
@@ -128,139 +159,29 @@ def sample_data_df():
     )
 
 
-@pytest.fixture
-def glue_table_schema():
-    return pd.DataFrame(
-        {
-            "Column Name": [
-                "id",
-                "ttl",
-                "ispublished",
-                "created_at",
-                "updated_at",
-                "name",
-                "securityattribute",
-                "closingdate",
-                "formpurpose",
-                "publishdesc",
-                "publishformtype",
-                "publishreason",
-                "closeddetails",
-                "saveandresume",
-                "deliveryemaildestination",
-                "api_created_at",
-                "api_id",
-                "deliveryoption",
-                "timestamp",
-                "titleen",
-                "titlefr",
-                "brand",
-                "checkbox_count",
-                "combobox_count",
-                "dropdown_count",
-                "dynamicrow_count",
-                "fileinput_count",
-                "formatteddate_count",
-                "radio_count",
-                "richtext_count",
-                "textarea_count",
-                "textfield_count",
-                "addresscomplete_count",
-                "notificationsinterval",
-                "year",
-                "month",
-            ],
-            "Type": [
-                "string",  # id
-                "timestamp",  # ttl
-                "boolean",  # ispublished
-                "timestamp",  # created_at
-                "timestamp",  # updated_at
-                "string",  # name
-                "string",  # securityattribute
-                "timestamp",  # closingdate
-                "string",  # formpurpose
-                "string",  # publishdesc
-                "string",  # publishformtype
-                "string",  # publishreason
-                "string",  # closeddetails
-                "boolean",  # saveandresume
-                "string",  # deliveryemaildestination
-                "timestamp",  # api_created_at
-                "string",  # api_id
-                "int",  # deliveryoption
-                "timestamp",  # timestamp
-                "string",  # titleen
-                "string",  # titlefr
-                "string",  # brand
-                "bigint",  # checkbox_count
-                "bigint",  # combobox_count
-                "bigint",  # dropdown_count
-                "bigint",  # dynamicrow_count
-                "bigint",  # fileinput_count
-                "bigint",  # formatteddate_count
-                "bigint",  # radio_count
-                "bigint",  # richtext_count
-                "bigint",  # textarea_count
-                "bigint",  # textfield_count
-                "bigint",  # addresscomplete_count
-                "int",  # notificationsinterval
-                "string",  # year
-                "string",  # month
-            ],
-        }
-    )
+def test_validate_schema_valid(sample_data_df, datasets_params):
+    assert validate_with_gx(sample_data_df, datasets_params["gx_checkpoint"]) is True
 
 
-def test_validate_schema_valid(sample_data_df, glue_table_schema):
-    assert validate_schema(sample_data_df, None, None, glue_table_schema) is True
-
-
-def test_validate_schema_missing_column(sample_data_df, glue_table_schema):
+def test_validate_schema_missing_column(sample_data_df, datasets_params):
     df_missing_column = sample_data_df.drop("ispublished", axis=1)
-    assert validate_schema(df_missing_column, None, None, glue_table_schema) is False
-
-
-def test_validate_schema_partition_column(sample_data_df, glue_table_schema):
-    df_with_partition_column = sample_data_df.copy()
-    df_with_partition_column["month"] = pd.to_datetime(
-        ["2024-01-01", "2024-01-02", "2024-01-03"]
-    )
     assert (
-        validate_schema(df_with_partition_column, None, ["month"], glue_table_schema)
-        is True
+        validate_with_gx(df_missing_column, datasets_params["gx_checkpoint"]) is False
     )
 
 
-def test_validate_schema_dropped_column(sample_data_df, glue_table_schema):
-    df_dropped_column = sample_data_df.drop("ispublished", axis=1)
-    assert (
-        validate_schema(
-            df_dropped_column, ["ispublished"], ["month"], glue_table_schema
-        )
-        is True
-    )
+def test_validate_schema_extra_column(sample_data_df, datasets_params):
+    df_added_column = sample_data_df.copy()
+    df_added_column["stuff"] = True
+    assert validate_with_gx(df_added_column, datasets_params["gx_checkpoint"]) is True
 
 
-def test_validate_schema_wrong_type(sample_data_df, glue_table_schema):
+def test_validate_schema_wrong_type(sample_data_df, datasets_params):
     df_wrong_type = sample_data_df.copy()
     df_wrong_type["ispublished"] = pd.to_datetime(
         ["2024-01-04", "2024-01-05", "2024-01-06"]
     )
-    assert validate_schema(df_wrong_type, None, None, glue_table_schema) is False
-
-
-def test_is_type_compatible():
-    assert is_type_compatible(pd.Series(["a", "b", "c"]), "string") is True
-    assert is_type_compatible(pd.Series([1, 2, 3]), "int") is True
-    assert is_type_compatible(pd.Series([1.1, 2.2, 3.3]), "double") is True
-    assert is_type_compatible(pd.Series([True, False]), "boolean") is True
-    assert (
-        is_type_compatible(pd.Series(pd.to_datetime(["2024-01-01"])), "timestamp")
-        is True
-    )
-    assert is_type_compatible(pd.Series(["a", "b", "c"]), "int") is False
-    assert is_type_compatible(pd.Series(["a", "b", "c"]), "unknown_type") is False
+    assert validate_with_gx(df_wrong_type, datasets_params["gx_checkpoint"]) is False
 
 
 @patch("process_data.datetime")
@@ -386,7 +307,7 @@ def test_process_data(
     mock_validate_with_gx,
     mock_s3,
     sample_data_df,
-    glue_table_schema,
+    datasets_params,
 ):
     mock_cloudwatch = Mock()
     mock_s3_client = Mock()
@@ -394,7 +315,7 @@ def test_process_data(
         mock_cloudwatch if service_name == "cloudwatch" else mock_s3_client
     )
     mock_get_new_data.return_value = sample_data_df
-    mock_wr_catalog.table.return_value = glue_table_schema
+
     mock_get_metrics.return_value = np.array([100, 110, 90])
     mock_detect_anomalies.return_value = False
 
@@ -426,48 +347,19 @@ def test_process_data_validation_success(
     mock_get_new_data,
     mock_s3,
     sample_data_df,
-    glue_table_schema,
+    datasets_params,
 ):
     mock_cloudwatch = Mock()
     mock_s3_client = Mock()
-    mock_boto3_client.side_effect = [mock_cloudwatch, mock_s3_client]
+    mock_boto3_client.side_effect = lambda service_name, *args, **kwargs: (
+        mock_cloudwatch if service_name == "cloudwatch" else mock_s3_client
+    )
     mock_get_new_data.return_value = sample_data_df
-    mock_wr_catalog.table.return_value = glue_table_schema
+
     mock_get_metrics.return_value = np.array([100, 110, 90])
     mock_detect_anomalies.return_value = False
 
-    process_data(
-        datasets=[
-            {
-                "path": "processed-data/template",
-                "date_columns": [
-                    "ttl",
-                    "api_created_at",
-                    "timestamp",
-                    "closingdate",
-                    "created_at",
-                    "updated_at",
-                ],
-                "field_count_columns": [
-                    "checkbox_count",
-                    "combobox_count",
-                    "dropdown_count",
-                    "dynamicrow_count",
-                    "fileinput_count",
-                    "formatteddate_count",
-                    "radio_count",
-                    "richtext_count",
-                    "textarea_count",
-                    "textfield_count",
-                    "addresscomplete_count",
-                ],
-                "partition_timestamp": "created_at",
-                "partition_columns": ["year", "month"],
-                "email_columns": ["deliveryemaildestination"],
-                "gx_checkpoint": "forms-template_checkpoint",
-            }
-        ]
-    )
+    process_data(datasets_params)
 
     assert mock_get_new_data.call_count == 1
     assert mock_wr_s3.to_parquet.call_count == 1
@@ -491,13 +383,14 @@ def test_process_data_empty_dataset(
     mock_get_metrics,
     mock_get_new_data,
     mock_s3,
-    glue_table_schema,
 ):
     mock_cloudwatch = Mock()
     mock_s3_client = Mock()
-    mock_boto3_client.side_effect = [mock_cloudwatch, mock_s3_client]
+    mock_boto3_client.side_effect = lambda service_name, *args, **kwargs: (
+        mock_cloudwatch if service_name == "cloudwatch" else mock_s3_client
+    )
     mock_get_new_data.return_value = pd.DataFrame()
-    mock_wr_catalog.table.return_value = glue_table_schema
+
     mock_get_metrics.return_value = np.array([100, 110, 90])
     mock_detect_anomalies.return_value = False
 
@@ -510,41 +403,71 @@ def test_process_data_empty_dataset(
 
 
 @patch("process_data.download_s3_object")
-@patch("process_data.validate_with_gx", return_value=True)
 @patch("process_data.get_new_data")
 @patch("process_data.get_metrics")
 @patch("process_data.detect_anomalies")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
-def test_process_data_validation_failure(
+def test_process_data_extra_column(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
     mock_detect_anomalies,
     mock_get_metrics,
     mock_get_new_data,
-    mock_validate_with_gx,
     mock_s3,
     sample_data_df,
-    glue_table_schema,
+    datasets_params,
 ):
+
     mock_cloudwatch = Mock()
-    mock_s3_client = Mock()
-    mock_boto3_client.side_effect = [mock_cloudwatch, mock_s3_client]
+
+    df_added_column = sample_data_df.copy()
+    df_added_column["extra_column"] = "extra_value"
+    mock_get_new_data.return_value = df_added_column
     mock_get_new_data.return_value = sample_data_df
+
+    mock_s3_client = Mock()
+    mock_boto3_client.side_effect = lambda service_name, *args, **kwargs: (
+        mock_cloudwatch if service_name == "cloudwatch" else mock_s3_client
+    )
+
     mock_get_metrics.return_value = np.array([100, 110, 90])
     mock_detect_anomalies.return_value = False
 
-    # Mock table schema that will cause validation to fail (missing required column)
-    invalid_schema = glue_table_schema.drop(0)  # Remove the first column from schema
-    mock_wr_catalog.table.return_value = invalid_schema
+    process_data(datasets_params)
 
-    # Run the process, expect a ValueError due to schema validation failure
+    assert mock_get_new_data.call_count == 1
+    assert mock_wr_s3.to_parquet.call_count == 1
+    assert mock_cloudwatch.put_metric_data.call_count == 1
+
+
+@patch("process_data.download_s3_object")
+@patch("process_data.get_new_data")
+@patch("awswrangler.catalog")
+@patch("awswrangler.s3")
+@patch("boto3.client")
+def test_process_data_validation_failure_missing_column(
+    mock_boto3_client,
+    mock_wr_s3,
+    mock_wr_catalog,
+    mock_get_new_data,
+    mock_s3,
+    sample_data_df,
+    datasets_params,
+):
+    # Mock CloudWatch client
+    mock_cloudwatch = Mock()
+    mock_boto3_client.return_value = mock_cloudwatch
+
+    bad_data_df = sample_data_df.drop(columns=["ispublished"])
+    mock_get_new_data.return_value = bad_data_df
+
     with pytest.raises(ValueError):
-        process_data()
+        process_data(datasets_params)
 
-    # Verify to_parquet was not called
+    assert mock_get_new_data.call_count == 1
     mock_wr_s3.to_parquet.assert_not_called()
     mock_cloudwatch.put_metric_data.assert_not_called()
     mock_get_metrics.assert_not_called()
@@ -560,7 +483,7 @@ def test_process_data_validation_failure(
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
-def test_process_data_validation_failure_great_expectations_missing_column(
+def test_process_data_validation_failure_missing_column(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
@@ -569,52 +492,22 @@ def test_process_data_validation_failure_great_expectations_missing_column(
     mock_get_new_data,
     mock_s3,
     sample_data_df,
-    glue_table_schema,
+    datasets_params,
 ):
     # Mock CloudWatch client
     mock_cloudwatch = Mock()
     mock_s3_client = Mock()
-    mock_boto3_client.side_effect = [mock_cloudwatch, mock_s3_client]
+    mock_boto3_client.side_effect = lambda service_name, *args, **kwargs: (
+        mock_cloudwatch if service_name == "cloudwatch" else mock_s3_client
+    )
     mock_get_metrics.return_value = np.array([100, 110, 90])
     mock_detect_anomalies.return_value = False
 
     bad_data_df = sample_data_df.drop(columns=["ispublished"])
     mock_get_new_data.return_value = bad_data_df
-    mock_wr_catalog.table.return_value = glue_table_schema
 
     with pytest.raises(ValueError):
-        process_data(
-            datasets=[
-                {
-                    "path": "processed-data/template",
-                    "date_columns": [
-                        "ttl",
-                        "api_created_at",
-                        "timestamp",
-                        "closingdate",
-                        "created_at",
-                        "updated_at",
-                    ],
-                    "field_count_columns": [
-                        "checkbox_count",
-                        "combobox_count",
-                        "dropdown_count",
-                        "dynamicrow_count",
-                        "fileinput_count",
-                        "formatteddate_count",
-                        "radio_count",
-                        "richtext_count",
-                        "textarea_count",
-                        "textfield_count",
-                        "addresscomplete_count",
-                    ],
-                    "partition_timestamp": "created_at",
-                    "partition_columns": ["year", "month"],
-                    "email_columns": ["deliveryemaildestination"],
-                    "gx_checkpoint": "forms-template_checkpoint",
-                }
-            ]
-        )
+        process_data(datasets=datasets_params)
 
     assert mock_get_new_data.call_count == 1
     assert mock_wr_s3.to_parquet.call_count == 0
@@ -628,56 +521,24 @@ def test_process_data_validation_failure_great_expectations_missing_column(
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
-def test_process_data_validation_failure_great_expectations_bad_schema_str_count(
+def test_process_data_validation_bad_format(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
     mock_get_new_data,
     mock_s3,
     sample_data_df,
-    glue_table_schema,
+    datasets_params,
 ):
     mock_cloudwatch = Mock()
     mock_boto3_client.return_value = mock_cloudwatch
 
     bad_data_df = sample_data_df.copy()
-    bad_data_df["checkbox_count"] = "1"  # string value
+    bad_data_df["checkbox_count"] = "foo"  # string value
     mock_get_new_data.return_value = bad_data_df
-    mock_wr_catalog.table.return_value = glue_table_schema
 
     with pytest.raises(ValueError):
-        process_data(
-            datasets=[
-                {
-                    "path": "processed-data/template",
-                    "date_columns": [
-                        "ttl",
-                        "api_created_at",
-                        "timestamp",
-                        "closingdate",
-                        "created_at",
-                        "updated_at",
-                    ],
-                    "field_count_columns": [
-                        "checkbox_count",
-                        "combobox_count",
-                        "dropdown_count",
-                        "dynamicrow_count",
-                        "fileinput_count",
-                        "formatteddate_count",
-                        "radio_count",
-                        "richtext_count",
-                        "textarea_count",
-                        "textfield_count",
-                        "addresscomplete_count",
-                    ],
-                    "partition_timestamp": "created_at",
-                    "partition_columns": ["year", "month"],
-                    "email_columns": ["deliveryemaildestination"],
-                    "gx_checkpoint": "forms-template_checkpoint",
-                }
-            ]
-        )
+        process_data(datasets_params)
 
     assert mock_get_new_data.call_count == 1
     assert mock_wr_s3.to_parquet.call_count == 0

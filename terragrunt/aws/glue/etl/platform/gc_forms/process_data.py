@@ -57,69 +57,6 @@ handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 
 
-def validate_schema(
-    dataframe: pd.DataFrame,
-    drop_columns: List[str],
-    non_source_columns: List[str],
-    glue_table_schema: pd.DataFrame,
-) -> bool:
-    """
-    Validate that the DataFrame conforms to the Glue table schema.  The `non_source_columns`
-    specifies extra columns that are allowed to be in the DataFrame but are not part of
-    the Glue schema.
-    """
-    for _, row in glue_table_schema.iterrows():
-        column_name = row["Column Name"]
-        column_type = row["Type"]
-
-        if drop_columns and column_name in drop_columns:
-            continue
-
-        if column_name not in dataframe.columns:
-            logger.error(f"Validation failed: Missing column '{column_name}'")
-            return False
-
-        if not is_type_compatible(dataframe[column_name], column_type):
-            logger.error(
-                f"Validation failed: Column '{column_name}' type mismatch. Expected {column_type} but got {dataframe[column_name].dtype}"
-            )
-            return False
-
-    for column_name in dataframe.columns:
-        if column_name not in glue_table_schema["Column Name"].values:
-            if non_source_columns and column_name not in non_source_columns:
-                logger.error(f"Validation failed: Extra column '{column_name}'")
-                return False
-
-    return True
-
-
-def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
-    """
-    Check if a pandas Series is compatible with a Glue type.
-    """
-    glue_to_pandas = {
-        "string": pd.StringDtype(),
-        "int": pd.Int64Dtype(),
-        "bigint": pd.Int64Dtype(),
-        "double": float,
-        "float": float,
-        "boolean": pd.BooleanDtype(),
-        "date": "datetime64[ns]",
-        "timestamp": "datetime64[ns]",
-        "array<string>": pd.StringDtype(),
-    }
-    expected_type = glue_to_pandas.get(glue_type.lower())
-    if expected_type is None:
-        logger.error(f"Unknown Glue type '{glue_type}' for validation.")
-        return False
-    try:
-        series.astype(expected_type)
-    except (ValueError, TypeError):
-        return False
-    return True
-
-
 def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
     """
     Properly configure all Great Expectations stores to use S3 at runtime.
@@ -386,10 +323,12 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "partition_timestamp": "date",
                 "partition_columns": ["year", "month"],
                 "email_columns": ["client_email"],
+                "gx_checkpoint": "forms-historicaldata_checkpoint",
             },
             {
                 "path": "processed-data/submissions",
                 "date_columns": ["timestamp"],
+                "gx_checkpoint": "forms-submissions_checkpoint",
             },
             {
                 "path": "processed-data/template",
@@ -422,6 +361,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
             {
                 "path": "processed-data/templateToUser",
                 "date_columns": ["timestamp"],
+                "gx_checkpoint": "forms-templatetouser_checkpoint",
             },
             {
                 "path": "processed-data/user",
@@ -435,8 +375,13 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "partition_columns": ["year", "month"],
                 "drop_columns": ["name"],
                 "email_columns": ["email"],
+                "gx_checkpoint": "forms-user_checkpoint",
             },
         ]
+    elif isinstance(datasets, dict):
+        datasets = [datasets]
+
+    cloudwatch = boto3.client("cloudwatch")
 
     for dataset in datasets:
         path = dataset.get("path")
@@ -469,27 +414,10 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
             continue
 
         if not data.empty:
-            # We prioritize data validation with Great Expectations if a checkpoint is provided
-            # Otherwise, we fall back to Glue schema validation
-            if gx_checkpoint:
-                if not validate_with_gx(data, gx_checkpoint):
-                    raise ValueError(
-                        f"Great Expectations validation failed for {path}. Aborting ETL process."
-                    )
-            else:
-                glue_table_schema = wr.catalog.table(
-                    database=DATABASE_NAME_RAW,
-                    table=f"{TABLE_NAME_PREFIX}_raw_{table_name}",
+            if not validate_with_gx(data, gx_checkpoint):
+                raise ValueError(
+                    f"Great Expectations validation failed for {path}. Aborting ETL process."
                 )
-                if not validate_schema(
-                    dataframe=data,
-                    drop_columns=drop_columns,
-                    non_source_columns=partition_columns,
-                    glue_table_schema=glue_table_schema,
-                ):
-                    raise ValueError(
-                        f"Schema validation failed for {path}. Aborting ETL process."
-                    )
 
             # Save the transformed data back to S3
             logger.info(f"Saving new {path} DataFrame to S3...")
