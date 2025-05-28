@@ -50,6 +50,8 @@ resource "aws_glue_job" "platform_gc_forms_job" {
     "--enable-job-insights"              = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
+    "--first_date"                       = "yesterday"
+    "--last_date"                        = "yesterday"
     "--gx_config_object"                 = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_forms_gx.key}"
     "--job-language"                     = "python"
     "--source_bucket"                    = var.raw_bucket_name

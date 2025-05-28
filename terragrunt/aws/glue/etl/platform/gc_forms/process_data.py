@@ -27,6 +27,8 @@ args = getResolvedOptions(
         "database_name_transformed",
         "table_name_prefix",
         "gx_config_object",
+        "first_date",
+        "last_date",
     ],
 )
 
@@ -35,11 +37,12 @@ SOURCE_PREFIX = args["source_prefix"]
 TRANSFORMED_BUCKET = args["transformed_bucket"]
 TRANSFORMED_PREFIX = args["transformed_prefix"]
 TRANSFORMED_PATH = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}"
-PARTITION_KEY = "month"
 DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
 GX_CONFIG_OBJECT = args["gx_config_object"]
+FIRST_DATE = args.get("first_date", "yesterday").lower()
+LAST_DATE = args.get("last_date", "yesterday").lower()
 
 
 # Anomaly detection configuration
@@ -133,6 +136,8 @@ def get_new_data(
     field_count_columns: Optional[List[str]],
     partition_columns: Optional[List[str]],
     partition_timestamp: Optional[str],
+    first_date: str = FIRST_DATE,
+    last_date: str = LAST_DATE,
 ) -> pd.DataFrame:
     """
     Reads the data from the specified path in S3 and returns a DataFrame.
@@ -143,16 +148,32 @@ def get_new_data(
     """
     data = pd.DataFrame()
     try:
-        yesterday = pd.Timestamp.today(tz="UTC") - pd.Timedelta(days=1)
+
+        if first_date == "yesterday":
+            first_date = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime(
+                "%Y-%m-%d"
+            )
+        if last_date == "yesterday":
+            last_date = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime(
+                "%Y-%m-%d"
+            )
+
+        last_modified_begin = (
+            datetime.strptime(first_date, "%Y-%m-%d") - timedelta(days=1)
+        ).replace(tzinfo=timezone.utc)
+        last_modified_end = datetime.strptime(last_date, "%Y-%m-%d").replace(
+            tzinfo=timezone.utc
+        )
 
         logger.info(
-            f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3 from {yesterday}..."
+            f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3 from {last_modified_begin} to {last_modified_end}..."
         )
         data = wr.s3.read_parquet(
             path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/",
             use_threads=True,
             dataset=True,
-            last_modified_begin=yesterday,
+            last_modified_begin=last_modified_begin,
+            last_modified_end=last_modified_end,
         )
         data.columns = [col.lower() for col in data.columns]
 
@@ -183,11 +204,17 @@ def get_new_data(
             partition_format = {
                 "month": "%Y-%m",
                 "year": "%Y",
+                "day": "%Y-%m-%d",
             }
             for partition in partition_columns:
                 data[partition] = data[partition_timestamp].dt.strftime(
                     partition_format[partition]
                 )
+
+        logger.info(
+            f"Filtering for data timestamped between {first_date} and {last_date}..."
+        )
+        data = data.loc[(data["day"] >= first_date) & (data["day"] <= last_date)]
 
     except wr.exceptions.NoFilesFound:
         logger.error(f"No new {path} data found.")
@@ -321,13 +348,15 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "path": "historical-data",
                 "date_columns": ["date"],
                 "partition_timestamp": "date",
-                "partition_columns": ["year", "month"],
+                "partition_columns": ["year", "month", "day"],
                 "email_columns": ["client_email"],
                 "gx_checkpoint": "forms-historicaldata_checkpoint",
             },
             {
                 "path": "processed-data/submissions",
                 "date_columns": ["timestamp"],
+                "partition_timestamp": "timestamp",
+                "partition_columns": ["year", "month", "day"],
                 "gx_checkpoint": "forms-submissions_checkpoint",
             },
             {
@@ -353,8 +382,8 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                     "textfield_count",
                     "addresscomplete_count",
                 ],
-                "partition_timestamp": "created_at",
-                "partition_columns": ["year", "month"],
+                "partition_timestamp": "timestamp",
+                "partition_columns": ["year", "month", "day"],
                 "email_columns": ["deliveryemaildestination"],
                 "gx_checkpoint": "forms-template_checkpoint",
             },
@@ -362,6 +391,8 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "path": "processed-data/templateToUser",
                 "date_columns": ["timestamp"],
                 "gx_checkpoint": "forms-templatetouser_checkpoint",
+                "partition_timestamp": "timestamp",
+                "partition_columns": ["year", "month", "day"],
             },
             {
                 "path": "processed-data/user",
@@ -371,8 +402,8 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                     "createdat",
                     "timestamp",
                 ],
-                "partition_timestamp": "lastlogin",  # User created date is currently in this field.
-                "partition_columns": ["year", "month"],
+                "partition_timestamp": "timestamp",
+                "partition_columns": ["year", "month", "day"],
                 "drop_columns": ["name"],
                 "email_columns": ["email"],
                 "gx_checkpoint": "forms-user_checkpoint",
@@ -426,7 +457,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 df=data,
                 path=f"{TRANSFORMED_PATH}/{path}/",
                 dataset=True,
-                mode="append",
+                mode="overwrite_partitions", 
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_columns,
