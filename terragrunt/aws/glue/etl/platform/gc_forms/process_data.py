@@ -117,23 +117,15 @@ def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
 
 def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
     """
-    Configure all Great Expectations stores to use S3 if target_gx_bucket is provided,
-    otherwise use local filesystem.
+    Properly configure all Great Expectations stores to use S3 at runtime.
+    This uses context.add_store to ensure the stores are actually registered.
     """
-
     if "test" not in target_gx_bucket:
-        logger.info("Writting to S3")
+        logger.info(f"Writing to S3 bucket: {target_gx_bucket}")
 
-        stores_config = {
-            "expectations_store": {
-                "class_name": "ExpectationsStore",
-                "store_backend": {
-                    "class_name": "TupleS3StoreBackend",
-                    "bucket": target_gx_bucket,
-                    "prefix": "platform/gc-forms/data-validation/expectations/",
-                },
-            },
-            "validations_store": {
+        context.add_store(
+            store_name="validations_store",
+            store_config={
                 "class_name": "ValidationsStore",
                 "store_backend": {
                     "class_name": "TupleS3StoreBackend",
@@ -141,27 +133,16 @@ def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
                     "prefix": "platform/gc-forms/data-validation/validations/",
                 },
             },
-            "checkpoint_store": {
-                "class_name": "CheckpointStore",
-                "store_backend": {
-                    "class_name": "TupleS3StoreBackend",
-                    "bucket": target_gx_bucket,
-                    "prefix": "platform/gc-forms/data-validation/checkpoints/",
-                    "suppress_store_backend_id": True,
-                },
-            },
-            "evaluation_parameter_store": {
+        )
+
+        context.add_store(
+            store_name="evaluation_parameter_store",
+            store_config={
                 "class_name": "EvaluationParameterStore",
             },
-        }
-
-        # Update all stores
-        for store_name, store_config in stores_config.items():
-            context.config.stores[store_name] = store_config
-
+        )
     else:
-        logger.info("Writting Locally")
-        pass
+        logger.info("Writing Locally")
 
 
 def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
