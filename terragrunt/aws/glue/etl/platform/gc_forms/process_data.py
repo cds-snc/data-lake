@@ -321,7 +321,6 @@ def process_data(datasets=None):
             {
                 "path": "processed-data/submissions",
                 "date_columns": ["timestamp"],
-                "gx_checkpoint": "forms-submissions_checkpoint",
             },
             {
                 "path": "processed-data/template",
