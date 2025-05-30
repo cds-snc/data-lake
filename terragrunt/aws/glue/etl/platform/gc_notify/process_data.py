@@ -47,7 +47,7 @@ TARGET_ENV = args["target_env"]
 METRIC_NAMESPACE = "data-lake/etl/gc-notify"
 METRIC_NAME = "ProcessedRecordCount"
 ANOMALY_LOOKBACK_DAYS = 14
-ANOMALY_STANDARD_DEVIATION = 2.0
+ANOMALY_STANDARD_DEVIATION = 2.5
 
 glueContext = GlueContext(SparkContext.getOrCreate())
 logger = glueContext.get_logger()
@@ -350,8 +350,9 @@ def detect_anomalies(
     is_anomaly = abs(z_score) > standard_deviation_threshold
     if is_anomaly:
         logger.error(
-            f"Anomaly: Latest value {row_count}, mean: {mean:.2f}, "
-            f"stdev: {standard_deviation:.2f}, z_score: {z_score:.2f}"
+            f"Anomaly: Latest value {row_count}, Mean: {mean:.2f}, "
+            f"Standard dev.: {standard_deviation:.2f}, Z-score: {z_score:.2f}, "
+            f"Historical data: {historical_data}"
         )
     return is_anomaly
 
