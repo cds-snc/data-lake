@@ -1,0 +1,65 @@
+config_version: 3.0
+
+# Datasources configuration 
+datasources:
+  pandas_datasource:
+    class_name: Datasource
+    module_name: great_expectations.datasource
+    execution_engine:
+      class_name: PandasExecutionEngine
+      module_name: great_expectations.execution_engine
+    data_connectors:
+      default_runtime_data_connector_name:
+        name: default_runtime_data_connector_name
+        class_name: RuntimeDataConnector
+        module_name: great_expectations.datasource.data_connector
+        batch_identifiers:
+          - default_identifier_name
+config_variables_file_path: uncommitted/config_variables.yml
+
+# Stores configuration
+stores:
+  expectations_store:
+    class_name: ExpectationsStore
+    store_backend:
+      class_name: TupleFilesystemStoreBackend
+      base_directory: expectations/
+
+  validations_store:
+    class_name: ValidationsStore
+    store_backend:
+      class_name: TupleFilesystemStoreBackend
+      base_directory: uncommitted/validations
+
+  checkpoint_store:
+    class_name: CheckpointStore
+    store_backend:
+      class_name: TupleFilesystemStoreBackend
+      suppress_store_backend_id: true
+      base_directory: checkpoints/
+
+  evaluation_parameter_store:
+    class_name: EvaluationParameterStore
+
+expectations_store_name: expectations_store
+validations_store_name: validations_store
+checkpoint_store_name: checkpoint_store
+evaluation_parameter_store_name: evaluation_parameter_store
+
+
+notebooks:
+data_docs_sites:
+  local_site:
+    class_name: SiteBuilder
+    store_backend:
+      class_name: TupleFilesystemStoreBackend
+      base_directory: uncommitted/data_docs/local_site/
+    site_index_builder:
+      class_name: DefaultSiteIndexBuilder
+anonymous_usage_statistics:
+  data_context_id: d6a4a38e-d07f-4d6f-b2b2-55261164ee47
+  enabled: false
+include_rendered_content:
+  globally: false
+  expectation_suite: false
+  expectation_validation_result: false

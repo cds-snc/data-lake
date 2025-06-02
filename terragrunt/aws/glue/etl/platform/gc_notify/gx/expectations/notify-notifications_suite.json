@@ -1,0 +1,347 @@
+{
+  "expectation_suite_name": "notify-notifications_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "job_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "job_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "job_row_number",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "service_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "service_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "template_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "template_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "template_version",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "api_key_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "api_key_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "key_type",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "key_type should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "notification_type",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "notification_type should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "created_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "sent_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "updated_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "reference",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "reference should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "billable_units",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "client_reference",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "client_reference should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "international",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "international should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "phone_prefix",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "phone_prefix should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "rate_multiplier",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "notification_status",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "notification_status should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "created_by_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "created_by_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "queue_name",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "queue_name should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "feedback_type",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "feedback_type should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "feedback_subtype",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "feedback_subtype should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "ses_feedback_id",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "ses_feedback_id should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "ses_feedback_date",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "sms_total_message_price",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "sms_total_carrier_fee",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "sms_iso_country_code",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "sms_iso_country_code should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "sms_carrier_name",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "sms_carrier_name should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "sms_message_encoding",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "sms_message_encoding should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "sms_origination_phone_number",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "sms_origination_phone_number should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "feedback_reason",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "feedback_reason should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "year",
+        "regex": "^\\d{4}$"
+      },
+      "meta": {
+        "description": "year should be a 4-digit year (e.g., 2024)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "month",
+        "regex": "^\\d{4}-\\d{2}$"
+      },
+      "meta": {
+        "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
+      }
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.22"
+  }
+}
