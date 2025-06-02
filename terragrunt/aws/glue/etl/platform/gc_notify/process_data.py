@@ -17,6 +17,9 @@ from awsglue.job import Job
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 
+import great_expectations as gx
+
+
 args = getResolvedOptions(
     sys.argv,
     [
@@ -29,6 +32,7 @@ args = getResolvedOptions(
         "table_config_object",
         "table_name_prefix",
         "target_env",
+        "gx_config_object",
     ],
 )
 
@@ -42,6 +46,8 @@ DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_CONFIG_OBJECT = args["table_config_object"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
 TARGET_ENV = args["target_env"]
+GX_CONFIG_OBJECT = args["gx_config_object"]
+
 
 # Anomaly detection configuration
 METRIC_NAMESPACE = "data-lake/etl/gc-notify"
@@ -58,26 +64,71 @@ class Field(TypedDict):
     type: str
 
 
-def validate_schema(
-    dataframe: pd.DataFrame,
-    fields: List[Field],
-) -> bool:
+def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
     """
-    Validate that the DataFrame conforms to the expected table schema.
+    Properly configure all Great Expectations stores to use S3 at runtime.
+    This uses context.add_store to ensure the stores are actually registered.
     """
-    for field in fields:
-        field_name = field["name"]
-        field_type = field["type"]
-        if field_name not in dataframe.columns:
-            logger.error(f"Validation failed: Missing column '{field_name}'")
-            return False
+    if "test" not in target_gx_bucket:
+        logger.info(f"Writing to S3 bucket: {target_gx_bucket}")
 
-        if not is_type_compatible(dataframe[field_name], field_type):
-            logger.error(
-                f"Validation failed: Column '{field_name}' type mismatch. Expected {field_type} but got {dataframe[field_name].dtype}"
-            )
-            return False
+        context.add_store(
+            store_name="validations_store",
+            store_config={
+                "class_name": "ValidationsStore",
+                "store_backend": {
+                    "class_name": "TupleS3StoreBackend",
+                    "bucket": target_gx_bucket,
+                    "prefix": "platform/gc-notify/data-validation/validations/",
+                },
+            },
+        )
 
+        context.add_store(
+            store_name="evaluation_parameter_store",
+            store_config={
+                "class_name": "EvaluationParameterStore",
+            },
+        )
+    else:
+        logger.info("Writing Locally")
+
+
+def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
+    """
+    Validate the DataFrame using the specified Great Expectations checkpoint.
+    Logs detailed errors if validation fails.
+    """
+    gx_context_path = os.path.join(os.getcwd(), "gx")
+    context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
+
+    configure_gx_stores(context, SOURCE_BUCKET)
+
+    result = context.run_checkpoint(
+        checkpoint_name=checkpoint_name,
+        batch_request={
+            "runtime_parameters": {"batch_data": dataframe},
+            "batch_identifiers": {"default_identifier_name": "runtime_batch"},
+        },
+    )
+    if not result["success"]:
+        logger.error(f"Validation failed for checkpoint '{checkpoint_name}'")
+        # Print detailed failed expectations
+        for run_result in result["run_results"].values():
+            validation_result = run_result["validation_result"]
+            for res in validation_result["results"]:
+                if not res["success"]:
+                    expectation_type = res["expectation_config"]["expectation_type"]
+                    expectation_definition = res["expectation_config"]["kwargs"]
+                    column = expectation_definition.get("column", "")
+                    result_details = res.get("result", {})
+                    logger.error(
+                        f"Failed expectation: {expectation_type} on column '{column}'. "
+                        f"Expectation definition: {expectation_definition}"
+                        f"Run details {result_details}"
+                    )
+        return False
+    logger.info(f"Validation succeeded for checkpoint '{checkpoint_name}'.")
     return True
 
 
@@ -104,21 +155,6 @@ def postgres_to_pandas_type(field_type: str) -> str:
         "timestamp": "datetime64[ns]",
     }
     return postgres_to_pandas.get(field_type)
-
-
-def is_type_compatible(series: pd.Series, field_type: str) -> bool:
-    """
-    Check if a pandas Series is compatible with a given data type.
-    """
-    expected_type = postgres_to_pandas_type(field_type)
-    if expected_type is None:
-        logger.error(f"Unknown Postgres type '{field_type}' for validation.")
-        return False
-    try:
-        series.astype(expected_type)
-    except (ValueError, TypeError):
-        return False
-    return True
 
 
 def parse_dates(date_series):
@@ -279,10 +315,6 @@ def get_dataset_config():
 
     current_dir = os.getcwd()
     tables_dir = os.path.join(current_dir, "tables")
-    tables_zip = os.path.join(current_dir, "tables.zip")
-
-    with zipfile.ZipFile(tables_zip, "r") as zip_ref:
-        zip_ref.extractall(tables_dir)
 
     try:
         for filename in os.listdir(tables_dir):
@@ -322,11 +354,19 @@ def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
     """
     bucket_name = s3_url.split("/")[2]
     object_key = "/".join(s3_url.split("/")[3:])
+    current_dir = os.getcwd()
+    file_path = os.path.join(current_dir, filename)
+
     s3.download_file(
         Bucket=bucket_name,
         Key=object_key,
-        Filename=os.path.join(os.getcwd(), filename),
+        Filename=file_path,
     )
+
+    folder_path = os.path.join(current_dir, filename.split(".")[0])
+
+    with zipfile.ZipFile(file_path, "r") as zip_ref:
+        zip_ref.extractall(folder_path)
 
 
 def detect_anomalies(
@@ -382,6 +422,9 @@ def process_data():
     # Download the table configuration file from S3
     download_s3_object(s3, TABLE_CONFIG_OBJECT, "tables.zip")
 
+    # Download the Great Expectations configuration from S3
+    download_s3_object(s3, GX_CONFIG_OBJECT, "gx.zip")
+
     # Read the dataset configuration and start processing
     datasets = get_dataset_config()
     for dataset in datasets:
@@ -390,6 +433,7 @@ def process_data():
         partition_cols = dataset.get("partition_cols")
         incremental_load = dataset.get("incremental_load", False)
         look_back_days = dataset.get("look_back_days", 0)
+        gx_checkpoint = "notify-" + table_name + "_checkpoint"
 
         # Retrieve the new data
         logger.info(f"Processing {table_name} data...")
@@ -405,9 +449,9 @@ def process_data():
             ),
         )
         if not data.empty:
-            if not validate_schema(data, dataset.get("fields")):
+            if not validate_with_gx(data, gx_checkpoint):
                 raise ValueError(
-                    f"Schema validation failed for {table_name}. Aborting ETL process."
+                    f"Great Expectations validation failed for {table_name}. Aborting ETL process."
                 )
 
             # Save the transformed data back to S3

@@ -4,18 +4,27 @@ import pandas as pd
 import numpy as np
 import datetime
 import sys
-from unittest.mock import Mock, patch, mock_open, ANY
+from unittest.mock import Mock, patch, mock_open, ANY, call
+
+
+class MockPysparkDataFrame:
+    pass
+
 
 sys.modules["pyspark"] = Mock()
 sys.modules["pyspark.context"] = Mock()
 sys.modules["pyspark.context"].SparkContext = Mock()
 sys.modules["pyspark.context"].SparkContext.getOrCreate = Mock(return_value=Mock())
+sys.modules["pyspark.sql"] = Mock()
+sys.modules["pyspark.sql"].DataFrame = MockPysparkDataFrame
+
 
 sys.modules["awsglue"] = Mock()
 sys.modules["awsglue.context"] = Mock()
 sys.modules["awsglue.context"].GlueContext = Mock()
 sys.modules["awsglue.job"] = Mock()
 sys.modules["awsglue.job"].Job = Mock()
+
 
 sys.modules["awsglue.utils"] = Mock()
 sys.modules["awsglue.utils"].getResolvedOptions = Mock()
@@ -27,6 +36,7 @@ sys.modules["awsglue.utils"].getResolvedOptions.return_value = {
     "transformed_prefix": "test-transformed-prefix",
     "database_name_transformed": "test_database_transformed",
     "table_config_object": "s3://test-config-bucket/test-config-key",
+    "gx_config_object": "s3://test-config-bucket/test-config-key",
     "table_name_prefix": "test_prefix",
     "target_env": "test",
 }
@@ -45,9 +55,8 @@ sys.modules["awswrangler"].exceptions.NoFilesFound = MockNoFilesFound
 # Import the module after mocking dependencies
 # flake8: noqa: E402
 from process_data import (
-    validate_schema,
+    validate_with_gx,
     postgres_to_pandas_type,
-    is_type_compatible,
     parse_dates,
     get_new_data,
     publish_metric,
@@ -70,21 +79,72 @@ def sample_dataframe():
     """Sample DataFrame for testing."""
     return pd.DataFrame(
         {
-            "id": ["1", "2", "3"],
+            "id": [
+                "11111111-1234-abde-abde-aaabbbccc123",
+                "11111111-1234-abde-abde-aaabbbccc124",
+                "11111111-1234-abde-abde-aaabbbccc125",
+            ],
+            "original_file_name": [
+                "message_gcnotify",
+                "message_gcnotify",
+                "message_gcnotify",
+            ],
+            "service_id": [
+                "11111111-1234-abde-abde-aaabbbccc123",
+                "11111111-1234-abde-abde-aaabbbccc124",
+                "11111111-1234-abde-abde-aaabbbccc125",
+            ],
+            "template_id": [
+                "11111111-1234-abde-abde-aaabbbccc123",
+                "11111111-1234-abde-abde-aaabbbccc124",
+                "11111111-1234-abde-abde-aaabbbccc125",
+            ],
             "created_at": [
-                "2024-01-01 12:30:45.123",
-                "2024-01-02 10:15:30",
-                "2024-01-03 08:45:20.456",
+                pd.Timestamp("2024-09-19 12:46:02.268903"),
+                pd.Timestamp("2024-09-19 12:46:18.002539"),
+                pd.Timestamp("2024-09-19 12:46:32.720726"),
             ],
             "updated_at": [
-                "2024-01-01 14:20:15.789",
-                "2024-01-02 16:40:10",
-                "2024-01-03 18:05:25.321",
+                pd.Timestamp("2024-09-27 09:07:57.236219"),
+                pd.Timestamp("2024-09-27 09:07:57.236219"),
+                pd.Timestamp("2024-09-27 09:07:57.236220"),
             ],
-            "status": ["active", "inactive", "pending"],
-            "count": [10, 20, 30],
-            "is_valid": [True, False, True],
-            "amount": [125.45, 230.75, 350.25],
+            "notification_count": [1, 1, 1],
+            "notifications_sent": [0, 0, 0],
+            "processing_started": [
+                pd.Timestamp("2024-09-19 12:46:02.334265"),
+                pd.Timestamp("2024-09-19 12:46:18.059370"),
+                pd.Timestamp("2024-09-19 12:46:32.782187"),
+            ],
+            "processing_finished": [
+                pd.Timestamp("2024-09-19 12:47:00.161073"),
+                pd.Timestamp("2024-09-19 12:47:00.583338"),
+                pd.Timestamp("2024-09-19 12:47:01.010010"),
+            ],
+            "created_by_id": [
+                "6af522d0-2915-4e52-83a3-3690455a5fe6",
+                "6af522d0-2915-4e52-83a3-3690455a5fe6",
+                "6af522d0-2915-4e52-83a3-3690455a5fe6",
+            ],
+            "template_version": [8, 8, 8],
+            "notifications_delivered": [0, 0, 0],
+            "notifications_failed": [0, 0, 0],
+            "job_status": ["finished", "finished", "finished"],
+            "scheduled_for": [pd.NaT, pd.NaT, pd.NaT],
+            "archived": [True, True, True],
+            "api_key_id": [
+                "11111111-1234-abde-abde-aaabbbccc123",
+                "11111111-1234-abde-abde-aaabbbccc124",
+                "11111111-1234-abde-abde-aaabbbccc153",
+            ],
+            "sender_id": [None, None, None],
+            "data_modified": [
+                pd.Timestamp("2025-05-29 00:33:29"),
+                pd.Timestamp("2025-05-29 00:33:29"),
+                pd.Timestamp("2025-05-29 00:33:29"),
+            ],
+            "year": ["2024", "2024", "2024"],
+            "month": ["2024-09", "2024-09", "2024-09"],
         }
     )
 
@@ -94,12 +154,24 @@ def sample_fields():
     """Sample field definitions for testing."""
     return [
         {"name": "id", "type": "uuid"},
+        {"name": "original_file_name", "type": "varchar"},
+        {"name": "service_id", "type": "uuid"},
+        {"name": "template_id", "type": "uuid"},
         {"name": "created_at", "type": "timestamp"},
         {"name": "updated_at", "type": "timestamp"},
-        {"name": "status", "type": "text"},
-        {"name": "count", "type": "integer"},
-        {"name": "is_valid", "type": "boolean"},
-        {"name": "amount", "type": "numeric"},
+        {"name": "notification_count", "type": "integer"},
+        {"name": "notifications_sent", "type": "integer"},
+        {"name": "processing_started", "type": "timestamp"},
+        {"name": "processing_finished", "type": "timestamp"},
+        {"name": "created_by_id", "type": "uuid"},
+        {"name": "template_version", "type": "integer"},
+        {"name": "notifications_delivered", "type": "integer"},
+        {"name": "notifications_failed", "type": "integer"},
+        {"name": "job_status", "type": "varchar"},
+        {"name": "scheduled_for", "type": "timestamp"},
+        {"name": "archived", "type": "boolean"},
+        {"name": "api_key_id", "type": "uuid"},
+        {"name": "sender_id", "type": "uuid"},
     ]
 
 
@@ -135,28 +207,27 @@ def sample_dataset_config():
     ]
 
 
-def test_validate_schema_valid(sample_dataframe, sample_fields):
+def test_validate_with_gx_valid(
+    sample_dataframe,
+):
     """Test schema validation with valid data."""
-    assert validate_schema(sample_dataframe, sample_fields) is True
+    gx_checkpoint = "notify-jobs_checkpoint"
+    assert validate_with_gx(sample_dataframe, gx_checkpoint) is True
 
 
-def test_validate_schema_missing_column(sample_dataframe, sample_fields):
+def test_validate_with_gx_missing_column(sample_dataframe):
     """Test schema validation with a missing column."""
-    df_missing_column = sample_dataframe.drop("status", axis=1)
-    assert validate_schema(df_missing_column, sample_fields) is False
+    df_missing_column = sample_dataframe.drop("job_status", axis=1)
+    gx_checkpoint = "notify-jobs_checkpoint"
+    assert validate_with_gx(df_missing_column, gx_checkpoint) is False
 
 
-def test_validate_schema_type_mismatch(sample_dataframe, sample_fields):
+def test_validate_with_gx_type_mismatch(sample_dataframe, sample_fields):
     """Test schema validation with a type mismatch."""
     df_type_mismatch = sample_dataframe.copy()
-
-    with patch(
-        "process_data.is_type_compatible",
-        side_effect=lambda series, field_type: (
-            False if field_type == "integer" else True
-        ),
-    ):
-        assert validate_schema(df_type_mismatch, sample_fields) is False
+    df_type_mismatch["scheduled_for"] = True
+    gx_checkpoint = "notify-jobs_checkpoint"
+    assert validate_with_gx(df_type_mismatch, gx_checkpoint) is False
 
 
 def test_postgres_to_pandas_type():
@@ -175,17 +246,6 @@ def test_postgres_to_pandas_type():
     assert isinstance(postgres_to_pandas_type("template_type"), pd.StringDtype)
     assert isinstance(postgres_to_pandas_type("sms_sending_vehicle"), pd.StringDtype)
     assert postgres_to_pandas_type("unknown_type") is None
-
-
-def test_is_type_compatible():
-    """Test type compatibility checking."""
-    assert is_type_compatible(pd.Series(["a", "b", "c"]), "text") is True
-    assert is_type_compatible(pd.Series([1, 2, 3]), "integer") is True
-    assert is_type_compatible(pd.Series([1.1, 2.2, 3.3]), "numeric") is True
-    assert is_type_compatible(pd.Series([True, False, True]), "boolean") is True
-    assert is_type_compatible(pd.Series(["a", "b", "c"]), "integer") is False
-    assert is_type_compatible(pd.Series([1, 2, 3]), "boolean") is False
-    assert is_type_compatible(pd.Series(["a", "b", "c"]), "unknown_type") is False
 
 
 def test_parse_dates():
@@ -243,12 +303,24 @@ def test_get_new_data_incremental_load(mock_ds, sample_dataframe, sample_fields)
         filter=True,
         columns=[
             "id",
+            "original_file_name",
+            "service_id",
+            "template_id",
             "created_at",
             "updated_at",
-            "status",
-            "count",
-            "is_valid",
-            "amount",
+            "notification_count",
+            "notifications_sent",
+            "processing_started",
+            "processing_finished",
+            "created_by_id",
+            "template_version",
+            "notifications_delivered",
+            "notifications_failed",
+            "job_status",
+            "scheduled_for",
+            "archived",
+            "api_key_id",
+            "sender_id",
         ],
     )
     assert len(result) == len(sample_dataframe)
@@ -301,12 +373,11 @@ def test_publish_metric(mock_datetime):
     assert record_metric["Unit"] == "Count"
 
 
-@patch("process_data.zipfile.ZipFile")
 @patch("process_data.os.listdir")
 @patch("process_data.os.getcwd")
 @patch("builtins.open", new_callable=mock_open)
 def test_get_dataset_config(
-    mock_file, mock_getcwd, mock_listdir, mock_zipfile, sample_dataset_config
+    mock_file, mock_getcwd, mock_listdir, sample_dataset_config
 ):
     """Test loading dataset configurations."""
     mock_getcwd.return_value = "/workspaces/test"
@@ -317,11 +388,6 @@ def test_get_dataset_config(
     ]
 
     result = get_dataset_config()
-
-    mock_zipfile.assert_called_once_with("/workspaces/test/tables.zip", "r")
-    mock_zipfile.return_value.__enter__.return_value.extractall.assert_called_once_with(
-        "/workspaces/test/tables"
-    )
 
     assert len(result) == 2
     assert result[0]["table_name"] == "notifications"
@@ -355,14 +421,19 @@ def test_get_dataset_config_dir_not_found(mock_zipfile, mock_getcwd, mock_listdi
         get_dataset_config()
 
 
-def test_download_s3_object():
+@patch("process_data.zipfile.ZipFile")
+def test_download_s3_object(mock_zipfile):
     """Test the S3 object download function."""
     mock_s3 = Mock()
     s3_url = "s3://test-bucket/path/to/object.zip"
 
-    with patch("os.path.join", return_value="/workspaces/test/tables.zip"):
-        with patch("os.getcwd", return_value="/workspaces/test"):
-            download_s3_object(mock_s3, s3_url, "tables.zip")
+    with patch("os.getcwd", return_value="/workspaces/test"):
+        download_s3_object(mock_s3, s3_url, "tables.zip")
+
+    mock_zipfile.assert_called_once_with("/workspaces/test/tables.zip", "r")
+    mock_zipfile.return_value.__enter__.return_value.extractall.assert_called_once_with(
+        "/workspaces/test/tables"
+    )
 
     mock_s3.download_file.assert_called_once_with(
         Bucket="test-bucket",
@@ -393,7 +464,7 @@ def test_get_incremental_load_date_from(mock_timestamp):
 @patch("process_data.download_s3_object")
 @patch("process_data.get_dataset_config")
 @patch("process_data.get_new_data")
-@patch("process_data.validate_schema")
+@patch("process_data.validate_with_gx")
 @patch("process_data.get_metrics")
 @patch("process_data.detect_anomalies")
 @patch("process_data.wr.s3.to_parquet")
@@ -405,7 +476,7 @@ def test_process_data(
     mock_to_parquet,
     mock_detect_anomalies,
     mock_get_metrics,
-    mock_validate_schema,
+    mock_validate_with_gx,
     mock_get_new_data,
     mock_get_dataset_config,
     mock_download_s3_object,
@@ -426,12 +497,15 @@ def test_process_data(
 
     mock_get_dataset_config.return_value = sample_dataset_config
     mock_get_new_data.side_effect = [sample_dataframe, pd.DataFrame()]
-    mock_validate_schema.return_value = True
+    mock_validate_with_gx.return_value = True
 
     process_data()
 
-    mock_download_s3_object.assert_called_once_with(
-        mock_s3, "s3://test-config-bucket/test-config-key", "tables.zip"
+    mock_download_s3_object.assert_has_calls(
+        [
+            call(mock_s3, "s3://test-config-bucket/test-config-key", "tables.zip"),
+            call(mock_s3, "s3://test-config-bucket/test-config-key", "gx.zip"),
+        ]
     )
 
     assert mock_get_new_data.call_count == 2
@@ -452,8 +526,9 @@ def test_process_data(
         date_from=None,
     )
 
-    mock_validate_schema.assert_called_once_with(
-        sample_dataframe, sample_dataset_config[0]["fields"]
+    mock_validate_with_gx.assert_called_once_with(
+        sample_dataframe,
+        "notify-" + sample_dataset_config[0]["table_name"] + "_checkpoint",
     )
     mock_to_parquet.assert_called_once()
 
@@ -490,7 +565,7 @@ def test_process_data(
 
 @patch("process_data.get_dataset_config")
 @patch("process_data.get_new_data")
-@patch("process_data.validate_schema")
+@patch("process_data.validate_with_gx")
 @patch("process_data.get_metrics")
 @patch("process_data.detect_anomalies")
 @patch("process_data.boto3.client")
@@ -502,7 +577,7 @@ def test_process_data_schema_validation_failure(
     mock_boto3_client,
     mock_detect_anomalies,
     mock_get_metrics,
-    mock_validate_schema,
+    mock_validate_with_gx,
     mock_get_new_data,
     mock_get_dataset_config,
     sample_dataset_config,
@@ -517,9 +592,12 @@ def test_process_data_schema_validation_failure(
 
     mock_get_dataset_config.return_value = [sample_dataset_config[0]]
     mock_get_new_data.return_value = sample_dataframe
-    mock_validate_schema.return_value = False
+    mock_validate_with_gx.return_value = False
 
-    with pytest.raises(ValueError, match="Schema validation failed for notifications"):
+    with pytest.raises(
+        ValueError,
+        match="Great Expectations validation failed for notifications. Aborting ETL process.",
+    ):
         process_data()
 
 

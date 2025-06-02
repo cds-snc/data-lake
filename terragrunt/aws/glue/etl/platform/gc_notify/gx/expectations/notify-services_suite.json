@@ -1,0 +1,365 @@
+{
+  "expectation_suite_name": "notify-services_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "name",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "name should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "created_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "updated_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "active",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "active should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "message_limit",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "restricted",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "restricted should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "email_from",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "email_from should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "created_by_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "created_by_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "version",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "research_mode",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "research_mode should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "organisation_type",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "organisation_type should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "prefix_sms",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "prefix_sms should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "crown",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "crown should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "rate_limit",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "contact_link",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "contact_link should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "consent_to_research",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "consent_to_research should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "volume_email",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "volume_letter",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "volume_sms",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "count_as_live",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "count_as_live should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "go_live_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "go_live_user_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "go_live_user_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "organisation_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "organisation_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "sending_domain",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "sending_domain should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "default_branding_is_french",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "default_branding_is_french should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "sms_daily_limit",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "organisation_notes",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "organisation_notes should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "sensitive_service",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "sensitive_service should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "email_annual_limit",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "sms_annual_limit",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "data_modified",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "year",
+        "regex": "^\\d{4}$"
+      },
+      "meta": {
+        "description": "year should be a 4-digit year (e.g., 2024)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "month",
+        "regex": "^\\d{4}-\\d{2}$"
+      },
+      "meta": {
+        "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
+      }
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.22"
+  }
+}
