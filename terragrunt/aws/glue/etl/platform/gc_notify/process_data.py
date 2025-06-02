@@ -433,7 +433,7 @@ def process_data():
         partition_cols = dataset.get("partition_cols")
         incremental_load = dataset.get("incremental_load", False)
         look_back_days = dataset.get("look_back_days", 0)
-        gx_checkpoint = "notify-" + table_name + "_checkpoint"
+        gx_checkpoint = f"notify-{table_name}_checkpoint"
 
         # Retrieve the new data
         logger.info(f"Processing {table_name} data...")

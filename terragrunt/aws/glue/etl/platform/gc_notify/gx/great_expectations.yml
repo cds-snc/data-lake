@@ -46,7 +46,7 @@ validations_store_name: validations_store
 checkpoint_store_name: checkpoint_store
 evaluation_parameter_store_name: evaluation_parameter_store
 
-plugins_directory:
+
 notebooks:
 data_docs_sites:
   local_site:
