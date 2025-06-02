@@ -22,16 +22,6 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "data",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "data should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "created_at",
@@ -47,18 +37,6 @@
       "expectation_type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "updated_at",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
         "type_list": [
           "datetime64",
           "datetime64[ns]",

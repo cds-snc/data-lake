@@ -121,38 +121,6 @@
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
-        "column": "created_by_id",
-        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
-      },
-      "meta": {
-        "description": "created_by_id should match UUID format"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "updated_by_id",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "updated_by_id should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
         "column": "year",
         "regex": "^\\d{4}$"
       },

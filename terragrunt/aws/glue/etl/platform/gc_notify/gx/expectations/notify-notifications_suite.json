@@ -14,22 +14,20 @@
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
-        "column": "to",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "to should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
         "column": "job_id",
         "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
       },
       "meta": {
         "description": "job_id should match UUID format"
       }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "job_row_number",
+        "min_value": 0
+      },
+      "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",
@@ -52,86 +50,12 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "created_at",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "sent_at",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "sent_by",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "sent_by should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "updated_at",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "reference",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "reference should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "template_version",
         "min_value": 0
       },
       "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "job_row_number",
-        "min_value": 0
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "_personalisation",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "_personalisation should be string-like"
-      }
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",
@@ -161,6 +85,52 @@
       },
       "meta": {
         "description": "notification_type should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "created_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "sent_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "updated_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "reference",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "reference should be string-like"
       }
     },
     {
@@ -225,51 +195,11 @@
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
-        "column": "normalised_to",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "normalised_to should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
         "column": "created_by_id",
         "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
       },
       "meta": {
         "description": "created_by_id should match UUID format"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "reply_to_text",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "reply_to_text should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "postage",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "postage should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "provider_response",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "provider_response should be string-like"
       }
     },
     {
@@ -389,18 +319,6 @@
       "meta": {
         "description": "feedback_reason should be string-like"
       }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",

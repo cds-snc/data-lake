@@ -58,31 +58,11 @@
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
-        "column": "content",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "content should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
         "column": "service_id",
         "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
       },
       "meta": {
         "description": "service_id should match UUID format"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "subject",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "subject should be string-like"
       }
     },
     {
@@ -127,16 +107,6 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "service_letter_contact_id",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "service_letter_contact_id should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "hidden",
@@ -147,16 +117,6 @@
       },
       "meta": {
         "description": "hidden should be boolean-like values"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "postage",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "postage should be string-like"
       }
     },
     {
@@ -181,18 +141,6 @@
       "meta": {
         "description": "text_direction_rtl should be boolean-like values"
       }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",

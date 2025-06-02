@@ -20,18 +20,6 @@
       "meta": {
         "description": "service_id should match UUID format"
       }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
     }
   ],
   "meta": {

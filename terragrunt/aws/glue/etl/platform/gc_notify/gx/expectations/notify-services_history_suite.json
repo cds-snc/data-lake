@@ -165,16 +165,6 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "contact_link",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "contact_link should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "consent_to_research",
@@ -191,14 +181,6 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "volume_email",
-        "min_value": 0
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "volume_letter",
         "min_value": 0
       },
       "meta": {}
@@ -323,18 +305,6 @@
       "kwargs": {
         "column": "sms_annual_limit",
         "min_value": 0
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
       },
       "meta": {}
     },

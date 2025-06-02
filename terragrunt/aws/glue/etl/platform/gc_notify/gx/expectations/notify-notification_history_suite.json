@@ -112,16 +112,6 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "sent_by",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "sent_by should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "updated_at",
@@ -210,16 +200,6 @@
       },
       "meta": {
         "description": "created_by_id should match UUID format"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "postage",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "postage should be string-like"
       }
     },
     {
@@ -339,18 +319,6 @@
       "meta": {
         "description": "feedback_reason should be string-like"
       }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",

@@ -69,16 +69,6 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "letter_branding_id",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "letter_branding_id should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "agreement_signed",
@@ -145,36 +135,6 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "request_to_go_live_notes",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "request_to_go_live_notes should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "agreement_signed_on_behalf_of_email_address",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "agreement_signed_on_behalf_of_email_address should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "agreement_signed_on_behalf_of_name",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "agreement_signed_on_behalf_of_name should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "default_branding_is_french",
@@ -186,18 +146,6 @@
       "meta": {
         "description": "default_branding_is_french should be boolean-like values"
       }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",

@@ -12,26 +12,6 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "name",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "name should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "email_address",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "email_address should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "created_at",
@@ -54,26 +34,6 @@
         ]
       },
       "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "_password",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "_password should be string-like"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "mobile_number",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "mobile_number should be string-like"
-      }
     },
     {
       "expectation_type": "expect_column_values_to_be_in_type_list",
@@ -133,16 +93,6 @@
     {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
-        "column": "current_session_id",
-        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
-      },
-      "meta": {
-        "description": "current_session_id should match UUID format"
-      }
-    },
-    {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
         "column": "auth_type",
         "regex": ".*"
       },
@@ -164,16 +114,6 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
-      "kwargs": {
-        "column": "additional_information",
-        "regex": ".*"
-      },
-      "meta": {
-        "description": "additional_information should be string-like"
-      }
-    },
-    {
       "expectation_type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "password_expired",
@@ -185,18 +125,6 @@
       "meta": {
         "description": "password_expired should be boolean-like values"
       }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "data_modified",
-        "type_list": [
-          "datetime64",
-          "datetime64[ns]",
-          "<M8[us]"
-        ]
-      },
-      "meta": {}
     },
     {
       "expectation_type": "expect_column_values_to_match_regex",
