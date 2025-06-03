@@ -11,6 +11,9 @@ import pandas as pd
 
 from awsglue.utils import getResolvedOptions
 
+import great_expectations as gx
+import os
+
 args = getResolvedOptions(
     sys.argv,
     [
@@ -21,6 +24,7 @@ args = getResolvedOptions(
         "database_name_raw",
         "database_name_transformed",
         "table_name",
+        "gx_config_object",
     ],
 )
 
@@ -33,10 +37,12 @@ PARTITION_KEY = "month"
 DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME = args["table_name"]
+GX_CONFIG_OBJECT = args["gx_config_object"]
 
 # Anomaly detection configuration
 METRIC_NAMESPACE = "data-lake/etl/freshdesk"
 METRIC_NAME = "ProcessedRecordCount"
+GX_CHECKPOINT_NAME = "freshdesk_checkpoint"
 ANOMALY_LOOKBACK_DAYS = 14
 ANOMALY_STANDARD_DEVIATION = 3.0
 
@@ -49,48 +55,71 @@ handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 
 
-def validate_schema(dataframe: pd.DataFrame, glue_table_schema: pd.DataFrame) -> bool:
+def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
     """
-    Validate that the DataFrame conforms to the Glue table schema.
+    Properly configure all Great Expectations stores to use S3 at runtime.
+    This uses context.add_store to ensure the stores are actually registered.
     """
-    for _, row in glue_table_schema.iterrows():
-        column_name = row["Column Name"]
-        column_type = row["Type"]
-        if column_name not in dataframe.columns:
-            logger.error(f"Validation failed: Missing column '{column_name}'")
-            return False
+    if "test" not in target_gx_bucket:
+        logger.info(f"Writing to S3 bucket: {target_gx_bucket}")
 
-        if not is_type_compatible(dataframe[column_name], column_type):
-            logger.error(
-                f"Validation failed: Column '{column_name}' type mismatch. Expected {column_type}"
-            )
-            return False
-    return True
+        context.add_store(
+            store_name="validations_store",
+            store_config={
+                "class_name": "ValidationsStore",
+                "store_backend": {
+                    "class_name": "TupleS3StoreBackend",
+                    "bucket": target_gx_bucket,
+                    "prefix": "platform/gc-forms/data-validation/validations/",
+                },
+            },
+        )
+
+        context.add_store(
+            store_name="evaluation_parameter_store",
+            store_config={
+                "class_name": "EvaluationParameterStore",
+            },
+        )
+    else:
+        logger.info("Writing Locally")
 
 
-def is_type_compatible(series: pd.Series, glue_type: str) -> bool:
+def validate_with_gx(dataframe: pd.DataFrame) -> bool:
     """
-    Check if a pandas Series is compatible with a Glue type.
+    Validate the DataFrame using the specified Great Expectations checkpoint.
+    Logs detailed errors if validation fails.
     """
-    glue_to_pandas = {
-        "string": pd.StringDtype(),
-        "int": pd.Int64Dtype(),
-        "bigint": pd.Int64Dtype(),
-        "double": float,
-        "float": float,
-        "boolean": bool,
-        "date": "datetime64[ns]",
-        "timestamp": "datetime64[ns]",
-        "array<string>": pd.StringDtype(),
-    }
-    expected_type = glue_to_pandas.get(glue_type.lower())
-    if expected_type is None:
-        logger.error(f"Unknown Glue type '{glue_type}' for validation.")
+    gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
+    context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
+
+    configure_gx_stores(context, SOURCE_BUCKET)
+
+    result = context.run_checkpoint(
+        checkpoint_name=GX_CHECKPOINT_NAME,
+        batch_request={
+            "runtime_parameters": {"batch_data": dataframe},
+            "batch_identifiers": {"default_identifier_name": "runtime_batch"},
+        },
+    )
+    if not result["success"]:
+        logger.error(f"Validation failed for checkpoint '{GX_CHECKPOINT_NAME}'")
+        # Print detailed failed expectations
+        for run_result in result["run_results"].values():
+            validation_result = run_result["validation_result"]
+            for res in validation_result["results"]:
+                if not res["success"]:
+                    expectation_type = res["expectation_config"]["expectation_type"]
+                    expectation_definition = res["expectation_config"]["kwargs"]
+                    column = expectation_definition.get("column", "")
+                    result_details = res.get("result", {})
+                    logger.error(
+                        f"Failed expectation: {expectation_type} on column '{column}'. "
+                        f"Expectation definition: {expectation_definition}"
+                        f"Run details {result_details}"
+                    )
         return False
-    try:
-        series.astype(expected_type)
-    except (ValueError, TypeError):
-        return False
+    logger.info(f"Validation succeeded for checkpoint '{GX_CHECKPOINT_NAME}'.")
     return True
 
 
@@ -268,12 +297,10 @@ def process_tickets():
 
     if not new_tickets.empty:
 
-        # Check that the new tickets schema matches the expected schema
-        glue_table_schema = wr.catalog.table(
-            database=DATABASE_NAME_RAW, table=TABLE_NAME
-        )
-        if not validate_schema(new_tickets, glue_table_schema):
-            raise ValueError("Schema validation failed. Aborting ETL process.")
+        if not validate_with_gx(new_tickets):
+            raise ValueError(
+                "Great Expectations validation failed. Aborting ETL process."
+            )
 
         # Load 1 year of existing ticket data
         start_date = datetime.now(timezone.utc) - relativedelta(years=1)
