@@ -191,6 +191,19 @@ resource "aws_s3_object" "platform_support_freshdesk_job" {
   etag   = filemd5(data.local_file.platform_support_freshdesk_job.filename)
 }
 
+data "archive_file" "platform_freshdesk_gx" {
+  type        = "zip"
+  source_dir  = "${path.module}/etl/platform/support/freshdesk/gx"
+  output_path = "${path.module}/etl/platform/support/freshdesk/gx.zip"
+}
+
+resource "aws_s3_object" "platform_freshdesk_gx" {
+  bucket = var.glue_bucket_name
+  key    = "platform/support/freshdesk/gx.zip"
+  source = data.archive_file.platform_freshdesk_gx.output_path
+  etag   = data.archive_file.platform_freshdesk_gx.output_md5
+}
+
 resource "aws_glue_job" "platform_support_freshdesk" {
   name = "Platform / Support / Freshdesk"
 
@@ -207,6 +220,7 @@ resource "aws_glue_job" "platform_support_freshdesk" {
   }
 
   default_arguments = {
+    "--additional-python-modules"        = "great_expectations==0.18.22"
     "--continuous-log-logGroup"          = "/aws-glue/python-jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
     "--continuous-log-logStreamPrefix"   = "platform_support_freshdesk"
     "--enable-continuous-cloudwatch-log" = "true"
@@ -215,6 +229,7 @@ resource "aws_glue_job" "platform_support_freshdesk" {
     "--enable-job-insights"              = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
+    "--gx_config_object"                 = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_freshdesk_gx.key}"
     "--job-language"                     = "python"
     "--source_bucket"                    = var.raw_bucket_name
     "--source_prefix"                    = "platform/support/freshdesk/"

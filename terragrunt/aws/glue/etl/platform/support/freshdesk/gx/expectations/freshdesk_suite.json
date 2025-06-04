@@ -1,0 +1,256 @@
+{
+  "expectation_suite_name": "freshdesk_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "id",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "status",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "status_label",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "status_label should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "priority",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "priority_label",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "priority_label should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "source",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "source_label",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "source_label should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "created_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "updated_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "month",
+        "regex": "^\\d{4}-\\d{2}$"
+      },
+      "meta": {
+        "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "due_by",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "fr_due_by",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "is_escalated",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "is_escalated should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "tags",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "tags should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "spam",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "spam should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "requester_email_suffix",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "requester_email_suffix should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "type",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "type should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "product_id",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "product_name",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "product_name should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "conversations_total_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "conversations_reply_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "conversations_note_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "language",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "language should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "province_or_territory",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "province_or_territory should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "organization",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "organization should be string-like"
+      }
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.22"
+  }
+}
