@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.5.0](https://github.com/cds-snc/data-lake/compare/v1.4.0...v1.5.0) (2025-06-04)
+
+
+### Features
+
+* Added Great Expectation for freshdesk ([#297](https://github.com/cds-snc/data-lake/issues/297)) ([5f1dfd4](https://github.com/cds-snc/data-lake/commit/5f1dfd4178febe493e12ad3b339de2ae35599464))
+* Great Expectation Gc notify ([#296](https://github.com/cds-snc/data-lake/issues/296)) ([612484d](https://github.com/cds-snc/data-lake/commit/612484d7e9badb6498332f8141ec09285f307925))
+* improved partitioning ([#290](https://github.com/cds-snc/data-lake/issues/290)) ([41dfd15](https://github.com/cds-snc/data-lake/commit/41dfd1567cbe42c52c8e4dbf812efc4987863335))
+
+
+### Bug Fixes
+
+* increased notify timeout ([#298](https://github.com/cds-snc/data-lake/issues/298)) ([adde205](https://github.com/cds-snc/data-lake/commit/adde205cf121dbe7ba8706a0481a8ba62d680b48))
+* Notify ETL acceptable standard deviation ([#293](https://github.com/cds-snc/data-lake/issues/293)) ([716c53c](https://github.com/cds-snc/data-lake/commit/716c53cc7da04298d629d2776098a299cfc48a8a))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all patch dependencies ([#295](https://github.com/cds-snc/data-lake/issues/295)) ([35c8612](https://github.com/cds-snc/data-lake/commit/35c8612d18e1843934006e527e8d26f220949842))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to c283798 ([#294](https://github.com/cds-snc/data-lake/issues/294)) ([25410a5](https://github.com/cds-snc/data-lake/commit/25410a56f5a0feedadb0d61a15833111c47146f0))
+* suppress pip dependency resolver errors ([#291](https://github.com/cds-snc/data-lake/issues/291)) ([e6192b2](https://github.com/cds-snc/data-lake/commit/e6192b2b588043fedb48b52821d18e5bf6c10f2c))
+
 ## [1.4.0](https://github.com/cds-snc/data-lake/compare/v1.3.0...v1.4.0) (2025-05-28)
 
 
