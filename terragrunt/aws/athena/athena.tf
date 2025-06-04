@@ -14,3 +14,13 @@ resource "aws_athena_workgroup" "data_lake" {
     }
   }
 }
+
+resource "aws_athena_named_query" "notify_enriched" {
+  name        = "notify_enriched"
+  database    = "platform_gc_notify_${var.env}"
+  query       = templatefile("${path.module}/queries/notify_enriched.sql.tmpl", {
+    curated_bucket = var.curated_bucket_name
+  })
+  description = "Enriched notifications query"
+  workgroup   = aws_athena_workgroup.data_lake.name
+}
