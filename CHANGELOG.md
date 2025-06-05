@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.1](https://github.com/cds-snc/data-lake/compare/v1.5.0...v1.5.1) (2025-06-05)
+
+
+### Bug Fixes
+
+* undo day partitioning ([#300](https://github.com/cds-snc/data-lake/issues/300)) ([1ca4452](https://github.com/cds-snc/data-lake/commit/1ca4452c69d0322e7cac62a133295fff719b0ad4))
+* wrong gx path ([#302](https://github.com/cds-snc/data-lake/issues/302)) ([a67ff49](https://github.com/cds-snc/data-lake/commit/a67ff49c612de584573105e06659e01e88346a63))
+
 ## [1.5.0](https://github.com/cds-snc/data-lake/compare/v1.4.0...v1.5.0) (2025-06-04)
 
 
