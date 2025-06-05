@@ -91,7 +91,7 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     Validate the DataFrame using the specified Great Expectations checkpoint.
     Logs detailed errors if validation fails.
     """
-    gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
+    gx_context_path = os.path.join(os.getcwd(), "gx")
     context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
 
     configure_gx_stores(context, SOURCE_BUCKET)
