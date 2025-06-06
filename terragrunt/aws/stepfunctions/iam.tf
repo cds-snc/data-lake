@@ -15,17 +15,86 @@ resource "aws_iam_role" "sfn_role" {
 }
 
 data "aws_iam_policy_document" "sfn_glue_policy" {
+  # Glue job permissions
   statement {
     effect = "Allow"
     actions = [
       "glue:StartJobRun",
       "glue:GetJobRun",
-      "glue:GetJob"
+      "glue:GetJob",
+      "glue:BatchStopJobRun",
+      "glue:GetJobRuns"
     ]
     resources = [
       "arn:aws:glue:${var.region}:${var.account_id}:job/*"
     ]
   }
+  
+  # Glue catalog permissions 
+  statement {
+    effect = "Allow"
+    actions = [
+      "glue:GetDatabase",    
+      "glue:GetDatabases",    
+      "glue:GetTable",        
+      "glue:GetTables",       
+      "glue:CreateTable",    
+      "glue:UpdateTable",
+      "glue:DeleteTable",
+      "glue:GetPartitions",
+      "glue:GetPartition",
+      "glue:BatchGetPartition"
+    ]
+    resources = [
+      "arn:aws:glue:${var.region}:${var.account_id}:catalog",
+      "arn:aws:glue:${var.region}:${var.account_id}:database/*",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/*"
+    ]
+  }
+  
+  # Athena permissions
+  statement {
+    effect = "Allow"
+    actions = [
+      "athena:StartQueryExecution",
+      "athena:StopQueryExecution",
+      "athena:GetQueryExecution",
+      "athena:GetQueryResults",
+      "athena:GetWorkGroup",
+      "athena:GetDatabase",
+      "athena:ListQueryExecutions",
+      "athena:BatchGetQueryExecution"
+    ]
+    resources = [
+      "arn:aws:athena:${var.region}:${var.account_id}:workgroup/${var.athena_curated_workgroup_name}",
+      "arn:aws:athena:${var.region}:${var.account_id}:datacatalog/AwsDataCatalog",
+      "arn:aws:athena:${var.region}:${var.account_id}:database/platform_gc_notify_${var.env}",
+      "arn:aws:athena:${var.region}:${var.account_id}:query-execution/*"
+    ]
+  }
+  
+  # S3 permissions for both Glue and Athena
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket",
+      "s3:GetBucketLocation",
+      "s3:DeleteObject",
+      "s3:AbortMultipartUpload",
+      "s3:ListMultipartUploadParts"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.curated_bucket_name}",
+      "arn:aws:s3:::${var.curated_bucket_name}/*",
+      "arn:aws:s3:::${var.athena_bucket_name}",
+      "arn:aws:s3:::${var.athena_bucket_name}/*",
+      "arn:aws:s3:::${var.transformed_bucket_name}",
+      "arn:aws:s3:::${var.transformed_bucket_name}/*"
+    ]
+  }
+
 }
 
 resource "aws_iam_policy" "sfn_glue_policy" {
