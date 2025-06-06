@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.2](https://github.com/cds-snc/data-lake/compare/v1.5.1...v1.5.2) (2025-06-06)
+
+
+### Bug Fixes
+
+* create new alarm for data anomalies ([#304](https://github.com/cds-snc/data-lake/issues/304)) ([9b21b11](https://github.com/cds-snc/data-lake/commit/9b21b117f7891b233de2e95099d44b391ec77801))
+* only display Spark ETL job errors ([#303](https://github.com/cds-snc/data-lake/issues/303)) ([c5643ea](https://github.com/cds-snc/data-lake/commit/c5643eaa6cb4a233041c2dc5234df746231d48d7))
+
 ## [1.5.1](https://github.com/cds-snc/data-lake/compare/v1.5.0...v1.5.1) (2025-06-05)
 
 
