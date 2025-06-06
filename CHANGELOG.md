@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.3](https://github.com/cds-snc/data-lake/compare/v1.5.2...v1.5.3) (2025-06-06)
+
+
+### Bug Fixes
+
+* CloudWatch anomaly metric pattern ([#307](https://github.com/cds-snc/data-lake/issues/307)) ([4fdb690](https://github.com/cds-snc/data-lake/commit/4fdb690bbec70b0c02b1b69c20483d9f9f98a546))
+
 ## [1.5.2](https://github.com/cds-snc/data-lake/compare/v1.5.1...v1.5.2) (2025-06-06)
 
 
