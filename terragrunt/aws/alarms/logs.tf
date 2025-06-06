@@ -35,6 +35,7 @@ resource "aws_cloudwatch_query_definition" "glue_etl_spark_errors" {
   query_string = <<-QUERY
     fields @timestamp, @message, @logStream
     | filter @message like /ERROR/
+    | filter @message like /com.amazonaws.services.glue.log.GlueLogger/
     | sort @timestamp desc
     | limit 100
   QUERY
