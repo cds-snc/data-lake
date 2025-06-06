@@ -552,13 +552,15 @@ def test_process_data(
 
     call_args_list = mock_detect_anomalies.call_args_list
 
-    assert call_args_list[0][0][0] == len(sample_dataframe)
-    assert np.array_equal(call_args_list[0][0][1], np.array([100, 110, 90]))
-    assert call_args_list[0][0][2] == ANOMALY_STANDARD_DEVIATION
+    assert call_args_list[0][0][0] == "notifications"
+    assert call_args_list[0][0][1] == len(sample_dataframe)
+    assert np.array_equal(call_args_list[0][0][2], np.array([100, 110, 90]))
+    assert call_args_list[0][0][3] == ANOMALY_STANDARD_DEVIATION
 
-    assert call_args_list[1][0][0] == 0
-    assert np.array_equal(call_args_list[1][0][1], np.array([100, 110, 90]))
-    assert call_args_list[1][0][2] == ANOMALY_STANDARD_DEVIATION
+    assert call_args_list[1][0][0] == "templates"
+    assert call_args_list[1][0][1] == 0
+    assert np.array_equal(call_args_list[1][0][2], np.array([100, 110, 90]))
+    assert call_args_list[1][0][3] == ANOMALY_STANDARD_DEVIATION
 
     assert mock_cloudwatch.put_metric_data.call_count == 2
 
@@ -654,7 +656,7 @@ def test_detect_anomalies_normal_data():
     historical_data = np.array([100, 110, 105, 95, 108])
     row_count = 107
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False
 
@@ -664,18 +666,18 @@ def test_detect_anomalies_outlier(mock_logger):
     historical_data = np.array([100, 110, 105, 95, 108])
     row_count = 200
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == True
     mock_logger.warning.assert_called_once()
-    assert "Data-Anomaly: Latest value" in mock_logger.warning.call_args[0][0]
+    assert "Data-Anomaly for foo: Latest value" in mock_logger.warning.call_args[0][0]
 
 
 def test_detect_anomalies_zero_standard_deviation():
     historical_data = np.array([100, 100, 100, 100])
     row_count = 110
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False
 
@@ -685,6 +687,6 @@ def test_detect_anomalies_empty_history():
     historical_data = np.array([])
     row_count = 100
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False

@@ -53,7 +53,7 @@ GX_CONFIG_OBJECT = args["gx_config_object"]
 METRIC_NAMESPACE = "data-lake/etl/gc-notify"
 METRIC_NAME = "ProcessedRecordCount"
 ANOMALY_LOOKBACK_DAYS = 14
-ANOMALY_STANDARD_DEVIATION = 2.5
+ANOMALY_STANDARD_DEVIATION = 3.0
 
 glueContext = GlueContext(SparkContext.getOrCreate())
 logger = glueContext.get_logger()
@@ -370,7 +370,10 @@ def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
 
 
 def detect_anomalies(
-    row_count: int, historical_data: np.ndarray, standard_deviation_threshold: float
+    dataset: str,
+    row_count: int,
+    historical_data: np.ndarray,
+    standard_deviation_threshold: float,
 ) -> bool:
     """
     Detect anomalies by checking if the latest value falls within
@@ -390,7 +393,7 @@ def detect_anomalies(
     is_anomaly = abs(z_score) > standard_deviation_threshold
     if is_anomaly:
         logger.warning(
-            f"Data-Anomaly: Latest value {row_count}, Mean: {mean:.2f}, "
+            f"Data-Anomaly for {dataset}: Latest value {row_count}, Mean: {mean:.2f}, "
             f"Standard dev.: {standard_deviation:.2f}, Z-score: {z_score:.2f}, "
             f"Historical data: {historical_data}"
         )
@@ -482,7 +485,9 @@ def process_data():
         )
 
         row_count = len(data)
-        detect_anomalies(row_count, historical_data, ANOMALY_STANDARD_DEVIATION)
+        detect_anomalies(
+            table_name, row_count, historical_data, ANOMALY_STANDARD_DEVIATION
+        )
         publish_metric(cloudwatch, METRIC_NAMESPACE, METRIC_NAME, table_name, row_count)
 
     logger.info("ETL process completed successfully.")

@@ -300,7 +300,7 @@ def detect_anomalies(
     is_anomaly = abs(z_score) > standard_deviation_threshold
     if is_anomaly:
         logger.warning(
-            f"Data-Anomaly: Latest value {row_count}, mean: {mean:.2f}, "
+            f"Data-Anomaly for Freshdesk: Latest value {row_count}, mean: {mean:.2f}, "
             f"stdev: {standard_deviation:.2f}, z_score: {z_score:.2f}"
         )
     return is_anomaly
