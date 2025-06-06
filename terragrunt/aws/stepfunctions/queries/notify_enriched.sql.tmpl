@@ -1,0 +1,107 @@
+CREATE TABLE ${database}.${table_name}
+WITH (
+  format = 'PARQUET',
+  external_location = 's3://${curated_bucket}/${table_name}/'
+) AS
+WITH 
+notification_data AS (
+  SELECT id AS notification_id,
+         billable_units AS notification_billable_units,
+         created_at AS notification_created_at,
+         queue_name AS notification_queue_name,
+         sent_at AS notification_sent_at,
+         notification_status,
+         notification_type,
+         updated_at AS notification_updated_at,
+         job_id,
+         api_key_id,
+         KEY_TYPE AS api_key_type,
+         service_id,
+         template_id,
+         reference AS notification_reference,
+         sms_total_message_price,
+         sms_total_carrier_fee,
+         sms_iso_country_code,
+         sms_carrier_name,
+         sms_message_encoding,
+         sms_origination_phone_number
+  FROM platform_gc_notify_notifications
+
+  UNION
+
+  SELECT id AS notification_id,
+         billable_units AS notification_billable_units,
+         created_at AS notification_created_at,
+         queue_name AS notification_queue_name,
+         sent_at AS notification_sent_at,
+         notification_status,
+         notification_type,
+         updated_at AS notification_updated_at,
+         job_id,
+         api_key_id,
+         KEY_TYPE AS api_key_type,
+         service_id,
+         template_id,
+         reference AS notification_reference,
+         sms_total_message_price,
+         sms_total_carrier_fee,
+         sms_iso_country_code,
+         sms_carrier_name,
+         sms_message_encoding,
+         sms_origination_phone_number
+  FROM platform_gc_notify_notification_history
+),
+service_data AS (
+  SELECT s.id AS service_id,
+         s.active AS service_active,
+         count_as_live AS service_count_as_live,
+         s.go_live_at AS service_go_live_at,
+         s.name AS service_name,
+         s.message_limit AS service_message_limit,
+         s.rate_limit AS service_rate_limit,
+         s.sms_daily_limit AS service_sms_daily_limit,
+         o.name AS organisation_name,
+         s.organisation_id
+  FROM platform_gc_notify_services s
+  JOIN platform_gc_notify_organisation o ON s.organisation_id = o.id
+),
+template_data AS (
+  SELECT t.id AS template_id,
+         t.created_at AS template_created_at,
+         t.name AS template_name,
+         t.updated_at AS template_updated_at,
+         t.version AS template_version,
+         tc.id AS tc_id,
+         tc.name_en AS tc_name_en,
+         tc.name_fr AS tc_name_fr,
+         tc.email_process_type AS tc_email_process_type,
+         tc.sms_process_type AS tc_sms_process_type,
+         tc.sms_sending_vehicle AS tc_sms_sending_vehicle
+  FROM platform_gc_notify_templates t
+  LEFT JOIN platform_gc_notify_template_categories tc
+    ON tc.id = t.template_category_id
+)
+SELECT 
+  notification_id,
+  notification_billable_units,
+  notification_created_at,
+  notification_sent_at,
+  notification_status,
+  notification_queue_name,
+  notification_type,
+  notification_updated_at,
+  notification_reference,
+  job_id,
+  api_key_id,
+  api_key_type,
+  sms_total_message_price,
+  sms_total_carrier_fee,
+  sms_iso_country_code,
+  sms_carrier_name,
+  sms_message_encoding,
+  sms_origination_phone_number,
+  s.*,
+  t.*
+FROM notification_data n
+JOIN service_data s ON n.service_id = s.service_id
+JOIN template_data t ON n.template_id = t.template_id;

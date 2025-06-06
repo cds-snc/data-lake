@@ -1,0 +1,19 @@
+[profile datalake-staging-admin]
+sso_session = cds
+sso_account_id = 454671348950
+sso_role_name = AWSAdministratorAccess
+region = ca-central-1
+[sso-session cds]
+sso_start_url = https://cds-snc-ct.awsapps.com/start/
+sso_region = ca-central-1
+sso_registration_scopes = sso:account:access
+[profile datalake-prod-read]
+sso_session = cds
+sso_account_id = 739275439843
+sso_role_name = AWSReadOnlyAccess
+region = ca-central-1
+[profile datalake-prod-admin]
+sso_session = cds
+sso_account_id = 739275439843
+sso_role_name = AWSAdministratorAccess
+region = ca-central-1
