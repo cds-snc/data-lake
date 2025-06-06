@@ -8,6 +8,7 @@ import awswrangler as wr
 import boto3
 import numpy as np
 import pandas as pd
+import zipfile
 
 from awsglue.utils import getResolvedOptions
 
@@ -85,12 +86,32 @@ def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
         logger.info("Writing Locally")
 
 
+def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
+    """
+    Download an S3 object to a local file.
+    """
+    bucket_name = s3_url.split("/")[2]
+    object_key = "/".join(s3_url.split("/")[3:])
+    current_dir = os.getcwd()
+    s3.download_file(
+        Bucket=bucket_name,
+        Key=object_key,
+        Filename=os.path.join(current_dir, filename),
+    )
+
+    gx_zip = os.path.join(current_dir, os.path.basename(filename))
+    gx_dir = os.path.join(current_dir, os.path.splitext(gx_zip)[0])
+
+    with zipfile.ZipFile(gx_zip, "r") as zip_ref:
+        zip_ref.extractall(gx_dir)
+
+
 def validate_with_gx(dataframe: pd.DataFrame) -> bool:
     """
     Validate the DataFrame using the specified Great Expectations checkpoint.
     Logs detailed errors if validation fails.
     """
-    gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
+    gx_context_path = os.path.join(os.getcwd(), "gx")
     context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
 
     configure_gx_stores(context, SOURCE_BUCKET)
@@ -290,6 +311,8 @@ def process_tickets():
     Load the new tickets, validate the schema, and merge with existing data.
     """
     cloudwatch = boto3.client("cloudwatch")
+    s3 = boto3.client("s3")
+    download_s3_object(s3, GX_CONFIG_OBJECT, "gx.zip")
 
     # Get yesterday's tickets
     yesterday = datetime.now(timezone.utc) - relativedelta(days=1)
