@@ -259,7 +259,10 @@ def get_metrics(
 
 
 def detect_anomalies(
-    row_count: int, historical_data: np.ndarray, standard_deviation_threshold: float
+    dataset: str,
+    row_count: int,
+    historical_data: np.ndarray,
+    standard_deviation_threshold: float,
 ) -> bool:
     """
     Detect anomalies by checking if the latest value falls within
@@ -278,8 +281,8 @@ def detect_anomalies(
 
     is_anomaly = abs(z_score) > standard_deviation_threshold
     if is_anomaly:
-        logger.error(
-            f"Anomaly: Latest value {row_count}, mean: {mean:.2f}, "
+        logger.warning(
+            f"Data-Anomaly for {dataset}: Latest value {row_count}, mean: {mean:.2f}, "
             f"stdev: {standard_deviation:.2f}, z_score: {z_score:.2f}"
         )
     return is_anomaly
@@ -450,7 +453,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
         )
 
         row_count = len(data)
-        detect_anomalies(row_count, historical_data, ANOMALY_STANDARD_DEVIATION)
+        detect_anomalies(path, row_count, historical_data, ANOMALY_STANDARD_DEVIATION)
         publish_metric(cloudwatch, METRIC_NAMESPACE, METRIC_NAME, path, row_count)
     logger.info("ETL process completed successfully.")
 

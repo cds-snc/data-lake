@@ -651,7 +651,7 @@ def test_detect_anomalies_normal_data():
     historical_data = np.array([100, 110, 105, 95, 108])
     row_count = 107
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False
 
@@ -661,18 +661,18 @@ def test_detect_anomalies_outlier(mock_logger):
     historical_data = np.array([100, 110, 105, 95, 108])
     row_count = 200
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == True
-    mock_logger.error.assert_called_once()
-    assert "Anomaly: Latest value" in mock_logger.error.call_args[0][0]
+    mock_logger.warning.assert_called_once()
+    assert "Data-Anomaly for foo: Latest value" in mock_logger.warning.call_args[0][0]
 
 
 def test_detect_anomalies_zero_standard_deviation():
     historical_data = np.array([100, 100, 100, 100])
     row_count = 110
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False
 
@@ -682,6 +682,6 @@ def test_detect_anomalies_empty_history():
     historical_data = np.array([])
     row_count = 100
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False
