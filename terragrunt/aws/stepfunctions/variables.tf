@@ -25,15 +25,15 @@ variable "curated_bucket_name" {
 
 variable "athena_curated_workgroup_name" {
   description = "The name of the Athena workgroup for curated tables."
-  type       = string
+  type        = string
 }
 
 variable "athena_bucket_name" {
   description = "The name of the Athena bucket."
-  type       = string
+  type        = string
 }
 
 variable "transformed_bucket_name" {
   description = "The name of the Athena bucket."
-  type       = string
+  type        = string
 }

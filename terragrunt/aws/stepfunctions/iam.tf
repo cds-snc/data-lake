@@ -29,16 +29,16 @@ data "aws_iam_policy_document" "sfn_glue_policy" {
       "arn:aws:glue:${var.region}:${var.account_id}:job/*"
     ]
   }
-  
+
   # Glue catalog permissions 
   statement {
     effect = "Allow"
     actions = [
-      "glue:GetDatabase",    
-      "glue:GetDatabases",    
-      "glue:GetTable",        
-      "glue:GetTables",       
-      "glue:CreateTable",    
+      "glue:GetDatabase",
+      "glue:GetDatabases",
+      "glue:GetTable",
+      "glue:GetTables",
+      "glue:CreateTable",
       "glue:UpdateTable",
       "glue:DeleteTable",
       "glue:GetPartitions",
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "sfn_glue_policy" {
       "arn:aws:glue:${var.region}:${var.account_id}:table/*"
     ]
   }
-  
+
   # Athena permissions
   statement {
     effect = "Allow"
@@ -72,7 +72,7 @@ data "aws_iam_policy_document" "sfn_glue_policy" {
       "arn:aws:athena:${var.region}:${var.account_id}:query-execution/*"
     ]
   }
-  
+
   # S3 permissions for both Glue and Athena
   statement {
     effect = "Allow"

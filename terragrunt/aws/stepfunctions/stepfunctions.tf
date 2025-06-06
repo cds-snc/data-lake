@@ -1,7 +1,7 @@
 resource "aws_athena_named_query" "notify_enriched_delete" {
-  name     = "notify_enriched_delete_query"
-  database = "platform_gc_notify_${var.env}"
-  query = "DROP TABLE IF EXISTS platform_gc_notify_${var.env}.platform_gc_notify_notifications_enriched"
+  name        = "notify_enriched_delete_query"
+  database    = "platform_gc_notify_${var.env}"
+  query       = "DROP TABLE IF EXISTS platform_gc_notify_${var.env}.platform_gc_notify_notifications_enriched"
   description = "Drop enriched_notifications query"
   workgroup   = var.athena_curated_workgroup_name
 }
@@ -71,51 +71,51 @@ resource "aws_sfn_state_machine" "etl_state_machine" {
                     }
                   ]
                 },
-                "DropTableIfExists": {
-                  "Type": "Task",
-                  "Resource": "arn:aws:states:::athena:startQueryExecution.sync",
-                  "Parameters": {
-                    "QueryString": aws_athena_named_query.notify_enriched_delete.query,
-                    "QueryExecutionContext": {
-                      "Database": aws_athena_named_query.notify_enriched_delete.database
+                "DropTableIfExists" : {
+                  "Type" : "Task",
+                  "Resource" : "arn:aws:states:::athena:startQueryExecution.sync",
+                  "Parameters" : {
+                    "QueryString" : aws_athena_named_query.notify_enriched_delete.query,
+                    "QueryExecutionContext" : {
+                      "Database" : aws_athena_named_query.notify_enriched_delete.database
                     },
-                    "WorkGroup": aws_athena_named_query.notify_enriched_delete.workgroup
+                    "WorkGroup" : aws_athena_named_query.notify_enriched_delete.workgroup
                   },
-                  "Next": "RunNotifyEnrichedAthena",
-                  "Catch": [
+                  "Next" : "RunNotifyEnrichedAthena",
+                  "Catch" : [
                     {
-                      "ErrorEquals": ["States.ALL"],
-                      "Next": "DropTableFailed"
+                      "ErrorEquals" : ["States.ALL"],
+                      "Next" : "DropTableFailed"
                     }
                   ]
                 },
-                "DropTableFailed": {
-                  "Type": "Pass",
-                  "Result": "Drop table failed, skipping create table step",
-                  "End": true
+                "DropTableFailed" : {
+                  "Type" : "Pass",
+                  "Result" : "Drop table failed, skipping create table step",
+                  "End" : true
                 },
-                "RunNotifyEnrichedAthena": {
-                  "Type": "Task",
-                  "Resource": "arn:aws:states:::athena:startQueryExecution.sync",
-                  "Parameters": {
-                    "QueryString": aws_athena_named_query.notify_enriched.query,
-                    "QueryExecutionContext": {
-                      "Database": aws_athena_named_query.notify_enriched.database
+                "RunNotifyEnrichedAthena" : {
+                  "Type" : "Task",
+                  "Resource" : "arn:aws:states:::athena:startQueryExecution.sync",
+                  "Parameters" : {
+                    "QueryString" : aws_athena_named_query.notify_enriched.query,
+                    "QueryExecutionContext" : {
+                      "Database" : aws_athena_named_query.notify_enriched.database
                     },
-                    "WorkGroup": aws_athena_named_query.notify_enriched.workgroup
+                    "WorkGroup" : aws_athena_named_query.notify_enriched.workgroup
                   },
-                  "End": true,
-                  "Catch": [
+                  "End" : true,
+                  "Catch" : [
                     {
-                      "ErrorEquals": ["States.ALL"],
-                      "Next": "NotifyEnrichedAthenaFailed"
+                      "ErrorEquals" : ["States.ALL"],
+                      "Next" : "NotifyEnrichedAthenaFailed"
                     }
                   ]
                 },
-                "NotifyEnrichedAthenaFailed": {
-                  "Type": "Pass",
-                  "Result": "Notify Enriched Athena query failed",
-                  "End": true
+                "NotifyEnrichedAthenaFailed" : {
+                  "Type" : "Pass",
+                  "Result" : "Notify Enriched Athena query failed",
+                  "End" : true
                 },
                 "GCNotifyJobFailed" : {
                   "Type" : "Pass",
