@@ -27,8 +27,6 @@ args = getResolvedOptions(
         "database_name_transformed",
         "table_name_prefix",
         "gx_config_object",
-        "first_date",
-        "last_date",
     ],
 )
 
@@ -37,13 +35,11 @@ SOURCE_PREFIX = args["source_prefix"]
 TRANSFORMED_BUCKET = args["transformed_bucket"]
 TRANSFORMED_PREFIX = args["transformed_prefix"]
 TRANSFORMED_PATH = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}"
+PARTITION_KEY = "month"
 DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME_PREFIX = args["table_name_prefix"]
 GX_CONFIG_OBJECT = args["gx_config_object"]
-FIRST_DATE = args.get("first_date", "yesterday").lower()
-LAST_DATE = args.get("last_date", "yesterday").lower()
-
 
 # Anomaly detection configuration
 METRIC_NAMESPACE = "data-lake/etl/gc-forms"
@@ -95,7 +91,7 @@ def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
     Validate the DataFrame using the specified Great Expectations checkpoint.
     Logs detailed errors if validation fails.
     """
-    gx_context_path = os.path.join(os.path.dirname(__file__), "gx")
+    gx_context_path = os.path.join(os.getcwd(), "gx")
     context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
 
     configure_gx_stores(context, SOURCE_BUCKET)
@@ -136,8 +132,6 @@ def get_new_data(
     field_count_columns: Optional[List[str]],
     partition_columns: Optional[List[str]],
     partition_timestamp: Optional[str],
-    first_date: str = FIRST_DATE,
-    last_date: str = LAST_DATE,
 ) -> pd.DataFrame:
     """
     Reads the data from the specified path in S3 and returns a DataFrame.
@@ -148,32 +142,16 @@ def get_new_data(
     """
     data = pd.DataFrame()
     try:
-
-        if first_date == "yesterday":
-            first_date = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime(
-                "%Y-%m-%d"
-            )
-        if last_date == "yesterday":
-            last_date = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime(
-                "%Y-%m-%d"
-            )
-
-        last_modified_begin = (
-            datetime.strptime(first_date, "%Y-%m-%d") - timedelta(days=1)
-        ).replace(tzinfo=timezone.utc)
-        last_modified_end = datetime.strptime(last_date, "%Y-%m-%d").replace(
-            tzinfo=timezone.utc
-        )
+        yesterday = pd.Timestamp.today(tz="UTC") - pd.Timedelta(days=1)
 
         logger.info(
-            f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3 from {last_modified_begin} to {last_modified_end}..."
+            f"Reading s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/ data from S3 from {yesterday}..."
         )
         data = wr.s3.read_parquet(
             path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/{path}/",
             use_threads=True,
             dataset=True,
-            last_modified_begin=last_modified_begin,
-            last_modified_end=last_modified_end,
+            last_modified_begin=yesterday,
         )
         data.columns = [col.lower() for col in data.columns]
 
@@ -204,17 +182,11 @@ def get_new_data(
             partition_format = {
                 "month": "%Y-%m",
                 "year": "%Y",
-                "day": "%Y-%m-%d",
             }
             for partition in partition_columns:
                 data[partition] = data[partition_timestamp].dt.strftime(
                     partition_format[partition]
                 )
-
-        logger.info(
-            f"Filtering for data timestamped between {first_date} and {last_date}..."
-        )
-        data = data.loc[(data["day"] >= first_date) & (data["day"] <= last_date)]
 
     except wr.exceptions.NoFilesFound:
         logger.error(f"No new {path} data found.")
@@ -287,7 +259,10 @@ def get_metrics(
 
 
 def detect_anomalies(
-    row_count: int, historical_data: np.ndarray, standard_deviation_threshold: float
+    dataset: str,
+    row_count: int,
+    historical_data: np.ndarray,
+    standard_deviation_threshold: float,
 ) -> bool:
     """
     Detect anomalies by checking if the latest value falls within
@@ -306,8 +281,8 @@ def detect_anomalies(
 
     is_anomaly = abs(z_score) > standard_deviation_threshold
     if is_anomaly:
-        logger.error(
-            f"Anomaly: Latest value {row_count}, mean: {mean:.2f}, "
+        logger.warning(
+            f"Data-Anomaly for {dataset}: Latest value {row_count}, mean: {mean:.2f}, "
             f"stdev: {standard_deviation:.2f}, z_score: {z_score:.2f}"
         )
     return is_anomaly
@@ -319,7 +294,7 @@ def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
     """
     bucket_name = s3_url.split("/")[2]
     object_key = "/".join(s3_url.split("/")[3:])
-    current_dir = os.path.dirname(__file__)
+    current_dir = os.getcwd()
     s3.download_file(
         Bucket=bucket_name,
         Key=object_key,
@@ -338,6 +313,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
     Main ETL process to read data from S3, validate the schema, and save the
     transformed data back to S3.
     """
+
     cloudwatch = boto3.client("cloudwatch")
     s3 = boto3.client("s3")
     download_s3_object(s3, GX_CONFIG_OBJECT, "gx.zip")
@@ -348,7 +324,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "path": "historical-data",
                 "date_columns": ["date"],
                 "partition_timestamp": "date",
-                "partition_columns": ["year", "month", "day"],
+                "partition_columns": ["year", "month"],
                 "email_columns": ["client_email"],
                 "gx_checkpoint": "forms-historicaldata_checkpoint",
             },
@@ -356,7 +332,6 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "path": "processed-data/submissions",
                 "date_columns": ["timestamp"],
                 "partition_timestamp": "timestamp",
-                "partition_columns": ["year", "month", "day"],
                 "gx_checkpoint": "forms-submissions_checkpoint",
             },
             {
@@ -383,7 +358,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                     "addresscomplete_count",
                 ],
                 "partition_timestamp": "timestamp",
-                "partition_columns": ["year", "month", "day"],
+                "partition_columns": ["year", "month"],
                 "email_columns": ["deliveryemaildestination"],
                 "gx_checkpoint": "forms-template_checkpoint",
             },
@@ -392,7 +367,6 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "date_columns": ["timestamp"],
                 "gx_checkpoint": "forms-templatetouser_checkpoint",
                 "partition_timestamp": "timestamp",
-                "partition_columns": ["year", "month", "day"],
             },
             {
                 "path": "processed-data/user",
@@ -403,7 +377,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                     "timestamp",
                 ],
                 "partition_timestamp": "timestamp",
-                "partition_columns": ["year", "month", "day"],
+                "partition_columns": ["year", "month"],
                 "drop_columns": ["name"],
                 "email_columns": ["email"],
                 "gx_checkpoint": "forms-user_checkpoint",
@@ -415,6 +389,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
     cloudwatch = boto3.client("cloudwatch")
 
     for dataset in datasets:
+
         path = dataset.get("path")
         date_columns = dataset.get("date_columns")
         drop_columns = dataset.get("drop_columns")
@@ -457,7 +432,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 df=data,
                 path=f"{TRANSFORMED_PATH}/{path}/",
                 dataset=True,
-                mode="overwrite_partitions",
+                mode="append",
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_columns,
@@ -478,7 +453,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
         )
 
         row_count = len(data)
-        detect_anomalies(row_count, historical_data, ANOMALY_STANDARD_DEVIATION)
+        detect_anomalies(path, row_count, historical_data, ANOMALY_STANDARD_DEVIATION)
         publish_metric(cloudwatch, METRIC_NAMESPACE, METRIC_NAME, path, row_count)
     logger.info("ETL process completed successfully.")
 
