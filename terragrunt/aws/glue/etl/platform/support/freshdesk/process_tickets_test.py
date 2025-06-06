@@ -161,7 +161,10 @@ def test_merge_tickets_with_duplicates():
 # Test the main process with mocked AWS services
 @patch("boto3.client")
 @patch("awswrangler.s3")
-def test_process_tickets(mock_wr_s3, mock_boto3_client, sample_tickets_df):
+@patch("process_tickets.download_s3_object")
+def test_process_tickets(
+    mock_s3_download, mock_wr_s3, mock_boto3_client, sample_tickets_df
+):
     # Mock AWS Wrangler responses
     mock_wr_s3.read_json.return_value = sample_tickets_df
     mock_wr_s3.read_parquet.return_value = sample_tickets_df
@@ -213,7 +216,8 @@ def test_process_tickets(mock_wr_s3, mock_boto3_client, sample_tickets_df):
 # Test error handling
 @patch("boto3.client")
 @patch("awswrangler.s3")
-def test_process_tickets_no_new_data(mock_wr_s3, mock_boto3_client):
+@patch("process_tickets.download_s3_object")
+def test_process_tickets_no_new_data(mock_s3_download, mock_wr_s3, mock_boto3_client):
     # Mock empty response from S3
     mock_wr_s3.read_json.side_effect = NoFilesFound("Simulate no file for read_json")
 
