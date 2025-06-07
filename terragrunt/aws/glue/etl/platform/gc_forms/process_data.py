@@ -281,7 +281,7 @@ def detect_anomalies(
 
     is_anomaly = abs(z_score) > standard_deviation_threshold
     if is_anomaly:
-        logger.warning(
+        logger.warn(
             f"Data-Anomaly for {dataset}: Latest value {row_count}, mean: {mean:.2f}, "
             f"stdev: {standard_deviation:.2f}, z_score: {z_score:.2f}"
         )

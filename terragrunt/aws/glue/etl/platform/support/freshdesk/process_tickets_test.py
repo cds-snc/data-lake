@@ -420,10 +420,9 @@ def test_detect_anomalies_outlier(mock_logger):
     result = detect_anomalies(row_count, historical_data, 2.0)
 
     assert result == True
-    mock_logger.warning.assert_called_once()
+    mock_logger.warn.assert_called_once()
     assert (
-        "Data-Anomaly for Freshdesk: Latest value"
-        in mock_logger.warning.call_args[0][0]
+        "Data-Anomaly for Freshdesk: Latest value" in mock_logger.warn.call_args[0][0]
     )
 
 

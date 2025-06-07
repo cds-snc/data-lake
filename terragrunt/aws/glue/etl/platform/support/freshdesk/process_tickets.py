@@ -163,7 +163,7 @@ def get_days_tickets(day: datetime) -> pd.DataFrame:
             new_tickets[date_column] = new_tickets[date_column].dt.tz_localize(None)
 
     except wr.exceptions.NoFilesFound:
-        logger.warning("No new tickets found.")
+        logger.warn("No new tickets found.")
     return new_tickets
 
 
@@ -186,7 +186,7 @@ def get_existing_tickets(start_date: str) -> pd.DataFrame:
             None
         )  # Treat all as UTC
     except wr.exceptions.NoFilesFound:
-        logger.warning("No existing data found. Starting fresh.")
+        logger.warn("No existing data found. Starting fresh.")
 
     return existing_tickets
 
@@ -299,7 +299,7 @@ def detect_anomalies(
 
     is_anomaly = abs(z_score) > standard_deviation_threshold
     if is_anomaly:
-        logger.warning(
+        logger.warn(
             f"Data-Anomaly for Freshdesk: Latest value {row_count}, mean: {mean:.2f}, "
             f"stdev: {standard_deviation:.2f}, z_score: {z_score:.2f}"
         )
