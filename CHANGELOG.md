@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.6.0](https://github.com/cds-snc/data-lake/compare/v1.5.3...v1.6.0) (2025-06-10)
+
+
+### Features
+
+* add architecture diagrams for read/write operations ([#317](https://github.com/cds-snc/data-lake/issues/317)) ([0bd59d7](https://github.com/cds-snc/data-lake/commit/0bd59d7804eec97b57efcbd0c9b467f993ae6d1d))
+* allow Superset prod IAM role access to Notify data ([#318](https://github.com/cds-snc/data-lake/issues/318)) ([fb3e00a](https://github.com/cds-snc/data-lake/commit/fb3e00ad05ba3f7fdcc240d6a74ab442ff395eac))
+
+
+### Bug Fixes
+
+* switch to logger.warn to support Glue Python version ([#312](https://github.com/cds-snc/data-lake/issues/312)) ([03c8bcc](https://github.com/cds-snc/data-lake/commit/03c8bcccf5d2638ce612f3cf45bede69e251d4c2))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency requests to v2.32.4 [security] ([#316](https://github.com/cds-snc/data-lake/issues/316)) ([93e1b12](https://github.com/cds-snc/data-lake/commit/93e1b121cbdaa6397791694c47cca9fdbe9de0d5))
+
 ## [1.5.3](https://github.com/cds-snc/data-lake/compare/v1.5.2...v1.5.3) (2025-06-06)
 
 
