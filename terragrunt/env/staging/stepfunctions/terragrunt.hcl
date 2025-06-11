@@ -3,18 +3,10 @@ terraform {
 }
 
 dependencies {
-  paths = ["../glue", "../buckets", "../athena"]
+  paths = ["../glue", "../buckets"]
 }
 
 
-dependency "athena" {
-  config_path                             = "../athena"
-  mock_outputs_merge_strategy_with_state  = "shallow"
-  mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
-  mock_outputs = {
-    athena_curated_workgroup_name     = "athena-curated-workgroup-data-lake"
-  }
-}
 dependency "buckets" {
   config_path                             = "../buckets"
   mock_outputs_merge_strategy_with_state  = "shallow"
@@ -44,7 +36,6 @@ inputs = {
   platform_support_freshdesk_name = dependency.glue.outputs.platform_support_freshdesk_name
   bes_crm_salesforce_name         = dependency.glue.outputs.bes_crm_salesforce_name
   curated_bucket_name             = dependency.buckets.outputs.curated_bucket_name
-  athena_curated_workgroup_name           = dependency.athena.outputs.athena_curated_workgroup_name
   athena_bucket_name              = dependency.buckets.outputs.athena_bucket_name
   transformed_bucket_name         = dependency.buckets.outputs.transformed_bucket_name
 }

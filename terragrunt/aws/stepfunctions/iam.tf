@@ -52,28 +52,21 @@ data "aws_iam_policy_document" "sfn_glue_policy" {
     ]
   }
 
-  # Athena permissions
+  # S3 permissions read
   statement {
     effect = "Allow"
     actions = [
-      "athena:StartQueryExecution",
-      "athena:StopQueryExecution",
-      "athena:GetQueryExecution",
-      "athena:GetQueryResults",
-      "athena:GetWorkGroup",
-      "athena:GetDatabase",
-      "athena:ListQueryExecutions",
-      "athena:BatchGetQueryExecution"
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
     ]
     resources = [
-      "arn:aws:athena:${var.region}:${var.account_id}:workgroup/${var.athena_curated_workgroup_name}",
-      "arn:aws:athena:${var.region}:${var.account_id}:datacatalog/AwsDataCatalog",
-      "arn:aws:athena:${var.region}:${var.account_id}:database/platform_gc_notify_${var.env}",
-      "arn:aws:athena:${var.region}:${var.account_id}:query-execution/*"
+      "arn:aws:s3:::${var.transformed_bucket_name}",
+      "arn:aws:s3:::${var.transformed_bucket_name}/*"
     ]
   }
 
-  # S3 permissions for both Glue and Athena
+  # S3 permissions read/write/delete
   statement {
     effect = "Allow"
     actions = [
@@ -87,11 +80,7 @@ data "aws_iam_policy_document" "sfn_glue_policy" {
     ]
     resources = [
       "arn:aws:s3:::${var.curated_bucket_name}",
-      "arn:aws:s3:::${var.curated_bucket_name}/*",
-      "arn:aws:s3:::${var.athena_bucket_name}",
-      "arn:aws:s3:::${var.athena_bucket_name}/*",
-      "arn:aws:s3:::${var.transformed_bucket_name}",
-      "arn:aws:s3:::${var.transformed_bucket_name}/*"
+      "arn:aws:s3:::${var.curated_bucket_name}/*"
     ]
   }
 

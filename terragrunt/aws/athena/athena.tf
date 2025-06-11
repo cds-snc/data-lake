@@ -14,20 +14,3 @@ resource "aws_athena_workgroup" "data_lake" {
     }
   }
 }
-
-resource "aws_athena_workgroup" "data_lake_curated" {
-  name = "data-lake-curated-${var.env}"
-
-  configuration {
-    enforce_workgroup_configuration    = false
-    publish_cloudwatch_metrics_enabled = true
-
-    result_configuration {
-      output_location = "s3://${var.curated_bucket_name}/"
-
-      encryption_configuration {
-        encryption_option = "SSE_S3"
-      }
-    }
-  }
-}

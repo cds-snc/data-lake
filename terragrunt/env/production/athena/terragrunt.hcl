@@ -12,13 +12,11 @@ dependency "buckets" {
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
     athena_bucket_name = "mock-athena-bucket"
-    curated_bucket_name = "mock-curated-bucket"
   }
 }
 
 inputs = {
   athena_bucket_name = dependency.buckets.outputs.athena_bucket_name
-  curated_bucket_name = dependency.buckets.outputs.curated_bucket_name
 }
 
 include {
