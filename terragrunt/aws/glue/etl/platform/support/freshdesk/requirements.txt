@@ -1,4 +1,4 @@
-awswrangler==3.11.0
-boto3==1.38.23
+awswrangler==3.12.0
+boto3==1.38.29
 pandas==2.2.3
 great_expectations==0.18.22
