@@ -13,7 +13,6 @@ output "glue_etl_spark_log_group_name" {
   value       = local.glue_etl_spark_log_group_name
 }
 
-
 output "platform_gc_forms_job_name" {
   description = "Gc Forms Glue job name."
   value       = aws_glue_job.platform_gc_forms_job.name
@@ -23,6 +22,7 @@ output "platform_gc_notify_job_name" {
   description = "Gc Notify Glue job name."
   value       = aws_glue_job.platform_gc_notify_job.name
 }
+
 output "platform_support_freshdesk_name" {
   description = "Freshdesk Glue job name."
   value       = aws_glue_job.platform_support_freshdesk.name

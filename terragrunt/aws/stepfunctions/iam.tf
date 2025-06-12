@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "sfn_assume_role" {
 }
 
 resource "aws_iam_role" "sfn_role" {
-  name               = "StepFunctionsRole"
+  name               = "DataLakeOrchestratorRole"
   assume_role_policy = data.aws_iam_policy_document.sfn_assume_role.json
 }
 
@@ -87,7 +87,7 @@ data "aws_iam_policy_document" "sfn_glue_policy" {
 }
 
 resource "aws_iam_policy" "sfn_glue_policy" {
-  name   = "StepFunctionsGluePolicy"
+  name   = "DataLakeOrchestratorGluePolicy"
   policy = data.aws_iam_policy_document.sfn_glue_policy.json
 }
 
