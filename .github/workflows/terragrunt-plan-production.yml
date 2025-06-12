@@ -91,3 +91,13 @@ jobs:
           comment-title: "Production: export 💾"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
+
+      - name: Terragrunt plan stepfunctions
+        uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
+        with:
+          directory: "terragrunt/env/production/stepfunctions"
+          comment-delete: "true"
+          comment-title: "Production: stepfunctions 🤖"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+          

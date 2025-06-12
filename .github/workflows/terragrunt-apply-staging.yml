@@ -65,6 +65,10 @@ jobs:
         working-directory: terragrunt/env/staging/export
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
+      - name: Terragrunt apply stepfunctions
+        working-directory: terragrunt/env/staging/stepfunctions
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
       - name: Report deployment to Sentinel
         if: always()
         uses: cds-snc/sentinel-forward-data-action@main
