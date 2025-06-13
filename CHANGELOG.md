@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.7.0](https://github.com/cds-snc/data-lake/compare/v1.6.0...v1.7.0) (2025-06-13)
+
+
+### Features
+
+* add CODEOWNERS ([#319](https://github.com/cds-snc/data-lake/issues/319)) ([cd044cd](https://github.com/cds-snc/data-lake/commit/cd044cda6d9366ec1c721529e74bb162bfc25e34))
+* add Slack notification for Security PRs ([#322](https://github.com/cds-snc/data-lake/issues/322)) ([4e340aa](https://github.com/cds-snc/data-lake/commit/4e340aa14c201d0e802f492bd600a9d06f0c4bbd))
+* added stepfunctions state machine ([#321](https://github.com/cds-snc/data-lake/issues/321)) ([67769fc](https://github.com/cds-snc/data-lake/commit/67769fcba83fa768b86328170b58298a7f259383))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#313](https://github.com/cds-snc/data-lake/issues/313)) ([98c94ff](https://github.com/cds-snc/data-lake/commit/98c94ff826226fdb9d35f949080fb2c9437368e2))
+* **deps:** update all minor dependencies ([#311](https://github.com/cds-snc/data-lake/issues/311)) ([f802eb0](https://github.com/cds-snc/data-lake/commit/f802eb0335990bcc7af8174c0e0e0473314048ba))
+* **deps:** update all patch dependencies ([#310](https://github.com/cds-snc/data-lake/issues/310)) ([216fc12](https://github.com/cds-snc/data-lake/commit/216fc124c4cf0c8373e4e31f104a83152207b3c5))
+
 ## [1.6.0](https://github.com/cds-snc/data-lake/compare/v1.5.3...v1.6.0) (2025-06-10)
 
 
