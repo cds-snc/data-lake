@@ -1,0 +1,31 @@
+name: Dependency Security Updates
+on:
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-security-update:
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.title, '[security]') && github.actor == 'renovate[bot]'
+    steps:
+      - name: Send Slack notification
+        run: |
+          curl \
+            --request POST \
+            --header 'Content-type: application/json' \
+            --data "{
+              \"blocks\": [
+                {
+                  \"type\": \"section\",
+                  \"text\": {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"🔒 Security dependency PR opened for the Data Lake:\n<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\"
+                  }
+                }
+              ]
+            }" \
+            ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}
