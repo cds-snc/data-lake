@@ -37,3 +37,8 @@ resource "aws_glue_catalog_database" "operations_aws_production_raw" {
   name        = "operations_aws_${var.env}_raw"
   description = "RAW: data source path: /operations/aws/*"
 }
+
+resource "aws_glue_catalog_database" "platform_gc_notify_production_curated" {
+  name        = "platform_gc_notify_${var.env}_curated"
+  description = "CURATED: data source path /platform/gc-notify/*"
+}

@@ -18,6 +18,11 @@ variable "bes_crm_salesforce_name" {
   type        = string
 }
 
+variable "platform_gc_notify_curated_job_name" {
+  description = "GC Notify Curated Glue job name."
+  type        = string
+}
+
 variable "curated_bucket_name" {
   description = "Curated bucket name where the Glue jobs will write their output."
   type        = string
