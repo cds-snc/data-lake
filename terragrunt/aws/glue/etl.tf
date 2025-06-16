@@ -305,7 +305,7 @@ resource "aws_glue_trigger" "bes_crm_salesforce" {
   name     = "BES / CRM / Salesforce"
   schedule = "cron(00 7 * * ? *)" # 7am UTC every day
   type     = "SCHEDULED"
-  enabled  = local.is_production
+  enabled  = false # Change for local.is_production to enable
 
   actions {
     job_name = aws_glue_job.bes_crm_salesforce.name
