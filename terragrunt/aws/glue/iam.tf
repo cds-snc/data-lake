@@ -332,8 +332,8 @@ data "aws_iam_policy_document" "bes_strategic_data_access" {
       "arn:aws:glue:${var.region}:${var.account_id}:catalog",
       "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.bes_strategic_data_production.name}",
       "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.bes_strategic_data_production_raw.name}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_table.bes_strategic_data_production.name}/*",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_table.bes_strategic_data_production_raw.name}/*"
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.bes_strategic_data_production.name}/*",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_database.bes_strategic_data_production_raw.name}/*"
     ]
   }
 
