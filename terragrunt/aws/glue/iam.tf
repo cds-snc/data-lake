@@ -224,3 +224,131 @@ data "aws_iam_policy_document" "cloudwatch_metrics" {
     ]
   }
 }
+
+#
+# BES Strategic Data
+# Grants access to the `bes/strategic-data/*` S3 prefix and related Glue and Athena resources.
+#
+resource "aws_iam_policy" "bes_strategic_data_access" {
+  name   = "bes-strategic-data-access"
+  path   = "/"
+  policy = data.aws_iam_policy_document.bes_strategic_data_access.json
+}
+
+data "aws_iam_policy_document" "bes_strategic_data_access" {
+  version = "2012-10-17"
+
+  statement {
+    sid    = "S3ListBuckets"
+    effect = "Allow"
+    actions = [
+      "s3:GetBucketVersioning",
+      "s3:ListAllMyBuckets"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "S3ListObjects"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:ListBucketVersions"
+    ]
+    resources = [
+      var.raw_bucket_arn,
+      var.transformed_bucket_arn
+    ]
+    condition {
+      test     = "ForAnyValue:StringLike"
+      variable = "s3:prefix"
+      values = [
+        "",
+        "${local.s3_bes_prefix}/",
+        "${local.s3_bes_strategic_data_prefix}/*"
+      ]
+    }
+  }
+
+  statement {
+    sid    = "S3ObjectsReadWrite"
+    effect = "Allow"
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:DeleteObject",
+      "s3:DeleteObjectVersion",
+      "s3:GetObject",
+      "s3:GetObjectAcl",
+      "s3:GetObjectTagging",
+      "s3:GetObjectVersion",
+      "s3:GetObjectVersionTagging",
+      "s3:ListBucketVersions",
+      "s3:ListMultipartUploadParts",
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:PutObjectTagging",
+      "s3:PutObjectVersionAcl",
+      "s3:PutObjectVersionTagging"
+    ]
+    resources = [
+      "${var.raw_bucket_arn}/${local.s3_bes_strategic_data_prefix}/*",
+      "${var.transformed_bucket_arn}/${local.s3_bes_strategic_data_prefix}/*",
+    ]
+  }
+
+  statement {
+    sid    = "AthenaAccess"
+    effect = "Allow"
+    actions = [
+      "athena:ListWorkGroups",
+      "athena:GetWorkGroup",
+      "athena:StartQueryExecution",
+      "athena:GetQueryExecution",
+      "athena:GetQueryResults",
+      "athena:StopQueryExecution",
+      "athena:ListQueryExecutions",
+      "athena:BatchGetQueryExecution"
+    ]
+    resources = [
+      "arn:aws:athena:${var.region}:${var.account_id}:workgroup/data-lake-${var.env}"
+    ]
+  }
+
+  statement {
+    sid    = "GlueTableReadAccess"
+    effect = "Allow"
+    actions = [
+      "glue:GetColumnStatisticsTaskRuns",
+      "glue:GetTable",
+      "glue:GetTableVersion",
+      "glue:GetTableVersions",
+      "glue:GetTables",
+      "glue:GetDatabase",
+      "glue:GetDatabases",
+      "glue:GetPartitions",
+      "glue:SearchTables"
+    ]
+    resources = [
+      "arn:aws:glue:${var.region}:${var.account_id}:catalog",
+      "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.bes_strategic_data_production.name}",
+      "arn:aws:glue:${var.region}:${var.account_id}:database/${aws_glue_catalog_database.bes_strategic_data_production_raw.name}",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_table.bes_strategic_data_production.name}/*",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${aws_glue_catalog_table.bes_strategic_data_production_raw.name}/*"
+    ]
+  }
+
+  statement {
+    sid    = "AthenaResultsAccess"
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      var.athena_bucket_arn,
+      "${var.athena_bucket_arn}/*",
+    ]
+  }
+}
