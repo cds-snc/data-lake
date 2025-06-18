@@ -1,3 +1,28 @@
+resource "aws_glue_catalog_database" "bes_crm_salesforce_production" {
+  name        = "bes_crm_salesforce_${var.env}"
+  description = "TRANSFORMED: data source path: /bes/crm/salesforce/*"
+}
+
+resource "aws_glue_catalog_database" "bes_strategic_data_production" {
+  name        = "bes_strategic_data_${var.env}"
+  description = "TRANSFORMED: data source path: /bes/strategic-data/*"
+}
+
+resource "aws_glue_catalog_database" "bes_strategic_data_production_raw" {
+  name        = "bes_strategic_data_${var.env}_raw"
+  description = "RAW: data source path: /bes/strategic-data/*"
+}
+
+resource "aws_glue_catalog_database" "operations_aws_production" {
+  name        = "operations_aws_${var.env}"
+  description = "TRANSFORMED: data source path: /operations/aws/*"
+}
+
+resource "aws_glue_catalog_database" "operations_aws_production_raw" {
+  name        = "operations_aws_${var.env}_raw"
+  description = "RAW: data source path: /operations/aws/*"
+}
+
 resource "aws_glue_catalog_database" "platform_gc_forms_production" {
   name        = "platform_gc_forms_${var.env}"
   description = "TRANSFORMED: data source path: /platform/gc-forms/*"
