@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.7.0](https://github.com/cds-snc/data-lake/compare/v1.6.0...v1.7.0) (2025-06-18)
+
+
+### Features
+
+* add CODEOWNERS ([#319](https://github.com/cds-snc/data-lake/issues/319)) ([cd044cd](https://github.com/cds-snc/data-lake/commit/cd044cda6d9366ec1c721529e74bb162bfc25e34))
+* add Slack notification for Security PRs ([#322](https://github.com/cds-snc/data-lake/issues/322)) ([4e340aa](https://github.com/cds-snc/data-lake/commit/4e340aa14c201d0e802f492bd600a9d06f0c4bbd))
+* added stepfunctions state machine ([#321](https://github.com/cds-snc/data-lake/issues/321)) ([67769fc](https://github.com/cds-snc/data-lake/commit/67769fcba83fa768b86328170b58298a7f259383))
+* BES Strategic Data S3 and Glue access ([#327](https://github.com/cds-snc/data-lake/issues/327)) ([b1ddc93](https://github.com/cds-snc/data-lake/commit/b1ddc93f785cbab0a5478ba20d2bc8cb08b47906))
+
+
+### Bug Fixes
+
+* pause salesforce ETL ([#325](https://github.com/cds-snc/data-lake/issues/325)) ([c2b9312](https://github.com/cds-snc/data-lake/commit/c2b93121265b8052cab8c42b2fb12bf148e1e448))
+* pin GitHub actions to commit SHAs ([#326](https://github.com/cds-snc/data-lake/issues/326)) ([5980cf8](https://github.com/cds-snc/data-lake/commit/5980cf8f4919ac5c67048ec9a6a94a98052602bc))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#313](https://github.com/cds-snc/data-lake/issues/313)) ([98c94ff](https://github.com/cds-snc/data-lake/commit/98c94ff826226fdb9d35f949080fb2c9437368e2))
+* **deps:** update all minor dependencies ([#311](https://github.com/cds-snc/data-lake/issues/311)) ([f802eb0](https://github.com/cds-snc/data-lake/commit/f802eb0335990bcc7af8174c0e0e0473314048ba))
+* **deps:** update all minor dependencies ([#324](https://github.com/cds-snc/data-lake/issues/324)) ([f187ade](https://github.com/cds-snc/data-lake/commit/f187ade7d856fe38acb3892b3eefa9057d647203))
+* **deps:** update all patch dependencies ([#310](https://github.com/cds-snc/data-lake/issues/310)) ([216fc12](https://github.com/cds-snc/data-lake/commit/216fc124c4cf0c8373e4e31f104a83152207b3c5))
+* **deps:** update dependency boto3 to v1.38.32 ([#323](https://github.com/cds-snc/data-lake/issues/323)) ([5d0bdc2](https://github.com/cds-snc/data-lake/commit/5d0bdc2165d55f331a9f99254e2ce6162db7c835))
+
 ## [1.6.0](https://github.com/cds-snc/data-lake/compare/v1.5.3...v1.6.0) (2025-06-10)
 
 
