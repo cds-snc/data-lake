@@ -2,8 +2,7 @@ import sys
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 
-import awswrangler as wr
-from pyspark.sql import DataFrame as SparkDataFrame 
+from pyspark.sql import DataFrame as SparkDataFrame
 
 from awsglue.context import GlueContext
 from awsglue.job import Job
@@ -11,18 +10,18 @@ from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 
 args = getResolvedOptions(
-        sys.argv,
-        [
-            "JOB_NAME",
-            "curated_bucket",
-            "curated_prefix",
-            "database_name_transformed",
-            "database_name_curated",
-            "target_env",
-            "start_month",
-            "end_month",
-        ],
-    )
+    sys.argv,
+    [
+        "JOB_NAME",
+        "curated_bucket",
+        "curated_prefix",
+        "database_name_transformed",
+        "database_name_curated",
+        "target_env",
+        "start_month",
+        "end_month",
+    ],
+)
 
 JOB_NAME = args["JOB_NAME"]
 CURATED_BUCKET = args["curated_bucket"]
@@ -62,10 +61,11 @@ job.init(JOB_NAME, args)
 logger = glueContext.get_logger()
 
 
-def execute_enrichment_query(start_month_str: str, end_month_str: str) -> SparkDataFrame:  # Changed return type
+def execute_enrichment_query(
+    start_month_str: str, end_month_str: str
+) -> SparkDataFrame:  # Changed return type
     """Execute the SQL query to create enriched notification dataset."""
     logger.info(f"Processing month range: {start_month_str} to {end_month_str}")
-
 
     sql_query = f"""
     WITH notification_data AS (
@@ -190,15 +190,15 @@ def execute_enrichment_query(start_month_str: str, end_month_str: str) -> SparkD
     logger.info("Executing enrichment SQL query using Spark")
     df = spark.sql(sql_query)
 
-    row_count = df.count()  
+    row_count = df.count()
     logger.info(f"Query returned {row_count} rows")
     return df
 
 
-def write_to_curated(df: SparkDataFrame, table_name: str):  
+def write_to_curated(df: SparkDataFrame, table_name: str):
     """Write the enriched dataset to the curated bucket with partitioning and overwrite."""
     try:
-        row_count = df.count()  
+        row_count = df.count()
         s3_path = f"s3://{CURATED_BUCKET}/{CURATED_PREFIX}/{table_name}/"
 
         logger.info(f"Writing {row_count} rows to {s3_path}")
@@ -206,28 +206,28 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
 
         # First, write the parquet files with dynamic partition overwrite
         spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
-        
-        df.write \
-          .mode("overwrite") \
-          .partitionBy("year", "month") \
-          .option("path", s3_path) \
-          .parquet(s3_path)
+
+        df.write.mode("overwrite").partitionBy("year", "month").parquet(s3_path)
 
         # Create/update the Glue table separately to ensure it exists
-        logger.info(f"Creating/updating Glue table {DATABASE_NAME_CURATED}.{table_name}")
-        
+        logger.info(
+            f"Creating/updating Glue table {DATABASE_NAME_CURATED}.{table_name}"
+        )
+
         # Create temp view from the original DataFrame (no extra read needed)
         df.createOrReplaceTempView("temp_table_for_registration")
-        
+
         # Create the table in Glue Data Catalog using the original DataFrame's schema
-        spark.sql(f"""
+        spark.sql(
+            f"""
             CREATE TABLE IF NOT EXISTS {DATABASE_NAME_CURATED}.{table_name}
             USING PARQUET
             LOCATION '{s3_path}'
-            PARTITIONED BY (year STRING, month STRING)
+            PARTITIONED BY (year, month)
             AS SELECT * FROM temp_table_for_registration WHERE 1=0
-        """)
-        
+        """
+        )
+
         # Refresh partitions to ensure Glue knows about the new partitions
         spark.sql(f"MSCK REPAIR TABLE {DATABASE_NAME_CURATED}.{table_name}")
 
@@ -251,13 +251,11 @@ def main():
 
         logger.info(f"Processing date range: {start_month_str} to {end_month_str}")
 
-
-
         # Execute SQL query to create enriched dataset
         enriched_df = execute_enrichment_query(start_month_str, end_month_str)
 
         # Write to curated bucket with partition overwrite
-        table_name = "notification_enriched"
+        table_name = "platform_gc_notify_notifications_enriched"
         write_to_curated(enriched_df, table_name)
 
         logger.info("Notification enrichment job completed successfully")

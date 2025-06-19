@@ -16,7 +16,7 @@ resource "aws_glue_job" "platform_gc_notify_curated" {
   name = "Platform / GC Notify / Curated / Notification Enriched"
 
   glue_version           = "5.0"
-  timeout                = 15 # minutes
+  timeout                = 15 # minutes 
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
   worker_type            = "G.1X"
@@ -28,7 +28,6 @@ resource "aws_glue_job" "platform_gc_notify_curated" {
   }
 
   default_arguments = {
-    "--additional-python-modules"        = "awswrangler==3.12.0"
     "--continuous-log-logGroup"          = "/aws-glue/jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
     "--continuous-log-logStreamPrefix"   = "platform_gc_notify_curated"
     "--enable-continuous-cloudwatch-log" = "true"
@@ -40,10 +39,11 @@ resource "aws_glue_job" "platform_gc_notify_curated" {
     "--job-language"                     = "python"
     "--curated_bucket"                   = var.curated_bucket_name
     "--curated_prefix"                   = "platform/gc-notify"
+    "--enable-glue-datacatalog"          = "true"
     "--database_name_transformed"        = aws_glue_catalog_database.platform_gc_notify_production.name
     "--database_name_curated"            = aws_glue_catalog_database.platform_gc_notify_production_curated.name
     "--target_env"                       = var.env
-    "--start_month"                      = " "  # Default empty - will use current and previous month
-    "--end_month"                        = " "  # Default empty - will use current and previous month
+    "--start_month"                      = " " # Default empty - will use current and previous month
+    "--end_month"                        = " " # Default empty - will use current and previous month
   }
 }

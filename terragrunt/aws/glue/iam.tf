@@ -92,8 +92,7 @@ data "aws_iam_policy_document" "glue_etl_combined" {
     data.aws_iam_policy_document.s3_write_data_lake.json,
     data.aws_iam_policy_document.glue_kms.json,
     data.aws_iam_policy_document.gc_notify_rds_export_kms.json,
-    data.aws_iam_policy_document.cloudwatch_metrics.json,
-    data.aws_iam_policy_document.glue_pass_role.json
+    data.aws_iam_policy_document.cloudwatch_metrics.json
   ]
 }
 
@@ -226,15 +225,6 @@ data "aws_iam_policy_document" "cloudwatch_metrics" {
   }
 }
 
-# Allow Glue ETL role to pass itself to Glue jobs
-data "aws_iam_policy_document" "glue_pass_role" {
-  statement {
-    sid = "PassGlueETLRole"
-    actions = [
-      "iam:PassRole"
-    ]
-    resources = [
-      "arn:aws:iam::${var.account_id}:role/service-role/AWSGlueETL-DataLake"
 #
 # BES Strategic Data
 # Grants access to the `bes/strategic-data/*` S3 prefix and related Glue and Athena resources.
