@@ -47,3 +47,8 @@ resource "aws_glue_catalog_database" "platform_support_production_raw" {
   name        = "platform_support_${var.env}_raw"
   description = "RAW: data source path: /platform/support/*"
 }
+
+resource "aws_glue_catalog_database" "platform_gc_notify_production_curated" {
+  name        = "platform_gc_notify_${var.env}_curated"
+  description = "CURATED: data source path /platform/gc-notify/*"
+}

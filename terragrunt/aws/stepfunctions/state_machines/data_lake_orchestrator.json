@@ -1,10 +1,10 @@
 {
-  "Comment": "Orchestrates data pipeline jobs in parallel",
-  "StartAt": "ParallelJobs",
+  "Comment": "Orchestrates data pipeline jobs in parallel, followed by curated jobs",
+  "StartAt": "ParallelTransformedJobs",
   "States": {
-    "ParallelJobs": {
+    "ParallelTransformedJobs": {
       "Type": "Parallel",
-      "Next": "AllJobsComplete",
+      "Next": "ParallelCuratedJobs",
       "Branches": [
         {
           "StartAt": "StartGCFormsJob",
@@ -98,6 +98,36 @@
             "SalesforceJobFailed": {
               "Type": "Pass",
               "Result": "Salesforce Glue job failed",
+              "End": true
+            }
+          }
+        }
+      ]
+    },
+    "ParallelCuratedJobs": {
+      "Type": "Parallel",
+      "Next": "AllJobsComplete",
+      "Branches": [
+        {
+          "StartAt": "StartGCNotifyCuratedJob",
+          "States": {
+            "StartGCNotifyCuratedJob": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "${platform_gc_notify_curated_job_name}"
+              },
+              "Catch": [
+                {
+                  "ErrorEquals": ["States.ALL"],
+                  "Next": "GCNotifyCuratedJobFailed"
+                }
+              ],
+              "End": true
+            },
+            "GCNotifyCuratedJobFailed": {
+              "Type": "Pass",
+              "Result": "GC Notify Curated Glue job failed",
               "End": true
             }
           }

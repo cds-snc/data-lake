@@ -32,3 +32,8 @@ output "bes_crm_salesforce_name" {
   description = "Salesforce Glue job name."
   value       = aws_glue_job.bes_crm_salesforce.name
 }
+
+output "platform_gc_notify_curated_job_name" {
+  description = "GC Notify Curated Glue job name."
+  value       = aws_glue_job.platform_gc_notify_curated.name
+}
