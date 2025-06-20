@@ -133,7 +133,7 @@ resource "aws_glue_job" "platform_gc_notify_job" {
   timeout                = 90 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-  worker_type            = "G.2X"
+  worker_type            = "G.3X"
   number_of_workers      = 2
 
   command {
