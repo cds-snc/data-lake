@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/cds-snc/data-lake/compare/v1.7.0...v1.8.0) (2025-06-20)
+
+
+### Features
+
+* add glue gold table job ([#329](https://github.com/cds-snc/data-lake/issues/329)) ([dc2fc45](https://github.com/cds-snc/data-lake/commit/dc2fc4530ffa9c4230822537252a9cd847965306))
+
 ## [1.7.0](https://github.com/cds-snc/data-lake/compare/v1.6.0...v1.7.0) (2025-06-18)
 
 
