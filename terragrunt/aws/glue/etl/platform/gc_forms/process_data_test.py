@@ -21,8 +21,6 @@ mock_args = {
     "database_name_transformed": "test_transformed_db",
     "table_name_prefix": "test_table",
     "gx_config_object": "s3://test-config-bucket/test-config-key",
-    "first_date": "yesterday",
-    "last_date": "yesterday",
 }
 
 # Mock the AWS Glue and PySpark modules
@@ -73,7 +71,7 @@ def datasets_params():
             "addresscomplete_count",
         ],
         "partition_timestamp": "timestamp",
-        "partition_columns": ["year", "month", "day"],
+        "partition_columns": ["year", "month"],
         "email_columns": ["deliveryemaildestination"],
         "gx_checkpoint": "forms-template_checkpoint",
     }
@@ -228,13 +226,9 @@ def test_publish_metric(mock_logger, mock_datetime):
 @patch("awswrangler.s3")
 def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
 
-    # The job runs on jan 2
-    fixed_date = datetime(2025, 1, 2)
-
-    # We get the last modified date from the S3 bucket as two days prior (for a buffer)
-    last_modified_begin = datetime(2024, 12, 31).replace(tzinfo=timezone.utc)
-    last_modified_end = datetime(2025, 1, 1).replace(tzinfo=timezone.utc)
-    mock_timestamp.now.return_value = fixed_date
+    fixed_date = datetime(1970, 1, 2)
+    fixed_date_yesterday = datetime(1970, 1, 1)
+    mock_timestamp.today.return_value = fixed_date
 
     # This data has timestamp of jan 1st
     mock_wr_s3.read_parquet.return_value = sample_data_df
@@ -245,7 +239,7 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
         drop_columns=["ispublished"],
         field_count_columns=["checkbox_count", "muffin_count"],
         email_columns=["deliveryemaildestination"],
-        partition_columns=["year", "month", "day"],
+        partition_columns=["year", "month"],
         partition_timestamp="timestamp",
     )
 
@@ -254,8 +248,7 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
         path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/test-path/",
         use_threads=True,
         dataset=True,
-        last_modified_begin=last_modified_begin,
-        last_modified_end=last_modified_end,
+        last_modified_begin=fixed_date_yesterday,
     )
 
     # Verify data is processed correctly
@@ -264,39 +257,39 @@ def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
     assert "ispublished" not in result.columns
 
     # One row is dropped because its dated after the job run date
-    assert len(result) == len(sample_data_df) - 1
+    assert len(result) == len(sample_data_df)
 
     # Verify email columns are processed correctly
-    assert (result["deliveryemaildestination"].values == ["bar.com", "baz.com"]).all()
+    assert (
+        result["deliveryemaildestination"].values == ["bar.com", "baz.com", None]
+    ).all()
 
     # Verify field count columns are processed correctly
-    assert (result["checkbox_count"].values == [63, 0]).all()
-    assert (result["muffin_count"].values == [0, 0]).all()
+    assert (result["checkbox_count"].values == [63, 0, 0]).all()
+    assert (result["muffin_count"].values == [0, 0, 0]).all()
 
     # Test date columns TZ localization
     for date_column in ["ttl", "timestamp", "created_at"]:
         assert result[date_column].dt.tz is None
 
 
+@patch("pandas.Timestamp")
 @patch("awswrangler.s3")
-def test_get_new_data_historical(mock_wr_s3, sample_data_df):
+def test_get_new_data_historical(mock_wr_s3, mock_timestamp, sample_data_df):
 
-    first_date = "2025-01-01"
-    last_date = "2025-01-02"
-    last_modified_begin = datetime(2024, 12, 31).replace(tzinfo=timezone.utc)
-    last_modified_end = datetime(2025, 1, 2).replace(tzinfo=timezone.utc)
+    fixed_date = datetime(1970, 1, 2)
+    fixed_date_yesterday = datetime(1970, 1, 1)
+    mock_timestamp.today.return_value = fixed_date
 
     mock_wr_s3.read_parquet.return_value = sample_data_df
 
     result = get_new_data(
-        first_date=first_date,
-        last_date=last_date,
         path="test-path",
         date_columns=["ttl", "timestamp", "created_at"],
         drop_columns=["ispublished"],
         field_count_columns=["checkbox_count", "muffin_count"],
         email_columns=["deliveryemaildestination"],
-        partition_columns=["year", "month", "day"],
+        partition_columns=["year", "month"],
         partition_timestamp="timestamp",
     )
 
@@ -305,8 +298,7 @@ def test_get_new_data_historical(mock_wr_s3, sample_data_df):
         path=f"s3://{SOURCE_BUCKET}/{SOURCE_PREFIX}/test-path/",
         use_threads=True,
         dataset=True,
-        last_modified_begin=last_modified_begin,
-        last_modified_end=last_modified_end,
+        last_modified_begin=fixed_date_yesterday,
     )
 
     # Verify data is processed correctly
@@ -659,7 +651,7 @@ def test_detect_anomalies_normal_data():
     historical_data = np.array([100, 110, 105, 95, 108])
     row_count = 107
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False
 
@@ -669,18 +661,18 @@ def test_detect_anomalies_outlier(mock_logger):
     historical_data = np.array([100, 110, 105, 95, 108])
     row_count = 200
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == True
-    mock_logger.error.assert_called_once()
-    assert "Anomaly: Latest value" in mock_logger.error.call_args[0][0]
+    mock_logger.warn.assert_called_once()
+    assert "Data-Anomaly for foo: Latest value" in mock_logger.warn.call_args[0][0]
 
 
 def test_detect_anomalies_zero_standard_deviation():
     historical_data = np.array([100, 100, 100, 100])
     row_count = 110
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False
 
@@ -690,6 +682,6 @@ def test_detect_anomalies_empty_history():
     historical_data = np.array([])
     row_count = 100
 
-    result = detect_anomalies(row_count, historical_data, 2.0)
+    result = detect_anomalies("foo", row_count, historical_data, 2.0)
 
     assert result == False

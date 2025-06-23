@@ -1,0 +1,141 @@
+{
+  "Comment": "Orchestrates data pipeline jobs in parallel, followed by curated jobs",
+  "StartAt": "ParallelTransformedJobs",
+  "States": {
+    "ParallelTransformedJobs": {
+      "Type": "Parallel",
+      "Next": "ParallelCuratedJobs",
+      "Branches": [
+        {
+          "StartAt": "StartGCFormsJob",
+          "States": {
+            "StartGCFormsJob": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "${platform_gc_forms_job_name}"
+              },
+              "Catch": [
+                {
+                  "ErrorEquals": ["States.ALL"],
+                  "Next": "GCFormsJobFailed"
+                }
+              ],
+              "End": true
+            },
+            "GCFormsJobFailed": {
+              "Type": "Pass",
+              "Result": "GC Forms Glue job failed",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "StartGCNotifyJob",
+          "States": {
+            "StartGCNotifyJob": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "${platform_gc_notify_job_name}"
+              },
+              "Catch": [
+                {
+                  "ErrorEquals": ["States.ALL"],
+                  "Next": "GCNotifyJobFailed"
+                }
+              ],
+              "End": true
+            },
+            "GCNotifyJobFailed": {
+              "Type": "Pass",
+              "Result": "GC Notify Glue job failed",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "StartFreshdeskJob",
+          "States": {
+            "StartFreshdeskJob": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "${platform_support_freshdesk_name}"
+              },
+              "Catch": [
+                {
+                  "ErrorEquals": ["States.ALL"],
+                  "Next": "FreshdeskJobFailed"
+                }
+              ],
+              "End": true
+            },
+            "FreshdeskJobFailed": {
+              "Type": "Pass",
+              "Result": "Freshdesk Glue job failed",
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "StartSalesforceJob",
+          "States": {
+            "StartSalesforceJob": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "${bes_crm_salesforce_name}"
+              },
+              "Catch": [
+                {
+                  "ErrorEquals": ["States.ALL"],
+                  "Next": "SalesforceJobFailed"
+                }
+              ],
+              "End": true
+            },
+            "SalesforceJobFailed": {
+              "Type": "Pass",
+              "Result": "Salesforce Glue job failed",
+              "End": true
+            }
+          }
+        }
+      ]
+    },
+    "ParallelCuratedJobs": {
+      "Type": "Parallel",
+      "Next": "AllJobsComplete",
+      "Branches": [
+        {
+          "StartAt": "StartGCNotifyCuratedJob",
+          "States": {
+            "StartGCNotifyCuratedJob": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "${platform_gc_notify_curated_job_name}"
+              },
+              "Catch": [
+                {
+                  "ErrorEquals": ["States.ALL"],
+                  "Next": "GCNotifyCuratedJobFailed"
+                }
+              ],
+              "End": true
+            },
+            "GCNotifyCuratedJobFailed": {
+              "Type": "Pass",
+              "Result": "GC Notify Curated Glue job failed",
+              "End": true
+            }
+          }
+        }
+      ]
+    },
+    "AllJobsComplete": {
+      "Type": "Succeed"
+    }
+  }
+}

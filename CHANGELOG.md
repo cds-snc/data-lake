@@ -1,5 +1,93 @@
 # Changelog
 
+## [1.7.0](https://github.com/cds-snc/data-lake/compare/v1.6.0...v1.7.0) (2025-06-18)
+
+
+### Features
+
+* add CODEOWNERS ([#319](https://github.com/cds-snc/data-lake/issues/319)) ([cd044cd](https://github.com/cds-snc/data-lake/commit/cd044cda6d9366ec1c721529e74bb162bfc25e34))
+* add Slack notification for Security PRs ([#322](https://github.com/cds-snc/data-lake/issues/322)) ([4e340aa](https://github.com/cds-snc/data-lake/commit/4e340aa14c201d0e802f492bd600a9d06f0c4bbd))
+* added stepfunctions state machine ([#321](https://github.com/cds-snc/data-lake/issues/321)) ([67769fc](https://github.com/cds-snc/data-lake/commit/67769fcba83fa768b86328170b58298a7f259383))
+* BES Strategic Data S3 and Glue access ([#327](https://github.com/cds-snc/data-lake/issues/327)) ([b1ddc93](https://github.com/cds-snc/data-lake/commit/b1ddc93f785cbab0a5478ba20d2bc8cb08b47906))
+
+
+### Bug Fixes
+
+* pause salesforce ETL ([#325](https://github.com/cds-snc/data-lake/issues/325)) ([c2b9312](https://github.com/cds-snc/data-lake/commit/c2b93121265b8052cab8c42b2fb12bf148e1e448))
+* pin GitHub actions to commit SHAs ([#326](https://github.com/cds-snc/data-lake/issues/326)) ([5980cf8](https://github.com/cds-snc/data-lake/commit/5980cf8f4919ac5c67048ec9a6a94a98052602bc))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#313](https://github.com/cds-snc/data-lake/issues/313)) ([98c94ff](https://github.com/cds-snc/data-lake/commit/98c94ff826226fdb9d35f949080fb2c9437368e2))
+* **deps:** update all minor dependencies ([#311](https://github.com/cds-snc/data-lake/issues/311)) ([f802eb0](https://github.com/cds-snc/data-lake/commit/f802eb0335990bcc7af8174c0e0e0473314048ba))
+* **deps:** update all minor dependencies ([#324](https://github.com/cds-snc/data-lake/issues/324)) ([f187ade](https://github.com/cds-snc/data-lake/commit/f187ade7d856fe38acb3892b3eefa9057d647203))
+* **deps:** update all patch dependencies ([#310](https://github.com/cds-snc/data-lake/issues/310)) ([216fc12](https://github.com/cds-snc/data-lake/commit/216fc124c4cf0c8373e4e31f104a83152207b3c5))
+* **deps:** update dependency boto3 to v1.38.32 ([#323](https://github.com/cds-snc/data-lake/issues/323)) ([5d0bdc2](https://github.com/cds-snc/data-lake/commit/5d0bdc2165d55f331a9f99254e2ce6162db7c835))
+
+## [1.6.0](https://github.com/cds-snc/data-lake/compare/v1.5.3...v1.6.0) (2025-06-10)
+
+
+### Features
+
+* add architecture diagrams for read/write operations ([#317](https://github.com/cds-snc/data-lake/issues/317)) ([0bd59d7](https://github.com/cds-snc/data-lake/commit/0bd59d7804eec97b57efcbd0c9b467f993ae6d1d))
+* allow Superset prod IAM role access to Notify data ([#318](https://github.com/cds-snc/data-lake/issues/318)) ([fb3e00a](https://github.com/cds-snc/data-lake/commit/fb3e00ad05ba3f7fdcc240d6a74ab442ff395eac))
+
+
+### Bug Fixes
+
+* switch to logger.warn to support Glue Python version ([#312](https://github.com/cds-snc/data-lake/issues/312)) ([03c8bcc](https://github.com/cds-snc/data-lake/commit/03c8bcccf5d2638ce612f3cf45bede69e251d4c2))
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency requests to v2.32.4 [security] ([#316](https://github.com/cds-snc/data-lake/issues/316)) ([93e1b12](https://github.com/cds-snc/data-lake/commit/93e1b121cbdaa6397791694c47cca9fdbe9de0d5))
+
+## [1.5.3](https://github.com/cds-snc/data-lake/compare/v1.5.2...v1.5.3) (2025-06-06)
+
+
+### Bug Fixes
+
+* CloudWatch anomaly metric pattern ([#307](https://github.com/cds-snc/data-lake/issues/307)) ([4fdb690](https://github.com/cds-snc/data-lake/commit/4fdb690bbec70b0c02b1b69c20483d9f9f98a546))
+
+## [1.5.2](https://github.com/cds-snc/data-lake/compare/v1.5.1...v1.5.2) (2025-06-06)
+
+
+### Bug Fixes
+
+* create new alarm for data anomalies ([#304](https://github.com/cds-snc/data-lake/issues/304)) ([9b21b11](https://github.com/cds-snc/data-lake/commit/9b21b117f7891b233de2e95099d44b391ec77801))
+* only display Spark ETL job errors ([#303](https://github.com/cds-snc/data-lake/issues/303)) ([c5643ea](https://github.com/cds-snc/data-lake/commit/c5643eaa6cb4a233041c2dc5234df746231d48d7))
+
+## [1.5.1](https://github.com/cds-snc/data-lake/compare/v1.5.0...v1.5.1) (2025-06-05)
+
+
+### Bug Fixes
+
+* undo day partitioning ([#300](https://github.com/cds-snc/data-lake/issues/300)) ([1ca4452](https://github.com/cds-snc/data-lake/commit/1ca4452c69d0322e7cac62a133295fff719b0ad4))
+* wrong gx path ([#302](https://github.com/cds-snc/data-lake/issues/302)) ([a67ff49](https://github.com/cds-snc/data-lake/commit/a67ff49c612de584573105e06659e01e88346a63))
+
+## [1.5.0](https://github.com/cds-snc/data-lake/compare/v1.4.0...v1.5.0) (2025-06-04)
+
+
+### Features
+
+* Added Great Expectation for freshdesk ([#297](https://github.com/cds-snc/data-lake/issues/297)) ([5f1dfd4](https://github.com/cds-snc/data-lake/commit/5f1dfd4178febe493e12ad3b339de2ae35599464))
+* Great Expectation Gc notify ([#296](https://github.com/cds-snc/data-lake/issues/296)) ([612484d](https://github.com/cds-snc/data-lake/commit/612484d7e9badb6498332f8141ec09285f307925))
+* improved partitioning ([#290](https://github.com/cds-snc/data-lake/issues/290)) ([41dfd15](https://github.com/cds-snc/data-lake/commit/41dfd1567cbe42c52c8e4dbf812efc4987863335))
+
+
+### Bug Fixes
+
+* increased notify timeout ([#298](https://github.com/cds-snc/data-lake/issues/298)) ([adde205](https://github.com/cds-snc/data-lake/commit/adde205cf121dbe7ba8706a0481a8ba62d680b48))
+* Notify ETL acceptable standard deviation ([#293](https://github.com/cds-snc/data-lake/issues/293)) ([716c53c](https://github.com/cds-snc/data-lake/commit/716c53cc7da04298d629d2776098a299cfc48a8a))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all patch dependencies ([#295](https://github.com/cds-snc/data-lake/issues/295)) ([35c8612](https://github.com/cds-snc/data-lake/commit/35c8612d18e1843934006e527e8d26f220949842))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to c283798 ([#294](https://github.com/cds-snc/data-lake/issues/294)) ([25410a5](https://github.com/cds-snc/data-lake/commit/25410a56f5a0feedadb0d61a15833111c47146f0))
+* suppress pip dependency resolver errors ([#291](https://github.com/cds-snc/data-lake/issues/291)) ([e6192b2](https://github.com/cds-snc/data-lake/commit/e6192b2b588043fedb48b52821d18e5bf6c10f2c))
+
 ## [1.4.0](https://github.com/cds-snc/data-lake/compare/v1.3.0...v1.4.0) (2025-05-28)
 
 

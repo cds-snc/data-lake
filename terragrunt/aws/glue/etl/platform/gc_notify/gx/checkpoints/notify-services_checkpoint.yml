@@ -1,0 +1,17 @@
+name: notify-services_checkpoint
+config_version: 1.0
+class_name: Checkpoint
+run_name_template: '%Y-%m-%d-%H-%M-%S-validation'
+validations:
+- batch_request:
+    datasource_name: pandas_datasource
+    data_connector_name: default_runtime_data_connector_name
+    data_asset_name: notify-services_data
+  expectation_suite_name: notify-services_suite
+action_list:
+- name: store_validation_result
+  action:
+    class_name: StoreValidationResultAction
+- name: store_evaluation_params
+  action:
+    class_name: StoreEvaluationParametersAction

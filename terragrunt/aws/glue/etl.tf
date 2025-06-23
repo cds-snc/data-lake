@@ -113,14 +113,27 @@ resource "aws_s3_object" "platform_gc_notify_tables" {
   etag   = data.archive_file.platform_gc_notify_tables.output_md5
 }
 
+data "archive_file" "platform_gc_notify_gx" {
+  type        = "zip"
+  source_dir  = "${path.module}/etl/platform/gc_notify/gx"
+  output_path = "${path.module}/etl/platform/gc_notify/gx.zip"
+}
+
+resource "aws_s3_object" "platform_gc_notify_gx" {
+  bucket = var.glue_bucket_name
+  key    = "platform/gc_notify/gx.zip"
+  source = data.archive_file.platform_gc_notify_gx.output_path
+  etag   = data.archive_file.platform_gc_notify_gx.output_md5
+}
+
 resource "aws_glue_job" "platform_gc_notify_job" {
   name = "Platform / GC Notify"
 
   glue_version           = "5.0"
-  timeout                = 30 # minutes
+  timeout                = 90 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-  worker_type            = "G.2X"
+  worker_type            = "G.4X"
   number_of_workers      = 2
 
   command {
@@ -129,6 +142,7 @@ resource "aws_glue_job" "platform_gc_notify_job" {
   }
 
   default_arguments = {
+    "--additional-python-modules"        = "great_expectations==0.18.22"
     "--continuous-log-logGroup"          = "/aws-glue/jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
     "--continuous-log-logStreamPrefix"   = "platform_gc_notify"
     "--enable-continuous-cloudwatch-log" = "true"
@@ -137,6 +151,7 @@ resource "aws_glue_job" "platform_gc_notify_job" {
     "--enable-job-insights"              = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
+    "--gx_config_object"                 = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_notify_gx.key}"
     "--job-language"                     = "python"
     "--python-modules-installer-option"  = "-r"
     "--additional-python-modules"        = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_notify_requirements.key}"
@@ -176,6 +191,19 @@ resource "aws_s3_object" "platform_support_freshdesk_job" {
   etag   = filemd5(data.local_file.platform_support_freshdesk_job.filename)
 }
 
+data "archive_file" "platform_freshdesk_gx" {
+  type        = "zip"
+  source_dir  = "${path.module}/etl/platform/support/freshdesk/gx"
+  output_path = "${path.module}/etl/platform/support/freshdesk/gx.zip"
+}
+
+resource "aws_s3_object" "platform_freshdesk_gx" {
+  bucket = var.glue_bucket_name
+  key    = "platform/support/freshdesk/gx.zip"
+  source = data.archive_file.platform_freshdesk_gx.output_path
+  etag   = data.archive_file.platform_freshdesk_gx.output_md5
+}
+
 resource "aws_glue_job" "platform_support_freshdesk" {
   name = "Platform / Support / Freshdesk"
 
@@ -192,6 +220,7 @@ resource "aws_glue_job" "platform_support_freshdesk" {
   }
 
   default_arguments = {
+    "--additional-python-modules"        = "great_expectations==0.18.22"
     "--continuous-log-logGroup"          = "/aws-glue/python-jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
     "--continuous-log-logStreamPrefix"   = "platform_support_freshdesk"
     "--enable-continuous-cloudwatch-log" = "true"
@@ -200,6 +229,7 @@ resource "aws_glue_job" "platform_support_freshdesk" {
     "--enable-job-insights"              = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
+    "--gx_config_object"                 = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_freshdesk_gx.key}"
     "--job-language"                     = "python"
     "--source_bucket"                    = var.raw_bucket_name
     "--source_prefix"                    = "platform/support/freshdesk/"
@@ -275,7 +305,7 @@ resource "aws_glue_trigger" "bes_crm_salesforce" {
   name     = "BES / CRM / Salesforce"
   schedule = "cron(00 7 * * ? *)" # 7am UTC every day
   type     = "SCHEDULED"
-  enabled  = local.is_production
+  enabled  = false # Change for local.is_production to enable
 
   actions {
     job_name = aws_glue_job.bes_crm_salesforce.name

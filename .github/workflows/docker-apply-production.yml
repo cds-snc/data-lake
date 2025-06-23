@@ -28,7 +28,7 @@ jobs:
 
     steps:
     - name: Audit DNS requests
-      uses: cds-snc/dns-proxy-action@main
+      uses: cds-snc/dns-proxy-action@2aee21aebfddefac5839497648a36a9f84342d8b
       env:
         DNS_PROXY_FORWARDTOSENTINEL: "true"
         DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
@@ -41,7 +41,7 @@ jobs:
       uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
 
     - name: Setup Docker Buildx
-      uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+      uses: docker/setup-buildx-action@18ce135bb5112fa8ce4ed6c17ab05699d7f3a5e0 # v3.11.0
 
     - name: Configure AWS credentials using OIDC
       uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1

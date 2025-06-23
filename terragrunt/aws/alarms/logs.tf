@@ -35,6 +35,23 @@ resource "aws_cloudwatch_query_definition" "glue_etl_spark_errors" {
   query_string = <<-QUERY
     fields @timestamp, @message, @logStream
     | filter @message like /ERROR/
+    | filter @message like /com.amazonaws.services.glue.log.GlueLogger/
+    | sort @timestamp desc
+    | limit 100
+  QUERY
+}
+
+resource "aws_cloudwatch_query_definition" "glue_etl_data_anomaly" {
+  name = "Glue ETL - Data Anomaly"
+
+  log_group_names = [
+    "${var.glue_etl_pythonshell_log_group_name}/error",
+    "${var.glue_etl_spark_log_group_name}/error"
+  ]
+
+  query_string = <<-QUERY
+    fields @timestamp, @message, @logStream
+    | filter @message like /${local.glue_etl_metric_filter_anomaly_pattern}/
     | sort @timestamp desc
     | limit 100
   QUERY
