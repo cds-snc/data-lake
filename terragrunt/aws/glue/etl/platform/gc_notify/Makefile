@@ -11,7 +11,7 @@ install_dev:
 	pip3 install --user -r requirements_dev.txt
 
 lint:
-	flake8 --ignore=E501 *.py
+	flake8 --ignore=E501,E402 *.py
 
 pull_request: install install_dev fmt lint test
 

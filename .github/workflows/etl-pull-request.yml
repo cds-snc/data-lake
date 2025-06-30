@@ -55,6 +55,13 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Setup Java
+        if: steps.changes.outputs.module == 'true'
+        uses: actions/setup-java@2dfa2011c5b2a0f1489bf9e433881c92c1631f88 # v4.3.0
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
       - name: Run PR tests
         if: steps.changes.outputs.module == 'true'
         working-directory: ${{ env.GLUE_BASE_PATH }}/${{ matrix.module_type }}/${{ matrix.module_path }}

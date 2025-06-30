@@ -48,7 +48,9 @@
         "type_list": [
           "datetime64",
           "datetime64[ns]",
-          "<M8[us]"
+          "<M8[us]",
+          "TimestampType",
+          "timestamp"
         ]
       },
       "meta": {}
