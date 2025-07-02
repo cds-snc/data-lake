@@ -637,7 +637,7 @@ def process_data():
                     "enableUpdateCatalog": True,
                     "updateBehavior": "UPDATE_IN_DATABASE",
                     "catalogDatabase": DATABASE_NAME_TRANSFORMED,
-                    "catalogTableName": table, 
+                    "catalogTableName": table,
                 },
                 format="glueparquet",
                 format_options={"compression": "snappy"},
@@ -647,15 +647,21 @@ def process_data():
             logger.info(f"Successfully wrote {row_count} records to {s3_output_path}")
             logger.info(f"Data written with partitions: {partition_cols}")
             logger.info(f"Catalog table: {DATABASE_NAME_TRANSFORMED}.{table}")
-            
+
             # Ensure partitions are discovered for partitioned tables
             try:
-                logger.info(f"Running MSCK REPAIR TABLE to discover partitions for {DATABASE_NAME_TRANSFORMED}.{table}")
+                logger.info(
+                    f"Running MSCK REPAIR TABLE to discover partitions for {DATABASE_NAME_TRANSFORMED}.{table}"
+                )
                 repair_sql = f"MSCK REPAIR TABLE {DATABASE_NAME_TRANSFORMED}.{table}"
                 spark.sql(repair_sql)
-                logger.info(f"Successfully refreshed partitions for {DATABASE_NAME_TRANSFORMED}.{table}")
+                logger.info(
+                    f"Successfully refreshed partitions for {DATABASE_NAME_TRANSFORMED}.{table}"
+                )
             except Exception as repair_e:
-                logger.warning(f"MSCK REPAIR failed (table might not exist yet): {str(repair_e)}")
+                logger.warning(
+                    f"MSCK REPAIR failed (table might not exist yet): {str(repair_e)}"
+                )
                 pass
 
         else:
@@ -677,6 +683,7 @@ def process_data():
         publish_metric(cloudwatch, METRIC_NAMESPACE, METRIC_NAME, table_name, row_count)
 
     logger.info("ETL process completed successfully.")
+
 
 if __name__ == "__main__":
     job = Job(glueContext)
