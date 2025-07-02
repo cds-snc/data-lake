@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.8.0](https://github.com/cds-snc/data-lake/compare/v1.7.0...v1.8.0) (2025-07-02)
+
+
+### Features
+
+* add glue gold table job ([#329](https://github.com/cds-snc/data-lake/issues/329)) ([dc2fc45](https://github.com/cds-snc/data-lake/commit/dc2fc4530ffa9c4230822537252a9cd847965306))
+* change notify job to spark ([#338](https://github.com/cds-snc/data-lake/issues/338)) ([0e75437](https://github.com/cds-snc/data-lake/commit/0e75437dbd82ac16f10e94e82e00964c2e246f50))
+
+
+### Bug Fixes
+
+* spark job write to glue ([#339](https://github.com/cds-snc/data-lake/issues/339)) ([06230b4](https://github.com/cds-snc/data-lake/commit/06230b4359f70e5724cabdb55c8bf84863738bdf))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#333](https://github.com/cds-snc/data-lake/issues/333)) ([f1b31df](https://github.com/cds-snc/data-lake/commit/f1b31dfe938db688b78decf976d6afe0d7e2023a))
+* **deps:** update all minor dependencies ([#337](https://github.com/cds-snc/data-lake/issues/337)) ([854dce0](https://github.com/cds-snc/data-lake/commit/854dce0e5215bd18efda1266bf908013ad39c61a))
+* **deps:** update all non-major github action dependencies ([#331](https://github.com/cds-snc/data-lake/issues/331)) ([72dd7da](https://github.com/cds-snc/data-lake/commit/72dd7da11ac3a1f48d45a32a807aa278973c1eab))
+* **deps:** update all patch dependencies ([#332](https://github.com/cds-snc/data-lake/issues/332)) ([c89b5e4](https://github.com/cds-snc/data-lake/commit/c89b5e4d7704ad2f5aa92fe786b2e6e3dc7d77fe))
+* **deps:** update all patch dependencies ([#335](https://github.com/cds-snc/data-lake/issues/335)) ([23803c4](https://github.com/cds-snc/data-lake/commit/23803c466787cb120711590c8f48c51ce6d6019e))
+* **deps:** update docker/setup-buildx-action action to v3.11.1 ([#336](https://github.com/cds-snc/data-lake/issues/336)) ([561a992](https://github.com/cds-snc/data-lake/commit/561a992452cf57f214ff8cfb1c13d0a19c91d7ff))
+* **deps:** update terraform aws to v6 ([#334](https://github.com/cds-snc/data-lake/issues/334)) ([eaa2b08](https://github.com/cds-snc/data-lake/commit/eaa2b08dce95080acf50ca830ca1388b75faf385))
+* synced file(s) with cds-snc/site-reliability-engineering ([#328](https://github.com/cds-snc/data-lake/issues/328)) ([5eab815](https://github.com/cds-snc/data-lake/commit/5eab815efec395a43f1645cd7278f402359e96a4))
+* synced local '.github/workflows/backstage-catalog-helper.yml' with remote 'tools/sre_file_sync/backstage-catalog-helper.yml' ([5eab815](https://github.com/cds-snc/data-lake/commit/5eab815efec395a43f1645cd7278f402359e96a4))
+
 ## [1.7.0](https://github.com/cds-snc/data-lake/compare/v1.6.0...v1.7.0) (2025-06-18)
 
 
