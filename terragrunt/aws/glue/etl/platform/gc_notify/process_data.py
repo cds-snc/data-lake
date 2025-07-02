@@ -625,7 +625,11 @@ def process_data():
             # Convert Spark DataFrame to Glue DynamicFrame for native integration
             dynamic_frame = DynamicFrame.fromDF(data, glueContext, table)
 
+<<<<<<< HEAD
             # Write using Glue's native capabilities with catalog updates enabled
+=======
+            # Write using Glue's native capabilities with partition overwrite
+>>>>>>> 0e75437dbd82ac16f10e94e82e00964c2e246f50
             s3_output_path = f"{TRANSFORMED_PATH}/{table_name}/"
 
             glueContext.write_dynamic_frame.from_options(
