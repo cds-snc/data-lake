@@ -677,3 +677,9 @@ def process_data():
         publish_metric(cloudwatch, METRIC_NAMESPACE, METRIC_NAME, table_name, row_count)
 
     logger.info("ETL process completed successfully.")
+
+if __name__ == "__main__":
+    job = Job(glueContext)
+    job.init(JOB_NAME, args)
+    process_data()
+    job.commit()
