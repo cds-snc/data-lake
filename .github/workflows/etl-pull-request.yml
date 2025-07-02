@@ -60,7 +60,7 @@ jobs:
         uses: actions/setup-java@2dfa2011c5b2a0f1489bf9e433881c92c1631f88 # v4.3.0
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
       - name: Run PR tests
         if: steps.changes.outputs.module == 'true'
