@@ -4,7 +4,7 @@ class_name: Checkpoint
 run_name_template: '%Y-%m-%d-%H-%M-%S-validation'
 validations:
 - batch_request:
-    datasource_name: pandas_datasource
+    datasource_name: spark_datasource
     data_connector_name: default_runtime_data_connector_name
     data_asset_name: notify-user_to_service_data
   expectation_suite_name: notify-user_to_service_suite
