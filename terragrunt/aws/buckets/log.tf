@@ -2,7 +2,7 @@
 # Bucket access logs, stored for 30 days
 #
 module "log_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3_log_bucket?ref=v10.5.2"
+  source            = "github.com/cds-snc/terraform-modules//S3_log_bucket?ref=v10.6.0"
   bucket_name       = "cds-data-lake-bucket-logs-${var.env}"
   versioning_status = "Enabled"
 
