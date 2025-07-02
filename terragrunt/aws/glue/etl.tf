@@ -148,6 +148,7 @@ resource "aws_glue_job" "platform_gc_notify_job" {
     "--enable-continuous-cloudwatch-log" = "true"
     "--enable-continuous-log-filter"     = "true"
     "--enable-auto-scaling"              = "true"
+    "--enable-glue-datacatalog"          = "true"
     "--enable-job-insights"              = "true"
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
