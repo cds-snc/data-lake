@@ -1,6 +1,5 @@
 import pytest
 import json
-import numpy as np
 import datetime
 import sys
 import os
@@ -63,15 +62,10 @@ import great_expectations as gx
 from process_data import (
     postgres_to_spark_type,
     get_new_data,
-    publish_metric,
     get_dataset_config,
     download_s3_object,
     get_incremental_load_date_from,
-    get_metrics,
-    detect_anomalies,
     validate_with_gx,
-    METRIC_NAMESPACE,
-    METRIC_NAME,
 )
 
 
@@ -370,36 +364,6 @@ def test_get_new_data_exception_handling(spark_session, sample_fields):
         assert result.count() == 0
 
 
-# ===== BUSINESS LOGIC TESTS =====
-
-
-@patch("process_data.datetime")
-def test_publish_metric(mock_datetime):
-    """Test the publish_metric function."""
-    mock_datetime.now.return_value = datetime.datetime(
-        2024, 1, 1, 12, 0, 0, tzinfo=datetime.timezone.utc
-    )
-    mock_cloudwatch = Mock()
-
-    publish_metric(
-        mock_cloudwatch, METRIC_NAMESPACE, "ProcessedRecordCount", "test_dataset", 100
-    )
-
-    mock_cloudwatch.put_metric_data.assert_called_once()
-    put_metric_args = mock_cloudwatch.put_metric_data.call_args[1]
-    assert put_metric_args["Namespace"] == METRIC_NAMESPACE
-
-    metric_data = put_metric_args["MetricData"]
-    assert len(metric_data) == 1
-
-    record_metric = metric_data[0]
-    assert record_metric["MetricName"] == "ProcessedRecordCount"
-    assert record_metric["Dimensions"][0]["Name"] == "Dataset"
-    assert record_metric["Dimensions"][0]["Value"] == "test_dataset"
-    assert record_metric["Value"] == 100
-    assert record_metric["Unit"] == "Count"
-
-
 @patch("process_data.os.listdir")
 @patch("process_data.os.getcwd")
 @patch("builtins.open", new_callable=mock_open)
@@ -460,95 +424,6 @@ def test_get_incremental_load_date_from(mock_datetime):
 
     result = get_incremental_load_date_from(30)
     assert result.startswith("2024-04-01")
-
-
-@patch("process_data.datetime")
-def test_get_metrics(mock_datetime):
-    fixed_now = datetime.datetime(2025, 5, 15, 12, 0, 0, tzinfo=datetime.timezone.utc)
-    fixed_start = datetime.datetime(2025, 5, 1, 12, 0, 0, tzinfo=datetime.timezone.utc)
-    mock_datetime.now.return_value = fixed_now
-    mock_datetime.timedelta.return_value = fixed_now - fixed_start
-
-    mock_cloudwatch = Mock()
-    mock_cloudwatch.get_metric_statistics.return_value = {
-        "Datapoints": [
-            {"Timestamp": "2025-05-01T00:00:00Z", "Maximum": 100},
-            {"Timestamp": "2025-05-02T00:00:00Z", "Maximum": 150},
-            {"Timestamp": "2025-05-03T00:00:00Z", "Maximum": 125},
-        ]
-    }
-
-    result = get_metrics(
-        mock_cloudwatch, METRIC_NAMESPACE, METRIC_NAME, "test_table", 14
-    )
-
-    mock_cloudwatch.get_metric_statistics.assert_called_once_with(
-        Namespace=METRIC_NAMESPACE,
-        MetricName=METRIC_NAME,
-        Dimensions=[{"Name": "Dataset", "Value": "test_table"}],
-        StartTime=fixed_now - mock_datetime.timedelta(),
-        EndTime=fixed_now,
-        Period=86400,
-        Statistics=["Maximum"],
-    )
-
-    # Check the result contains the expected values
-    assert isinstance(result, np.ndarray)
-    assert list(result) == [100, 150, 125]
-
-
-@patch("process_data.logger")
-def test_get_metrics_exception_handling(mock_logger):
-    mock_cloudwatch = Mock()
-    mock_cloudwatch.get_metric_statistics.side_effect = Exception("Test exception")
-
-    result = get_metrics(
-        mock_cloudwatch, METRIC_NAMESPACE, METRIC_NAME, "test_table", 14
-    )
-
-    mock_logger.error.assert_called_once()
-    assert "Error fetching CloudWatch metric data" in mock_logger.error.call_args[0][0]
-    assert result is None
-
-
-def test_detect_anomalies_normal_data():
-    historical_data = np.array([100, 110, 105, 95, 108])
-    row_count = 107
-
-    result = detect_anomalies("foo", row_count, historical_data, 2.0)
-
-    assert not result
-
-
-@patch("process_data.logger")
-def test_detect_anomalies_outlier(mock_logger):
-    historical_data = np.array([100, 110, 105, 95, 108])
-    row_count = 200
-
-    result = detect_anomalies("foo", row_count, historical_data, 2.0)
-
-    assert result
-    mock_logger.warn.assert_called_once()
-    assert "Data-Anomaly for foo: Latest value" in mock_logger.warn.call_args[0][0]
-
-
-def test_detect_anomalies_zero_standard_deviation():
-    historical_data = np.array([100, 100, 100, 100])
-    row_count = 110
-
-    result = detect_anomalies("foo", row_count, historical_data, 2.0)
-
-    assert result is False
-
-
-def test_detect_anomalies_empty_history():
-    """Test anomaly detection with empty historical data."""
-    historical_data = np.array([])
-    row_count = 100
-
-    result = detect_anomalies("foo", row_count, historical_data, 2.0)
-
-    assert result is False
 
 
 # ===== GREAT EXPECTATIONS VALIDATION TESTS =====
