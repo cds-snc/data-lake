@@ -32,16 +32,9 @@ sys.modules["awsglue.utils"] = mock_glue_utils
 from process_data import (
     get_new_data,
     process_data,
-    publish_metric,
     validate_with_gx,
-    get_metrics,
-    detect_anomalies,
     SOURCE_BUCKET,
     SOURCE_PREFIX,
-    METRIC_NAMESPACE,
-    METRIC_NAME,
-    ANOMALY_LOOKBACK_DAYS,
-    ANOMALY_STANDARD_DEVIATION,
 )
 
 
@@ -184,44 +177,6 @@ def test_validate_schema_wrong_type(sample_data_df, datasets_params):
     assert validate_with_gx(df_wrong_type, datasets_params["gx_checkpoint"]) is False
 
 
-@patch("process_data.datetime")
-@patch("process_data.logger")
-def test_publish_metric(mock_logger, mock_datetime):
-    mock_cloudwatch = Mock()
-    test_namespace = METRIC_NAMESPACE
-    test_metric_name = METRIC_NAME
-    test_dataset = "test-dataset"
-    test_count = 100
-
-    fixed_timestamp = datetime(2025, 3, 28, 12, 0, 0, tzinfo=timezone.utc)
-    mock_datetime.now.return_value = fixed_timestamp
-
-    publish_metric(
-        mock_cloudwatch,
-        test_namespace,
-        test_metric_name,
-        test_dataset,
-        test_count,
-    )
-
-    mock_cloudwatch.put_metric_data.assert_called_once_with(
-        Namespace=test_namespace,
-        MetricData=[
-            {
-                "MetricName": test_metric_name,
-                "Dimensions": [{"Name": "Dataset", "Value": test_dataset}],
-                "Value": test_count,
-                "Timestamp": fixed_timestamp,
-                "Unit": "Count",
-            },
-        ],
-    )
-
-    mock_logger.info.assert_called_once_with(
-        f"Published metrics for {test_dataset}: {test_count} records"
-    )
-
-
 @patch("pandas.Timestamp")
 @patch("awswrangler.s3")
 def test_get_new_data(mock_wr_s3, mock_timestamp, sample_data_df):
@@ -345,8 +300,6 @@ def test_get_new_data_no_files(mock_wr_s3):
 @patch("process_data.download_s3_object")
 @patch("process_data.validate_with_gx", return_value=True)
 @patch("process_data.get_new_data")
-@patch("process_data.get_metrics")
-@patch("process_data.detect_anomalies")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
@@ -354,8 +307,6 @@ def test_process_data(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
-    mock_detect_anomalies,
-    mock_get_metrics,
     mock_get_new_data,
     mock_validate_with_gx,
     mock_s3,
@@ -369,25 +320,15 @@ def test_process_data(
     )
     mock_get_new_data.return_value = sample_data_df
 
-    mock_get_metrics.return_value = np.array([100, 110, 90])
-    mock_detect_anomalies.return_value = False
-
     process_data()
 
     # Verify a call for each dataset
     assert mock_get_new_data.call_count == 5
     assert mock_wr_s3.to_parquet.call_count == 5
-    assert mock_cloudwatch.put_metric_data.call_count == 5
-
-    # Verify anomaly detection calls
-    assert mock_get_metrics.call_count == 5
-    assert mock_detect_anomalies.call_count == 5
 
 
 @patch("process_data.download_s3_object")
 @patch("process_data.get_new_data")
-@patch("process_data.get_metrics")
-@patch("process_data.detect_anomalies")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
@@ -395,8 +336,6 @@ def test_process_data_validation_success(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
-    mock_detect_anomalies,
-    mock_get_metrics,
     mock_get_new_data,
     mock_s3,
     sample_data_df,
@@ -409,22 +348,14 @@ def test_process_data_validation_success(
     )
     mock_get_new_data.return_value = sample_data_df
 
-    mock_get_metrics.return_value = np.array([100, 110, 90])
-    mock_detect_anomalies.return_value = False
-
     process_data(datasets_params)
 
     assert mock_get_new_data.call_count == 1
     assert mock_wr_s3.to_parquet.call_count == 1
-    assert mock_cloudwatch.put_metric_data.call_count == 1
-    assert mock_get_metrics.call_count == 1
-    assert mock_detect_anomalies.call_count == 1
 
 
 @patch("process_data.download_s3_object")
 @patch("process_data.get_new_data")
-@patch("process_data.get_metrics")
-@patch("process_data.detect_anomalies")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
@@ -432,8 +363,6 @@ def test_process_data_empty_dataset(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
-    mock_detect_anomalies,
-    mock_get_metrics,
     mock_get_new_data,
     mock_s3,
 ):
@@ -444,21 +373,13 @@ def test_process_data_empty_dataset(
     )
     mock_get_new_data.return_value = pd.DataFrame()
 
-    mock_get_metrics.return_value = np.array([100, 110, 90])
-    mock_detect_anomalies.return_value = False
-
     process_data()
 
     mock_wr_s3.to_parquet.assert_not_called()
-    assert mock_cloudwatch.put_metric_data.call_count == 5
-    assert mock_get_metrics.call_count == 5
-    assert mock_detect_anomalies.call_count == 5
 
 
 @patch("process_data.download_s3_object")
 @patch("process_data.get_new_data")
-@patch("process_data.get_metrics")
-@patch("process_data.detect_anomalies")
 @patch("awswrangler.catalog")
 @patch("awswrangler.s3")
 @patch("boto3.client")
@@ -466,8 +387,6 @@ def test_process_data_extra_column(
     mock_boto3_client,
     mock_wr_s3,
     mock_wr_catalog,
-    mock_detect_anomalies,
-    mock_get_metrics,
     mock_get_new_data,
     mock_s3,
     sample_data_df,
@@ -479,21 +398,16 @@ def test_process_data_extra_column(
     df_added_column = sample_data_df.copy()
     df_added_column["extra_column"] = "extra_value"
     mock_get_new_data.return_value = df_added_column
-    mock_get_new_data.return_value = sample_data_df
 
     mock_s3_client = Mock()
     mock_boto3_client.side_effect = lambda service_name, *args, **kwargs: (
         mock_cloudwatch if service_name == "cloudwatch" else mock_s3_client
     )
 
-    mock_get_metrics.return_value = np.array([100, 110, 90])
-    mock_detect_anomalies.return_value = False
-
     process_data(datasets_params)
 
     assert mock_get_new_data.call_count == 1
     assert mock_wr_s3.to_parquet.call_count == 1
-    assert mock_cloudwatch.put_metric_data.call_count == 1
 
 
 @patch("process_data.download_s3_object")
@@ -522,51 +436,6 @@ def test_process_data_validation_failure_missing_column(
 
     assert mock_get_new_data.call_count == 1
     mock_wr_s3.to_parquet.assert_not_called()
-    mock_cloudwatch.put_metric_data.assert_not_called()
-    mock_get_metrics.assert_not_called()
-    mock_detect_anomalies.assert_not_called()
-    mock_get_metrics.assert_not_called()
-    mock_detect_anomalies.assert_not_called()
-
-
-@patch("process_data.download_s3_object")
-@patch("process_data.get_new_data")
-@patch("process_data.get_metrics")
-@patch("process_data.detect_anomalies")
-@patch("awswrangler.catalog")
-@patch("awswrangler.s3")
-@patch("boto3.client")
-def test_process_data_validation_failure_missing_column(
-    mock_boto3_client,
-    mock_wr_s3,
-    mock_wr_catalog,
-    mock_detect_anomalies,
-    mock_get_metrics,
-    mock_get_new_data,
-    mock_s3,
-    sample_data_df,
-    datasets_params,
-):
-    # Mock CloudWatch client
-    mock_cloudwatch = Mock()
-    mock_s3_client = Mock()
-    mock_boto3_client.side_effect = lambda service_name, *args, **kwargs: (
-        mock_cloudwatch if service_name == "cloudwatch" else mock_s3_client
-    )
-    mock_get_metrics.return_value = np.array([100, 110, 90])
-    mock_detect_anomalies.return_value = False
-
-    bad_data_df = sample_data_df.drop(columns=["ispublished"])
-    mock_get_new_data.return_value = bad_data_df
-
-    with pytest.raises(ValueError):
-        process_data(datasets=datasets_params)
-
-    assert mock_get_new_data.call_count == 1
-    assert mock_wr_s3.to_parquet.call_count == 0
-    assert mock_cloudwatch.put_metric_data.call_count == 0
-    mock_get_metrics.assert_not_called()
-    mock_detect_anomalies.assert_not_called()
 
 
 @patch("process_data.download_s3_object")
@@ -595,93 +464,3 @@ def test_process_data_validation_bad_format(
 
     assert mock_get_new_data.call_count == 1
     assert mock_wr_s3.to_parquet.call_count == 0
-    assert mock_cloudwatch.put_metric_data.call_count == 0
-
-
-@patch("process_data.datetime")
-def test_get_metrics(mock_datetime):
-    fixed_now = datetime(2025, 5, 15, 12, 0, 0, tzinfo=timezone.utc)
-    fixed_start = datetime(2025, 5, 1, 12, 0, 0, tzinfo=timezone.utc)
-    mock_datetime.now.return_value = fixed_now
-    mock_datetime.timedelta.return_value = fixed_now - fixed_start
-
-    mock_cloudwatch = Mock()
-    mock_cloudwatch.get_metric_statistics.return_value = {
-        "Datapoints": [
-            {"Timestamp": "2025-05-01T00:00:00Z", "Maximum": 100},
-            {"Timestamp": "2025-05-02T00:00:00Z", "Maximum": 150},
-            {"Timestamp": "2025-05-03T00:00:00Z", "Maximum": 125},
-        ]
-    }
-
-    result = get_metrics(
-        mock_cloudwatch, METRIC_NAMESPACE, METRIC_NAME, "test_table", 14
-    )
-
-    mock_cloudwatch.get_metric_statistics.assert_called_once_with(
-        Namespace=METRIC_NAMESPACE,
-        MetricName=METRIC_NAME,
-        Dimensions=[{"Name": "Dataset", "Value": "test_table"}],
-        StartTime=fixed_now - mock_datetime.timedelta(),
-        EndTime=fixed_now,
-        Period=86400,
-        Statistics=["Maximum"],
-    )
-
-    # Check the result contains the expected values
-    assert isinstance(result, np.ndarray)
-    assert list(result) == [100, 150, 125]
-
-
-@patch("process_data.logger")
-def test_get_metrics_exception_handling(mock_logger):
-    mock_cloudwatch = Mock()
-    mock_cloudwatch.get_metric_statistics.side_effect = Exception("Test exception")
-
-    result = get_metrics(
-        mock_cloudwatch, METRIC_NAMESPACE, METRIC_NAME, "test_table", 14
-    )
-
-    mock_logger.error.assert_called_once()
-    assert "Error fetching CloudWatch metric data" in mock_logger.error.call_args[0][0]
-    assert result is None
-
-
-def test_detect_anomalies_normal_data():
-    historical_data = np.array([100, 110, 105, 95, 108])
-    row_count = 107
-
-    result = detect_anomalies("foo", row_count, historical_data, 2.0)
-
-    assert result == False
-
-
-@patch("process_data.logger")
-def test_detect_anomalies_outlier(mock_logger):
-    historical_data = np.array([100, 110, 105, 95, 108])
-    row_count = 200
-
-    result = detect_anomalies("foo", row_count, historical_data, 2.0)
-
-    assert result == True
-    mock_logger.warn.assert_called_once()
-    assert "Data-Anomaly for foo: Latest value" in mock_logger.warn.call_args[0][0]
-
-
-def test_detect_anomalies_zero_standard_deviation():
-    historical_data = np.array([100, 100, 100, 100])
-    row_count = 110
-
-    result = detect_anomalies("foo", row_count, historical_data, 2.0)
-
-    assert result == False
-
-
-def test_detect_anomalies_empty_history():
-    """Test anomaly detection with empty historical data."""
-    historical_data = np.array([])
-    row_count = 100
-
-    result = detect_anomalies("foo", row_count, historical_data, 2.0)
-
-    assert result == False

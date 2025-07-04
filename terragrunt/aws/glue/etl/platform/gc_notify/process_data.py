@@ -3,11 +3,10 @@ import os
 import sys
 import zipfile
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import List, TypedDict
 
 import boto3
-import numpy as np
 
 from awsglue.context import GlueContext
 from awsglue.job import Job
@@ -61,12 +60,6 @@ TABLE_NAME_PREFIX = args["table_name_prefix"]
 TARGET_ENV = args["target_env"]
 GX_CONFIG_OBJECT = args["gx_config_object"]
 
-
-# Anomaly detection configuration
-METRIC_NAMESPACE = "data-lake/etl/gc-notify"
-METRIC_NAME = "ProcessedRecordCount"
-ANOMALY_LOOKBACK_DAYS = 14
-ANOMALY_STANDARD_DEVIATION = 3.0
 
 # Initialize Spark and Glue contexts
 sc = SparkContext.getOrCreate()
@@ -405,70 +398,6 @@ def get_new_data(
         return spark.createDataFrame([], fallback_schema)
 
 
-def publish_metric(
-    cloudwatch: boto3.client,
-    metric_namespace: str,
-    metric_name: str,
-    dataset_name: str,
-    metric_value: float,
-) -> None:
-    """
-    Publish data processing metrics to CloudWatch
-    """
-    cloudwatch.put_metric_data(
-        Namespace=metric_namespace,
-        MetricData=[
-            {
-                "MetricName": metric_name,
-                "Dimensions": [{"Name": "Dataset", "Value": dataset_name}],
-                "Value": metric_value,
-                "Timestamp": datetime.now(timezone.utc),
-                "Unit": "Count",
-            },
-        ],
-    )
-    logger.info(
-        f"Published metrics for {dataset_name}: {metric_value} records processed"
-    )
-
-
-def get_metrics(
-    cloudwatch: boto3.client,
-    metric_namespace: str,
-    metric_name: str,
-    dataset_name: str,
-    days: int,
-) -> np.ndarray:
-    """
-    Retrieve historical metrics from CloudWatch for a specific dataset.
-    """
-    end_time = datetime.now(timezone.utc)
-    start_time = end_time - timedelta(days=days)
-
-    try:
-        response = cloudwatch.get_metric_statistics(
-            Namespace=metric_namespace,
-            MetricName=metric_name,
-            Dimensions=[{"Name": "Dataset", "Value": dataset_name}],
-            StartTime=start_time,
-            EndTime=end_time,
-            Period=86400,  # 1 day
-            Statistics=["Maximum"],
-        )
-
-        # Sort by timestamp and extract values
-        datapoints = sorted(response["Datapoints"], key=lambda x: x["Timestamp"])
-        values = [point["Maximum"] for point in datapoints]
-        metrics = np.array(values)
-
-        logger.info(f"Retrieved {metrics} metrics for {dataset_name} from CloudWatch.")
-        return metrics
-
-    except Exception as e:
-        logger.error(f"Error fetching CloudWatch metric data: {e}")
-        return None
-
-
 def get_dataset_config():
     datasets = []
 
@@ -528,37 +457,6 @@ def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
         zip_ref.extractall(folder_path)
 
 
-def detect_anomalies(
-    dataset: str,
-    row_count: int,
-    historical_data: np.ndarray,
-    standard_deviation_threshold: float,
-) -> bool:
-    """
-    Detect anomalies by checking if the latest value falls within
-    a certain number of standard deviations from the mean.
-    """
-    if historical_data is None or len(historical_data) == 0:
-        logger.error("No historical data available for anomaly detection.")
-        return False
-
-    mean = np.mean(historical_data)
-    standard_deviation = np.std(historical_data, ddof=1)
-
-    z_score = 0
-    if standard_deviation != 0:
-        z_score = (row_count - mean) / standard_deviation
-
-    is_anomaly = abs(z_score) > standard_deviation_threshold
-    if is_anomaly:
-        logger.warn(
-            f"Data-Anomaly for {dataset}: Latest value {row_count}, Mean: {mean:.2f}, "
-            f"Standard dev.: {standard_deviation:.2f}, Z-score: {z_score:.2f}, "
-            f"Historical data: {historical_data}"
-        )
-    return is_anomaly
-
-
 def get_incremental_load_date_from(data_look_back_days: int) -> str:
     """
     Get the date from which to load incremental data.  This will always be the beginning of
@@ -578,7 +476,6 @@ def process_data():
     """
     today = datetime.now().strftime("%Y-%m-%d")
     path_prefix = f"notification-canada-ca-{TARGET_ENV}-cluster-{today}/NotificationCanadaCa{TARGET_ENV}/public."
-    cloudwatch = boto3.client("cloudwatch")
     s3 = boto3.client("s3")
 
     # Download the table configuration file from S3
@@ -666,21 +563,6 @@ def process_data():
 
         else:
             logger.error(f"No new {table_name} data found.")
-
-        # Check for anomalies in rows of data processed
-        # by comparing with previous data processed metrics
-        historical_data = get_metrics(
-            cloudwatch,
-            METRIC_NAMESPACE,
-            METRIC_NAME,
-            table_name,
-            ANOMALY_LOOKBACK_DAYS,
-        )
-
-        detect_anomalies(
-            table_name, row_count, historical_data, ANOMALY_STANDARD_DEVIATION
-        )
-        publish_metric(cloudwatch, METRIC_NAMESPACE, METRIC_NAME, table_name, row_count)
 
     logger.info("ETL process completed successfully.")
 
