@@ -32,7 +32,7 @@ jobs:
             module_path: platform/gc_notify
     steps:
       - name: Audit DNS requests
-        uses: cds-snc/dns-proxy-action@2aee21aebfddefac5839497648a36a9f84342d8b
+        uses: cds-snc/dns-proxy-action@fbe67c964333a5066967c1a135fb3f02fbe7cc10
         env:
           DNS_PROXY_FORWARDTOSENTINEL: "true"
           DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
@@ -57,7 +57,7 @@ jobs:
 
       - name: Setup Java
         if: steps.changes.outputs.module == 'true'
-        uses: actions/setup-java@2dfa2011c5b2a0f1489bf9e433881c92c1631f88 # v4.3.0
+        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: 'temurin'
           java-version: '17'
