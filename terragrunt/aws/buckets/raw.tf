@@ -2,7 +2,7 @@
 # Holds exported data before transformation
 #
 module "raw_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v10.6.0"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=v10.6.2"
   bucket_name       = "cds-data-lake-raw-${var.env}"
   billing_tag_value = var.billing_tag_value
 
