@@ -6,7 +6,6 @@ from dateutil.relativedelta import relativedelta
 
 import awswrangler as wr
 import boto3
-import numpy as np
 import pandas as pd
 import zipfile
 
@@ -245,7 +244,6 @@ def process_tickets():
         logger.info("ETL process completed successfully.")
     else:
         logger.info("No new tickets found. Aborting ETL process.")
-
 
 
 if __name__ == "__main__":

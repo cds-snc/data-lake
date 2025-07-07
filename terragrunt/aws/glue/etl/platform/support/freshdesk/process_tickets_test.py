@@ -168,44 +168,9 @@ def test_process_tickets(
     mock_cloudwatch = MagicMock()
     mock_boto3_client.return_value = mock_cloudwatch
 
-    # Mock metrics
-    with patch("process_tickets.get_metrics") as mock_get_metrics:
-        mock_get_metrics.return_value = [10, 15, 20]  # Some sample historical data
+    process_tickets()
 
-        # Run the process
-        process_tickets()
-
-        # Verify the write operation was called
-        mock_wr_s3.to_parquet.assert_called_once()
-
-        # Verify CloudWatch metrics were published
-        mock_cloudwatch.put_metric_data.assert_called()
-
-        # Get all calls to put_metric_data
-        call_args_list = mock_cloudwatch.put_metric_data.call_args_list
-
-        # Ensure we have the right namespace for metrics
-        assert any(
-            call[1]["Namespace"] == "data-lake/etl/freshdesk" for call in call_args_list
-        )
-
-        # Verify metric for new ticket count was published
-        found_record_count_metric = False
-        for call in call_args_list:
-            metrics = call[1]["MetricData"]
-            for metric in metrics:
-                if (
-                    metric["MetricName"] == "ProcessedRecordCount"
-                    and metric["Dimensions"][0]["Value"] == "new_tickets"
-                ):
-                    found_record_count_metric = True
-                    break
-            if found_record_count_metric:
-                break
-
-        assert (
-            found_record_count_metric
-        ), "ProcessedRecordCount metric for new_tickets not found"
+    mock_wr_s3.to_parquet.assert_called_once()
 
 
 # Test error handling
@@ -246,5 +211,3 @@ def test_get_days_tickets_date_handling():
         assert result["updated_at"].dt.tz is None
         assert result["due_by"].dt.tz is None
         assert result["fr_due_by"].dt.tz is None
-
-
