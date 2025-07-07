@@ -10,8 +10,4 @@ locals {
 
   glue_etl_spark_error_metric_name           = "glue-etl-spark-error"
   glue_etl_spark_metric_filter_error_pattern = "[(w1=\"*ERROR*com.amazonaws.services.glue.log.GlueLogger*\")]"
-
-  glue_etl_metric_filter_anomaly_pattern   = "Anomaly"
-  glue_etl_pythonshell_anomaly_metric_name = "glue-etl-pythonshell-anomaly"
-  glue_etl_spark_anomaly_metric_name       = "glue-etl-spark-anomaly"
 }
