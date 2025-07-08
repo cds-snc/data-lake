@@ -546,20 +546,23 @@ def process_data():
             logger.info(f"Catalog table: {DATABASE_NAME_TRANSFORMED}.{table}")
 
             # Ensure partitions are discovered for partitioned tables
-            try:
-                logger.info(
-                    f"Running MSCK REPAIR TABLE to discover partitions for {DATABASE_NAME_TRANSFORMED}.{table}"
-                )
-                repair_sql = f"MSCK REPAIR TABLE {DATABASE_NAME_TRANSFORMED}.{table}"
-                spark.sql(repair_sql)
-                logger.info(
-                    f"Successfully refreshed partitions for {DATABASE_NAME_TRANSFORMED}.{table}"
-                )
-            except Exception as repair_e:
-                logger.warning(
-                    f"MSCK REPAIR failed (table might not exist yet): {str(repair_e)}"
-                )
-                pass
+            if partition_cols:
+                try:
+                    logger.info(
+                        f"Running MSCK REPAIR TABLE to discover partitions for {DATABASE_NAME_TRANSFORMED}.{table}"
+                    )
+                    repair_sql = (
+                        f"MSCK REPAIR TABLE {DATABASE_NAME_TRANSFORMED}.{table}"
+                    )
+                    spark.sql(repair_sql)
+                    logger.info(
+                        f"Successfully refreshed partitions for {DATABASE_NAME_TRANSFORMED}.{table}"
+                    )
+                except Exception as repair_e:
+                    logger.warning(
+                        f"MSCK REPAIR failed (table might not exist yet): {str(repair_e)}"
+                    )
+                    pass
 
         else:
             logger.error(f"No new {table_name} data found.")
