@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.8.1](https://github.com/cds-snc/data-lake/compare/v1.8.0...v1.8.1) (2025-07-08)
+
+
+### Bug Fixes
+
+* disable anomaly detection ([#340](https://github.com/cds-snc/data-lake/issues/340)) ([224eeae](https://github.com/cds-snc/data-lake/commit/224eeaef5d82bed58c84b9d84db6f69aaa3c7e49))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#342](https://github.com/cds-snc/data-lake/issues/342)) ([f900530](https://github.com/cds-snc/data-lake/commit/f9005301bd4ff9a67458fe25604d3af9fba01278))
+* **deps:** update all patch dependencies ([#341](https://github.com/cds-snc/data-lake/issues/341)) ([78ed87c](https://github.com/cds-snc/data-lake/commit/78ed87cd8d809b517df4575b854d76a648fa6bba))
+
 ## [1.8.0](https://github.com/cds-snc/data-lake/compare/v1.7.0...v1.8.0) (2025-07-02)
 
 
