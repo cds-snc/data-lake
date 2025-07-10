@@ -68,7 +68,7 @@ resource "aws_glue_trigger" "platform_gc_forms_job" {
   name     = "Platform / GC Forms"
   schedule = "cron(00 2 * * ? *)" # 2am UTC every day
   type     = "SCHEDULED"
-  enabled  = local.is_production
+  enabled  = false # Change for local.is_production to enable
 
   actions {
     job_name = aws_glue_job.platform_gc_forms_job.name
@@ -171,7 +171,7 @@ resource "aws_glue_trigger" "platform_gc_notify_job" {
   name     = "Platform / GC Notify"
   schedule = "cron(0 7 * * ? *)" # Daily at 7am UTC
   type     = "SCHEDULED"
-  enabled  = local.is_production
+  enabled  = false # Change for local.is_production to enable
 
   actions {
     job_name = aws_glue_job.platform_gc_notify_job.name
@@ -246,7 +246,7 @@ resource "aws_glue_trigger" "platform_support_freshdesk" {
   name     = "Platform / Support / Freshdesk"
   schedule = "cron(00 7 * * ? *)" # 7am UTC every day
   type     = "SCHEDULED"
-  enabled  = local.is_production
+  enabled  = false # Change for local.is_production to enable
 
   actions {
     job_name = aws_glue_job.platform_support_freshdesk.name

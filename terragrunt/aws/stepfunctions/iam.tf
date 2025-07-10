@@ -95,3 +95,42 @@ resource "aws_iam_role_policy_attachment" "sfn_glue_policy_attachment" {
   role       = aws_iam_role.sfn_role.name
   policy_arn = aws_iam_policy.sfn_glue_policy.arn
 }
+
+# IAM role for EventBridge to execute Step Functions (all environments)
+data "aws_iam_policy_document" "eventbridge_sfn_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "eventbridge_sfn_role" {
+  name               = "DataLakeOrchestratorEventBridgeRole"
+  assume_role_policy = data.aws_iam_policy_document.eventbridge_sfn_assume_role.json
+}
+
+data "aws_iam_policy_document" "eventbridge_sfn_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "states:StartExecution"
+    ]
+    resources = [
+      aws_sfn_state_machine.data_orchestrator.arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "eventbridge_sfn_policy" {
+  name   = "DataLakeOrchestratorEventBridgePolicy"
+  policy = data.aws_iam_policy_document.eventbridge_sfn_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "eventbridge_sfn_policy_attachment" {
+  role       = aws_iam_role.eventbridge_sfn_role.name
+  policy_arn = aws_iam_policy.eventbridge_sfn_policy.arn
+}

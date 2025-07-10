@@ -16,11 +16,11 @@ resource "aws_glue_job" "platform_gc_notify_curated" {
   name = "Platform / GC Notify / Curated / Notification Enriched"
 
   glue_version           = "5.0"
-  timeout                = 15 # minutes 
+  timeout                = 60 # minutes - increased for large datasets
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-  worker_type            = "G.1X"
-  number_of_workers      = 2
+  worker_type            = "G.2X"
+  number_of_workers      = 4 # Increased workers for better parallelization
 
   command {
     script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_notify_curated_job.key}"
