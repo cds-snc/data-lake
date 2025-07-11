@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.0](https://github.com/cds-snc/data-lake/compare/v1.8.1...v1.9.0) (2025-07-11)
+
+
+### Features
+
+* enable stepfunctions orchestrator ([#345](https://github.com/cds-snc/data-lake/issues/345)) ([d8eb837](https://github.com/cds-snc/data-lake/commit/d8eb83777a5981ddb1dea615c6367397618c72f9))
+* updated forms historidal data ([#347](https://github.com/cds-snc/data-lake/issues/347)) ([68507bf](https://github.com/cds-snc/data-lake/commit/68507bf8d3500e53057c21312fc78b8fb8efa230))
+
 ## [1.8.1](https://github.com/cds-snc/data-lake/compare/v1.8.0...v1.8.1) (2025-07-08)
 
 
