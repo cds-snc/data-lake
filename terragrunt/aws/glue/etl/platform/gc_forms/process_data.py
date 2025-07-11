@@ -219,11 +219,11 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
         datasets = [
             {
                 "path": "historical-data",
-                "date_columns": ["date"],
-                "partition_timestamp": "date",
+                "date_columns": ["created_at"],
+                "partition_timestamp": "created_at",
                 "partition_columns": ["year", "month"],
-                "email_columns": ["client_email"],
-                "gx_checkpoint": "forms-historicaldata_checkpoint",
+                "email_columns": ["email", "emaildeliveryaddress"],
+                "write_mode": "overwrite",
             },
             {
                 "path": "processed-data/submissions",
@@ -293,7 +293,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
         partition_columns = dataset.get("partition_columns")
         partition_timestamp = dataset.get("partition_timestamp")
         gx_checkpoint = dataset.get("gx_checkpoint")
-
+        write_mode = dataset.get("write_mode", "append")
         table_name = path.lower().replace("-", "_")
         if "/" in table_name:
             table_name = path.split("/", 1)[1]
@@ -315,10 +315,11 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
             continue
 
         if not data.empty:
-            if not validate_with_gx(data, gx_checkpoint):
-                raise ValueError(
-                    f"Great Expectations validation failed for {path}. Aborting ETL process."
-                )
+            if gx_checkpoint:
+                if not validate_with_gx(data, gx_checkpoint):
+                    raise ValueError(
+                        f"Great Expectations validation failed for {path}. Aborting ETL process."
+                    )
 
             # Save the transformed data back to S3
             logger.info(f"Saving new {path} DataFrame to S3...")
@@ -327,7 +328,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 df=data,
                 path=f"{TRANSFORMED_PATH}/{path}/",
                 dataset=True,
-                mode="append",
+                mode=write_mode,
                 database=DATABASE_NAME_TRANSFORMED,
                 table=table,
                 partition_cols=partition_columns,
