@@ -37,11 +37,10 @@ resource "aws_glue_job" "platform_gc_notify_curated" {
     "--enable-metrics"                   = "true"
     "--enable-observability-metrics"     = "true"
     "--job-language"                     = "python"
-    "--curated_bucket"                   = var.curated_bucket_name
-    "--curated_prefix"                   = "platform/gc-notify"
+    "--transformed_bucket"               = var.transformed_bucket_name
+    "--transformed_prefix"               = "platform/gc-notify"
     "--enable-glue-datacatalog"          = "true"
     "--database_name_transformed"        = aws_glue_catalog_database.platform_gc_notify_production.name
-    "--database_name_curated"            = aws_glue_catalog_database.platform_gc_notify_production_curated.name
     "--target_env"                       = var.env
     "--start_month"                      = " " # Default empty - will use current and previous month
     "--end_month"                        = " " # Default empty - will use current and previous month

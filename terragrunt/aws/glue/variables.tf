@@ -8,16 +8,6 @@ variable "athena_bucket_name" {
   type        = string
 }
 
-variable "curated_bucket_arn" {
-  description = "The ARN of the Curated bucket"
-  type        = string
-}
-
-variable "curated_bucket_name" {
-  description = "The name of the Curated bucket"
-  type        = string
-}
-
 variable "glue_bucket_arn" {
   description = "The ARN of the Glue bucket"
   type        = string

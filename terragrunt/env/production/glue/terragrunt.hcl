@@ -13,8 +13,6 @@ dependency "buckets" {
   mock_outputs = {
     athena_bucket_arn      = "arn:aws:s3:::mock-athena-bucket"
     athena_bucket_name     = "mock-athena-bucket"
-    curated_bucket_arn      = "arn:aws:s3:::mock-curated-bucket"
-    curated_bucket_name     = "mock-curated-bucket"
     glue_bucket_arn         = "arn:aws:s3:::mock-glue-bucket"
     glue_bucket_name        = "mock-glue-bucket"
     raw_bucket_arn          = "arn:aws:s3:::mock-raw-bucket"
@@ -27,8 +25,6 @@ dependency "buckets" {
 inputs = {
   athena_bucket_arn       = dependency.buckets.outputs.athena_bucket_arn
   athena_bucket_name      = dependency.buckets.outputs.athena_bucket_name
-  curated_bucket_arn      = dependency.buckets.outputs.curated_bucket_arn
-  curated_bucket_name     = dependency.buckets.outputs.curated_bucket_name
   glue_bucket_arn         = dependency.buckets.outputs.glue_bucket_arn
   glue_bucket_name        = dependency.buckets.outputs.glue_bucket_name
   raw_bucket_arn          = dependency.buckets.outputs.raw_bucket_arn
