@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.10.0](https://github.com/cds-snc/data-lake/compare/v1.9.0...v1.10.0) (2025-07-15)
+
+
+### Features
+
+* migrating curated database to transformed database ([#352](https://github.com/cds-snc/data-lake/issues/352)) ([af0e4c9](https://github.com/cds-snc/data-lake/commit/af0e4c9bbf1ca076496378d75358c673e2e8078e))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#350](https://github.com/cds-snc/data-lake/issues/350)) ([6fa0ab3](https://github.com/cds-snc/data-lake/commit/6fa0ab33ebfbe79aabb7a4388df6233efc95937c))
+* **deps:** update dependency boto3 to v1.39.3 ([#349](https://github.com/cds-snc/data-lake/issues/349)) ([692788a](https://github.com/cds-snc/data-lake/commit/692788a0db4c25d505eaa5ed7ac25e943fa9a0d7))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to 5d19b08 ([#348](https://github.com/cds-snc/data-lake/issues/348)) ([7df3ba3](https://github.com/cds-snc/data-lake/commit/7df3ba302c825e6d0762af786a4a8183ccbc4df8))
+
 ## [1.9.0](https://github.com/cds-snc/data-lake/compare/v1.8.1...v1.9.0) (2025-07-11)
 
 
