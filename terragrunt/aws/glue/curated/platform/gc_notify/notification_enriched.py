@@ -13,10 +13,9 @@ args = getResolvedOptions(
     sys.argv,
     [
         "JOB_NAME",
-        "curated_bucket",
-        "curated_prefix",
+        "transformed_bucket",
+        "transformed_prefix",
         "database_name_transformed",
-        "database_name_curated",
         "target_env",
         "start_month",
         "end_month",
@@ -24,10 +23,9 @@ args = getResolvedOptions(
 )
 
 JOB_NAME = args["JOB_NAME"]
-CURATED_BUCKET = args["curated_bucket"]
-CURATED_PREFIX = args["curated_prefix"]
+TRANSFORMED_BUCKET = args["transformed_bucket"]
+TRANSFORMED_PREFIX = args["transformed_prefix"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
-DATABASE_NAME_CURATED = args["database_name_curated"]
 TARGET_ENV = args["target_env"]
 START_MONTH = args["start_month"]
 END_MONTH = args["end_month"]
@@ -214,7 +212,7 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
     """Write the enriched dataset to the curated bucket with partitioning and overwrite."""
     try:
         row_count = df.count()
-        s3_path = f"s3://{CURATED_BUCKET}/{CURATED_PREFIX}/{table_name}/"
+        s3_path = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}/{table_name}/"
 
         logger.info(f"Writing {row_count} rows to {s3_path}")
         logger.info("Partitioning by: year, month")
@@ -226,7 +224,7 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
 
         # Create/update the Glue table separately to ensure it exists
         logger.info(
-            f"Creating/updating Glue table {DATABASE_NAME_CURATED}.{table_name}"
+            f"Creating/updating Glue table {DATABASE_NAME_TRANSFORMED}.{table_name}"
         )
 
         # Create temp view from the original DataFrame (no extra read needed)
@@ -235,7 +233,7 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
         # Create the table in Glue Data Catalog using the original DataFrame's schema
         spark.sql(
             f"""
-            CREATE TABLE IF NOT EXISTS {DATABASE_NAME_CURATED}.{table_name}
+            CREATE TABLE IF NOT EXISTS {DATABASE_NAME_TRANSFORMED}.{table_name}
             USING PARQUET
             LOCATION '{s3_path}'
             PARTITIONED BY (year, month)
@@ -244,7 +242,7 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
         )
 
         # Refresh partitions to ensure Glue knows about the new partitions
-        spark.sql(f"MSCK REPAIR TABLE {DATABASE_NAME_CURATED}.{table_name}")
+        spark.sql(f"MSCK REPAIR TABLE {DATABASE_NAME_TRANSFORMED}.{table_name}")
 
         logger.info(
             f"Successfully wrote data to {s3_path} and registered table {table_name}"
