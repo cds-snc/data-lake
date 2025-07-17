@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/cds-snc/data-lake/compare/v1.10.0...v1.10.1) (2025-07-17)
+
+
+### Bug Fixes
+
+* pause notification enriched ([#353](https://github.com/cds-snc/data-lake/issues/353)) ([929267c](https://github.com/cds-snc/data-lake/commit/929267c4bef90442c9e52f6a2d26fff2bff37b2c))
+
 ## [1.10.0](https://github.com/cds-snc/data-lake/compare/v1.9.0...v1.10.0) (2025-07-15)
 
 
