@@ -61,9 +61,9 @@ logger = glueContext.get_logger()
 # Configure Spark to handle schema evolution and empty partitions
 if spark is not None:
     # Enable schema merging for Parquet files to handle schema evolution
-    spark.conf.set("spark.sql.parquet.mergeSchema", "true")
+    # spark.conf.set("spark.sql.parquet.mergeSchema", "true")
     # Handle empty partitions and schema evolution more gracefully
-    spark.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
+    # spark.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
     # Ignore missing files and corrupt files
     spark.conf.set("spark.sql.files.ignoreMissingFiles", "true")
     spark.conf.set("spark.sql.files.ignoreCorruptFiles", "true")
