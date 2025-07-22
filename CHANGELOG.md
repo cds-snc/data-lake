@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.2](https://github.com/cds-snc/data-lake/compare/v1.10.1...v1.10.2) (2025-07-22)
+
+
+### Bug Fixes
+
+* Notify ETL job should overwrite data instead of appending ([#356](https://github.com/cds-snc/data-lake/issues/356)) ([c5e7bb6](https://github.com/cds-snc/data-lake/commit/c5e7bb6669ef6ca0e83b020b7ae5dc9c43ece979))
+
 ## [1.10.1](https://github.com/cds-snc/data-lake/compare/v1.10.0...v1.10.1) (2025-07-17)
 
 
