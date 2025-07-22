@@ -529,7 +529,6 @@ def process_data():
             # Explicitly set dynamic partition overwrite mode before writing
             spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
-
             # Write the DataFrame to S3 using Spark's write method with dynamic partition overwrite
             s3_output_path = f"{TRANSFORMED_PATH}/{table_name}/"
 
@@ -540,7 +539,9 @@ def process_data():
             else:
                 spark_df.write.mode("overwrite").parquet(s3_output_path)
 
-            logger.info(f"Successfully wrote {row_count} records to {s3_output_path} using Spark DataFrame write.")
+            logger.info(
+                f"Successfully wrote {row_count} records to {s3_output_path} using Spark DataFrame write."
+            )
             logger.info(f"Data written with partitions: {partition_cols}")
             logger.info(f"Catalog table: {DATABASE_NAME_TRANSFORMED}.{table}")
 
