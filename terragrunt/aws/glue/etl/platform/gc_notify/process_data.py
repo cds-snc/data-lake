@@ -69,6 +69,7 @@ spark = glueContext.spark_session
 # Configure Spark to handle timestamp parsing issues with Spark 3.0+
 if spark is not None:
     spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
+    spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 logger = glueContext.get_logger()
 
@@ -515,33 +516,32 @@ def process_data():
                     f"Great Expectations validation failed for {table_name}. Aborting ETL process."
                 )
 
-            # Save the transformed data back to S3 using Glue
+            # Save the transformed data back to S3 using Spark
             logger.info(f"Saving new {table_name} DataFrame to S3...")
             table = f"{TABLE_NAME_PREFIX}_{table_name}"
 
             # Convert Spark DataFrame to Glue DynamicFrame for native integration
             dynamic_frame = DynamicFrame.fromDF(data, glueContext, table)
 
-            # Write using Glue's native capabilities with catalog updates enabled
+            # Convert DynamicFrame to Spark DataFrame
+            spark_df = dynamic_frame.toDF()
+
+            # Explicitly set dynamic partition overwrite mode before writing
+            spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
+
+            # Write the DataFrame to S3 using Spark's write method with dynamic partition overwrite
             s3_output_path = f"{TRANSFORMED_PATH}/{table_name}/"
 
-            glueContext.write_dynamic_frame.from_options(
-                frame=dynamic_frame,
-                connection_type="s3",
-                connection_options={
-                    "path": s3_output_path,
-                    "partitionKeys": partition_cols if partition_cols else [],
-                    "enableUpdateCatalog": True,
-                    "updateBehavior": "UPDATE_IN_DATABASE",
-                    "catalogDatabase": DATABASE_NAME_TRANSFORMED,
-                    "catalogTableName": table,
-                },
-                format="glueparquet",
-                format_options={"compression": "snappy"},
-                transformation_ctx=f"write_{table_name}",
-            )
+            if partition_cols:
+                spark_df.write.mode("overwrite").partitionBy(partition_cols).parquet(
+                    s3_output_path
+                )
+            else:
+                spark_df.write.mode("overwrite").parquet(s3_output_path)
 
-            logger.info(f"Successfully wrote {row_count} records to {s3_output_path}")
+            logger.info(
+                f"Successfully wrote {row_count} records to {s3_output_path} using Spark DataFrame write."
+            )
             logger.info(f"Data written with partitions: {partition_cols}")
             logger.info(f"Catalog table: {DATABASE_NAME_TRANSFORMED}.{table}")
 
