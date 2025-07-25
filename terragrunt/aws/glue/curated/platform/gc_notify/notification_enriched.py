@@ -214,8 +214,12 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
         )
 
         # Create temp view from the original DataFrame (no extra read needed)
-        df.createOrReplaceTempView("temp_table_for_registration")
+        df.limit(0).createOrReplaceTempView("temp_table_for_registration")
 
+        # Register table in Glue Data Catalog using Spark SQL
+        # Drop table if exists to avoid schema drift
+        spark.sql(f"DROP TABLE IF EXISTS {DATABASE_NAME_TRANSFORMED}.{table_name}")
+        
         # Create the table in Glue Data Catalog using the original DataFrame's schema
         spark.sql(
             f"""
