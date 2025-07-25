@@ -204,7 +204,7 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
         # Remove 'platform_gc_notify_' prefix from table name for S3 path
         s3_subdir = table_name
         if s3_subdir.startswith("platform_gc_notify_"):
-            s3_subdir = s3_subdir[len("platform_gc_notify_") :]
+            s3_subdir = s3_subdir[len("platform_gc_notify_"):]
         s3_path = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}/{s3_subdir}/"
 
         logger.info(f"Writing {row_count} rows to {s3_path}")
