@@ -532,6 +532,18 @@ def process_data():
             # Write the DataFrame to S3 using Spark's write method with dynamic partition overwrite
             s3_output_path = f"{TRANSFORMED_PATH}/{table_name}/"
 
+            # If not incremental, delete all objects under the output path to remove old partitions
+            if not incremental_load:
+                logger.info(
+                    f"Deleting all objects under {s3_output_path} before full overwrite..."
+                )
+                s3_resource = boto3.resource("s3")
+                bucket = s3_resource.Bucket(TRANSFORMED_BUCKET)
+                prefix = f"{TRANSFORMED_PREFIX}/{table_name}/"
+                delete_objs = bucket.objects.filter(Prefix=prefix)
+                deleted = [obj.delete() for obj in delete_objs]
+                logger.info(f"Deleted {len(deleted)} objects from {s3_output_path}")
+
             if partition_cols:
                 spark_df.write.mode("overwrite").partitionBy(partition_cols).parquet(
                     s3_output_path
