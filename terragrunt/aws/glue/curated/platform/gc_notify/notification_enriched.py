@@ -60,18 +60,7 @@ logger = glueContext.get_logger()
 
 # Configure Spark to handle schema evolution and empty partitions
 if spark is not None:
-    # Enable schema merging for Parquet files to handle schema evolution
-    # spark.conf.set("spark.sql.parquet.mergeSchema", "true")
-    # Handle empty partitions and schema evolution more gracefully
-    # spark.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
-    # Ignore missing files and corrupt files
-    spark.conf.set("spark.sql.files.ignoreMissingFiles", "true")
-    spark.conf.set("spark.sql.files.ignoreCorruptFiles", "true")
-    # Enable adaptive type coercion
-    spark.conf.set("spark.sql.adaptive.enabled", "true")
-    spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", "true")
-    # Handle partition discovery issues
-    spark.conf.set("spark.sql.sources.partitionColumnTypeInference.enabled", "false")
+    spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 
 def execute_enrichment_query(
@@ -216,9 +205,6 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
 
         logger.info(f"Writing {row_count} rows to {s3_path}")
         logger.info("Partitioning by: year, month")
-
-        # First, write the parquet files with dynamic partition overwrite
-        spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
         df.write.mode("overwrite").partitionBy("year", "month").parquet(s3_path)
 
