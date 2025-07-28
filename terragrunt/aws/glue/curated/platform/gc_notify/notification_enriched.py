@@ -60,18 +60,7 @@ logger = glueContext.get_logger()
 
 # Configure Spark to handle schema evolution and empty partitions
 if spark is not None:
-    # Enable schema merging for Parquet files to handle schema evolution
-    # spark.conf.set("spark.sql.parquet.mergeSchema", "true")
-    # Handle empty partitions and schema evolution more gracefully
-    # spark.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
-    # Ignore missing files and corrupt files
-    spark.conf.set("spark.sql.files.ignoreMissingFiles", "true")
-    spark.conf.set("spark.sql.files.ignoreCorruptFiles", "true")
-    # Enable adaptive type coercion
-    spark.conf.set("spark.sql.adaptive.enabled", "true")
-    spark.conf.set("spark.sql.adaptive.coalescePartitions.enabled", "true")
-    # Handle partition discovery issues
-    spark.conf.set("spark.sql.sources.partitionColumnTypeInference.enabled", "false")
+    spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 
 def execute_enrichment_query(
@@ -212,13 +201,12 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
     """Write the enriched dataset to the curated bucket with partitioning and overwrite."""
     try:
         row_count = df.count()
-        s3_path = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}/{table_name}/"
+        # Remove 'platform_gc_notify_' prefix from table name for S3 path
+        s3_subdir = table_name.removeprefix("platform_gc_notify_")
+        s3_path = f"s3://{TRANSFORMED_BUCKET}/{TRANSFORMED_PREFIX}/{s3_subdir}/"
 
         logger.info(f"Writing {row_count} rows to {s3_path}")
         logger.info("Partitioning by: year, month")
-
-        # First, write the parquet files with dynamic partition overwrite
-        spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
         df.write.mode("overwrite").partitionBy("year", "month").parquet(s3_path)
 
@@ -228,8 +216,11 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
         )
 
         # Create temp view from the original DataFrame (no extra read needed)
-        df.createOrReplaceTempView("temp_table_for_registration")
+        df.limit(0).createOrReplaceTempView("temp_table_for_registration")
 
+        # Register table in Glue Data Catalog using Spark SQL
+        # Drop table if exists to avoid schema drift
+        spark.sql(f"DROP TABLE IF EXISTS {DATABASE_NAME_TRANSFORMED}.{table_name}")
         # Create the table in Glue Data Catalog using the original DataFrame's schema
         spark.sql(
             f"""
