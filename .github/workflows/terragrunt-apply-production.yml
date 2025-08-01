@@ -13,6 +13,7 @@ env:
   TF_INPUT: false
   TF_VAR_cloudwatch_alarm_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}
   TF_VAR_freshdesk_api_key: ${{ secrets.PRODUCTION_FRESHDESK_API_KEY }}
+  TF_VAR_airtable_api_key: ${{ secrets.PRODUCTION_AIRTABLE_API_KEY }}
 
 permissions:
   id-token: write
