@@ -22,6 +22,7 @@ jobs:
       matrix:
         export:
           - platform/gc_notify
+          - platform/gc_design_system/airtable
           - platform/support/freshdesk
     steps:
       - name: Audit DNS requests

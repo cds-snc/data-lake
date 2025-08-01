@@ -13,6 +13,8 @@ dependency "buckets" {
   mock_outputs = {
     raw_bucket_arn  = "arn:aws:s3:::mock-raw-bucket"
     raw_bucket_name = "mock-raw-bucket"
+    transformed_bucket_arn  = "arn:aws:s3:::mock-transformed-bucket"
+    transformed_bucket_name = "mock-transformed-bucket"
   }
 }
 
@@ -32,6 +34,10 @@ inputs = {
 
   sns_topic_alarm_action_arn = dependency.alarms.outputs.sns_topic_alarm_action_arn
   sns_topic_ok_action_arn    = dependency.alarms.outputs.sns_topic_ok_action_arn
+  
+  transformed_bucket_arn  = dependency.buckets.outputs.transformed_bucket_arn
+  transformed_bucket_name = dependency.buckets.outputs.transformed_bucket_name
+  
 }
 
 include {

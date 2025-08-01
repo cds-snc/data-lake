@@ -10,6 +10,19 @@ module "platform_notify_export" {
   billing_tag_value = var.billing_tag_value
 }
 
+module "platform_gc_design_system_export" {
+  source = "./platform/gc_design_system"
+
+  env                        = var.env
+  transformed_bucket_arn     = var.transformed_bucket_arn
+  transformed_bucket_name    = var.transformed_bucket_name
+  sns_topic_alarm_action_arn = var.sns_topic_alarm_action_arn
+  sns_topic_ok_action_arn    = var.sns_topic_ok_action_arn
+  airtable_api_key           = var.airtable_api_key
+
+  billing_tag_value = var.billing_tag_value
+}
+
 module "platform_support_freshdesk_export" {
   source = "./platform/support/freshdesk"
 

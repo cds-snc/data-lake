@@ -26,6 +26,8 @@ jobs:
         include:
           - export: platform/gc_notify
             lambda: platform-gc-notify-export
+          - export: platform/gc_design_system/airtable
+            lambda: platform-gc-design-system-export
           - export: platform/support/freshdesk
             lambda: platform-support-freshdesk-export
 
