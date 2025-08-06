@@ -16,8 +16,13 @@ module "platform_gc_design_system_export" {
 
   lambda_environment_variables = {
     AIRTABLE_API_KEY_PARAMETER_NAME = aws_ssm_parameter.airtable_api_key.name
-    S3_BUCKET_NAME                  = var.transformed_bucket_name
+    S3_BUCKET_NAME_TRANSFORMED      = var.transformed_bucket_name
+    S3_BUCKET_NAME_RAW              = var.raw_bucket_name
     S3_OBJECT_PREFIX                = local.gc_design_system_export_path
+    AIRTABLE_BASE_ID                = local.airtable_base_id
+    AIRTABLE_TABLE_NAME             = local.airtable_table_name
+    GLUE_CRAWLER_NAME               = local.gc_design_system_crawler_name
+
   }
 
   billing_tag_value = var.billing_tag_value
@@ -44,7 +49,20 @@ data "aws_iam_policy_document" "platform_gc_design_system_export" {
       "s3:DeleteObject"
     ]
     resources = [
-      "${var.transformed_bucket_arn}/${local.gc_design_system_export_path}/*"
+      "${var.transformed_bucket_arn}/${local.gc_design_system_export_path}/*",
+      "${var.raw_bucket_arn}/${local.gc_design_system_export_path}/*"
+    ]
+  }
+
+  statement {
+    sid    = "StartGlueCrawler"
+    effect = "Allow"
+    actions = [
+      "glue:StartCrawler",
+      "glue:GetCrawler"
+    ]
+    resources = [
+      aws_glue_crawler.platform_gc_design_system_airtable.arn
     ]
   }
 }

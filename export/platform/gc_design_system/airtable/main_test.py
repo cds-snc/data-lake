@@ -3,9 +3,10 @@ import json
 import os
 from unittest.mock import Mock, patch, MagicMock
 
-# Set test environment variables (only the ones that aren't hardcoded)
+# Set test environment variables to match main.py
 os.environ["AIRTABLE_API_KEY_PARAMETER_NAME"] = "/test/airtable-api-key"
-os.environ["S3_BUCKET_NAME"] = "test-bucket"
+os.environ["S3_BUCKET_NAME_TRANSFORMED"] = "test-bucket-transformed"
+os.environ["S3_BUCKET_NAME_RAW"] = "test-bucket-raw"
 os.environ["S3_OBJECT_PREFIX"] = "test/prefix"
 
 from main import handler, fetch_all_records, get_airtable_api_key
@@ -31,10 +32,11 @@ class TestGCDesignSystemExport:
             mock_client.side_effect = client_side_effect
             yield mock_client, mock_ssm, mock_s3
 
+
     @pytest.fixture
-    def mock_urllib_request(self):
-        with patch("main.urllib.request") as mock_urllib:
-            yield mock_urllib
+    def mock_requests_get(self):
+        with patch("main.requests.get") as mock_get:
+            yield mock_get
 
     @pytest.fixture
     def sample_airtable_response(self):
@@ -79,7 +81,7 @@ class TestGCDesignSystemExport:
         assert "Failed to retrieve API key from SSM" in str(exc_info.value)
 
     def test_handler_success(
-        self, mock_boto3_client, mock_urllib_request, sample_airtable_response
+        self, mock_boto3_client, mock_requests_get, sample_airtable_response
     ):
         """Test successful handler execution."""
         mock_client, mock_ssm, mock_s3 = mock_boto3_client
@@ -87,12 +89,12 @@ class TestGCDesignSystemExport:
             "Parameter": {"Value": "test-api-key-value"}
         }
 
-        # Mock urllib response
+        # Mock requests.get response
         mock_response = MagicMock()
-        mock_response.read.return_value = json.dumps(sample_airtable_response).encode()
-        mock_response.__enter__.return_value = mock_response
-        mock_response.__exit__.return_value = None
-        mock_urllib_request.urlopen.return_value = mock_response
+        mock_response.status_code = 200
+        mock_response.json.return_value = sample_airtable_response
+        mock_response.raise_for_status = MagicMock()
+        mock_requests_get.return_value = mock_response
 
         # Mock S3 put_object
         mock_s3.put_object.return_value = {}
@@ -101,15 +103,27 @@ class TestGCDesignSystemExport:
 
         assert result["statusCode"] == 200
         assert "Saved 2 records" in result["body"]
-        mock_s3.put_object.assert_called_once()
 
-    def test_handler_airtable_failure(self, mock_boto3_client, mock_urllib_request):
+        # Check that put_object was called twice with correct buckets and keys
+        calls = mock_s3.put_object.call_args_list
+        assert len(calls) == 2
+        # Extract bucket/key for each call
+        call_buckets = [call.kwargs.get("Bucket") for call in calls]
+        call_keys = [call.kwargs.get("Key") for call in calls]
+        # Should have one call for transformed, one for raw
+        assert "test-bucket-transformed" in call_buckets
+        assert "test-bucket-raw" in call_buckets
+        assert "test/prefix/clients.json" in call_keys
+        assert any(k.startswith("test/prefix/clients_") and k.endswith(".json") for k in call_keys)
+
+    def test_handler_airtable_failure(self, mock_boto3_client, mock_requests_get):
         """Test handler with Airtable fetch failure."""
         mock_client, mock_ssm, mock_s3 = mock_boto3_client
         mock_ssm.get_parameter.return_value = {
             "Parameter": {"Value": "test-api-key-value"}
         }
-        mock_urllib_request.urlopen.side_effect = Exception("Connection error")
+
+        mock_requests_get.side_effect = Exception("Connection error")
 
         result = handler({}, {})
 
@@ -117,7 +131,7 @@ class TestGCDesignSystemExport:
         assert "Failed to fetch from Airtable" in result["body"]
 
     def test_handler_s3_failure(
-        self, mock_boto3_client, mock_urllib_request, sample_airtable_response
+        self, mock_boto3_client, mock_requests_get, sample_airtable_response
     ):
         """Test handler with S3 upload failure."""
         mock_client, mock_ssm, mock_s3 = mock_boto3_client
@@ -125,12 +139,13 @@ class TestGCDesignSystemExport:
             "Parameter": {"Value": "test-api-key-value"}
         }
 
+
         # Mock successful Airtable response
         mock_response = MagicMock()
-        mock_response.read.return_value = json.dumps(sample_airtable_response).encode()
-        mock_response.__enter__.return_value = mock_response
-        mock_response.__exit__.return_value = None
-        mock_urllib_request.urlopen.return_value = mock_response
+        mock_response.status_code = 200
+        mock_response.json.return_value = sample_airtable_response
+        mock_response.raise_for_status = MagicMock()
+        mock_requests_get.return_value = mock_response
 
         # Mock S3 failure
         mock_s3.put_object.side_effect = Exception("S3 error")
@@ -141,7 +156,7 @@ class TestGCDesignSystemExport:
         assert "Failed to upload to S3" in result["body"]
 
     def test_fetch_all_records_single_page(
-        self, mock_boto3_client, mock_urllib_request, sample_airtable_response
+        self, mock_boto3_client, mock_requests_get, sample_airtable_response
     ):
         """Test fetching records from a single page."""
         mock_client, mock_ssm, mock_s3 = mock_boto3_client
@@ -149,11 +164,12 @@ class TestGCDesignSystemExport:
             "Parameter": {"Value": "test-api-key-value"}
         }
 
+
         mock_response = MagicMock()
-        mock_response.read.return_value = json.dumps(sample_airtable_response).encode()
-        mock_response.__enter__.return_value = mock_response
-        mock_response.__exit__.return_value = None
-        mock_urllib_request.urlopen.return_value = mock_response
+        mock_response.status_code = 200
+        mock_response.json.return_value = sample_airtable_response
+        mock_response.raise_for_status = MagicMock()
+        mock_requests_get.return_value = mock_response
 
         records = fetch_all_records()
 
@@ -162,7 +178,7 @@ class TestGCDesignSystemExport:
         assert records[1]["id"] == "rec456"
 
     def test_fetch_all_records_multiple_pages(
-        self, mock_boto3_client, mock_urllib_request
+        self, mock_boto3_client, mock_requests_get
     ):
         """Test fetching records from multiple pages."""
         mock_client, mock_ssm, mock_s3 = mock_boto3_client
@@ -179,18 +195,19 @@ class TestGCDesignSystemExport:
         # Second page response
         page2_response = {"records": [{"id": "rec2", "fields": {"name": "Client 2"}}]}
 
+
         # Mock responses
         mock_response1 = MagicMock()
-        mock_response1.read.return_value = json.dumps(page1_response).encode()
-        mock_response1.__enter__.return_value = mock_response1
-        mock_response1.__exit__.return_value = None
+        mock_response1.status_code = 200
+        mock_response1.json.return_value = page1_response
+        mock_response1.raise_for_status = MagicMock()
 
         mock_response2 = MagicMock()
-        mock_response2.read.return_value = json.dumps(page2_response).encode()
-        mock_response2.__enter__.return_value = mock_response2
-        mock_response2.__exit__.return_value = None
+        mock_response2.status_code = 200
+        mock_response2.json.return_value = page2_response
+        mock_response2.raise_for_status = MagicMock()
 
-        mock_urllib_request.urlopen.side_effect = [mock_response1, mock_response2]
+        mock_requests_get.side_effect = [mock_response1, mock_response2]
 
         records = fetch_all_records()
 
@@ -199,4 +216,4 @@ class TestGCDesignSystemExport:
         assert records[1]["id"] == "rec2"
 
         # Verify both URLs were called
-        assert mock_urllib_request.urlopen.call_count == 2
+        assert mock_requests_get.call_count == 2

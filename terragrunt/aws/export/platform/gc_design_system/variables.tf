@@ -15,12 +15,22 @@ variable "env" {
 }
 
 variable "transformed_bucket_arn" {
-  description = "The ARN of the bucket"
+  description = "The ARN of the transformed bucket"
   type        = string
 }
 
 variable "transformed_bucket_name" {
-  description = "The name of the bucket"
+  description = "The name of the transformed bucket"
+  type        = string
+}
+
+variable "raw_bucket_arn" {
+  description = "The ARN of the raw bucket"
+  type        = string
+}
+
+variable "raw_bucket_name" {
+  description = "The name of the raw bucket"
   type        = string
 }
 

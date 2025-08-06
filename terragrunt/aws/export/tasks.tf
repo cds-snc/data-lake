@@ -16,6 +16,8 @@ module "platform_gc_design_system_export" {
   env                        = var.env
   transformed_bucket_arn     = var.transformed_bucket_arn
   transformed_bucket_name    = var.transformed_bucket_name
+  raw_bucket_arn             = var.raw_bucket_arn
+  raw_bucket_name            = var.raw_bucket_name
   sns_topic_alarm_action_arn = var.sns_topic_alarm_action_arn
   sns_topic_ok_action_arn    = var.sns_topic_ok_action_arn
   airtable_api_key           = var.airtable_api_key

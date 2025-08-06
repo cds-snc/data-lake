@@ -15,6 +15,8 @@ dependency "buckets" {
     raw_bucket_name = "mock-raw-bucket"
     transformed_bucket_arn  = "arn:aws:s3:::mock-transformed-bucket"
     transformed_bucket_name = "mock-transformed-bucket"
+    raw_bucket_arn  = "arn:aws:s3:::mock-raw-bucket"
+    raw_bucket_name = "mock-raw-bucket"
   }
 }
 
