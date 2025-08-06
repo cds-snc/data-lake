@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/cds-snc/data-lake/compare/v1.10.3...v1.11.0) (2025-08-06)
+
+
+### Features
+
+* all GCDS S3 replication to Raw ([#364](https://github.com/cds-snc/data-lake/issues/364)) ([c8a804d](https://github.com/cds-snc/data-lake/commit/c8a804dd0e73aa0dac5993a381332e335e919351))
+
 ## [1.10.3](https://github.com/cds-snc/data-lake/compare/v1.10.2...v1.10.3) (2025-07-28)
 
 
