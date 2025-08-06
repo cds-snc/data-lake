@@ -1,3 +1,12 @@
+variable "account_id" {
+  description = "The AWS Account ID."
+  type        = string
+}
+
+variable "region" {
+  description = "The AWS region."
+  type        = string
+}
 variable "billing_tag_value" {
   description = "The billing tag value to apply to resources."
   type        = string

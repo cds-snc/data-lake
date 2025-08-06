@@ -1,10 +1,33 @@
 #
 # Glue Crawler for GC Design System Airtable data
 #
+
+# Security Configuration for Glue Crawler
+resource "aws_glue_security_configuration" "platform_gc_design_system" {
+  name = "platform-gc-design-system-encryption"
+
+  encryption_configuration {
+    cloudwatch_encryption {
+      cloudwatch_encryption_mode = "SSE-KMS"
+      kms_key_arn                = aws_kms_key.platform_gc_design_system.arn
+    }
+
+    job_bookmarks_encryption {
+      job_bookmarks_encryption_mode = "CSE-KMS"
+      kms_key_arn                   = aws_kms_key.platform_gc_design_system.arn
+    }
+
+    s3_encryption {
+      s3_encryption_mode = "SSE-S3"
+    }
+  }
+}
+
 resource "aws_glue_crawler" "platform_gc_design_system_airtable" {
-  name          = local.gc_design_system_crawler_name
-  role          = aws_iam_role.glue_crawler_role.arn
-  database_name = "platform_gc_design_system"
+  name                   = local.gc_design_system_crawler_name
+  role                   = aws_iam_role.glue_crawler_role.arn
+  database_name          = "platform_gc_design_system"
+  security_configuration = aws_glue_security_configuration.platform_gc_design_system.name
 
   s3_target {
     path = "s3://${var.transformed_bucket_name}/${local.gc_design_system_export_path}/"

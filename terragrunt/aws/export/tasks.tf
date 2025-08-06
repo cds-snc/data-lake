@@ -14,6 +14,8 @@ module "platform_gc_design_system_export" {
   source = "./platform/gc_design_system"
 
   env                        = var.env
+  account_id                 = var.account_id
+  region                     = var.region
   transformed_bucket_arn     = var.transformed_bucket_arn
   transformed_bucket_name    = var.transformed_bucket_name
   raw_bucket_arn             = var.raw_bucket_arn
