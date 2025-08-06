@@ -75,16 +75,20 @@ def handler(event, context):
                 .lower()
             )
 
-            # Strip PII - We are hashing sensitive fields. Some of the fields are already hashed in Airtable, this is just an extra precaution        
+            # Strip PII - We are hashing sensitive fields. Some of the fields are already hashed in Airtable, this is just an extra precaution
             if normalized_key in [
                 "name",
                 "primary_contact_on_team",
                 "main_contact_on_meetings",
                 "main_contact_on_engagement",
-                "email"
+                "email",
             ]:
                 if isinstance(value, list):
-                    value = [hashlib.sha256(item.encode("utf-8")).hexdigest() for item in value if isinstance(item, str)]
+                    value = [
+                        hashlib.sha256(item.encode("utf-8")).hexdigest()
+                        for item in value
+                        if isinstance(item, str)
+                    ]
                 elif isinstance(value, str):
                     value = hashlib.sha256(value.encode("utf-8")).hexdigest()
 
