@@ -65,11 +65,11 @@ def handler(event, context):
     # Convert records to newline-delimited JSON (JSONL) for Athena
     lines = []
     for record in records:
-        flattened = {
-            "id": record.get("id"),
-            **record.get("fields", {}),
-            "createdTime": record.get("createdTime"),
-        }
+        # Flatten and normalize field names in one step
+        flattened = {"id": record.get("id"), "created_time": record.get("createdTime")}
+        for key, value in record.get("fields", {}).items():
+            normalized_key = key.replace(" ", "_").replace('"', "").replace("(", "").replace(")", "").lower()
+            flattened[normalized_key] = value
         lines.append(json.dumps(flattened))
 
 

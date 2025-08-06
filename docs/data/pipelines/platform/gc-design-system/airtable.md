@@ -1,0 +1,152 @@
+# Platform / GC Design System / Airtable
+
+* `Schedule`: Daily at 5:00 AM UTC (Production only)
+* `Steward`: Platform Core Services  
+* `Contact`: Slack channel #platform-core-services
+
+## Description
+
+The GC Design System Airtable dataset is an export of design component data from the GC Design System Airtable base in [JSONL format](https://jsonlines.org/). This dataset contains information about design components, their properties, usage guidelines, and related metadata that powers the Government of Canada Design System.
+
+The data is exported daily from Airtable and automatically registered as a queryable table in the data catalog. It can be queried in Athena as follows:
+
+```sql
+-- View all GC Design System component data
+SELECT 
+    * 
+FROM 
+    "platform_gc_design_system"."platform_gc_design_system_airtable" 
+LIMIT 10;
+
+-- Count total components
+SELECT 
+    COUNT(*) as total_components
+FROM 
+    "platform_gc_design_system"."platform_gc_design_system_airtable";
+
+-- View component data structure
+DESCRIBE "platform_gc_design_system"."platform_gc_design_system_airtable";
+```
+
+## Data pipeline
+
+The pipeline uses a scheduled Lambda function to extract data from Airtable and automatically register it for querying in Athena.
+
+```mermaid
+graph TD
+    %% Source Systems
+    Airtable["`**Airtable Base**<br/>GC Design System<br/>appaMppKljeU8zJE1`"]
+    
+    %% Storage
+    TransS3["`**S3 Bucket (Transformed)**<br/>cds-data-lake-transformed-production<br/>platform/gc-design-system/airtable/`"]
+    
+    %% Processing
+    Lambda["`**Lambda Function**<br/>platform-gc-design-system-export<br/>Daily at 5:00 AM UTC`"]
+    Crawler["`**Glue Crawler**<br/>platform-gc-design-system-airtable-crawler<br/>Triggered after each export`"]
+    CatalogTransformed["`**Data Catalog**<br/>Database: platform_gc_design_system<br/>Table: platform_gc_design_system_airtable`"]
+
+    %% Flow
+    subgraph airtable_source[GC Design System Airtable]
+        Airtable
+    end
+
+    subgraph aws_datalake[AWS Data Lake]
+        Lambda --> |1. Fetch via API|Airtable
+        Lambda --> |2. Convert to JSONL|TransS3
+        Lambda --> |3. Trigger crawler|Crawler
+        Crawler --> |4. Register/update schema|CatalogTransformed
+        TransS3 --> |5. Schema discovery|Crawler
+    end
+
+    %% Styling
+    classDef source fill:#e1f5fe
+    classDef storage fill:#f3e5f5
+    classDef processing fill:#e8f5e8
+    classDef catalog fill:#fff3e0
+
+    class Airtable source
+    class TransS3 storage
+    class Lambda,Crawler processing
+    class CatalogTransformed catalog
+```
+
+## Technical Details
+
+### Data Source
+- **Source System**: Airtable (appaMppKljeU8zJE1)
+- **Table ID**: tbllQrJwtozOb0Ziv
+- **Authentication**: Bearer token stored in SSM Parameter Store
+- **API Endpoint**: `https://api.airtable.com/v0/{base_id}/{table_name}`
+
+### Export Process
+1. **Scheduled Trigger**: CloudWatch Events rule triggers Lambda daily at 5:00 AM UTC (Production only)
+2. **Data Extraction**: Lambda function fetches all records from Airtable API with pagination support
+3. **Data Transformation**: Raw JSON records are converted to JSONL format for efficient querying
+4. **Storage**: Data is uploaded to S3 in the transformed bucket under `platform/gc-design-system/airtable/`
+5. **Schema Registration**: Glue crawler is automatically triggered to update the table schema in the data catalog
+
+### Infrastructure Components
+
+#### Lambda Function
+- **Name**: `platform-gc-design-system-export`
+- **Runtime**: Python (ARM64 architecture)
+- **Timeout**: 300 seconds
+- **Memory**: Default
+- **Environment Variables**:
+  - `AIRTABLE_API_KEY_PARAMETER_NAME`: SSM parameter name for API key
+  - `S3_BUCKET_NAME`: Target S3 bucket name
+  - `S3_OBJECT_PREFIX`: S3 path prefix for data files
+  - `AIRTABLE_BASE_ID`: Airtable base identifier
+  - `AIRTABLE_TABLE_NAME`: Airtable table identifier
+
+#### IAM Permissions
+- **SSM**: Read access to Airtable API key parameter
+- **S3**: Write access to transformed bucket path
+- **Glue**: Start and monitor crawler execution
+
+#### Glue Crawler
+- **Name**: `platform-gc-design-system-airtable-crawler`
+- **Target**: S3 path in transformed bucket
+- **Database**: `platform_gc_design_system`
+- **Table Prefix**: `platform_gc_design_system_`
+- **Schedule**: Triggered by Lambda after each data export
+- **Schema Policy**: Update schema changes, merge new columns
+
+### Data Format
+- **File Format**: JSONL (JSON Lines)
+- **Compression**: None
+- **Partitioning**: None (single file per export)
+- **Update Frequency**: Daily (overwrites previous data)
+
+### Monitoring
+- **CloudWatch Logs**: Lambda execution logs available in `/aws/lambda/platform-gc-design-system-export`
+- **Glue Crawler Logs**: Available in CloudWatch under `/aws-glue/crawlers`
+- **Failure Notifications**: Configured through existing alarm infrastructure
+
+## Data Schema
+
+The table schema is automatically discovered by the Glue crawler based on the JSON structure from Airtable. Common fields typically include:
+
+- `id`: Unique record identifier from Airtable
+- `createdTime`: Timestamp when record was created in Airtable
+- `fields`: Object containing all the custom fields defined in the Airtable table
+
+*Note: The exact schema depends on the current structure of the Airtable table and will be automatically updated by the crawler when changes are detected.*
+
+## Access and Permissions
+
+- **Data Location**: S3 bucket `cds-data-lake-transformed-production`
+- **Query Access**: Available through AWS Athena
+- **Visualization**: Can be connected to Apache Superset for dashboards
+- **API Access**: Raw data available via Airtable API (requires separate authentication)
+
+## Troubleshooting
+
+### Common Issues
+1. **Lambda Timeout**: If Airtable table grows large, increase Lambda timeout
+2. **API Rate Limits**: Function includes rate limiting; monitor for 429 errors
+3. **Schema Changes**: Crawler automatically detects schema changes, but manual intervention may be needed for major structural changes
+4. **Access Denied**: Verify SSM parameter exists and Lambda has proper IAM permissions
+
+### Support
+For issues with this pipeline, contact the Platform Core Services team via the #platform-core-services Slack channel.
