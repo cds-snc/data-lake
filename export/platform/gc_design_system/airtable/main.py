@@ -68,10 +68,15 @@ def handler(event, context):
         # Flatten and normalize field names in one step
         flattened = {"id": record.get("id"), "created_time": record.get("createdTime")}
         for key, value in record.get("fields", {}).items():
-            normalized_key = key.replace(" ", "_").replace('"', "").replace("(", "").replace(")", "").lower()
+            normalized_key = (
+                key.replace(" ", "_")
+                .replace('"', "")
+                .replace("(", "")
+                .replace(")", "")
+                .lower()
+            )
             flattened[normalized_key] = value
         lines.append(json.dumps(flattened))
-
 
     date_suffix = datetime.utcnow().strftime("%Y-%m-%d")
     s3_key_transformed = f"{S3_OBJECT_PREFIX}/clients.json"
@@ -85,7 +90,7 @@ def handler(event, context):
             Body="\n".join(lines).encode("utf-8"),
             ContentType="application/json",
         )
-        
+
         s3.put_object(
             Bucket=S3_BUCKET_NAME_RAW,
             Key=s3_key_raw,
@@ -99,7 +104,7 @@ def handler(event, context):
         except Exception as crawler_error:
             # Don't fail the whole job if crawler fails
             print(f"Warning: Failed to start crawler: {crawler_error}")
-            
+
     except Exception as e:
         return {"statusCode": 500, "body": f"Failed to upload to S3: {str(e)}"}
 

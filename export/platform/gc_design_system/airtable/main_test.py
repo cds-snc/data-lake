@@ -32,7 +32,6 @@ class TestGCDesignSystemExport:
             mock_client.side_effect = client_side_effect
             yield mock_client, mock_ssm, mock_s3
 
-
     @pytest.fixture
     def mock_requests_get(self):
         with patch("main.requests.get") as mock_get:
@@ -114,7 +113,10 @@ class TestGCDesignSystemExport:
         assert "test-bucket-transformed" in call_buckets
         assert "test-bucket-raw" in call_buckets
         assert "test/prefix/clients.json" in call_keys
-        assert any(k.startswith("test/prefix/clients_") and k.endswith(".json") for k in call_keys)
+        assert any(
+            k.startswith("test/prefix/clients_") and k.endswith(".json")
+            for k in call_keys
+        )
 
     def test_handler_airtable_failure(self, mock_boto3_client, mock_requests_get):
         """Test handler with Airtable fetch failure."""
@@ -139,7 +141,6 @@ class TestGCDesignSystemExport:
             "Parameter": {"Value": "test-api-key-value"}
         }
 
-
         # Mock successful Airtable response
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -163,7 +164,6 @@ class TestGCDesignSystemExport:
         mock_ssm.get_parameter.return_value = {
             "Parameter": {"Value": "test-api-key-value"}
         }
-
 
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -194,7 +194,6 @@ class TestGCDesignSystemExport:
 
         # Second page response
         page2_response = {"records": [{"id": "rec2", "fields": {"name": "Client 2"}}]}
-
 
         # Mock responses
         mock_response1 = MagicMock()
