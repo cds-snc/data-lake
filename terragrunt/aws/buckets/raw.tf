@@ -37,6 +37,7 @@ data "aws_iam_policy_document" "raw_bucket" {
     principals {
       type = "AWS"
       identifiers = [
+        "arn:aws:iam::307395567143:role/DesignSystemS3ReplicatePlatformDataLake",
         "arn:aws:iam::563894450011:role/SalesforceReplicateToDataLake",
         "arn:aws:iam::659087519042:role/BillingExtractTags",
         "arn:aws:iam::659087519042:role/CostUsageReplicateToDataLake",
