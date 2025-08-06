@@ -8,7 +8,7 @@ module "platform_gc_design_system_export" {
   lambda_schedule_expression = local.cron_expression
   lambda_timeout             = "300"
   lambda_architectures       = ["arm64"]
-  
+
 
   lambda_policies = [
     data.aws_iam_policy_document.platform_gc_design_system_export.json
