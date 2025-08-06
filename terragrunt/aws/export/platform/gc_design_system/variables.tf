@@ -43,6 +43,16 @@ variable "raw_bucket_name" {
   type        = string
 }
 
+variable "gc_design_system_crawler_name" {
+  description = "The name of the GC Design System Glue crawler"
+  type        = string
+}
+
+variable "gc_design_system_crawler_arn" {
+  description = "The ARN of the GC Design System Glue crawler"
+  type        = string
+}
+
 variable "sns_topic_alarm_action_arn" {
   description = "The ARN of the SNS topic to send alarm actions to."
   type        = string
@@ -51,4 +61,16 @@ variable "sns_topic_alarm_action_arn" {
 variable "sns_topic_ok_action_arn" {
   description = "The ARN of the SNS topic to send OK actions to."
   type        = string
+}
+
+variable "airtable_base_id" {
+  description = "Airtable base ID for the GC Design System base"
+  type        = string
+  sensitive   = true
+}
+
+variable "airtable_table_name" {
+  description = "Airtable table name for the GC Design System data"
+  type        = string
+  sensitive   = true
 }

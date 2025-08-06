@@ -17,8 +17,8 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the P
 This dataset is exported daily from the GC Design System Airtable base using the Airtable API. The data contains client engagement information, support interactions, and relationship data for users and organizations working with the Government of Canada Design System. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-design-system/airtable.md).
 
 * `Updated`: Daily at 5:00 AM UTC (Production only)
-* `Steward`: Platform Core Services
-* `Contact`: Slack channel #platform-core-services
+* `Steward`: GC Design System
+* `Contact`: Slack channel #ds-cds-internal
 * `Location`: `cds-data-lake-transformed-production/platform/gc-design-system/airtable/*.jsonl`
 
 ## Fields
@@ -42,8 +42,8 @@ Here's a descriptive list of the core fields that are typically present:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| name | string | Client's full name |
-| email | array<string> | Array of email addresses (Airtable linked records) |
+| name | string | Hashed client's full name |
+| email | array<string> | Array of hashed email addresses (Airtable linked records) |
 | client_status | array<string> | Array of client statuses (e.g., ["Active Client (connected)"]) |
 | department | array<string> | Array of department or organization identifiers (Airtable linked records) |
 | team | array<string> | Array of team identifiers (Airtable linked records) |
@@ -57,13 +57,13 @@ Here's a descriptive list of the core fields that are typically present:
 | notes | string | Additional notes about the client |
 | team_tags | array<string> | Array of tags associated with the client's team |
 | involved_in_engagements | array<string> | Array of engagement activity identifiers |
-| primary_contact_on_team | array<string> | Array of primary contact identifiers for the team |
+| primary_contact_on_team | array<string> | Array of hashed primary contact identifiers for the team |
 | non_team_use_case | string | Use cases outside of team context |
-| main_contact_on_meetings | array<string> | Array of primary contact identifiers for meeting coordination |
+| main_contact_on_meetings | array<string> | Array of hashed primary contact identifiers for meeting coordination |
 | themes | array<string> | Array of themes or topics associated with the client |
 | language_pref | array<string> | Array of client's preferred languages |
 | contributions | array<string> | Array of contribution identifiers made by the client |
-| main_contact_on_engagement | array<string> | Array of primary contact identifiers for engagement activities |
+| main_contact_on_engagement | array<string> | Array of hashed primary contact identifiers for engagement activities |
 
 ### Example Queries
 

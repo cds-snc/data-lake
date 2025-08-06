@@ -19,10 +19,9 @@ module "platform_gc_design_system_export" {
     S3_BUCKET_NAME_TRANSFORMED      = var.transformed_bucket_name
     S3_BUCKET_NAME_RAW              = var.raw_bucket_name
     S3_OBJECT_PREFIX                = local.gc_design_system_export_path
-    AIRTABLE_BASE_ID                = local.airtable_base_id
-    AIRTABLE_TABLE_NAME             = local.airtable_table_name
-    GLUE_CRAWLER_NAME               = local.gc_design_system_crawler_name
-
+    AIRTABLE_BASE_ID                = var.airtable_base_id
+    AIRTABLE_TABLE_NAME             = var.airtable_table_name
+    GLUE_CRAWLER_NAME               = var.gc_design_system_crawler_name
   }
 
   billing_tag_value = var.billing_tag_value
@@ -62,7 +61,7 @@ data "aws_iam_policy_document" "platform_gc_design_system_export" {
       "glue:GetCrawler"
     ]
     resources = [
-      aws_glue_crawler.platform_gc_design_system_airtable.arn
+      var.gc_design_system_crawler_arn
     ]
   }
 }

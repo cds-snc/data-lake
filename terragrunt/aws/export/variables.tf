@@ -10,6 +10,18 @@ variable "airtable_api_key" {
   sensitive   = true
 }
 
+variable "airtable_base_id" {
+  description = "Airtable base ID for the GC Design System base"
+  type        = string
+  sensitive   = true
+}
+
+variable "airtable_table_name" {
+  description = "Airtable table name for the GC Design System data"
+  type        = string
+  sensitive   = true
+}
+
 variable "raw_bucket_arn" {
   description = "The ARN of the Raw bucket."
   type        = string
@@ -37,5 +49,15 @@ variable "transformed_bucket_arn" {
 
 variable "transformed_bucket_name" {
   description = "The name of the Transformed bucket"
+  type        = string
+}
+
+variable "gc_design_system_crawler_arn" {
+  description = "The ARN of the GC Design System Glue crawler"
+  type        = string
+}
+
+variable "gc_design_system_crawler_name" {
+  description = "The name of the GC Design System Glue crawler"
   type        = string
 }

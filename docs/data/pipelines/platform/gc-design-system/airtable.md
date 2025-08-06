@@ -1,8 +1,8 @@
 # Platform / GC Design System / Airtable
 
 * `Schedule`: Daily at 5:00 AM UTC (Production only)
-* `Steward`: Platform Core Services  
-* `Contact`: Slack channel #platform-core-services
+* `Steward`: GC Design System
+* `Contact`: Slack channel #ds-cds-internal
 
 ## Description
 
@@ -39,10 +39,11 @@ graph TD
     
     %% Storage
     TransS3["`**S3 Bucket (Transformed)**<br/>cds-data-lake-transformed-production<br/>platform/gc-design-system/airtable/`"]
+    RawS3["`**S3 Bucket (Raw)**<br/>cds-data-lake-raw-production<br/>platform/gc-design-system/airtable/`"]
     
     %% Processing
     Lambda["`**Lambda Function**<br/>platform-gc-design-system-export<br/>Daily at 5:00 AM UTC`"]
-    Crawler["`**Glue Crawler**<br/>platform-gc-design-system-airtable-crawler<br/>Triggered after each export`"]
+    Crawler["`**Glue Crawler**<br/>Platform / GC Design System / Airtable<br/>Triggered after each export`"]
     CatalogTransformed["`**Data Catalog**<br/>Database: platform_gc_design_system<br/>Table: platform_gc_design_system_airtable`"]
 
     %% Flow
@@ -51,11 +52,12 @@ graph TD
     end
 
     subgraph aws_datalake[AWS Data Lake]
-        Lambda --> |1. Fetch via API|Airtable
-        Lambda --> |2. Convert to JSONL|TransS3
-        Lambda --> |3. Trigger crawler|Crawler
-        Crawler --> |4. Register/update schema|CatalogTransformed
-        TransS3 --> |5. Schema discovery|Crawler
+        Lambda --> |Fetch via API|Airtable
+        Lambda --> |Convert to JSONL|TransS3
+        Lambda --> |Convert to JSONL Raw|RawS3
+        Lambda --> |Trigger crawler|Crawler
+        Crawler --> |Register/update schema|CatalogTransformed
+        TransS3 --> |Schema discovery|Crawler
     end
 
     %% Styling
@@ -65,7 +67,7 @@ graph TD
     classDef catalog fill:#fff3e0
 
     class Airtable source
-    class TransS3 storage
+    class TransS3,RawS3 storage
     class Lambda,Crawler processing
     class CatalogTransformed catalog
 ```

@@ -23,6 +23,10 @@ module "platform_gc_design_system_export" {
   sns_topic_alarm_action_arn = var.sns_topic_alarm_action_arn
   sns_topic_ok_action_arn    = var.sns_topic_ok_action_arn
   airtable_api_key           = var.airtable_api_key
+  airtable_base_id           = var.airtable_base_id
+  airtable_table_name        = var.airtable_table_name
+  gc_design_system_crawler_arn  = var.gc_design_system_crawler_arn
+  gc_design_system_crawler_name = var.gc_design_system_crawler_name
 
   billing_tag_value = var.billing_tag_value
 }

@@ -4,6 +4,7 @@ import os
 import requests
 from time import sleep
 from datetime import datetime
+import hashlib
 
 # Environment variables
 AIRTABLE_API_KEY_PARAMETER_NAME = os.environ.get("AIRTABLE_API_KEY_PARAMETER_NAME")
@@ -12,8 +13,6 @@ S3_BUCKET_NAME_RAW = os.environ.get("S3_BUCKET_NAME_RAW")
 S3_OBJECT_PREFIX = os.environ.get("S3_OBJECT_PREFIX")
 AIRTABLE_BASE_ID = os.environ.get("AIRTABLE_BASE_ID")
 AIRTABLE_TABLE_NAME = os.environ.get("AIRTABLE_TABLE_NAME")
-
-# New: Glue crawler name from environment
 GLUE_CRAWLER_NAME = os.environ.get("GLUE_CRAWLER_NAME")
 
 
@@ -75,6 +74,20 @@ def handler(event, context):
                 .replace(")", "")
                 .lower()
             )
+
+            # Strip PII - We are hashing sensitive fields. Some of the fields are already hashed in Airtable, this is just an extra precaution        
+            if normalized_key in [
+                "name",
+                "primary_contact_on_team",
+                "main_contact_on_meetings",
+                "main_contact_on_engagement",
+                "email"
+            ]:
+                if isinstance(value, list):
+                    value = [hashlib.sha256(item.encode("utf-8")).hexdigest() for item in value if isinstance(item, str)]
+                elif isinstance(value, str):
+                    value = hashlib.sha256(value.encode("utf-8")).hexdigest()
+
             flattened[normalized_key] = value
         lines.append(json.dumps(flattened))
 
