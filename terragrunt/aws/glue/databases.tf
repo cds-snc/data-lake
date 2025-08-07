@@ -52,3 +52,8 @@ resource "aws_glue_catalog_database" "platform_gc_notify_production_curated" {
   name        = "platform_gc_notify_${var.env}_curated"
   description = "CURATED: data source path /platform/gc-notify/*"
 }
+
+resource "aws_glue_catalog_database" "platform_gc_design_system" {
+  name        = "platform_gc_design_system"
+  description = "TRANSFORMED: data source path: /platform/gc-design-system/*"
+}
