@@ -1,6 +1,6 @@
 docker:
-	docker build --platform linux/arm64 --tag platform-gc-design-system-export .
- 
+	docker build --platform linux/arm64 --tag platform-gc-design-system-airtable-export .
+
 fmt:
 	black . $(ARGS)
 
