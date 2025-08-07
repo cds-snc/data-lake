@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.12.0](https://github.com/cds-snc/data-lake/compare/v1.11.0...v1.12.0) (2025-08-07)
+
+
+### Features
+
+* add airtable export ([#360](https://github.com/cds-snc/data-lake/issues/360)) ([eea55d2](https://github.com/cds-snc/data-lake/commit/eea55d2fc0424063c6a639b56bdccb4f3cb965f4))
+
+
+### Bug Fixes
+
+* makefile naming error ([#367](https://github.com/cds-snc/data-lake/issues/367)) ([943a1c3](https://github.com/cds-snc/data-lake/commit/943a1c314ebe610c546d37e9332d1fcedf22e42a))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#363](https://github.com/cds-snc/data-lake/issues/363)) ([b33f59f](https://github.com/cds-snc/data-lake/commit/b33f59f97057af1f17b528a42a3f6d881ab4e40c))
+* **deps:** update dependency boto3 to v1.39.17 ([#362](https://github.com/cds-snc/data-lake/issues/362)) ([337d7c8](https://github.com/cds-snc/data-lake/commit/337d7c80d17ee6f22a74c61b69b4d82b9be26f46))
+
 ## [1.11.0](https://github.com/cds-snc/data-lake/compare/v1.10.3...v1.11.0) (2025-08-06)
 
 
