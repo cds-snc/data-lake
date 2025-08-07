@@ -35,7 +35,7 @@ The pipeline uses a scheduled Lambda function to extract data from Airtable and 
 ```mermaid
 graph TD
     %% Source Systems
-    Airtable["`**Airtable Base**<br/>GC Design System<br/>appaMppKljeU8zJE1`"]
+    Airtable["`**Airtable Base**<br/>GC Design System`"]
     
     %% Storage
     TransS3["`**S3 Bucket (Transformed)**<br/>cds-data-lake-transformed-production<br/>platform/gc-design-system/airtable/`"]
