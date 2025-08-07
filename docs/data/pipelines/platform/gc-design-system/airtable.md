@@ -75,8 +75,7 @@ graph TD
 ## Technical Details
 
 ### Data Source
-- **Source System**: Airtable (appaMppKljeU8zJE1)
-- **Table ID**: tbllQrJwtozOb0Ziv
+- **Source System**: Airtable
 - **Authentication**: Bearer token stored in SSM Parameter Store
 - **API Endpoint**: `https://api.airtable.com/v0/{base_id}/{table_name}`
 
