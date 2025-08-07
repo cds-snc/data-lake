@@ -74,7 +74,7 @@ jobs:
 
       - name: Report deployment to Sentinel
         if: always()
-        uses: cds-snc/sentinel-forward-data-action@01db4a9203054ecdb60ff368c3cdfca71d62e85f
+        uses: cds-snc/sentinel-forward-data-action@717c852022dff8e51f34a4b59702f8d684b0eb3d
         with:
           input_data: '{"product": "data-lake", "sha": "${{ github.sha }}", "version": "Infrastructure ${{ github.sha }}", "repository": "${{ github.repository }}", "environment": "staging", "status": "${{ job.status }}"}'
           log_type: CDS_Product_Deployment_Data
