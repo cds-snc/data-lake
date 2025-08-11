@@ -41,7 +41,8 @@
                 "CatalogSource": {
                     "Name": "Cost and Usage Report",
                     "Database": "operations_aws_production_raw",
-                    "Table": "cost_usage_report_data"
+                    "Table": "cost_usage_report_data",
+                    "PartitionPredicate": ""
                 }
             },
             "node-1731523780914": {
@@ -1376,7 +1377,8 @@
                 "CatalogSource": {
                     "Name": "Account Tags",
                     "Database": "operations_aws_production_raw",
-                    "Table": "account_tags_organization"
+                    "Table": "account_tags_organization",
+                    "PartitionPredicate": ""
                 }
             },
             "node-1732400753303": {
@@ -1407,6 +1409,9 @@
                         "UpdateBehavior": "UPDATE_IN_DATABASE",
                         "Table": "cost_usage_report_by_account",
                         "Database": "operations_aws_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": false
                     }
                 }
             }
