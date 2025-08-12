@@ -557,26 +557,28 @@ def process_data():
             logger.info(f"Data written with partitions: {partition_cols}")
             logger.info(f"Catalog table: {DATABASE_NAME_TRANSFORMED}.{table}")
 
-            # Register table in Glue Data Catalog using Spark SQL
-            # Drop table if exists to avoid schema drift
-            spark.sql(f"DROP TABLE IF EXISTS {DATABASE_NAME_TRANSFORMED}.{table}")
+            # Register table in Glue Data Catalog - only for partitioned tables
+            if partition_cols:
+                # Drop table if exists to avoid schema drift
+                spark.sql(f"DROP TABLE IF EXISTS {DATABASE_NAME_TRANSFORMED}.{table}")
 
-            # Create a temp view from the DataFrame for registration
-            spark_df.limit(0).createOrReplaceTempView("temp_table_for_registration")
+                # Create a temp view from the DataFrame for registration
+                spark_df.limit(0).createOrReplaceTempView("temp_table_for_registration")
 
-            partition_str = ", ".join(partition_cols) if partition_cols else ""
-            create_sql = f"""
-                CREATE TABLE IF NOT EXISTS {DATABASE_NAME_TRANSFORMED}.{table}
-                USING PARQUET
-                LOCATION '{s3_output_path}'
-                {f'PARTITIONED BY ({partition_str})' if partition_str else ''}
-                AS SELECT * FROM temp_table_for_registration WHERE 1=0
-            """
-            logger.info(f"Registering Glue table with SQL: {create_sql}")
-            spark.sql(create_sql)
+                partition_str = ", ".join(partition_cols)
+                create_sql = f"""
+                    CREATE TABLE IF NOT EXISTS {DATABASE_NAME_TRANSFORMED}.{table}
+                    USING PARQUET
+                    LOCATION '{s3_output_path}'
+                    PARTITIONED BY ({partition_str})
+                    AS SELECT * FROM temp_table_for_registration WHERE 1=0
+                """
+                logger.info(
+                    f"Registering partitioned Glue table with SQL: {create_sql}"
+                )
+                spark.sql(create_sql)
 
-            # Refresh partitions to ensure Glue knows about the new partitions
-            if partition_str:
+                # Refresh partitions to ensure Glue knows about the new partitions
                 try:
                     logger.info(
                         f"Running MSCK REPAIR TABLE to discover partitions for {DATABASE_NAME_TRANSFORMED}.{table}"
@@ -589,7 +591,18 @@ def process_data():
                     logger.warning(
                         f"MSCK REPAIR failed (table might not exist yet): {str(repair_e)}"
                     )
-                    pass
+            else:
+                # For unpartitioned tables, create table directly pointing to the data
+                spark.sql(f"DROP TABLE IF EXISTS {DATABASE_NAME_TRANSFORMED}.{table}")
+                create_sql = f"""
+                    CREATE TABLE {DATABASE_NAME_TRANSFORMED}.{table}
+                    USING PARQUET
+                    LOCATION '{s3_output_path}'
+                """
+                logger.info(
+                    f"Registering unpartitioned Glue table with SQL: {create_sql}"
+                )
+                spark.sql(create_sql)
 
         else:
             logger.error(f"No new {table_name} data found.")
