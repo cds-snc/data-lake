@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.13.0](https://github.com/cds-snc/data-lake/compare/v1.12.0...v1.13.0) (2025-08-12)
+
+
+### Features
+
+* activate daily gold table job ([#373](https://github.com/cds-snc/data-lake/issues/373)) ([c4e1e96](https://github.com/cds-snc/data-lake/commit/c4e1e960bceddf9635f72d3aa0b6bf11a18e6a15))
+
+
+### Bug Fixes
+
+* unpartitoned data were not save properly ([#372](https://github.com/cds-snc/data-lake/issues/372)) ([8782867](https://github.com/cds-snc/data-lake/commit/8782867908de5c2932cdc600303e69258a82e2ac))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#368](https://github.com/cds-snc/data-lake/issues/368)) ([74b9e6d](https://github.com/cds-snc/data-lake/commit/74b9e6de2c78c9ce79e3d56e468268f3fc5e77bc))
+* **deps:** lock file maintenance ([#370](https://github.com/cds-snc/data-lake/issues/370)) ([19dd125](https://github.com/cds-snc/data-lake/commit/19dd125c17672e32537a367c0f7ff8c464085831))
+* **deps:** update all non-major github action dependencies ([#361](https://github.com/cds-snc/data-lake/issues/361)) ([51bad86](https://github.com/cds-snc/data-lake/commit/51bad86aad522e154e5aff0a98c53e4d3fb211f1))
+* **deps:** update dependency boto3 to v1.40.1 ([#369](https://github.com/cds-snc/data-lake/issues/369)) ([f08c5cd](https://github.com/cds-snc/data-lake/commit/f08c5cd519f8a76b4e6268eb41c8ac90dbb83cca))
+* regenerate cost-and-usage-report.json for 2025-08-09 ([74b9e6d](https://github.com/cds-snc/data-lake/commit/74b9e6de2c78c9ce79e3d56e468268f3fc5e77bc))
+
 ## [1.12.0](https://github.com/cds-snc/data-lake/compare/v1.11.0...v1.12.0) (2025-08-07)
 
 
