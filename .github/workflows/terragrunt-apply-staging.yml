@@ -38,7 +38,7 @@ jobs:
         uses: cds-snc/terraform-tools-setup@cc15ce9039f6c37c592fb9930b70466b229d2e9b # v1
 
       - name: Configure AWS credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df # v4.2.1
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           role-to-assume: arn:aws:iam::454671348950:role/data-lake-apply
           role-session-name: TFApply
@@ -74,7 +74,7 @@ jobs:
 
       - name: Report deployment to Sentinel
         if: always()
-        uses: cds-snc/sentinel-forward-data-action@01db4a9203054ecdb60ff368c3cdfca71d62e85f
+        uses: cds-snc/sentinel-forward-data-action@717c852022dff8e51f34a4b59702f8d684b0eb3d
         with:
           input_data: '{"product": "data-lake", "sha": "${{ github.sha }}", "version": "Infrastructure ${{ github.sha }}", "repository": "${{ github.repository }}", "environment": "staging", "status": "${{ job.status }}"}'
           log_type: CDS_Product_Deployment_Data
