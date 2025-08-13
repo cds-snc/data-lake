@@ -13,20 +13,22 @@ module "platform_notify_export" {
 module "platform_gc_design_system_export" {
   source = "./platform/gc_design_system"
 
-  env                           = var.env
-  account_id                    = var.account_id
-  region                        = var.region
-  transformed_bucket_arn        = var.transformed_bucket_arn
-  transformed_bucket_name       = var.transformed_bucket_name
-  raw_bucket_arn                = var.raw_bucket_arn
-  raw_bucket_name               = var.raw_bucket_name
-  sns_topic_alarm_action_arn    = var.sns_topic_alarm_action_arn
-  sns_topic_ok_action_arn       = var.sns_topic_ok_action_arn
-  airtable_api_key              = var.airtable_api_key
-  airtable_base_id              = var.airtable_base_id
-  airtable_table_name           = var.airtable_table_name
-  gc_design_system_crawler_arn  = var.gc_design_system_crawler_arn
-  gc_design_system_crawler_name = var.gc_design_system_crawler_name
+  env                               = var.env
+  account_id                        = var.account_id
+  region                            = var.region
+  transformed_bucket_arn            = var.transformed_bucket_arn
+  transformed_bucket_name           = var.transformed_bucket_name
+  raw_bucket_arn                    = var.raw_bucket_arn
+  raw_bucket_name                   = var.raw_bucket_name
+  sns_topic_alarm_action_arn        = var.sns_topic_alarm_action_arn
+  sns_topic_ok_action_arn           = var.sns_topic_ok_action_arn
+  airtable_api_key                  = var.airtable_api_key
+  airtable_base_id                  = var.airtable_base_id
+  airtable_table_name               = var.airtable_table_name
+  gc_design_system_crawler_arn      = var.gc_design_system_crawler_arn
+  gc_design_system_crawler_name     = var.gc_design_system_crawler_name
+  gc_design_system_npm_crawler_arn  = var.gc_design_system_npm_crawler_arn
+  gc_design_system_npm_crawler_name = var.gc_design_system_npm_crawler_name
 
   billing_tag_value = var.billing_tag_value
 }

@@ -35,8 +35,10 @@ dependency "glue" {
   mock_outputs_merge_strategy_with_state  = "shallow"
   mock_outputs_allowed_terraform_commands = ["init", "fmt", "validate", "plan", "show"]
   mock_outputs = {
-    platform_gc_design_system_crawler_name = "mock-crawler-name"
-    platform_gc_design_system_crawler_arn  = "arn:aws:glue:ca-central-1:123456789012:crawler/mock-crawler-name"
+    platform_gc_design_system_crawler_name     = "mock-crawler-name"
+    platform_gc_design_system_crawler_arn      = "arn:aws:glue:ca-central-1:123456789012:crawler/mock-crawler-name"
+    platform_gc_design_system_npm_crawler_name = "mock-npm-crawler-name"
+    platform_gc_design_system_npm_crawler_arn  = "arn:aws:glue:ca-central-1:123456789012:crawler/mock-npm-crawler-name"
   }
 }
 
@@ -50,8 +52,10 @@ inputs = {
   transformed_bucket_arn  = dependency.buckets.outputs.transformed_bucket_arn
   transformed_bucket_name = dependency.buckets.outputs.transformed_bucket_name
   
-  gc_design_system_crawler_name = dependency.glue.outputs.platform_gc_design_system_crawler_name
-  gc_design_system_crawler_arn  = dependency.glue.outputs.platform_gc_design_system_crawler_arn
+  gc_design_system_crawler_name     = dependency.glue.outputs.platform_gc_design_system_crawler_name
+  gc_design_system_crawler_arn      = dependency.glue.outputs.platform_gc_design_system_crawler_arn
+  gc_design_system_npm_crawler_name = dependency.glue.outputs.platform_gc_design_system_npm_crawler_name
+  gc_design_system_npm_crawler_arn  = dependency.glue.outputs.platform_gc_design_system_npm_crawler_arn
 }
 
 include {

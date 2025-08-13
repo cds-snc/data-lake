@@ -71,3 +71,56 @@ resource "aws_ssm_parameter" "airtable_api_key" {
   type  = "SecureString"
   value = var.airtable_api_key
 }
+
+#
+# GC Design System NPM download data export via a scheduled Lambda function
+#
+module "platform_gc_design_system_npm_export" {
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.6.2"
+
+  lambda_name                = local.gc_design_system_npm_lambda_name
+  lambda_schedule_expression = local.cron_expression
+  lambda_timeout             = "300"
+  lambda_architectures       = ["arm64"]
+
+  lambda_policies = [
+    data.aws_iam_policy_document.platform_gc_design_system_npm_export.json
+  ]
+
+  lambda_environment_variables = {
+    S3_BUCKET_NAME_TRANSFORMED = var.transformed_bucket_name
+    S3_BUCKET_NAME_RAW         = var.raw_bucket_name
+    S3_OBJECT_PREFIX           = local.gc_design_system_npm_export_path
+    GLUE_CRAWLER_NAME          = var.gc_design_system_npm_crawler_name
+  }
+
+  billing_tag_value = var.billing_tag_value
+}
+
+data "aws_iam_policy_document" "platform_gc_design_system_npm_export" {
+  statement {
+    sid    = "WriteToS3Bucket"
+    effect = "Allow"
+    actions = [
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:DeleteObject"
+    ]
+    resources = [
+      "${var.transformed_bucket_arn}/${local.gc_design_system_npm_export_path}/*",
+      "${var.raw_bucket_arn}/${local.gc_design_system_npm_export_path}/*"
+    ]
+  }
+
+  statement {
+    sid    = "StartGlueCrawler"
+    effect = "Allow"
+    actions = [
+      "glue:StartCrawler",
+      "glue:GetCrawler"
+    ]
+    resources = [
+      var.gc_design_system_npm_crawler_arn
+    ]
+  }
+}
