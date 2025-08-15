@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/cds-snc/data-lake/compare/v1.13.0...v1.14.0) (2025-08-15)
+
+
+### Features
+
+* added npm data source ([#374](https://github.com/cds-snc/data-lake/issues/374)) ([a7d6bf7](https://github.com/cds-snc/data-lake/commit/a7d6bf71f73aa005be6d632dbc59d0b0bdecd342))
+
 ## [1.13.0](https://github.com/cds-snc/data-lake/compare/v1.12.0...v1.13.0) (2025-08-12)
 
 
