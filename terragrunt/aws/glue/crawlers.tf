@@ -193,3 +193,44 @@ resource "aws_glue_crawler" "platform_gc_design_system_airtable" {
     CostCentre = var.billing_tag_value
   }
 }
+
+#
+# Platform / GC Design System / NPM
+#
+resource "aws_glue_crawler" "platform_gc_design_system_npm" {
+  name          = "Platform / GC Design System / NPM"
+  description   = "Classify the GC Design System NPM download data"
+  database_name = aws_glue_catalog_database.platform_gc_design_system.name
+  table_prefix  = "platform_gc_design_system_"
+
+  role                   = aws_iam_role.glue_crawler.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+
+  s3_target {
+    path = "s3://${var.transformed_bucket_name}/platform/gc-design-system/npm/"
+  }
+
+  schema_change_policy {
+    update_behavior = "UPDATE_IN_DATABASE"
+    delete_behavior = "DELETE_FROM_DATABASE"
+  }
+
+  configuration = jsonencode({
+    Grouping = {
+      TableGroupingPolicy = "CombineCompatibleSchemas"
+    }
+    CrawlerOutput = {
+      Partitions = {
+        AddOrUpdateBehavior = "InheritFromTable"
+      }
+      Tables = {
+        AddOrUpdateBehavior = "MergeNewColumns"
+      }
+    }
+    Version = 1
+  })
+
+  tags = {
+    CostCentre = var.billing_tag_value
+  }
+}

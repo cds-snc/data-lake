@@ -61,3 +61,13 @@ variable "gc_design_system_crawler_name" {
   description = "The name of the GC Design System Glue crawler"
   type        = string
 }
+
+variable "gc_design_system_npm_crawler_arn" {
+  description = "The ARN of the GC Design System NPM Glue crawler"
+  type        = string
+}
+
+variable "gc_design_system_npm_crawler_name" {
+  description = "The name of the GC Design System NPM Glue crawler"
+  type        = string
+}

@@ -3,6 +3,8 @@
 Provides an inventory that contains metadata, descriptions, and technical details about all data sources within the data lake.
 
 - [Platform / GC Forms / Templates](./platform/gc-forms/templates.md)
+- [Platform / GC Design System / Airtable](./platform/gc-design-system/airtable.md)
+- [Platform / GC Design System / NPM](./platform/gc-design-system/npm.md)
 - [Platform / GC Notify](./platform/gc-notify/export.md)
 - [Platform / Support / Freshdesk](./platform/support/freshdesk.md)
 - [Operations / AWS / Cost and Usage Report](./operations/aws/cost-and-usage-report.md)

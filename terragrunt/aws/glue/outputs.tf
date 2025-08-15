@@ -38,6 +38,16 @@ output "platform_gc_design_system_crawler_arn" {
   value       = aws_glue_crawler.platform_gc_design_system_airtable.arn
 }
 
+output "platform_gc_design_system_npm_crawler_name" {
+  description = "GC Design System NPM Glue crawler name."
+  value       = aws_glue_crawler.platform_gc_design_system_npm.name
+}
+
+output "platform_gc_design_system_npm_crawler_arn" {
+  description = "GC Design System NPM Glue crawler ARN."
+  value       = aws_glue_crawler.platform_gc_design_system_npm.arn
+}
+
 output "bes_crm_salesforce_name" {
   description = "Salesforce Glue job name."
   value       = aws_glue_job.bes_crm_salesforce.name
