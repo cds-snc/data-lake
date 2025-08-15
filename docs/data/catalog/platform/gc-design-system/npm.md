@@ -19,7 +19,7 @@ This dataset is exported daily from the NPM Registry API, collecting download st
 * `Updated`: Daily at 5:00 AM UTC (Production only)
 * `Steward`: GC Design System
 * `Contact`: Slack channel #ds-cds-internal  
-* `Location`: `cds-data-lake-transformed-production/platform/gc-design-system/npm/*.parquet`
+* `Location`: `cds-data-lake-transformed-production/platform/gc-design-system/npm/*.json`
 
 ## Fields
 
@@ -82,5 +82,4 @@ FROM "platform_gc_design_system"."platform_gc_design_system_npm";
 
 - **Data Quality**: Data is fetched daily but represents complete historical data from NPM. Missing days may indicate no downloads or temporary API issues.
 - **Package Scope**: Currently tracks only the Vue components package (`@cdssnc/gcds-components-vue`). Additional packages may be added in future iterations.
-- **Partitioning**: Data is partitioned by year for efficient querying of time-based analytics.
 - **Usage Tracking**: This data complements other GC Design System analytics including [Airtable client engagement data](./airtable.md) for a complete adoption picture.

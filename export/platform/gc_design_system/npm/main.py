@@ -1,8 +1,12 @@
 import json
 import boto3
+import logging
 import os
 import requests
 from datetime import datetime
+
+logger = logging.getLogger()
+logger.setLevel("INFO")
 
 # Environment variables
 S3_BUCKET_NAME_TRANSFORMED = os.environ.get("S3_BUCKET_NAME_TRANSFORMED")
@@ -49,8 +53,10 @@ def fetch_all_npm_data():
                 all_data.append(download)
 
         except Exception as e:
-            print(f"Warning: Failed to fetch data for year {year}: {str(e)}")
-            continue
+            error_msg = f"Failed to fetch NPM data for year {year}: {str(e)}"
+            logger.error(error_msg)
+            raise Exception(error_msg)
+        logger.info("Fetched NPM data for year %s", year)
 
     return all_data
 
@@ -86,6 +92,11 @@ def handler(event, context):
             Body="\n".join(lines).encode("utf-8"),
             ContentType="application/json",
         )
+        logger.info(
+            "Successfully uploaded NPM download data to S3: %s and %s",
+            s3_key_transformed,
+            s3_key_raw,
+        )
 
         # Trigger Glue crawler to update table schema
         try:
@@ -93,12 +104,12 @@ def handler(event, context):
             glue.start_crawler(Name=GLUE_CRAWLER_NAME)
         except Exception as crawler_error:
             # Don't fail the whole job if crawler fails
-            print(f"Warning: Failed to start crawler: {crawler_error}")
+            logger.warning(f"Failed to start crawler: {crawler_error}")
 
     except Exception as e:
         return {"statusCode": 500, "body": f"Failed to upload to S3: {str(e)}"}
 
     return {
         "statusCode": 200,
-        "body": f"Saved {len(lines)} NPM download records to s3://{S3_BUCKET_NAME_TRANSFORMED}/{s3_key_raw} and s3://{S3_BUCKET_NAME_TRANSFORMED}/{s3_key_transformed}",
+        "body": f"Saved {len(lines)} NPM download records to s3://{S3_BUCKET_NAME_RAW}/{s3_key_raw} and s3://{S3_BUCKET_NAME_TRANSFORMED}/{s3_key_transformed}",
     }
