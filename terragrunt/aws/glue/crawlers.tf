@@ -234,3 +234,45 @@ resource "aws_glue_crawler" "platform_gc_design_system_npm" {
     CostCentre = var.billing_tag_value
   }
 }
+
+#
+# Platform / GC Design System / CloudFront
+#
+resource "aws_glue_crawler" "platform_gc_design_system_cloudfront" {
+  name          = "Platform / GC Design System / CloudFront"
+  description   = "Classify the GC Design System CloudFront log data"
+  database_name = aws_glue_catalog_database.platform_gc_design_system.name
+  table_prefix  = "platform_gc_design_system_"
+
+  role                   = aws_iam_role.glue_crawler.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+  schedule               = local.is_production ? "cron(0 6 * * ? *)" : null  # Daily at 6am UTC
+
+  s3_target {
+    path = "s3://${var.transformed_bucket_name}/platform/gc-design-system/cloudfront-logs/"
+  }
+
+  schema_change_policy {
+    update_behavior = "UPDATE_IN_DATABASE"
+    delete_behavior = "DELETE_FROM_DATABASE"
+  }
+
+  configuration = jsonencode({
+    Grouping = {
+      TableGroupingPolicy = "CombineCompatibleSchemas"
+    }
+    CrawlerOutput = {
+      Partitions = {
+        AddOrUpdateBehavior = "InheritFromTable"
+      }
+      Tables = {
+        AddOrUpdateBehavior = "MergeNewColumns"
+      }
+    }
+    Version = 1
+  })
+
+  tags = {
+    CostCentre = var.billing_tag_value
+  }
+}
