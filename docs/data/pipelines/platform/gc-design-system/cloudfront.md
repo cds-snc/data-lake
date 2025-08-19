@@ -184,25 +184,6 @@ The CloudFront log processing uses an event-driven ETL approach:
 - **Schedule**: Daily at 6:00 AM UTC (Production only)
 - **Schema Detection**: Automatic detection of Parquet schema and partitions
 
-### Data Schema
-
-The processed CloudFront logs contain the following key fields:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `date` | string | Date of the request (YYYY-MM-DD) |
-| `time` | string | Time of the request (HH:MM:SS) |
-| `x-edge-location` | string | CloudFront edge location code |
-| `sc-bytes` | string | Number of bytes sent to client |
-| `c-ip` | string | Client IP address |
-| `cs-method` | string | HTTP method (GET, POST, etc.) |
-| `cs-uri-stem` | string | URI path requested |
-| `sc-status` | string | HTTP response status code |
-| `cs-referer` | string | Referrer URL |
-| `cs-user-agent` | string | User agent string |
-| `cs-uri-query` | string | Query string parameters |
-| `processed_at` | timestamp | When the log was processed by Lambda |
-| `source_file` | string | Original .gz filename for traceability |
 
 ### Deployment
 
