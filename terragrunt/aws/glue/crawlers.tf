@@ -246,7 +246,7 @@ resource "aws_glue_crawler" "platform_gc_design_system_cloudfront" {
 
   role                   = aws_iam_role.glue_crawler.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
-  schedule               = local.is_production ? "cron(0 6 * * ? *)" : null  # Daily at 6am UTC
+  schedule               = local.is_production ? "cron(0 6 * * ? *)" : null # Daily at 6am UTC
 
   s3_target {
     path = "s3://${var.transformed_bucket_name}/platform/gc-design-system/cloudfront-logs/"

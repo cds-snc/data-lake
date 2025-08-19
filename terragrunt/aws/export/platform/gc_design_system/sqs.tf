@@ -12,6 +12,9 @@ resource "aws_sqs_queue" "cloudfront_processing_queue" {
   # Visibility timeout
   visibility_timeout_seconds = 960 # 16 minutes (should be longer than 15min lambda timeout)
 
+  # Encryption
+  kms_master_key_id = aws_kms_key.gc_design_system_exports.arn
+
   tags = {
     Billing = var.billing_tag_value
   }
@@ -20,6 +23,9 @@ resource "aws_sqs_queue" "cloudfront_processing_queue" {
 # Dead letter queue for failed messages
 resource "aws_sqs_queue" "cloudfront_processing_dlq" {
   name = "${local.gc_design_system_cloudfront_queue_name}-dlq"
+
+  # Encryption
+  kms_master_key_id = aws_kms_key.gc_design_system_exports.arn
 
   tags = {
     Billing = var.billing_tag_value
@@ -46,7 +52,10 @@ resource "aws_s3_bucket_notification" "cloudfront_trigger" {
     filter_suffix = ".gz"
   }
 
-  depends_on = [aws_sqs_queue_policy.cloudfront_s3_events]
+  depends_on = [
+    aws_sqs_queue_policy.cloudfront_s3_events,
+    aws_sqs_queue.cloudfront_processing_queue
+  ]
 }
 
 # SQS queue policy to allow S3 to send messages
@@ -68,8 +77,14 @@ resource "aws_sqs_queue_policy" "cloudfront_s3_events" {
           ArnEquals = {
             "aws:SourceArn" = var.raw_bucket_arn
           }
+          StringEquals = {
+            "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
         }
       }
     ]
   })
 }
+
+# Get current AWS account ID
+data "aws_caller_identity" "current" {}

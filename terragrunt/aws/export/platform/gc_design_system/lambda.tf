@@ -193,4 +193,16 @@ data "aws_iam_policy_document" "platform_gc_design_system_cloudfront_export" {
       aws_sqs_queue.cloudfront_processing_queue.arn
     ]
   }
+
+  statement {
+    sid    = "UseKMSForSQS"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
+    resources = [
+      aws_kms_key.gc_design_system_exports.arn
+    ]
+  }
 }
