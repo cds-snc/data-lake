@@ -33,9 +33,9 @@ def load_cloudfront_log(s3_client, bucket, key):
     data_lines = []
     for line in lines:
         if line.startswith('#Fields:'):
-            fields = line.strip().split()[1:]
+            fields = line.strip().split(" ")[1:]
         elif not line.startswith('#'):
-            data_lines.append(line.strip().split())
+            data_lines.append(line.strip().split("\t"))
 
     if not fields:
         raise ValueError("No #Fields header found in CloudFront log file")
@@ -143,6 +143,12 @@ def handler(event, context):
                         pa.array([row[i] for row in rows])
                         for i in range(len(all_fields))
                     ], names=all_fields)
+                    
+                    # Drop sensitive/redundant columns
+                    columns_to_drop = ['date', 'c-ip']
+                    existing_columns_to_drop  = [col for col in columns_to_drop if col in table.schema.names]
+                    if existing_columns_to_drop :
+                        table = table.drop(existing_columns_to_drop )
                     
                     # Write to Parquet buffer
                     parquet_buffer = BytesIO()

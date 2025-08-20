@@ -23,18 +23,18 @@ Sample data showing typical CloudFront access log entries converted to Parquet f
 
 | Field Name | Type | Description |
 |-------|------|-------------|
-| date | string | Request date in YYYY-MM-DD format |
+| date | string | **Partition Key** Request date in YYYY-MM-DD format |
 | time | string | Request time in HH:MM:SS format (UTC) |
 | x-edge-location | string | CloudFront edge location code that served the request (e.g., "IAD89-C1") |
 | sc-bytes | string | Number of bytes sent from CloudFront to the client |
-| c-ip | string | Client IP address making the request |
 | cs-method | string | HTTP method used for the request, one of "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS" |
+| cs(host) | string | Host header from the request |
 | cs-uri-stem | string | URI path portion of the request (without query parameters) |
 | sc-status | string | HTTP status code returned by CloudFront (e.g., "200", "404", "403") |
-| cs-referer | string | Referer header from the request, indicating the page that linked to this resource |
-| cs-user-agent | string | User agent string from the client browser |
+| cs(referer) | string | Referer header from the request, indicating the page that linked to this resource |
+| cs(user-agent) | string | User agent string from the client browser |
 | cs-uri-query | string | Query string parameters from the request URL |
-| cs-cookie | string | Cookie header from the request |
+| cs(cookie) | string | Cookie header from the request |
 | x-edge-result-type | string | Result type for the request, one of "Hit", "Miss", "RefreshHit", "OriginShield" |
 | x-edge-request-id | string | Unique identifier for the request assigned by CloudFront |
 | x-host-header | string | Host header from the request |
@@ -55,7 +55,7 @@ Sample data showing typical CloudFront access log entries converted to Parquet f
 | sc-content-len | string | Content-Length header in the response |
 | sc-range-start | string | Range start value if this was a range request |
 | sc-range-end | string | Range end value if this was a range request |
-| processed_at | timestamp | When the log entry was processed by the Lambda function |
+| processed_at | string | When the log entry was processed by the Lambda function |
 | source_file | string | Original CloudFront log filename for audit trail |
 
 ## Notes

@@ -36,7 +36,7 @@ Real-time processed CloudFront access logs providing detailed insights into CDN 
 ### Storage Structure
 All data is stored in the S3 data lake with the following structure:
 ```
-s3://data-lake-transformed-bucket/platform/gc-design-system/
+s3://cds-data-lake-transformed-production/platform/gc-design-system/
 ├── airtable/          # Client and department data
 ├── npm/               # Package download statistics  
 └── cloudfront-logs/   # CDN access logs
@@ -56,10 +56,10 @@ SELECT
   a.date_modified,
   a.department,
   a.implementation_status,
-  n.downloads_7d as recent_downloads
-FROM platform_gc_design_system_airtable_airtable a
-LEFT JOIN platform_gc_design_system_npm_npm n 
-  ON DATE(a.date_modified) = DATE(n.period_start)
+  n.downloads as downloads
+FROM platform_gc_design_system_airtable a
+LEFT JOIN platform_gc_design_system_npm n 
+  ON DATE(a.date_modified) = DATE(n.day)
 WHERE a.date_modified >= current_date - interval '30' day
 ORDER BY a.date_modified DESC;
 ```
@@ -70,10 +70,10 @@ ORDER BY a.date_modified DESC;
 SELECT 
   DATE(c.date) as date,
   COUNT(c.*) as cdn_requests,
-  AVG(n.downloads_1d) as avg_daily_downloads
-FROM platform_gc_design_system_cloudfront_cloudfront c
-LEFT JOIN platform_gc_design_system_npm_npm n 
-  ON DATE(c.date) = DATE(n.period_start)
+  AVG(n.downloads) as avg_daily_downloads
+FROM platform_gc_design_system_cloudfront_logs c
+LEFT JOIN platform_gc_design_system_npm n 
+  ON DATE(c.date) = DATE(n.day)
 WHERE DATE(c.date) >= current_date - interval '7' day
 GROUP BY DATE(c.date)
 ORDER BY date;

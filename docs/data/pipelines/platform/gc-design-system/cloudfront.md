@@ -38,7 +38,7 @@ SELECT
     "sc-status" as status,
     "sc-bytes" as bytes_sent
 FROM 
-    "platform_gc_design_system"."platform_gc_design_system_cloudfront_cloudfront" 
+    "platform_gc_design_system"."platform_gc_design_system_cloudfront_logs" 
 WHERE date >= current_date - interval '7' day
 ORDER BY date DESC, time DESC
 LIMIT 100;
@@ -49,7 +49,7 @@ SELECT
     COUNT(*) as request_count,
     AVG(CAST("sc-bytes" AS bigint)) as avg_bytes_sent
 FROM 
-    "platform_gc_design_system"."platform_gc_design_system_cloudfront_cloudfront"
+    "platform_gc_design_system"."platform_gc_design_system_cloudfront_logs"
 WHERE date >= current_date - interval '30' day
 GROUP BY "x-edge-location"
 ORDER BY request_count DESC;
@@ -61,7 +61,7 @@ SELECT
     SUM(CASE WHEN "sc-status" >= '400' THEN 1 ELSE 0 END) as error_requests,
     ROUND(SUM(CASE WHEN "sc-status" >= '400' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) as error_rate_percent
 FROM 
-    "platform_gc_design_system"."platform_gc_design_system_cloudfront_cloudfront"
+    "platform_gc_design_system"."platform_gc_design_system_cloudfront_logs"
 WHERE date >= current_date - interval '7' day
 GROUP BY date
 ORDER BY date;
