@@ -5,6 +5,7 @@ Provides details on the automated processes that import and transform the data s
 - [Platform / GC Forms / Templates](./platform/gc-forms/templates.md)
 - [Platform / GC Design System / Airtable](./platform/gc-design-system/airtable.md)
 - [Platform / GC Design System / NPM](./platform/gc-design-system/npm.md)
+- [Platform / GC Design System / CloudFront](./platform/gc-design-system/cloudfront.md)
 - [Platform / GC Notify](./platform/gc-notify/export.md)
 - [Platform / Support / Freshdesk](./platform/support/freshdesk.md)
 - [Operations / AWS / Cost and Usage Report](./operations/aws/cost-and-usage-report.md)

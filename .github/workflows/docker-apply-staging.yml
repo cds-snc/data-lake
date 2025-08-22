@@ -30,6 +30,8 @@ jobs:
             lambda: platform-gc-design-system-airtable-export
           - export: platform/gc_design_system/npm
             lambda: platform-gc-design-system-npm-export
+          - export: platform/gc_design_system/cloudfront
+            lambda: platform-gc-design-system-cloudfront-export
           - export: platform/support/freshdesk
             lambda: platform-support-freshdesk-export
 
