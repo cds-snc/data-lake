@@ -67,3 +67,54 @@ Sample data showing typical CloudFront access log entries converted to Parquet f
 **Partitioning Strategy**: Data is partitioned by the actual request date from the CloudFront logs (not the processing date), ensuring accurate time-based queries and efficient storage organization.
 
 **Schema Discovery**: The Glue crawler runs on a daily schedule at 6:00 AM UTC (Production only) to automatically discover and update the table schema as new data is processed. This ensures the catalog stays current with any schema changes while maintaining independence from the real-time processing pipeline.
+
+## Historical Analytics Tables
+
+In addition to real-time access logs, weekly historical analytics tables provide aggregated insights into CloudFront performance and usage patterns.
+
+### Popular Objects History (`platform_gc_design_system_cloudfront_popular_objects_history`)
+
+Weekly statistics showing the most frequently requested objects from the CloudFront distribution.
+
+| Field Name | Type | Description |
+|-------|------|-------------|
+| distributionid | string | CloudFront distribution identifier |
+| friendlyname | string | Human-readable name for the distribution |
+| object | string | Requested object/file path |
+| requestcount | bigint | Total number of requests for this object |
+| hitcount | bigint | Number of requests served from CloudFront cache (cache hits) |
+| misscount | bigint | Number of requests that required origin fetch (cache misses) |
+| hitcountpct | string | Cache hit percentage for this object |
+| bytesfrommisses | bigint | Total bytes served from origin due to cache misses |
+| totalbytes | bigint | Total bytes served for this object (hits + misses) |
+| incompletedownloadcount | bigint | Number of incomplete downloads/requests |
+| http2xx | bigint | Count of successful HTTP 2xx responses |
+| http3xx | bigint | Count of HTTP 3xx redirect responses |
+| http4xx | bigint | Count of HTTP 4xx client error responses |
+| http5xx | bigint | Count of HTTP 5xx server error responses |
+| report | string | Report type identifier |
+| startdateutc | string | Start date of the reporting period (UTC) |
+
+### Top Referrers History (`platform_gc_design_system_cloudfront_top_referrers_history`)
+
+Weekly statistics showing the top referrer domains that drive traffic to the GC Design System.
+
+| Field Name | Type | Description |
+|-------|------|-------------|
+| distributionid | string | CloudFront distribution identifier |
+| friendlyname | string | Human-readable name for the distribution |
+| referrers | string | Referrer domain or URL that drove traffic to the site |
+| requestcount | bigint | Total number of requests from this referrer |
+| requestserror | bigint | Number of requests from this referrer that resulted in errors |
+| report | string | Report type identifier |
+| startdateutc | string | Start date of the reporting period (UTC) |
+| enddateutc | string | End date of the reporting period (UTC) |
+
+## Data Access
+
+- **Database**: `platform_gc_design_system`
+- **Tables**: 
+  - `platform_gc_design_system_cloudfront_logs` (real-time access logs)
+  - `platform_gc_design_system_cloudfront_popular_objects_history` (weekly popular objects)
+  - `platform_gc_design_system_cloudfront_top_referrers_history` (weekly referrer analysis)
+- **Query Interface**: AWS Athena

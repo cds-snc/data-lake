@@ -20,26 +20,30 @@ Download statistics for the `@cdssnc/gcds-components-vue` NPM package, showing a
 - **Data Type**: Package download counts by time period
 
 ### [CloudFront Access Logs](./cloudfront.md)
-Real-time processed CloudFront access logs providing detailed insights into CDN usage, performance, and user behavior.
+Real-time processed CloudFront access logs providing detailed insights into CDN usage, performance, and user behavior. Includes both real-time access logs and historical analytics tables.
 
-- **Update Frequency**: Real-time (S3 triggered)
-- **Processing**: Event-driven Lambda function
-- **Data Type**: HTTP requests, geographic distribution, performance metrics
+- **Update Frequency**: Real-time (S3 triggered) for access logs, Manual for historical analytics
+- **Processing**: Event-driven Lambda function for logs, Manual notebook processing for historical data
+- **Data Type**: HTTP requests, geographic distribution, performance metrics, weekly aggregated statistics
 
 ## Data Architecture
 
 ### Processing Patterns
 - **Scheduled Processing**: Airtable and NPM data use scheduled Lambda functions with daily cron triggers
 - **Event-Driven Processing**: CloudFront logs use S3 event triggers for real-time processing
+- **Manual Processing**: Historical CloudFront analytics are processed locally via Jupyter notebooks and manually uploaded
 - **Schema Management**: Glue crawlers automatically update table schemas after data processing
 
 ### Storage Structure
 All data is stored in the S3 data lake with the following structure:
 ```
 s3://cds-data-lake-transformed-production/platform/gc-design-system/
-├── airtable/          # Client and department data
-├── npm/               # Package download statistics  
-└── cloudfront-logs/   # CDN access logs
+├── airtable/                                                    # Client and department data
+├── npm/                                                         # Package download statistics  
+├── cloudfront-logs/                                             # Real-time CDN access logs
+└── cloudfront-historical-data/                                 # Manual analytics processing
+    ├── cloudfront-popular-objects-history/                     # Weekly popular pages analytics
+    └── cloudfront-top-referrers-history/                       # Weekly top referrers analytics
 ```
 
 ### Data Quality
