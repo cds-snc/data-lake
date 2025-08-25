@@ -6,7 +6,7 @@
         "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
-        "LastModifiedOn": "2024-12-08T17:28:13.231000+00:00",
+        "LastModifiedOn": "2025-08-21T14:47:55.707000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -183,6 +183,24 @@
                             "ToKey": "tag_business_unit",
                             "FromPath": [
                                 "tag_business_unit"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tag_trn",
+                            "FromPath": [
+                                "tag_trn"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tag_trn_number",
+                            "FromPath": [
+                                "tag_trn_number"
                             ],
                             "FromType": "string",
                             "ToType": "string",
