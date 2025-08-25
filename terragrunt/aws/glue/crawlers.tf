@@ -276,3 +276,47 @@ resource "aws_glue_crawler" "platform_gc_design_system_cloudfront" {
     CostCentre = var.billing_tag_value
   }
 }
+
+# Platform / GC Design System / CloudFront History
+#
+resource "aws_glue_crawler" "platform_gc_design_system_cloudfront_history" {
+  name          = "Platform / GC Design System / CloudFront History"
+  description   = "Classify the GC Design System CloudFront historical data"
+  database_name = aws_glue_catalog_database.platform_gc_design_system.name
+  table_prefix  = "platform_gc_design_system_"
+
+  role                   = aws_iam_role.glue_crawler.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+
+  s3_target {
+    path = "s3://${var.transformed_bucket_name}/platform/gc-design-system/cloudfront-historical-data/cloudfront-popular-objects-history/"
+  }
+
+  s3_target {
+    path = "s3://${var.transformed_bucket_name}/platform/gc-design-system/cloudfront-historical-data/cloudfront-top-referrers-history/"
+  }
+
+  schema_change_policy {
+    update_behavior = "UPDATE_IN_DATABASE"
+    delete_behavior = "DELETE_FROM_DATABASE"
+  }
+
+  configuration = jsonencode({
+    Grouping = {
+      TableGroupingPolicy = "CombineCompatibleSchemas"
+    }
+    CrawlerOutput = {
+      Partitions = {
+        AddOrUpdateBehavior = "InheritFromTable"
+      }
+      Tables = {
+        AddOrUpdateBehavior = "MergeNewColumns"
+      }
+    }
+    Version = 1
+  })
+
+  tags = {
+    CostCentre = var.billing_tag_value
+  }
+}
