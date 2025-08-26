@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.14.0](https://github.com/cds-snc/data-lake/compare/v1.13.0...v1.14.0) (2025-08-25)
+
+
+### Features
+
+* added npm data source ([#374](https://github.com/cds-snc/data-lake/issues/374)) ([a7d6bf7](https://github.com/cds-snc/data-lake/commit/a7d6bf71f73aa005be6d632dbc59d0b0bdecd342))
+* cloudfront log dataset ([#380](https://github.com/cds-snc/data-lake/issues/380)) ([61c1f95](https://github.com/cds-snc/data-lake/commit/61c1f953d466fdbb20e893518d26b5c38cca53f2))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#381](https://github.com/cds-snc/data-lake/issues/381)) ([79627de](https://github.com/cds-snc/data-lake/commit/79627de39450cc46cba6ceead85f54460f2f545e))
+* **deps:** lock file maintenance ([#379](https://github.com/cds-snc/data-lake/issues/379)) ([e86ef0b](https://github.com/cds-snc/data-lake/commit/e86ef0bbae99594a379fdf8d8eeaa93c6a944c0b))
+* **deps:** lock file maintenance ([#386](https://github.com/cds-snc/data-lake/issues/386)) ([40c0cd7](https://github.com/cds-snc/data-lake/commit/40c0cd75b9931832f12374c3030f2764ee28093a))
+* **deps:** update all minor dependencies ([#378](https://github.com/cds-snc/data-lake/issues/378)) ([4a611fa](https://github.com/cds-snc/data-lake/commit/4a611fa7a3fbdeb6ef9c1b197311e8c5b1210d33))
+* **deps:** update all minor dependencies ([#385](https://github.com/cds-snc/data-lake/issues/385)) ([d01786f](https://github.com/cds-snc/data-lake/commit/d01786f06a9871fabf51fec8574614147147fcb6))
+* **deps:** update all non-major github action dependencies ([#377](https://github.com/cds-snc/data-lake/issues/377)) ([b4537de](https://github.com/cds-snc/data-lake/commit/b4537de2fbcd714b398947929d9af9e53f740f67))
+* **deps:** update dependency boto3 to v1.40.11 ([#384](https://github.com/cds-snc/data-lake/issues/384)) ([7dbd377](https://github.com/cds-snc/data-lake/commit/7dbd377cdcbe7aacf679116cedcdfacae4cb436d))
+* **deps:** update dependency boto3 to v1.40.7 ([#376](https://github.com/cds-snc/data-lake/issues/376)) ([b33a24a](https://github.com/cds-snc/data-lake/commit/b33a24a19bad93989d057e6445161ff7b18fee61))
+* regenerate cost-and-usage-report.json for 2025-08-22 ([79627de](https://github.com/cds-snc/data-lake/commit/79627de39450cc46cba6ceead85f54460f2f545e))
+
 ## [1.13.0](https://github.com/cds-snc/data-lake/compare/v1.12.0...v1.13.0) (2025-08-12)
 
 
