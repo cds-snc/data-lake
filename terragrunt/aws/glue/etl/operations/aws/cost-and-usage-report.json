@@ -6,7 +6,7 @@
         "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
-        "LastModifiedOn": "2025-08-21T14:47:55.707000+00:00",
+        "LastModifiedOn": "2025-08-26T18:43:16.445000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -22,7 +22,6 @@
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
             "--enable-glue-datacatalog": "true",
-            "--enable-continuous-cloudwatch-log": "true",
             "--job-bookmark-option": "job-bookmark-enable",
             "--job-language": "python",
             "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/",
@@ -30,12 +29,12 @@
         },
         "MaxRetries": 0,
         "AllocatedCapacity": 20,
-        "Timeout": 15,
+        "Timeout": 30,
         "MaxCapacity": 20.0,
         "WorkerType": "G.2X",
         "NumberOfWorkers": 10,
         "SecurityConfiguration": "encryption-at-rest",
-        "GlueVersion": "4.0",
+        "GlueVersion": "5.0",
         "CodeGenConfigurationNodes": {
             "node-1731428848266": {
                 "CatalogSource": {
