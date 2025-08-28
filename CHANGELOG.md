@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.15.0](https://github.com/cds-snc/data-lake/compare/v1.14.0...v1.15.0) (2025-08-28)
+
+
+### Features
+
+* added historical data load ([#382](https://github.com/cds-snc/data-lake/issues/382)) ([2f793e4](https://github.com/cds-snc/data-lake/commit/2f793e4dd4b118983c482c4d1f396eca62e57f5d))
+
+
+### Bug Fixes
+
+* changing the glue name so its available in superset ([#389](https://github.com/cds-snc/data-lake/issues/389)) ([95611c6](https://github.com/cds-snc/data-lake/commit/95611c6d59d1d515c1f15d862e278fddd86ebac8))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#387](https://github.com/cds-snc/data-lake/issues/387)) ([03c902b](https://github.com/cds-snc/data-lake/commit/03c902b44872daa3ead4fb48f167eac6a879feae))
+* **deps:** update actions/dependency-review-action action to v4.7.2 ([#383](https://github.com/cds-snc/data-lake/issues/383)) ([6d22dc3](https://github.com/cds-snc/data-lake/commit/6d22dc3db9e602cab240ff7e5192a213ad5a6743))
+* regenerate cost-and-usage-report.json for 2025-08-27 ([03c902b](https://github.com/cds-snc/data-lake/commit/03c902b44872daa3ead4fb48f167eac6a879feae))
+
 ## [1.14.0](https://github.com/cds-snc/data-lake/compare/v1.13.0...v1.14.0) (2025-08-25)
 
 
