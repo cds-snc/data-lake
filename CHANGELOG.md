@@ -5,7 +5,7 @@
 
 ### Features
 
-* added historical data load ([#382](https://github.com/cds-snc/data-lake/issues/382)) ([2f793e4](https://github.com/cds-snc/data-lake/commit/2f793e4dd4b118983c482c4d1f396eca62e57f5d))
+* added historical data load  ([#382](https://github.com/cds-snc/data-lake/issues/382)) ([2f793e4](https://github.com/cds-snc/data-lake/commit/2f793e4dd4b118983c482c4d1f396eca62e57f5d))
 
 
 ### Bug Fixes
