@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/cds-snc/data-lake/compare/v1.15.0...v1.15.1) (2025-08-28)
+
+
+### Bug Fixes
+
+* trigger release - give superset proper access to glue ([#392](https://github.com/cds-snc/data-lake/issues/392)) ([b3dc880](https://github.com/cds-snc/data-lake/commit/b3dc880e2f0460670bd9858d08e6844c9571f20c))
+
 ## [1.15.0](https://github.com/cds-snc/data-lake/compare/v1.14.0...v1.15.0) (2025-08-28)
 
 
