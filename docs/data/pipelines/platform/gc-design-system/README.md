@@ -6,7 +6,7 @@ This directory contains technical documentation for all data pipelines that coll
 ## Pipeline Architecture
 
 ### Processing Models
-The GC Design System uses two distinct processing patterns:
+The GC Design System uses three distinct processing patterns:
 
 #### Scheduled Processing
 - **Pipelines**: [Airtable](./airtable.md), [NPM](./npm.md)
@@ -15,10 +15,16 @@ The GC Design System uses two distinct processing patterns:
 - **Use Case**: Batch processing of external API data
 
 #### Event-Driven Processing with SQS
-- **Pipelines**: [CloudFront](./cloudfront.md)
+- **Pipelines**: [CloudFront](./cloudfront.md) (real-time logs)
 - **Trigger**: S3 ObjectCreated events → SQS queue → Lambda processing
 - **Pattern**: S3 upload → SQS buffering → Immediate Lambda processing
 - **Use Case**: Event-driven log processing with SQS buffering for reliability
+
+#### Manual Processing
+- **Pipelines**: CloudFront historical analytics
+- **Trigger**: Manual CSV upload and notebook processing
+- **Pattern**: CSV upload to raw bucket → Local Jupyter notebook processing → Manual upload to transformed bucket → Glue crawler registration
+- **Use Case**: Weekly aggregated analytics requiring custom processing logic
 
 ### Infrastructure Components
 
@@ -35,18 +41,23 @@ The GC Design System uses two distinct processing patterns:
 | `platform-gc-design-system-airtable` | Daily 6:00 AM UTC | Airtable schema discovery |
 | `platform-gc-design-system-npm` | Manual (triggered by Lambda) | NPM data schema update |
 | `platform-gc-design-system-cloudfront` | Triggered by Lambda | CloudFront schema discovery |
+| `platform-gc-design-system-cloudfront-historical` | Manual | Historical analytics schema registration |
 
 #### S3 Storage Structure
 ```
 Raw Bucket:
 ├── platform/gc-design-system/airtable/
 ├── platform/gc-design-system/npm/
-└── platform/gc-design-system/cloudfront-logs/     # CloudFront logs (input)
+├── platform/gc-design-system/cloudfront-logs/              # CloudFront logs (input)
+└── platform/gc-design-system/cloudfront-historical-data/   # Historical analytics CSVs
 
 Transformed Bucket:
 ├── platform/gc-design-system/airtable/
 ├── platform/gc-design-system/npm/
-└── platform/gc-design-system/cloudfront-logs/     # Processed logs (output)
+├── platform/gc-design-system/cloudfront-logs/              # Processed logs (output)
+└── platform/gc-design-system/cloudfront-historical-data/   # Processed historical analytics
+    ├── cloudfront-popular-objects-history/                 # Weekly popular pages
+    └── cloudfront-top-referrers-history/                   # Weekly top referrers
 ```
 
 ## Pipeline Details
@@ -68,8 +79,14 @@ Event-driven processing of CloudFront access logs with SQS reliability.
 - **Data Source**: CloudFront log files (.gz format)
 - **Processing**: Real-time processing via SQS event triggers
 - **Output**: Parquet files with Hive-style partitioning
-- **Processing**: Log parsing, decompression, and enrichment
-- **Output**: Structured access log data in Parquet format with geographic and performance metrics
+- **Use Case**: Real-time access log analysis with geographic and performance metrics
+
+### [CloudFront Historical Analytics Pipeline](./cloudfront-history.md)
+Manual processing of weekly CloudFront analytics for aggregated insights.
+- **Data Source**: CSV analytics files with weekly aggregations
+- **Processing**: Manual Jupyter notebook processing with data validation
+- **Output**: Historical analytics tables (popular objects and top referrers)
+- **Use Case**: Weekly trend analysis and historical reporting
 
 ## Deployment
 
