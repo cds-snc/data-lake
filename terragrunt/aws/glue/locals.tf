@@ -10,6 +10,7 @@ locals {
     aws_glue_catalog_database.platform_gc_notify_production.name,
     aws_glue_catalog_database.platform_support_production.name,
     aws_glue_catalog_database.bes_crm_salesforce_production.name,
+    aws_glue_catalog_database.platform_gc_design_system.name,
   ]
 
   # Filter out any Glue databases without a corresponding Superset IAM role
