@@ -7,5 +7,6 @@ inputs = {
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_forms_staging",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_notify_staging",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_support_staging",
+    "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_design_system_staging"
   ]
 }
