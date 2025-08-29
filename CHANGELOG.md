@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/cds-snc/data-lake/compare/v1.15.1...v1.16.0) (2025-08-29)
+
+
+### Features
+
+* historical data colums are now date type ([#394](https://github.com/cds-snc/data-lake/issues/394)) ([8ae52d2](https://github.com/cds-snc/data-lake/commit/8ae52d249a6e8a8deebe005bb67b5d0a60b95b26))
+
 ## [1.15.1](https://github.com/cds-snc/data-lake/compare/v1.15.0...v1.15.1) (2025-08-28)
 
 
