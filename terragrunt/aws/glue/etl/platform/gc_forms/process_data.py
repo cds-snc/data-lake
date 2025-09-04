@@ -232,6 +232,12 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "gx_checkpoint": "forms-submissions_checkpoint",
             },
             {
+                "path": "processed-data/submissions_files",
+                "date_columns": ["timestamp"],
+                "partition_timestamp": "timestamp",
+                "gx_checkpoint": "forms-submissions_files_checkpoint",
+            },
+            {
                 "path": "processed-data/template",
                 "date_columns": [
                     "ttl",
