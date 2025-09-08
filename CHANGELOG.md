@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.16.0](https://github.com/cds-snc/data-lake/compare/v1.15.1...v1.16.0) (2025-09-08)
+
+
+### Features
+
+* add submission files table ([#399](https://github.com/cds-snc/data-lake/issues/399)) ([ebdc33d](https://github.com/cds-snc/data-lake/commit/ebdc33d7098ed6af1ea1a06a17ffc038683e3094))
+* historical data colums are now date type ([#394](https://github.com/cds-snc/data-lake/issues/394)) ([8ae52d2](https://github.com/cds-snc/data-lake/commit/8ae52d249a6e8a8deebe005bb67b5d0a60b95b26))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/dependency-review-action action to v4.7.3 ([#401](https://github.com/cds-snc/data-lake/issues/401)) ([c1c77be](https://github.com/cds-snc/data-lake/commit/c1c77be942bb537c40ebe312b85d326cd3bfec4f))
+* **deps:** update all patch dependencies ([#396](https://github.com/cds-snc/data-lake/issues/396)) ([658ba0c](https://github.com/cds-snc/data-lake/commit/658ba0cff22036ab420102b82a9101697d81e021))
+* **deps:** update all patch dependencies ([#402](https://github.com/cds-snc/data-lake/issues/402)) ([da8438d](https://github.com/cds-snc/data-lake/commit/da8438d53cfcc0ad0dc5c85576314abf1d4f7058))
+* **deps:** update googleapis/release-please-action action to v4.3.0 ([#397](https://github.com/cds-snc/data-lake/issues/397)) ([c5f7c4a](https://github.com/cds-snc/data-lake/commit/c5f7c4a50debde227062d9218fd0fad04a1fdd11))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to b387f79 ([#400](https://github.com/cds-snc/data-lake/issues/400)) ([415c970](https://github.com/cds-snc/data-lake/commit/415c9709b8b97ff602bdcc48e76293c8b9e00f48))
+* **deps:** update terraform github.com/cds-snc/terraform-modules to v10.7.0 ([#403](https://github.com/cds-snc/data-lake/issues/403)) ([0f947a2](https://github.com/cds-snc/data-lake/commit/0f947a23f478ec44df5a4c7991023efdbcae3031))
+* **deps:** update terraform hashicorp/terraform to v1.13.0 ([#398](https://github.com/cds-snc/data-lake/issues/398)) ([c187915](https://github.com/cds-snc/data-lake/commit/c187915dc25400459c5e50ae7d57e8649fc1dba1))
+
 ## [1.15.1](https://github.com/cds-snc/data-lake/compare/v1.15.0...v1.15.1) (2025-08-28)
 
 
