@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0](https://github.com/cds-snc/data-lake/compare/v1.16.0...v1.17.0) (2025-09-11)
+
+
+### Features
+
+* add OIDC role to manage GitHub data exports ([#404](https://github.com/cds-snc/data-lake/issues/404)) ([54806ff](https://github.com/cds-snc/data-lake/commit/54806ff67f4742bb8bfd523fe7b81db4740c1d83))
+
 ## [1.16.0](https://github.com/cds-snc/data-lake/compare/v1.15.1...v1.16.0) (2025-09-08)
 
 
