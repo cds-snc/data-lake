@@ -79,4 +79,21 @@ data "aws_iam_policy_document" "raw_bucket" {
       "${module.raw_bucket.s3_bucket_arn}/*"
     ]
   }
+
+  statement {
+    sid    = "GitHubExportToBucket"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::739275439843:role/data-lake-github-data-export",
+      ]
+    }
+    actions = [
+      "s3:PutObject",
+    ]
+    resources = [
+      "${module.raw_bucket.s3_bucket_arn}/operations/github/*"
+    ]
+  }
 }
