@@ -33,7 +33,7 @@ def get_airtable_api_key():
 def fetch_all_records(table_name):
     """Fetch all records from Airtable with pagination support."""
     api_key = get_airtable_api_key()
-    base_url = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{table_name}"
+    base_url = f"https://api.airtable.com/v0/{AIRTABLE_BASE_ID}/{table_name}?cellFormat=string&timeZone=America/Toronto&userLocale=en-ca"
     all_records = []
     offset = None
 
