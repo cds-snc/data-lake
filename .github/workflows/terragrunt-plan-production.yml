@@ -41,21 +41,21 @@ jobs:
           role-session-name: TFPlan
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terragrunt plan oidc
-        uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
-        with:
-          directory: "terragrunt/env/production/oidc"
-          comment-delete: "true"
-          comment-title: "Production: oidc 🔑"
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-          terragrunt: "true"
-
       - name: Terragrunt plan buckets
         uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
         with:
           directory: "terragrunt/env/production/buckets"
           comment-delete: "true"
           comment-title: "Production: buckets 🪣"
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          terragrunt: "true"
+
+      - name: Terragrunt plan oidc
+        uses: cds-snc/terraform-plan@e710cb1446e5dfe69a0182603fb06b5282d7eb07 # v3.4.3
+        with:
+          directory: "terragrunt/env/production/oidc"
+          comment-delete: "true"
+          comment-title: "Production: oidc 🔑"
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           terragrunt: "true"
 
