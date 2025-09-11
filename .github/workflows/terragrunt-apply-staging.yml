@@ -44,12 +44,12 @@ jobs:
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Terragrunt apply oidc
-        working-directory: terragrunt/env/staging/oidc
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
-
       - name: Terragrunt apply buckets
         working-directory: terragrunt/env/staging/buckets
+        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+
+      - name: Terragrunt apply oidc
+        working-directory: terragrunt/env/staging/oidc
         run: terragrunt apply --terragrunt-non-interactive -auto-approve
 
       - name: Terragrunt apply glue
