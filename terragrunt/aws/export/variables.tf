@@ -16,8 +16,20 @@ variable "airtable_base_id" {
   sensitive   = true
 }
 
-variable "airtable_table_name" {
-  description = "Airtable table name for the GC Design System data"
+variable "airtable_table_name_clients" {
+  description = "Airtable table name for the GC Design System clients data"
+  type        = string
+  sensitive   = true
+}
+
+variable "airtable_table_name_teams" {
+  description = "Airtable table name for the GC Design System teams data"
+  type        = string
+  sensitive   = true
+}
+
+variable "airtable_table_name_services" {
+  description = "Airtable table name for the GC Design System services data"
   type        = string
   sensitive   = true
 }

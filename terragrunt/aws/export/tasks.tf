@@ -24,7 +24,9 @@ module "platform_gc_design_system_export" {
   sns_topic_ok_action_arn           = var.sns_topic_ok_action_arn
   airtable_api_key                  = var.airtable_api_key
   airtable_base_id                  = var.airtable_base_id
-  airtable_table_name               = var.airtable_table_name
+  airtable_table_name_clients       = var.airtable_table_name_clients
+  airtable_table_name_teams         = var.airtable_table_name_teams
+  airtable_table_name_services      = var.airtable_table_name_services
   gc_design_system_crawler_arn      = var.gc_design_system_crawler_arn
   gc_design_system_crawler_name     = var.gc_design_system_crawler_name
   gc_design_system_npm_crawler_arn  = var.gc_design_system_npm_crawler_arn
