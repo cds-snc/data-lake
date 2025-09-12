@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "20 7 * * *"
 
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+  
 jobs:
   export-data:
     runs-on: ubuntu-latest
