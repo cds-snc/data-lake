@@ -26,7 +26,7 @@ jobs:
           role-to-assume: arn:aws:iam::739275439843:role/data-lake-github-data-export
           role-session-name: GithubDataExport
           aws-region: ca-central-1
-      - name: Export Data
+      - name: Export Data to Azure Log and s3
         uses: cds-snc/github-repository-metadata-exporter@33b192f2a27db475bdb8939c2818a34bdb9cccce
         with:
           github-app-id: ${{ secrets.SRE_BOT_RO_APP_ID }}
