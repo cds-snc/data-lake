@@ -21,7 +21,9 @@ env:
   TF_VAR_freshdesk_api_key: ${{ secrets.STAGING_FRESHDESK_API_KEY }}
   TF_VAR_airtable_api_key: ${{ secrets.STAGING_AIRTABLE_API_KEY }}
   TF_VAR_airtable_base_id: ${{ secrets.STAGING_AIRTABLE_BASE_ID }}
-  TF_VAR_airtable_table_name: ${{ secrets.STAGING_AIRTABLE_TABLE_NAME }}
+   TF_VAR_airtable_table_name_clients: ${{ secrets.STAGING_AIRTABLE_TABLE_NAME_CLIENTS }}
+  TF_VAR_airtable_table_name_teams: ${{ secrets.STAGING_AIRTABLE_TABLE_NAME_TEAMS }}
+  TF_VAR_airtable_table_name_services: ${{ secrets.STAGING_AIRTABLE_TABLE_NAME_SERVICES }}
 
 permissions:
   id-token: write
