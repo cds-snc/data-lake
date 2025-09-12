@@ -175,9 +175,6 @@ resource "aws_glue_crawler" "platform_gc_design_system_airtable" {
   }
 
   configuration = jsonencode({
-    Grouping = {
-      TableGroupingPolicy = "CombineCompatibleSchemas"
-    }
     CrawlerOutput = {
       Partitions = {
         AddOrUpdateBehavior = "InheritFromTable"

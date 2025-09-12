@@ -20,7 +20,9 @@ module "platform_gc_design_system_export" {
     S3_BUCKET_NAME_RAW              = var.raw_bucket_name
     S3_OBJECT_PREFIX                = local.gc_design_system_export_path
     AIRTABLE_BASE_ID                = var.airtable_base_id
-    AIRTABLE_TABLE_NAME             = var.airtable_table_name
+    AIRTABLE_TABLE_NAME_CLIENTS     = var.airtable_table_name_clients
+    AIRTABLE_TABLE_NAME_TEAMS       = var.airtable_table_name_teams
+    AIRTABLE_TABLE_NAME_SERVICES    = var.airtable_table_name_services
     GLUE_CRAWLER_NAME               = var.gc_design_system_crawler_name
   }
 
