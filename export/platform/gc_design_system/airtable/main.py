@@ -99,7 +99,9 @@ def process_table(table_name, table_folder_name):
         lines.append(json.dumps(flattened))
 
     date_suffix = datetime.utcnow().strftime("%Y-%m-%d")
-    s3_key_transformed = f"{S3_OBJECT_PREFIX}/{table_folder_name}/{table_folder_name}.json"
+    s3_key_transformed = (
+        f"{S3_OBJECT_PREFIX}/{table_folder_name}/{table_folder_name}.json"
+    )
     s3_key_raw = f"{S3_OBJECT_PREFIX}/{table_folder_name}/{date_suffix}.json"
 
     try:
@@ -130,20 +132,24 @@ def handler(event, context):
         (AIRTABLE_TABLE_NAME_TEAMS, "teams"),
         (AIRTABLE_TABLE_NAME_SERVICES, "services"),
     ]
-    
+
     results = {}
-    
+
     for table_name, table_folder_name in tables_to_process:
         if not table_name:  # Skip if environment variable is not set
             results[table_folder_name] = "Skipped: Environment variable not set"
             continue
-            
+
         try:
-            record_count, s3_key_transformed, s3_key_raw = process_table(table_name, table_folder_name)
-            results[table_folder_name] = f"Saved {record_count} records to s3://{S3_BUCKET_NAME_TRANSFORMED}/{s3_key_transformed} and s3://{S3_BUCKET_NAME_RAW}/{s3_key_raw}"
+            record_count, s3_key_transformed, s3_key_raw = process_table(
+                table_name, table_folder_name
+            )
+            results[table_folder_name] = (
+                f"Saved {record_count} records to s3://{S3_BUCKET_NAME_TRANSFORMED}/{s3_key_transformed} and s3://{S3_BUCKET_NAME_RAW}/{s3_key_raw}"
+            )
         except Exception as e:
             results[table_folder_name] = f"Failed: {str(e)}"
-    
+
     # Trigger Glue crawler once for all tables
     try:
         glue = boto3.client("glue")
@@ -152,7 +158,4 @@ def handler(event, context):
     except Exception as crawler_error:
         results["crawler"] = f"Warning: Failed to start crawler: {crawler_error}"
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps(results)
-    }
+    return {"statusCode": 200, "body": json.dumps(results)}
