@@ -19,79 +19,94 @@ This dataset is exported daily from the GC Design System Airtable base using the
 * `Updated`: Daily at 5:00 AM UTC (Production only)
 * `Steward`: GC Design System
 * `Contact`: Slack channel #ds-cds-internal
-* `Location`: `cds-data-lake-transformed-production/platform/gc-design-system/airtable/*.jsonl`
+* `Location`: `cds-data-lake-transformed-production/platform/gc-design-system/airtable/*/*.json`
 
 ## Fields
 
-All fields are sourced directly from the GC Design System Airtable base. The exact schema is automatically discovered and may evolve as the Airtable structure changes.
 
-[Query to return example data](examples/airtable.sql) has been provided to explore the current structure.
+## Tables & Fields
 
-Here's a descriptive list of the core fields that are typically present:
-
-### Core Airtable Fields
+### 1. `platform_gc_design_system_clients`
 
 | Field | Type | Description |
 |-------|------|-------------|
-| id | string | Unique record identifier assigned by Airtable (format: recXXXXXXXXXXXXXX) |
-| created_time | timestamp | When the record was created in Airtable, in ISO 8601 format (UTC) |
+| id | string | Unique Airtable record ID |
+| created_time | string | Record creation time (ISO 8601) |
+| name | string | Hashed client name |
+| email | array<string> | Array of hashed email addresses |
+| client_status | array<string> | Array of client statuses |
+| department | array<string> | Array of department identifiers |
+| team | array<string> | Array of team identifiers |
+| client_tags | array<string> | Array of tags associated with the client |
+| source | array<string> | Array indicating how the client was acquired |
+| meetings | array<string> | Array of meeting record IDs |
+| date_turned_active_client | string | Date when client became active |
+| created | string | Date when client record was created |
+| tickets | array<string> | Array of support ticket record IDs |
+| date_turned_active_team_from_team | array<string> | Dates when associated team became active |
+| crm_id | int | CRM identifier |
+| department_name | array<string> | Array of department names |
+| notes | string | Additional notes |
+| team_tags | array<string> | Array of team tags |
+| email_type_from_email | string | Email type information |
+| involved_in_engagements | array<string> | Array of engagement activity IDs |
 
-### Actual Fields in the Dataset
-
-*Note: The Lambda function normalizes column names by replacing spaces with underscores, removing quotes and parentheses, and converting to lowercase. Many fields are arrays since Airtable often stores linked records and multi-select fields as arrays:*
+### 2. `platform_gc_design_system_services`
 
 | Field | Type | Description |
 |-------|------|-------------|
-| name | string | Hashed client's full name |
-| email | array<string> | Array of hashed email addresses (Airtable linked records) |
-| client_status | array<string> | Array of client statuses (e.g., ["Active Client (connected)"]) |
-| department | array<string> | Array of department or organization identifiers (Airtable linked records) |
-| team | array<string> | Array of team identifiers (Airtable linked records) |
-| client_tags | array<string> | Array of tags associated with the client (e.g., ["Mailing List", "GCDS Forum"]) |
-| source | array<string> | Array indicating how the client was acquired (e.g., ["Support Ticket"]) |
-| meetings | array<string> | Array of meeting record identifiers (Airtable linked records) |
-| date_turned_active_client | string | Date when client became active (stored as string, format varies) |
-| created | string | Date when the client record was created (stored as string, format varies) |
-| tickets | array<string> | Array of support ticket record identifiers (Airtable linked records) |
-| date_turned_active_team_from_team | array<string> | Array of dates when associated team became active |
-| notes | string | Additional notes about the client |
-| team_tags | array<string> | Array of tags associated with the client's team |
-| involved_in_engagements | array<string> | Array of engagement activity identifiers |
-| primary_contact_on_team | array<string> | Array of hashed primary contact identifiers for the team |
-| non_team_use_case | string | Use cases outside of team context |
-| main_contact_on_meetings | array<string> | Array of hashed primary contact identifiers for meeting coordination |
-| themes | array<string> | Array of themes or topics associated with the client |
-| language_pref | array<string> | Array of client's preferred languages |
-| contributions | array<string> | Array of contribution identifiers made by the client |
-| main_contact_on_engagement | array<string> | Array of hashed primary contact identifiers for engagement activities |
+| id | string | Unique Airtable record ID |
+| created_time | string | Record creation time (ISO 8601) |
+| services | string | Service name |
+| link | string | Service link |
+| service_status | string | Status of the service |
+| teams | array<string> | Array of team identifiers |
+| date_of_going_live | string | Date service went live |
+| department_from_teams | array<string> | Departments associated via teams |
+| departments_autopopulated | array<string> | Autopopulated department names |
+| clients_from_teams | array<string> | Clients associated via teams |
+| created | string | Date record was created |
+
+### 3. `platform_gc_design_system_teams`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | string | Unique Airtable record ID |
+| created_time | string | Record creation time (ISO 8601) |
+| team_name | string | Team name |
+| notes | string | Additional notes |
+| use_case | string | Team use case |
+| department | array<string> | Array of department identifiers |
+| team_tags | array<string> | Array of team tags |
+| use_case_tags | array<string> | Array of use case tags |
+| clients | array<string> | Array of client identifiers |
+| team_status | string | Status of the team |
+| date_turned_active_team | string | Date team became active |
+| created | string | Date record was created |
+| live_service_count | int | Number of live services |
+| primary_contact | array<string> | Array of primary contact identifiers |
+| summary | string | Team summary |
+| date_of_last_meeting | string | Date of last meeting |
+| restrictions_to_using_gcds | array<string> | Array of restrictions |
+| services | array<string> | Array of service identifiers |
 
 ### Example Queries
 
-To explore the current data structure:
-
 ```sql
--- View sample records to understand current structure
-SELECT * 
-FROM "platform_gc_design_system"."platform_gc_design_system_airtable" 
-LIMIT 5;
+-- View sample records from Clients
+SELECT * FROM "platform_gc_design_system"."platform_gc_design_system_clients" LIMIT 5;
 
--- Get table schema information
-DESCRIBE "platform_gc_design_system"."platform_gc_design_system_airtable";
+-- Count total services
+SELECT COUNT(*) as total_services FROM "platform_gc_design_system"."platform_gc_design_system_services";
 
--- Count total clients
-SELECT COUNT(*) as total_clients
-FROM "platform_gc_design_system"."platform_gc_design_system_airtable";
+-- List active teams
+SELECT team_name, team_status FROM "platform_gc_design_system"."platform_gc_design_system_teams" WHERE team_status = 'Active';
 
--- View client information (working with arrays)
-SELECT 
-    id,
-    name as client_name,
-    client_status[1] as first_client_status,  -- Get first element from array
-    date_turned_active_client,  -- String field
-    department[1] as first_department,  -- Get first element from array
-    team[1] as first_team  -- Get first element from array
-FROM "platform_gc_design_system"."platform_gc_design_system_airtable"
-LIMIT 10;
+-- Get client engagement by department
+SELECT department_name[1] as department, COUNT(*) as client_count
+FROM "platform_gc_design_system"."platform_gc_design_system_clients"
+GROUP BY department_name[1]
+ORDER BY client_count DESC;
 ```
 
 ## Notes

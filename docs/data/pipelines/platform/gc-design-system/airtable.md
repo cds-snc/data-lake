@@ -8,25 +8,7 @@
 
 The GC Design System Airtable dataset is an export of design component data from the GC Design System Airtable base in [JSONL format](https://jsonlines.org/). This dataset contains information about design components, their properties, usage guidelines, and related metadata that powers the Government of Canada Design System.
 
-The data is exported daily from Airtable and automatically registered as a queryable table in the data catalog. It can be queried in Athena as follows:
-
-```sql
--- View all GC Design System component data
-SELECT 
-    * 
-FROM 
-    "platform_gc_design_system"."platform_gc_design_system_airtable" 
-LIMIT 10;
-
--- Count total components
-SELECT 
-    COUNT(*) as total_components
-FROM 
-    "platform_gc_design_system"."platform_gc_design_system_airtable";
-
--- View component data structure
-DESCRIBE "platform_gc_design_system"."platform_gc_design_system_airtable";
-```
+The data is exported daily from Airtable and automatically registered as a queryable table in the data catalog.
 
 ## Data pipeline
 
@@ -38,13 +20,13 @@ graph TD
     Airtable["`**Airtable Base**<br/>GC Design System`"]
     
     %% Storage
-    TransS3["`**S3 Bucket (Transformed)**<br/>cds-data-lake-transformed-production<br/>platform/gc-design-system/airtable/`"]
-    RawS3["`**S3 Bucket (Raw)**<br/>cds-data-lake-raw-production<br/>platform/gc-design-system/airtable/`"]
+    TransS3["`**S3 Bucket (Transformed)**<br/>cds-data-lake-transformed-production<br/>platform/gc-design-system/airtable/*`"]
+    RawS3["`**S3 Bucket (Raw)**<br/>cds-data-lake-raw-production<br/>platform/gc-design-system/airtable/*`"]
     
     %% Processing
     Lambda["`**Lambda Function**<br/>platform-gc-design-system-export<br/>Daily at 5:00 AM UTC`"]
     Crawler["`**Glue Crawler**<br/>Platform / GC Design System / Airtable<br/>Triggered after each export`"]
-    CatalogTransformed["`**Data Catalog**<br/>Database: platform_gc_design_system<br/>Table: platform_gc_design_system_airtable`"]
+    CatalogTransformed["`**Data Catalog**<br/>Database: platform_gc_design_system<br/>Tables: platform_gc_design_system_clients, platform_gc_design_system_services, platform_gc_design_system_teams`"]
 
     %% Flow
     subgraph airtable_source[GC Design System Airtable]
@@ -94,11 +76,13 @@ graph TD
 - **Timeout**: 300 seconds
 - **Memory**: Default
 - **Environment Variables**:
-  - `AIRTABLE_API_KEY_PARAMETER_NAME`: SSM parameter name for API key
-  - `S3_BUCKET_NAME`: Target S3 bucket name
-  - `S3_OBJECT_PREFIX`: S3 path prefix for data files
-  - `AIRTABLE_BASE_ID`: Airtable base identifier
-  - `AIRTABLE_TABLE_NAME`: Airtable table identifier
+    - `AIRTABLE_API_KEY_PARAMETER_NAME`: SSM parameter name for API key
+    - `S3_BUCKET_NAME`: Target S3 bucket name
+    - `S3_OBJECT_PREFIX`: S3 path prefix for data files
+    - `AIRTABLE_BASE_ID`: Airtable base identifier
+    - `AIRTABLE_TABLE_NAME_CLIENTS`: Airtable table identifier for clients
+    - `AIRTABLE_TABLE_NAME_TEAMS`: Airtable table identifier for teams
+    - `AIRTABLE_TABLE_NAME_SERVICES`: Airtable table identifier for services
 
 #### IAM Permissions
 - **SSM**: Read access to Airtable API key parameter
