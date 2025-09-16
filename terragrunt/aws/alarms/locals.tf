@@ -5,7 +5,7 @@ locals {
 
   glue_etl_pythonshell_error_metric_name           = "glue-etl-pythonshell-error"
   glue_etl_pythonshell_metric_filters              = ["ERROR"]
-  glue_etl_pythonshell_metric_filters_skip         = ["No new historical-data data found.", "pip's dependency resolver"]
+  glue_etl_pythonshell_metric_filters_skip         = ["No new historical-data data found.", "pip's dependency resolver", "No new processed-data/submissions_files data found."]
   glue_etl_pythonshell_metric_filter_error_pattern = "[(w1=\"*${join("*\" || w1=\"*", local.glue_etl_pythonshell_metric_filters)}*\") && w1!=\"*${join("*\" && w1!=\"*", local.glue_etl_pythonshell_metric_filters_skip)}*\"]"
 
   glue_etl_spark_error_metric_name           = "glue-etl-spark-error"
