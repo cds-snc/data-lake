@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.19.0](https://github.com/cds-snc/data-lake/compare/v1.18.0...v1.19.0) (2025-09-16)
+
+
+### Features
+
+* Additional airtables ([#408](https://github.com/cds-snc/data-lake/issues/408)) ([421b5ec](https://github.com/cds-snc/data-lake/commit/421b5ec7a110d0b431f30212aebb1a8cfab4375e))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#411](https://github.com/cds-snc/data-lake/issues/411)) ([4e65619](https://github.com/cds-snc/data-lake/commit/4e656195f71ae3eb72c428ee30300299090697e7))
+* **deps:** update all patch dependencies ([#410](https://github.com/cds-snc/data-lake/issues/410)) ([717f967](https://github.com/cds-snc/data-lake/commit/717f9670dce0beff66bd04c647c34216bf9dd592))
+* Ignore missing submissions files data ([#412](https://github.com/cds-snc/data-lake/issues/412)) ([7095e55](https://github.com/cds-snc/data-lake/commit/7095e55e3427c128140ce565abbf3a3e0d250f63))
+
 ## [1.18.0](https://github.com/cds-snc/data-lake/compare/v1.17.0...v1.18.0) (2025-09-11)
 
 
