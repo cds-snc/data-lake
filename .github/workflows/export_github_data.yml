@@ -27,7 +27,7 @@ jobs:
           role-session-name: GithubDataExport
           aws-region: ca-central-1
       - name: Export Data to Azure Log
-        uses: cds-snc/github-repository-metadata-exporter@1fae7a6f023f11aa7605a93dda7377cb638f8119
+        uses: cds-snc/github-repository-metadata-exporter@950dccb026982137c28e3158ca5526f5a2f03800
         with:
           github-app-id: ${{ secrets.SRE_BOT_RO_APP_ID }}
           github-app-installation-id: ${{ secrets.SRE_BOT_RO_INSTALLATION_ID }}
