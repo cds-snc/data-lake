@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0](https://github.com/cds-snc/data-lake/compare/v1.19.0...v1.20.0) (2025-09-19)
+
+
+### Features
+
+* add github export ([#414](https://github.com/cds-snc/data-lake/issues/414)) ([a61951a](https://github.com/cds-snc/data-lake/commit/a61951ab2be2005cffee01f1fde14270e53d93c6))
+
 ## [1.19.0](https://github.com/cds-snc/data-lake/compare/v1.18.0...v1.19.0) (2025-09-16)
 
 
