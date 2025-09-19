@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "20 7 * * *"
 
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
 jobs:
   export-data:
     runs-on: ubuntu-latest
@@ -15,8 +20,14 @@ jobs:
           DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
           DNS_PROXY_LOGANALYTICSSHAREDKEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Export Data
-        uses: cds-snc/github-repository-metadata-exporter@7f8f3eccaf3e15675fc70611e913ec1458510540
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: arn:aws:iam::739275439843:role/data-lake-github-data-export
+          role-session-name: GithubDataExport
+          aws-region: ca-central-1
+      - name: Export Data to Azure Log
+        uses: cds-snc/github-repository-metadata-exporter@950dccb026982137c28e3158ca5526f5a2f03800
         with:
           github-app-id: ${{ secrets.SRE_BOT_RO_APP_ID }}
           github-app-installation-id: ${{ secrets.SRE_BOT_RO_INSTALLATION_ID }}
