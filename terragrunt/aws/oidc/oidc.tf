@@ -22,7 +22,7 @@ module "github_workflow_roles" {
     {
       name      = local.data_lake_github_data_export
       repo_name = "*"                  # Allow any CDS repo to use this role
-      claim     = "ref:refs/head/test" # Update to `main` once testing finished
+      claim     = "ref:refs/heads/main"
     }
   ]
 }
