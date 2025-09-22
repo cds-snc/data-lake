@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.20.0](https://github.com/cds-snc/data-lake/compare/v1.19.0...v1.20.0) (2025-09-22)
+
+
+### Features
+
+* add github export ([#414](https://github.com/cds-snc/data-lake/issues/414)) ([a61951a](https://github.com/cds-snc/data-lake/commit/a61951ab2be2005cffee01f1fde14270e53d93c6))
+
+
+### Bug Fixes
+
+* permissions for live version ([#421](https://github.com/cds-snc/data-lake/issues/421)) ([fffb5a8](https://github.com/cds-snc/data-lake/commit/fffb5a8c0b8f342dd26d4636a35b52af6211b383))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#420](https://github.com/cds-snc/data-lake/issues/420)) ([36f74b1](https://github.com/cds-snc/data-lake/commit/36f74b1ee92ba2fec57414b643fbb49359e6f5c1))
+* **deps:** update all minor dependencies ([#418](https://github.com/cds-snc/data-lake/issues/418)) ([593c8b8](https://github.com/cds-snc/data-lake/commit/593c8b8baf7c8c84135e9d1a6dd8437d693cefdf))
+* **deps:** update all non-major github action dependencies ([#416](https://github.com/cds-snc/data-lake/issues/416)) ([ebc31cf](https://github.com/cds-snc/data-lake/commit/ebc31cfb09481dd02d8c7c1d992c6f56df442d67))
+* **deps:** update all patch dependencies ([#417](https://github.com/cds-snc/data-lake/issues/417)) ([813f5f1](https://github.com/cds-snc/data-lake/commit/813f5f1352f35e39802764d0bd4bb5d155245234))
+* synced file(s) with cds-snc/site-reliability-engineering ([#419](https://github.com/cds-snc/data-lake/issues/419)) ([f34ea59](https://github.com/cds-snc/data-lake/commit/f34ea59b8619ea5a1f2468ef240178e8875e352a))
+* synced local '.github/workflows/export_github_data.yml' with remote 'tools/sre_file_sync/export_github_data.yml' ([f34ea59](https://github.com/cds-snc/data-lake/commit/f34ea59b8619ea5a1f2468ef240178e8875e352a))
+
 ## [1.19.0](https://github.com/cds-snc/data-lake/compare/v1.18.0...v1.19.0) (2025-09-16)
 
 
