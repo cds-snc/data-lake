@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.1](https://github.com/cds-snc/data-lake/compare/v1.20.0...v1.20.1) (2025-09-23)
+
+
+### Miscellaneous Chores
+
+* undoworkflow sync ([#422](https://github.com/cds-snc/data-lake/issues/422)) ([e5855b6](https://github.com/cds-snc/data-lake/commit/e5855b6b663d0ff1874d5a5766f399c3daab38a3))
+
 ## [1.20.0](https://github.com/cds-snc/data-lake/compare/v1.19.0...v1.20.0) (2025-09-22)
 
 
