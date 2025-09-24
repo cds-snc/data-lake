@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.0](https://github.com/cds-snc/data-lake/compare/v1.20.1...v1.21.0) (2025-09-24)
+
+
+### Features
+
+* added github metadata ingestion pipeline ([#425](https://github.com/cds-snc/data-lake/issues/425)) ([e527bcf](https://github.com/cds-snc/data-lake/commit/e527bcf8768b54733873effd011bb8c15a903c38))
+
 ## [1.20.1](https://github.com/cds-snc/data-lake/compare/v1.20.0...v1.20.1) (2025-09-23)
 
 
