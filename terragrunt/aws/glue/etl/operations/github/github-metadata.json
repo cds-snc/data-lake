@@ -1,0 +1,1356 @@
+{
+	"dag": {
+		"node-1758728182352": {
+			"classification": "DataSource",
+			"type": "S3",
+			"name": "All PRs",
+			"inputs": [],
+			"isCatalog": false,
+			"recurse": true,
+			"paths": [
+				"s3://cds-data-lake-raw-production/operations/github/AllPRs/"
+			],
+			"additionalOptions": {
+				"enableSamplePath": false,
+				"samplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-data-lake-2025-09-24T07:27:08.604Z.json"
+			},
+			"inferSchemaChanged": false,
+			"format": "json",
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/s3.2a166713.svg",
+			"generatedNodeName": "AllPRs_node1758728182352",
+			"codeGenVersion": 2,
+			"jsonPath": "",
+			"multiline": false,
+			"outputSchemas": [
+				[
+					{
+						"key": "metadata_owner",
+						"fullPath": [
+							"metadata_owner"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_repo",
+						"fullPath": [
+							"metadata_repo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_query",
+						"fullPath": [
+							"metadata_query"
+						],
+						"type": "string"
+					},
+					{
+						"key": "prs",
+						"fullPath": [
+							"prs"
+						],
+						"type": "array",
+						"children": [
+							{
+								"key": "id",
+								"fullPath": [
+									"prs",
+									"id"
+								],
+								"type": "long"
+							},
+							{
+								"key": "number",
+								"fullPath": [
+									"prs",
+									"number"
+								],
+								"type": "int"
+							},
+							{
+								"key": "title",
+								"fullPath": [
+									"prs",
+									"title"
+								],
+								"type": "string"
+							},
+							{
+								"key": "state",
+								"fullPath": [
+									"prs",
+									"state"
+								],
+								"type": "string"
+							},
+							{
+								"key": "created_at",
+								"fullPath": [
+									"prs",
+									"created_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "updated_at",
+								"fullPath": [
+									"prs",
+									"updated_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "closed_at",
+								"fullPath": [
+									"prs",
+									"closed_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "html_url",
+								"fullPath": [
+									"prs",
+									"html_url"
+								],
+								"type": "string"
+							},
+							{
+								"key": "labels",
+								"fullPath": [
+									"prs",
+									"labels"
+								],
+								"type": "string array"
+							}
+						]
+					}
+				]
+			]
+		},
+		"node-1758728190019": {
+			"classification": "Transform",
+			"type": "DynamicTransform",
+			"name": "Explode Array Or Map Into Rows",
+			"inputs": [
+				"node-1758728182352"
+			],
+			"transformName": "gs_explode",
+			"path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+			"functionName": "gs_explode",
+			"version": "1.0.0",
+			"parameters": [
+				{
+					"name": "colName",
+					"displayName": "Column to explode",
+					"type": "str",
+					"listOptions": "column",
+					"description": "A column of type array or map.",
+					"index": 0,
+					"value": [
+						"prs"
+					]
+				},
+				{
+					"name": "newCol",
+					"displayName": "New column name",
+					"type": "str",
+					"description": "The name of the column to put the array values or the dictionary keys.",
+					"index": 1,
+					"value": "pr"
+				},
+				{
+					"name": "valCol",
+					"displayName": "Values column",
+					"isOptional": true,
+					"type": "str",
+					"description": "If exploding a dictionary, you can specify a name for a column to contain the values. Default name: \"value\".",
+					"index": 2,
+					"value": ""
+				},
+				{
+					"name": "outer",
+					"displayName": "Include NULLs",
+					"isOptional": true,
+					"type": "bool",
+					"description": "If selected, NULL values will also generate a new rows, otherwise the row with a NULL value is omitted."
+				}
+			],
+			"label": "Explode Array Or Map Into Rows",
+			"displayName": "Explode Array Or Map Into Rows",
+			"description": "Convert an array of values generating a row for each one, or split a map into key and value columns with a row for each pair",
+			"lastModified": "2025-04-30T17:44:04.000Z",
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/generic-transform.e5360da7.svg",
+			"generatedNodeName": "ExplodeArrayOrMapIntoRows_node1758728190019",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "metadata_owner",
+						"fullPath": [
+							"metadata_owner"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_repo",
+						"fullPath": [
+							"metadata_repo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_query",
+						"fullPath": [
+							"metadata_query"
+						],
+						"type": "string"
+					},
+					{
+						"key": "prs",
+						"fullPath": [
+							"prs"
+						],
+						"type": "array",
+						"children": [
+							{
+								"key": "id",
+								"fullPath": [
+									"prs",
+									"id"
+								],
+								"type": "long"
+							},
+							{
+								"key": "number",
+								"fullPath": [
+									"prs",
+									"number"
+								],
+								"type": "int"
+							},
+							{
+								"key": "title",
+								"fullPath": [
+									"prs",
+									"title"
+								],
+								"type": "string"
+							},
+							{
+								"key": "state",
+								"fullPath": [
+									"prs",
+									"state"
+								],
+								"type": "string"
+							},
+							{
+								"key": "created_at",
+								"fullPath": [
+									"prs",
+									"created_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "updated_at",
+								"fullPath": [
+									"prs",
+									"updated_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "closed_at",
+								"fullPath": [
+									"prs",
+									"closed_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "html_url",
+								"fullPath": [
+									"prs",
+									"html_url"
+								],
+								"type": "string"
+							},
+							{
+								"key": "labels",
+								"fullPath": [
+									"prs",
+									"labels"
+								],
+								"type": "string array"
+							}
+						]
+					},
+					{
+						"key": "pr",
+						"fullPath": [
+							"pr"
+						],
+						"type": "object",
+						"children": [
+							{
+								"key": "id",
+								"fullPath": [
+									"pr",
+									"id"
+								],
+								"type": "long"
+							},
+							{
+								"key": "number",
+								"fullPath": [
+									"pr",
+									"number"
+								],
+								"type": "int"
+							},
+							{
+								"key": "title",
+								"fullPath": [
+									"pr",
+									"title"
+								],
+								"type": "string"
+							},
+							{
+								"key": "state",
+								"fullPath": [
+									"pr",
+									"state"
+								],
+								"type": "string"
+							},
+							{
+								"key": "created_at",
+								"fullPath": [
+									"pr",
+									"created_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "updated_at",
+								"fullPath": [
+									"pr",
+									"updated_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "closed_at",
+								"fullPath": [
+									"pr",
+									"closed_at"
+								],
+								"type": "string"
+							},
+							{
+								"key": "html_url",
+								"fullPath": [
+									"pr",
+									"html_url"
+								],
+								"type": "string"
+							},
+							{
+								"key": "labels",
+								"fullPath": [
+									"pr",
+									"labels"
+								],
+								"type": "string array"
+							}
+						]
+					}
+				]
+			]
+		},
+		"node-1758728192658": {
+			"classification": "Transform",
+			"type": "ApplyMapping",
+			"name": "Change Schema",
+			"inputs": [
+				"node-1758728190019"
+			],
+			"mapping": [
+				{
+					"toKey": "metadata_owner",
+					"fromPath": [
+						"metadata_owner"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false
+				},
+				{
+					"toKey": "metadata_repo",
+					"fromPath": [
+						"metadata_repo"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false
+				},
+				{
+					"toKey": "metadata_query",
+					"fromPath": [
+						"metadata_query"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": true
+				},
+				{
+					"toKey": "pr",
+					"fromPath": [
+						"prs"
+					],
+					"toType": "array",
+					"fromType": "array",
+					"dropped": true
+				},
+				{
+					"toKey": "",
+					"fromPath": [
+						"pr"
+					],
+					"toType": "object",
+					"fromType": "object",
+					"dropped": false,
+					"children": [
+						{
+							"toKey": "id",
+							"fromPath": [
+								"pr",
+								"id"
+							],
+							"toType": "long",
+							"fromType": "long",
+							"dropped": false
+						},
+						{
+							"toKey": "number",
+							"fromPath": [
+								"pr",
+								"number"
+							],
+							"toType": "int",
+							"fromType": "int",
+							"dropped": false
+						},
+						{
+							"toKey": "title",
+							"fromPath": [
+								"pr",
+								"title"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						},
+						{
+							"toKey": "state",
+							"fromPath": [
+								"pr",
+								"state"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						},
+						{
+							"toKey": "created_at",
+							"fromPath": [
+								"pr",
+								"created_at"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						},
+						{
+							"toKey": "updated_at",
+							"fromPath": [
+								"pr",
+								"updated_at"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						},
+						{
+							"toKey": "closed_at",
+							"fromPath": [
+								"pr",
+								"closed_at"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						},
+						{
+							"toKey": "html_url",
+							"fromPath": [
+								"pr",
+								"html_url"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						},
+						{
+							"toKey": "labels",
+							"fromPath": [
+								"pr",
+								"labels"
+							],
+							"toType": "array",
+							"fromType": "array",
+							"dropped": false
+						}
+					]
+				}
+			],
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/Apply-mapping.2595af12.svg",
+			"generatedNodeName": "ChangeSchema_node1758728192658",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "metadata_owner",
+						"fullPath": [
+							"metadata_owner"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_repo",
+						"fullPath": [
+							"metadata_repo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "id",
+						"fullPath": [
+							"id"
+						],
+						"type": "long"
+					},
+					{
+						"key": "number",
+						"fullPath": [
+							"number"
+						],
+						"type": "int"
+					},
+					{
+						"key": "title",
+						"fullPath": [
+							"title"
+						],
+						"type": "string"
+					},
+					{
+						"key": "state",
+						"fullPath": [
+							"state"
+						],
+						"type": "string"
+					},
+					{
+						"key": "created_at",
+						"fullPath": [
+							"created_at"
+						],
+						"type": "string"
+					},
+					{
+						"key": "updated_at",
+						"fullPath": [
+							"updated_at"
+						],
+						"type": "string"
+					},
+					{
+						"key": "closed_at",
+						"fullPath": [
+							"closed_at"
+						],
+						"type": "string"
+					},
+					{
+						"key": "html_url",
+						"fullPath": [
+							"html_url"
+						],
+						"type": "string"
+					},
+					{
+						"key": "labels",
+						"fullPath": [
+							"labels"
+						],
+						"type": "string array"
+					}
+				]
+			]
+		},
+		"node-1758728195328": {
+			"classification": "Transform",
+			"type": "DynamicTransform",
+			"name": "Flatten",
+			"inputs": [
+				"node-1758728192658"
+			],
+			"transformName": "gs_flatten",
+			"path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+			"functionName": "gs_flatten",
+			"version": "1.0.0",
+			"parameters": [
+				{
+					"name": "maxLevels",
+					"displayName": "Max levels to flatten",
+					"isOptional": true,
+					"type": "int",
+					"description": "Limit the maximum nexted levels to flatten, for example, entering 1 will only flatten top level structs. The default is 0 which means it will flatten any number of nesting levels."
+				},
+				{
+					"name": "separator",
+					"displayName": "Separator",
+					"type": "str",
+					"isOptional": true,
+					"description": "The character to use on the names of the new columns to separate the different levels, by default it's a dot."
+				}
+			],
+			"label": "Flatten",
+			"displayName": "Flatten",
+			"description": "Flatten struct fields into top level fields",
+			"lastModified": "2025-04-30T17:44:04.000Z",
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/generic-transform.e5360da7.svg",
+			"generatedNodeName": "Flatten_node1758728195328",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "metadata_owner",
+						"fullPath": [
+							"metadata_owner"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_repo",
+						"fullPath": [
+							"metadata_repo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "id",
+						"fullPath": [
+							"id"
+						],
+						"type": "long"
+					},
+					{
+						"key": "number",
+						"fullPath": [
+							"number"
+						],
+						"type": "int"
+					},
+					{
+						"key": "title",
+						"fullPath": [
+							"title"
+						],
+						"type": "string"
+					},
+					{
+						"key": "state",
+						"fullPath": [
+							"state"
+						],
+						"type": "string"
+					},
+					{
+						"key": "created_at",
+						"fullPath": [
+							"created_at"
+						],
+						"type": "string"
+					},
+					{
+						"key": "updated_at",
+						"fullPath": [
+							"updated_at"
+						],
+						"type": "string"
+					},
+					{
+						"key": "closed_at",
+						"fullPath": [
+							"closed_at"
+						],
+						"type": "string"
+					},
+					{
+						"key": "html_url",
+						"fullPath": [
+							"html_url"
+						],
+						"type": "string"
+					}
+				]
+			]
+		},
+		"node-1758728196642": {
+			"classification": "DataSink",
+			"type": "S3",
+			"name": "Amazon S3",
+			"inputs": [
+				"node-1758728195328"
+			],
+			"format": "glueparquet",
+			"compression": "snappy",
+			"numberTargetPartitions": "0",
+			"path": "s3://cds-data-lake-transformed-production/operations/github/CommitCount/",
+			"partitionKeys": [],
+			"updateCatalogOptions": "schemaAndPartitions",
+			"schemaChangePolicy": {
+				"enableUpdateCatalog": true,
+				"updateBehavior": "UPDATE_IN_DATABASE",
+				"database": "operations_github_production",
+				"table": "operations_github_prs"
+			},
+			"autoDataQuality": {
+				"isEnabled": true,
+				"evaluationContext": "EvaluateDataQuality_node1758728146611"
+			},
+			"additionalOptions": {},
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/s3.2a166713.svg",
+			"generatedNodeName": "AmazonS3_node1758728196642",
+			"codeGenVersion": 2
+		},
+		"node-1758728263455": {
+			"classification": "DataSource",
+			"type": "S3",
+			"name": "Commit Count",
+			"inputs": [],
+			"isCatalog": false,
+			"recurse": true,
+			"paths": [
+				"s3://cds-data-lake-raw-production/operations/github/CommitCount/"
+			],
+			"additionalOptions": {
+				"enableSamplePath": false,
+				"samplePath": "s3://cds-data-lake-raw-production/operations/github/CommitCount/cds-snc-data-lake-2025-09-12T17:00:33.582Z.json"
+			},
+			"inferSchemaChanged": false,
+			"format": "json",
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/s3.2a166713.svg",
+			"jsonPath": "",
+			"multiline": false,
+			"outputSchemas": [
+				[
+					{
+						"key": "metadata_owner",
+						"fullPath": [
+							"metadata_owner"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_repo",
+						"fullPath": [
+							"metadata_repo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_query",
+						"fullPath": [
+							"metadata_query"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_time_in_days",
+						"fullPath": [
+							"metadata_time_in_days"
+						],
+						"type": "int"
+					},
+					{
+						"key": "metadata_since",
+						"fullPath": [
+							"metadata_since"
+						],
+						"type": "string"
+					},
+					{
+						"key": "commit_count",
+						"fullPath": [
+							"commit_count"
+						],
+						"type": "array",
+						"children": [
+							{
+								"key": "author",
+								"fullPath": [
+									"commit_count",
+									"author"
+								],
+								"type": "string"
+							},
+							{
+								"key": "date",
+								"fullPath": [
+									"commit_count",
+									"date"
+								],
+								"type": "string"
+							},
+							{
+								"key": "verified",
+								"fullPath": [
+									"commit_count",
+									"verified"
+								],
+								"type": "boolean"
+							},
+							{
+								"key": "verified_reason",
+								"fullPath": [
+									"commit_count",
+									"verified_reason"
+								],
+								"type": "string"
+							}
+						]
+					}
+				]
+			],
+			"generatedNodeName": "CommitCount_node1758728263455",
+			"codeGenVersion": 2
+		},
+		"node-1758728270221": {
+			"classification": "Transform",
+			"type": "DynamicTransform",
+			"name": "Explode Array Or Map Into Rows",
+			"inputs": [
+				"node-1758728263455"
+			],
+			"transformName": "gs_explode",
+			"path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+			"functionName": "gs_explode",
+			"version": "1.0.0",
+			"parameters": [
+				{
+					"name": "colName",
+					"displayName": "Column to explode",
+					"type": "str",
+					"listOptions": "column",
+					"description": "A column of type array or map.",
+					"index": 0,
+					"value": [
+						"commit_count"
+					]
+				},
+				{
+					"name": "newCol",
+					"displayName": "New column name",
+					"type": "str",
+					"description": "The name of the column to put the array values or the dictionary keys.",
+					"index": 1,
+					"value": "cc"
+				},
+				{
+					"name": "valCol",
+					"displayName": "Values column",
+					"isOptional": true,
+					"type": "str",
+					"description": "If exploding a dictionary, you can specify a name for a column to contain the values. Default name: \"value\"."
+				},
+				{
+					"name": "outer",
+					"displayName": "Include NULLs",
+					"isOptional": true,
+					"type": "bool",
+					"description": "If selected, NULL values will also generate a new rows, otherwise the row with a NULL value is omitted."
+				}
+			],
+			"label": "Explode Array Or Map Into Rows",
+			"displayName": "Explode Array Or Map Into Rows",
+			"description": "Convert an array of values generating a row for each one, or split a map into key and value columns with a row for each pair",
+			"lastModified": "2025-04-30T17:44:04.000Z",
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/generic-transform.e5360da7.svg",
+			"generatedNodeName": "ExplodeArrayOrMapIntoRows_node1758728270221",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "metadata_owner",
+						"fullPath": [
+							"metadata_owner"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_repo",
+						"fullPath": [
+							"metadata_repo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_query",
+						"fullPath": [
+							"metadata_query"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_time_in_days",
+						"fullPath": [
+							"metadata_time_in_days"
+						],
+						"type": "int"
+					},
+					{
+						"key": "metadata_since",
+						"fullPath": [
+							"metadata_since"
+						],
+						"type": "string"
+					},
+					{
+						"key": "commit_count",
+						"fullPath": [
+							"commit_count"
+						],
+						"type": "array",
+						"children": [
+							{
+								"key": "author",
+								"fullPath": [
+									"commit_count",
+									"author"
+								],
+								"type": "string"
+							},
+							{
+								"key": "date",
+								"fullPath": [
+									"commit_count",
+									"date"
+								],
+								"type": "string"
+							},
+							{
+								"key": "verified",
+								"fullPath": [
+									"commit_count",
+									"verified"
+								],
+								"type": "boolean"
+							},
+							{
+								"key": "verified_reason",
+								"fullPath": [
+									"commit_count",
+									"verified_reason"
+								],
+								"type": "string"
+							}
+						]
+					},
+					{
+						"key": "cc",
+						"fullPath": [
+							"cc"
+						],
+						"type": "object",
+						"children": [
+							{
+								"key": "author",
+								"fullPath": [
+									"cc",
+									"author"
+								],
+								"type": "string"
+							},
+							{
+								"key": "date",
+								"fullPath": [
+									"cc",
+									"date"
+								],
+								"type": "string"
+							},
+							{
+								"key": "verified",
+								"fullPath": [
+									"cc",
+									"verified"
+								],
+								"type": "boolean"
+							},
+							{
+								"key": "verified_reason",
+								"fullPath": [
+									"cc",
+									"verified_reason"
+								],
+								"type": "string"
+							}
+						]
+					}
+				]
+			]
+		},
+		"node-1758728275687": {
+			"classification": "Transform",
+			"type": "ApplyMapping",
+			"name": "Change Schema",
+			"inputs": [
+				"node-1758728270221"
+			],
+			"mapping": [
+				{
+					"toKey": "metadata_owner",
+					"fromPath": [
+						"metadata_owner"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false
+				},
+				{
+					"toKey": "metadata_repo",
+					"fromPath": [
+						"metadata_repo"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false
+				},
+				{
+					"toKey": "metadata_query",
+					"fromPath": [
+						"metadata_query"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": true
+				},
+				{
+					"toKey": "metadata_time_in_days",
+					"fromPath": [
+						"metadata_time_in_days"
+					],
+					"toType": "int",
+					"fromType": "int",
+					"dropped": false
+				},
+				{
+					"toKey": "metadata_since",
+					"fromPath": [
+						"metadata_since"
+					],
+					"toType": "string",
+					"fromType": "string",
+					"dropped": false
+				},
+				{
+					"toKey": "commit_count",
+					"fromPath": [
+						"commit_count"
+					],
+					"toType": "array",
+					"fromType": "array",
+					"dropped": true
+				},
+				{
+					"toKey": "",
+					"fromPath": [
+						"cc"
+					],
+					"toType": "object",
+					"fromType": "object",
+					"dropped": false,
+					"children": [
+						{
+							"toKey": "author",
+							"fromPath": [
+								"cc",
+								"author"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						},
+						{
+							"toKey": "date",
+							"fromPath": [
+								"cc",
+								"date"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						},
+						{
+							"toKey": "verified",
+							"fromPath": [
+								"cc",
+								"verified"
+							],
+							"toType": "boolean",
+							"fromType": "boolean",
+							"dropped": false
+						},
+						{
+							"toKey": "verified_reason",
+							"fromPath": [
+								"cc",
+								"verified_reason"
+							],
+							"toType": "string",
+							"fromType": "string",
+							"dropped": false
+						}
+					]
+				}
+			],
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/Apply-mapping.2595af12.svg",
+			"generatedNodeName": "ChangeSchema_node1758728275687",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "metadata_owner",
+						"fullPath": [
+							"metadata_owner"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_repo",
+						"fullPath": [
+							"metadata_repo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_time_in_days",
+						"fullPath": [
+							"metadata_time_in_days"
+						],
+						"type": "int"
+					},
+					{
+						"key": "metadata_since",
+						"fullPath": [
+							"metadata_since"
+						],
+						"type": "string"
+					},
+					{
+						"key": "author",
+						"fullPath": [
+							"author"
+						],
+						"type": "string"
+					},
+					{
+						"key": "date",
+						"fullPath": [
+							"date"
+						],
+						"type": "string"
+					},
+					{
+						"key": "verified",
+						"fullPath": [
+							"verified"
+						],
+						"type": "boolean"
+					},
+					{
+						"key": "verified_reason",
+						"fullPath": [
+							"verified_reason"
+						],
+						"type": "string"
+					}
+				]
+			]
+		},
+		"node-1758728278634": {
+			"classification": "Transform",
+			"type": "DynamicTransform",
+			"name": "Flatten",
+			"inputs": [
+				"node-1758728275687"
+			],
+			"transformName": "gs_flatten",
+			"path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+			"functionName": "gs_flatten",
+			"version": "1.0.0",
+			"parameters": [
+				{
+					"name": "maxLevels",
+					"displayName": "Max levels to flatten",
+					"isOptional": true,
+					"type": "int",
+					"description": "Limit the maximum nexted levels to flatten, for example, entering 1 will only flatten top level structs. The default is 0 which means it will flatten any number of nesting levels."
+				},
+				{
+					"name": "separator",
+					"displayName": "Separator",
+					"type": "str",
+					"isOptional": true,
+					"description": "The character to use on the names of the new columns to separate the different levels, by default it's a dot."
+				}
+			],
+			"label": "Flatten",
+			"displayName": "Flatten",
+			"description": "Flatten struct fields into top level fields",
+			"lastModified": "2025-04-30T17:44:04.000Z",
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/generic-transform.e5360da7.svg",
+			"generatedNodeName": "Flatten_node1758728278634",
+			"codeGenVersion": 2,
+			"outputSchemas": [
+				[
+					{
+						"key": "metadata_owner",
+						"fullPath": [
+							"metadata_owner"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_repo",
+						"fullPath": [
+							"metadata_repo"
+						],
+						"type": "string"
+					},
+					{
+						"key": "metadata_time_in_days",
+						"fullPath": [
+							"metadata_time_in_days"
+						],
+						"type": "int"
+					},
+					{
+						"key": "metadata_since",
+						"fullPath": [
+							"metadata_since"
+						],
+						"type": "string"
+					},
+					{
+						"key": "author",
+						"fullPath": [
+							"author"
+						],
+						"type": "string"
+					},
+					{
+						"key": "date",
+						"fullPath": [
+							"date"
+						],
+						"type": "string"
+					},
+					{
+						"key": "verified",
+						"fullPath": [
+							"verified"
+						],
+						"type": "boolean"
+					},
+					{
+						"key": "verified_reason",
+						"fullPath": [
+							"verified_reason"
+						],
+						"type": "string"
+					}
+				]
+			]
+		},
+		"node-1758728280738": {
+			"classification": "DataSink",
+			"type": "S3",
+			"name": "Amazon S3",
+			"inputs": [
+				"node-1758728278634"
+			],
+			"format": "glueparquet",
+			"compression": "snappy",
+			"numberTargetPartitions": "0",
+			"path": "s3://cds-data-lake-transformed-production/operations/github/CommitCount/",
+			"partitionKeys": [],
+			"updateCatalogOptions": "schemaAndPartitions",
+			"schemaChangePolicy": {
+				"enableUpdateCatalog": true,
+				"updateBehavior": "UPDATE_IN_DATABASE",
+				"database": "operations_github_production",
+				"table": "operations_github_commits"
+			},
+			"autoDataQuality": {
+				"isEnabled": true,
+				"evaluationContext": "EvaluateDataQuality_node1758728146611"
+			},
+			"additionalOptions": {},
+			"iconUrl": "https://a.b.cdn.console.awsstatic.com/a/v1/RWG2E2C4WDVXPUNBXNIOAPXWJ54QCOOZPACBFEB4GBWZX47A457A/static/media/s3.2a166713.svg",
+			"generatedNodeName": "AmazonS3_node1758728280738",
+			"codeGenVersion": 2
+		}
+	},
+	"jobConfig": {
+		"command": "glueetl",
+		"description": "",
+		"role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+		"scriptName": "Operations / Github.py",
+		"version": "5.0",
+		"language": "python-3",
+		"scriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/",
+		"temporaryDirectory": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/",
+		"timeout": 480,
+		"maxConcurrentRuns": 1,
+		"workerType": "G.1X",
+		"numberOfWorkers": "5",
+		"maxRetries": 0,
+		"metrics": true,
+		"observabilityMetrics": true,
+		"security": "none",
+		"bookmark": "job-bookmark-enable",
+		"logging": false,
+		"spark": true,
+		"sparkConfiguration": "standard",
+		"sparkPath": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
+		"serverEncryption": false,
+		"glueHiveMetastore": true,
+		"etlAutoScaling": false,
+		"etlAutoTuning": true,
+		"jobParameters": [],
+		"tags": [],
+		"connectionsList": [],
+		"jobMode": "VISUAL_MODE",
+		"name": "Operations / Github",
+		"dataLineage": false,
+		"pythonPath": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py"
+	},
+	"hasBeenSaved": false
+}
