@@ -23,6 +23,16 @@ resource "aws_glue_catalog_database" "operations_aws_production_raw" {
   description = "RAW: data source path: /operations/aws/*"
 }
 
+resource "aws_glue_catalog_database" "operations_github_production" {
+  name        = "operations_github_${var.env}"
+  description = "TRANSFORMED: data source path: /operations/github/*"
+}
+
+resource "aws_glue_catalog_database" "operations_github_production_raw" {
+  name        = "operations_github_${var.env}_raw"
+  description = "RAW: data source path: /operations/github/*"
+}
+
 resource "aws_glue_catalog_database" "platform_gc_forms_production" {
   name        = "platform_gc_forms_${var.env}"
   description = "TRANSFORMED: data source path: /platform/gc-forms/*"
