@@ -1,0 +1,661 @@
+{
+    "Job": {
+        "Name": "Operations / Github",
+        "JobMode": "VISUAL",
+        "JobRunQueuingEnabled": false,
+        "Description": "",
+        "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+        "CreatedOn": "2025-09-24T15:44:40.459000+00:00",
+        "LastModifiedOn": "2025-09-24T18:50:33.675000+00:00",
+        "ExecutionProperty": {
+            "MaxConcurrentRuns": 1
+        },
+        "Command": {
+            "Name": "glueetl",
+            "ScriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Operations / Github.py",
+            "PythonVersion": "3"
+        },
+        "DefaultArguments": {
+            "--enable-metrics": "true",
+            "--enable-spark-ui": "true",
+            "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+            "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
+            "--enable-job-insights": "true",
+            "--enable-observability-metrics": "true",
+            "--enable-glue-datacatalog": "true",
+            "--job-bookmark-option": "job-bookmark-enable",
+            "--job-language": "python",
+            "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/"
+        },
+        "MaxRetries": 0,
+        "AllocatedCapacity": 5,
+        "Timeout": 480,
+        "MaxCapacity": 5.0,
+        "WorkerType": "G.1X",
+        "NumberOfWorkers": 5,
+        "GlueVersion": "5.0",
+        "CodeGenConfigurationNodes": {
+            "node-1758728190019": {
+                "DynamicTransform": {
+                    "Name": "Explode Array Or Map Into Rows",
+                    "TransformName": "gs_explode",
+                    "Inputs": [
+                        "node-1758728182352"
+                    ],
+                    "Parameters": [
+                        {
+                            "Name": "colName",
+                            "Type": "str",
+                            "Value": [
+                                "prs"
+                            ],
+                            "IsOptional": false
+                        },
+                        {
+                            "Name": "newCol",
+                            "Type": "str",
+                            "Value": [
+                                "pr"
+                            ],
+                            "IsOptional": false
+                        }
+                    ],
+                    "FunctionName": "gs_explode",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "prs",
+                                    "Type": "array<struct<id:bigint,number:int,title:string,state:string,created_at:string,updated_at:string,closed_at:string,html_url:string,labels:array<string>>>"
+                                },
+                                {
+                                    "Name": "pr",
+                                    "Type": "struct<id:bigint,number:int,title:string,state:string,created_at:string,updated_at:string,closed_at:string,html_url:string,labels:array<string>>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1758728182352": {
+                "S3JsonSource": {
+                    "Name": "All PRs",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/github/AllPRs/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": false,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-data-lake-2025-09-24T07:27:08.604Z.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "prs",
+                                    "Type": "array<struct<id:bigint,number:int,title:string,state:string,created_at:string,updated_at:string,closed_at:string,html_url:string,labels:array<string>>>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1758728192658": {
+                "ApplyMapping": {
+                    "Name": "Change Schema",
+                    "Inputs": [
+                        "node-1758728190019"
+                    ],
+                    "Mapping": [
+                        {
+                            "ToKey": "metadata_owner",
+                            "FromPath": [
+                                "metadata_owner"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_repo",
+                            "FromPath": [
+                                "metadata_repo"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_query",
+                            "FromPath": [
+                                "metadata_query"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "pr",
+                            "FromPath": [
+                                "prs"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "",
+                            "FromPath": [
+                                "pr"
+                            ],
+                            "FromType": "object",
+                            "ToType": "object",
+                            "Dropped": false,
+                            "Children": [
+                                {
+                                    "ToKey": "id",
+                                    "FromPath": [
+                                        "pr",
+                                        "id"
+                                    ],
+                                    "FromType": "bigint",
+                                    "ToType": "long",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "number",
+                                    "FromPath": [
+                                        "pr",
+                                        "number"
+                                    ],
+                                    "FromType": "int",
+                                    "ToType": "int",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "title",
+                                    "FromPath": [
+                                        "pr",
+                                        "title"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "state",
+                                    "FromPath": [
+                                        "pr",
+                                        "state"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "created_at",
+                                    "FromPath": [
+                                        "pr",
+                                        "created_at"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "updated_at",
+                                    "FromPath": [
+                                        "pr",
+                                        "updated_at"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "closed_at",
+                                    "FromPath": [
+                                        "pr",
+                                        "closed_at"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "html_url",
+                                    "FromPath": [
+                                        "pr",
+                                        "html_url"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "labels",
+                                    "FromPath": [
+                                        "pr",
+                                        "labels"
+                                    ],
+                                    "FromType": "array",
+                                    "ToType": "array",
+                                    "Dropped": false
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1758728196642": {
+                "S3GlueParquetTarget": {
+                    "Name": "Amazon S3",
+                    "Inputs": [
+                        "node-1758728195328"
+                    ],
+                    "PartitionKeys": [],
+                    "Path": "s3://cds-data-lake-transformed-production/operations/github/AllPRs/",
+                    "Compression": "snappy",
+                    "NumberTargetPartitions": "0",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "UPDATE_IN_DATABASE",
+                        "Table": "operations_github_prs",
+                        "Database": "operations_github_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": true,
+                        "EvaluationContext": "EvaluateDataQuality_node1758728146611"
+                    }
+                }
+            },
+            "node-1758728195328": {
+                "DynamicTransform": {
+                    "Name": "Flatten",
+                    "TransformName": "gs_flatten",
+                    "Inputs": [
+                        "node-1758728192658"
+                    ],
+                    "Parameters": [],
+                    "FunctionName": "gs_flatten",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "id",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "number",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "title",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "state",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "created_at",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "updated_at",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "closed_at",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "html_url",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1758728275687": {
+                "ApplyMapping": {
+                    "Name": "Change Schema",
+                    "Inputs": [
+                        "node-1758728270221"
+                    ],
+                    "Mapping": [
+                        {
+                            "ToKey": "metadata_owner",
+                            "FromPath": [
+                                "metadata_owner"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_repo",
+                            "FromPath": [
+                                "metadata_repo"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_query",
+                            "FromPath": [
+                                "metadata_query"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "metadata_time_in_days",
+                            "FromPath": [
+                                "metadata_time_in_days"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_since",
+                            "FromPath": [
+                                "metadata_since"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "commit_count",
+                            "FromPath": [
+                                "commit_count"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "",
+                            "FromPath": [
+                                "cc"
+                            ],
+                            "FromType": "object",
+                            "ToType": "object",
+                            "Dropped": false,
+                            "Children": [
+                                {
+                                    "ToKey": "author",
+                                    "FromPath": [
+                                        "cc",
+                                        "author"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "date",
+                                    "FromPath": [
+                                        "cc",
+                                        "date"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "verified",
+                                    "FromPath": [
+                                        "cc",
+                                        "verified"
+                                    ],
+                                    "FromType": "boolean",
+                                    "ToType": "boolean",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "verified_reason",
+                                    "FromPath": [
+                                        "cc",
+                                        "verified_reason"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1758728263455": {
+                "S3JsonSource": {
+                    "Name": "Commit Count",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/github/CommitCount/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": false,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/CommitCount/cds-snc-data-lake-2025-09-12T17:00:33.582Z.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_time_in_days",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "metadata_since",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "commit_count",
+                                    "Type": "array<struct<author:string,date:string,verified:boolean,verified_reason:string>>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1758728278634": {
+                "DynamicTransform": {
+                    "Name": "Flatten",
+                    "TransformName": "gs_flatten",
+                    "Inputs": [
+                        "node-1758728275687"
+                    ],
+                    "Parameters": [],
+                    "FunctionName": "gs_flatten",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_time_in_days",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "metadata_since",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "author",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "verified",
+                                    "Type": "boolean"
+                                },
+                                {
+                                    "Name": "verified_reason",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1758728280738": {
+                "S3GlueParquetTarget": {
+                    "Name": "Amazon S3",
+                    "Inputs": [
+                        "node-1758728278634"
+                    ],
+                    "PartitionKeys": [],
+                    "Path": "s3://cds-data-lake-transformed-production/operations/github/CommitCount/",
+                    "Compression": "snappy",
+                    "NumberTargetPartitions": "0",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "UPDATE_IN_DATABASE",
+                        "Table": "operations_github_commits",
+                        "Database": "operations_github_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": true,
+                        "EvaluationContext": "EvaluateDataQuality_node1758728146611"
+                    }
+                }
+            },
+            "node-1758728270221": {
+                "DynamicTransform": {
+                    "Name": "Explode Array Or Map Into Rows",
+                    "TransformName": "gs_explode",
+                    "Inputs": [
+                        "node-1758728263455"
+                    ],
+                    "Parameters": [
+                        {
+                            "Name": "colName",
+                            "Type": "str",
+                            "Value": [
+                                "commit_count"
+                            ],
+                            "IsOptional": false
+                        },
+                        {
+                            "Name": "newCol",
+                            "Type": "str",
+                            "Value": [
+                                "cc"
+                            ],
+                            "IsOptional": false
+                        }
+                    ],
+                    "FunctionName": "gs_explode",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_time_in_days",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "metadata_since",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "commit_count",
+                                    "Type": "array<struct<author:string,date:string,verified:boolean,verified_reason:string>>"
+                                },
+                                {
+                                    "Name": "cc",
+                                    "Type": "struct<author:string,date:string,verified:boolean,verified_reason:string>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "ExecutionClass": "STANDARD"
+    }
+}
