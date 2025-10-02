@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.21.1](https://github.com/cds-snc/data-lake/compare/v1.21.0...v1.21.1) (2025-10-02)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#430](https://github.com/cds-snc/data-lake/issues/430)) ([d9f78c9](https://github.com/cds-snc/data-lake/commit/d9f78c9a7ae33fdd8f82e9f9862c6ce32dde1c12))
+* **deps:** update all patch dependencies ([#428](https://github.com/cds-snc/data-lake/issues/428)) ([112213a](https://github.com/cds-snc/data-lake/commit/112213a50c0afea21479edabb15e7069e0bc2f2a))
+* **deps:** update dependency black to v25.9.0 ([#429](https://github.com/cds-snc/data-lake/issues/429)) ([fa39d15](https://github.com/cds-snc/data-lake/commit/fa39d1568514da05403b6c12f0bdfccdfdf2e7a3))
+* update GH exporter ([#432](https://github.com/cds-snc/data-lake/issues/432)) ([45d8f5d](https://github.com/cds-snc/data-lake/commit/45d8f5d8b20f15dd8c930992cde613555d6cf084))
+
 ## [1.21.0](https://github.com/cds-snc/data-lake/compare/v1.20.1...v1.21.0) (2025-09-24)
 
 
