@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-10-02T15:31:28.419000+00:00",
-        "LastModifiedOn": "2025-10-02T19:28:07.160000+00:00",
+        "LastModifiedOn": "2025-10-03T14:14:26.549000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -18,7 +18,7 @@
         "DefaultArguments": {
             "--enable-metrics": "true",
             "--enable-spark-ui": "true",
-            "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+            "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
             "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
@@ -48,7 +48,7 @@
                     "SchemaChangePolicy": {
                         "EnableUpdateCatalog": true,
                         "UpdateBehavior": "UPDATE_IN_DATABASE",
-                        "Table": "workflows",
+                        "Table": "operations_github_workflows",
                         "Database": "operations_github_production"
                     },
                     "AutoDataQuality": {
@@ -89,7 +89,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Workflows/cds-snc-data-lake-2025-10-02T15_43_35.890Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Workflows/cds-snc-cds-superset-2025-10-03T07:25:11.935Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -435,7 +435,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-data-lake-2025-09-24T07:27:08.604Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-cds-superset-2025-10-03T07:25:09.923Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -783,7 +783,7 @@
                                         "wf",
                                         "id"
                                     ],
-                                    "FromType": "long",
+                                    "FromType": "bigint",
                                     "ToType": "long",
                                     "Dropped": false
                                 },
@@ -892,7 +892,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/CommitCount/cds-snc-data-lake-2025-09-12T17:00:33.582Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/CommitCount/cds-snc-cds-superset-2025-10-03T07:25:13.577Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
