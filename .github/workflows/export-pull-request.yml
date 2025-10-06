@@ -26,7 +26,7 @@ jobs:
           - platform/support/freshdesk
     steps:
       - name: Audit DNS requests
-        uses: cds-snc/dns-proxy-action@abae14dc37311af3a9bf8e6838dba2c1d873d06e
+        uses: cds-snc/dns-proxy-action@a0d442834e9028e22d0f919e48a5eb92de712976
         env:
           DNS_PROXY_FORWARDTOSENTINEL: "true"
           DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
