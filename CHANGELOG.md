@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.22.0](https://github.com/cds-snc/data-lake/compare/v1.21.1...v1.22.0) (2025-10-07)
+
+
+### Features
+
+* add github metadata tables to superset ([#439](https://github.com/cds-snc/data-lake/issues/439)) ([2594fad](https://github.com/cds-snc/data-lake/commit/2594fadeea847053c06b08b79221a3e79fe7398b))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#436](https://github.com/cds-snc/data-lake/issues/436)) ([5a5c281](https://github.com/cds-snc/data-lake/commit/5a5c2812c7a0654f37a45d2500b1dafd11b86a1f))
+* **deps:** update all non-major github action dependencies ([#435](https://github.com/cds-snc/data-lake/issues/435)) ([69a69f4](https://github.com/cds-snc/data-lake/commit/69a69f41b172a1df08216e5322db206ef2cf42d9))
+* **deps:** update dependency boto3 to v1.40.40 ([#434](https://github.com/cds-snc/data-lake/issues/434)) ([b6bf1f0](https://github.com/cds-snc/data-lake/commit/b6bf1f0af85a03459268c23877d4e53cb42e4ec3))
+* synced file(s) with cds-snc/site-reliability-engineering ([#438](https://github.com/cds-snc/data-lake/issues/438)) ([a455979](https://github.com/cds-snc/data-lake/commit/a455979fc4a6b1838a6cb90752c8adb3dd32b767))
+
 ## [1.21.1](https://github.com/cds-snc/data-lake/compare/v1.21.0...v1.21.1) (2025-10-02)
 
 
