@@ -6,6 +6,7 @@ locals {
   # The Superset role ARNs are managed by the `superset_iam_role_arns` input variable.
   glue_catalog_databases = [
     aws_glue_catalog_database.operations_aws_production.name,
+    aws_glue_catalog_database.operations_github_production.name,
     aws_glue_catalog_database.platform_gc_forms_production.name,
     aws_glue_catalog_database.platform_gc_notify_production.name,
     aws_glue_catalog_database.platform_support_production.name,
