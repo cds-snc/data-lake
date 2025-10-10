@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-10-02T15:31:28.419000+00:00",
-        "LastModifiedOn": "2025-10-03T14:14:26.549000+00:00",
+        "LastModifiedOn": "2025-10-10T14:28:59.544000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -89,7 +89,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Workflows/cds-snc-cds-superset-2025-10-03T07:25:11.935Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Workflows/cds-snc-automatic-website-scanning-2025-10-07T07:25:49.143Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -232,6 +232,59 @@
                     ]
                 }
             },
+            "node-1760104966863": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
+                    "Inputs": [
+                        "node-1758728278634"
+                    ],
+                    "SqlQuery": "SELECT *\nFROM myDataSource\nWHERE DATE_ADD(DATE(to_timestamp(metadata_since)), 59)\n      = DATE(to_timestamp(date))",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1758728278634",
+                            "Alias": "myDataSource"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_time_in_days",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "metadata_since",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "author",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "verified",
+                                    "Type": "boolean"
+                                },
+                                {
+                                    "Name": "verified_reason",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
             "node-1758728278634": {
                 "DynamicTransform": {
                     "Name": "Flatten",
@@ -287,7 +340,7 @@
                 "S3GlueParquetTarget": {
                     "Name": "Amazon S3",
                     "Inputs": [
-                        "node-1758728278634"
+                        "node-1760104966863"
                     ],
                     "PartitionKeys": [],
                     "Path": "s3://cds-data-lake-transformed-production/operations/github/CommitCount/",
@@ -435,7 +488,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-cds-superset-2025-10-03T07:25:09.923Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-ADR-2025-10-08T07:26:25.332Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -892,7 +945,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/CommitCount/cds-snc-cds-superset-2025-10-03T07:25:13.577Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/CommitCount/cds-snc-ADR-2025-10-08T07:26:26.687Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
