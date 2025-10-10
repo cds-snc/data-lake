@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.22.1](https://github.com/cds-snc/data-lake/compare/v1.22.0...v1.22.1) (2025-10-10)
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#442](https://github.com/cds-snc/data-lake/issues/442)) ([8a9b50d](https://github.com/cds-snc/data-lake/commit/8a9b50de158195a0d4b6b61da84188b55774eb3c))
+* documentation github metadata etl ([#440](https://github.com/cds-snc/data-lake/issues/440)) ([30dea42](https://github.com/cds-snc/data-lake/commit/30dea42262b59e412f842225968f311bf008e560))
+
 ## [1.22.0](https://github.com/cds-snc/data-lake/compare/v1.21.1...v1.22.0) (2025-10-07)
 
 
