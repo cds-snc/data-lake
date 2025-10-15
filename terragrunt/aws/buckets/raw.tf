@@ -106,8 +106,8 @@ data "aws_iam_policy_document" "raw_bucket" {
       principals {
         type = "AWS"
         identifiers = [
-          "arn:aws:iam::454671348950:role/AWSGlueETL-DataLake",
-          "arn:aws:iam::454671348950:role/AWSGlueCrawler-DataLake"
+          "arn:aws:iam::454671348950:role/service-role/AWSGlueETL-DataLake",
+          "arn:aws:iam::454671348950:role/service-role/AWSGlueCrawler-DataLake"
         ]
       }
       actions = [
