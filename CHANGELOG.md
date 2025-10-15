@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.1](https://github.com/cds-snc/data-lake/compare/v1.23.0...v1.23.1) (2025-10-15)
+
+
+### Bug Fixes
+
+* giving raw bucket access to the correct staging ARN ([#446](https://github.com/cds-snc/data-lake/issues/446)) ([6d181b1](https://github.com/cds-snc/data-lake/commit/6d181b1707c819cc1c6ccc410b800e3e8e204bed))
+
 ## [1.23.0](https://github.com/cds-snc/data-lake/compare/v1.22.0...v1.23.0) (2025-10-15)
 
 
