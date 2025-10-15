@@ -96,4 +96,29 @@ data "aws_iam_policy_document" "raw_bucket" {
       "${module.raw_bucket.s3_bucket_arn}/operations/github/*"
     ]
   }
+
+  # Allow staging environment read-only access to production raw bucket
+  dynamic "statement" {
+    for_each = var.env == "production" ? [1] : []
+    content {
+      sid    = "StagingReadAccess"
+      effect = "Allow"
+      principals {
+        type = "AWS"
+        identifiers = [
+          "arn:aws:iam::454671348950:role/AWSGlueETL-DataLake",
+          "arn:aws:iam::454671348950:role/AWSGlueCrawler-DataLake"
+        ]
+      }
+      actions = [
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ]
+      resources = [
+        module.raw_bucket.s3_bucket_arn,
+        "${module.raw_bucket.s3_bucket_arn}/*"
+      ]
+    }
+  }
 }
