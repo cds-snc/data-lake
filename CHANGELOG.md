@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.23.0](https://github.com/cds-snc/data-lake/compare/v1.22.0...v1.23.0) (2025-10-15)
+
+
+### Features
+
+* give staging read access to raw prod data ([#445](https://github.com/cds-snc/data-lake/issues/445)) ([40eadb1](https://github.com/cds-snc/data-lake/commit/40eadb1e14e15c0459a44bd530846c92feb46aa5))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#442](https://github.com/cds-snc/data-lake/issues/442)) ([8a9b50d](https://github.com/cds-snc/data-lake/commit/8a9b50de158195a0d4b6b61da84188b55774eb3c))
+* **deps:** lock file maintenance ([#444](https://github.com/cds-snc/data-lake/issues/444)) ([73b0411](https://github.com/cds-snc/data-lake/commit/73b041141d05e59d8624409d77531e7b4cce241b))
+* **deps:** update all patch dependencies ([#443](https://github.com/cds-snc/data-lake/issues/443)) ([b8ff340](https://github.com/cds-snc/data-lake/commit/b8ff3409bcb7e3a162d5a6fab6de75e39def783b))
+* documentation github metadata etl ([#440](https://github.com/cds-snc/data-lake/issues/440)) ([30dea42](https://github.com/cds-snc/data-lake/commit/30dea42262b59e412f842225968f311bf008e560))
+
 ## [1.22.0](https://github.com/cds-snc/data-lake/compare/v1.21.1...v1.22.0) (2025-10-07)
 
 
