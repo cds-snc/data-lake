@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.2](https://github.com/cds-snc/data-lake/compare/v1.23.1...v1.23.2) (2025-10-17)
+
+
+### Miscellaneous Chores
+
+* update github SHA ([#448](https://github.com/cds-snc/data-lake/issues/448)) ([1be8915](https://github.com/cds-snc/data-lake/commit/1be8915b57c8e598a335cc04ada2c4ac16a8a437))
+
 ## [1.23.1](https://github.com/cds-snc/data-lake/compare/v1.23.0...v1.23.1) (2025-10-15)
 
 
