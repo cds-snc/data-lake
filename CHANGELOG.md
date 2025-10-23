@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.23.3](https://github.com/cds-snc/data-lake/compare/v1.23.2...v1.23.3) (2025-10-23)
+
+
+### Bug Fixes
+
+* GCDS add missing  npm frameworks ([#466](https://github.com/cds-snc/data-lake/issues/466)) ([a072c7c](https://github.com/cds-snc/data-lake/commit/a072c7ce885ef4ae39c0324abf92dfbdf37e81b6))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#467](https://github.com/cds-snc/data-lake/issues/467)) ([e25f17d](https://github.com/cds-snc/data-lake/commit/e25f17d434aa7b00613422604c5a16b024c74379))
+* **deps:** lock file maintenance ([#455](https://github.com/cds-snc/data-lake/issues/455)) ([6f09dd9](https://github.com/cds-snc/data-lake/commit/6f09dd942795232efecd4021c626719ec130a120))
+* **deps:** update actions/checkout action to v5 ([#456](https://github.com/cds-snc/data-lake/issues/456)) ([ddb2d48](https://github.com/cds-snc/data-lake/commit/ddb2d48eb84f6a379eec4d850e5d10a192a26dd2))
+* **deps:** update actions/setup-java action to v5 ([#457](https://github.com/cds-snc/data-lake/issues/457)) ([593979b](https://github.com/cds-snc/data-lake/commit/593979b175a4b2e7f0aa276f81a00ecb6030bc20))
+* **deps:** update actions/setup-python action to v6 ([#458](https://github.com/cds-snc/data-lake/issues/458)) ([6105b42](https://github.com/cds-snc/data-lake/commit/6105b4235807d4b8e05e4ed52f4a3612152b6e4b))
+* **deps:** update aws-actions/configure-aws-credentials action to v5 ([#459](https://github.com/cds-snc/data-lake/issues/459)) ([e22986d](https://github.com/cds-snc/data-lake/commit/e22986da746060a074629c52a6da33cbf2d0da07))
+* **deps:** update dependency black to v25 ([#460](https://github.com/cds-snc/data-lake/issues/460)) ([93ea6aa](https://github.com/cds-snc/data-lake/commit/93ea6aaa990ab20fef680b85ed38f3318d5d5b34))
+* **deps:** update dependency boto3 to v1.40.50 ([#452](https://github.com/cds-snc/data-lake/issues/452)) ([b5d353d](https://github.com/cds-snc/data-lake/commit/b5d353d7ee9ea875fd9cbd29c690e5484ff8fc21))
+* **deps:** update dependency pyarrow to v21 ([#462](https://github.com/cds-snc/data-lake/issues/462)) ([c0caaf6](https://github.com/cds-snc/data-lake/commit/c0caaf66da030851736a6ac27df69eb42817944a))
+* **deps:** update dependency pyspark to v4 ([#463](https://github.com/cds-snc/data-lake/issues/463)) ([1050f08](https://github.com/cds-snc/data-lake/commit/1050f084af958d3bf776813e31a0d63b079565ee))
+* **deps:** update dependency python to v3.14.0 ([#453](https://github.com/cds-snc/data-lake/issues/453)) ([5643563](https://github.com/cds-snc/data-lake/commit/5643563c60da9eb3ea5fe4e9913ec4df7fa7fb6d))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to 1f1835d ([#450](https://github.com/cds-snc/data-lake/issues/450)) ([39a46bb](https://github.com/cds-snc/data-lake/commit/39a46bbe22e6befdf2e16d651ee93a47fecbb879))
+* regenerate metadata-export.json for 2025-10-23 ([e25f17d](https://github.com/cds-snc/data-lake/commit/e25f17d434aa7b00613422604c5a16b024c74379))
+* synced file(s) with cds-snc/site-reliability-engineering ([#465](https://github.com/cds-snc/data-lake/issues/465)) ([f79505e](https://github.com/cds-snc/data-lake/commit/f79505e073879f629527f9a42650cc88789d84e5))
+* synced local '.github/workflows/export_github_data.yml' with remote 'tools/sre_file_sync/export_github_data.yml' ([f79505e](https://github.com/cds-snc/data-lake/commit/f79505e073879f629527f9a42650cc88789d84e5))
+
 ## [1.23.2](https://github.com/cds-snc/data-lake/compare/v1.23.1...v1.23.2) (2025-10-17)
 
 
