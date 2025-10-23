@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-10-02T15:31:28.419000+00:00",
-        "LastModifiedOn": "2025-10-10T14:28:59.544000+00:00",
+        "LastModifiedOn": "2025-10-22T15:04:57.756000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -166,7 +166,7 @@
                                 "metadata_since"
                             ],
                             "FromType": "string",
-                            "ToType": "string",
+                            "ToType": "date",
                             "Dropped": false
                         },
                         {
@@ -204,7 +204,7 @@
                                         "date"
                                     ],
                                     "FromType": "string",
-                                    "ToType": "string",
+                                    "ToType": "date",
                                     "Dropped": false
                                 },
                                 {
@@ -262,7 +262,7 @@
                                 },
                                 {
                                     "Name": "metadata_since",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "author",
@@ -270,7 +270,7 @@
                                 },
                                 {
                                     "Name": "date",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "verified",
@@ -671,7 +671,7 @@
                                         "created_at"
                                     ],
                                     "FromType": "string",
-                                    "ToType": "string",
+                                    "ToType": "date",
                                     "Dropped": false
                                 },
                                 {
@@ -681,7 +681,7 @@
                                         "updated_at"
                                     ],
                                     "FromType": "string",
-                                    "ToType": "string",
+                                    "ToType": "date",
                                     "Dropped": false
                                 },
                                 {
@@ -691,7 +691,7 @@
                                         "closed_at"
                                     ],
                                     "FromType": "string",
-                                    "ToType": "string",
+                                    "ToType": "date",
                                     "Dropped": false
                                 },
                                 {
@@ -907,7 +907,7 @@
                                         "created_at"
                                     ],
                                     "FromType": "string",
-                                    "ToType": "string",
+                                    "ToType": "date",
                                     "Dropped": false
                                 },
                                 {
@@ -917,7 +917,7 @@
                                         "updated_at"
                                     ],
                                     "FromType": "string",
-                                    "ToType": "string",
+                                    "ToType": "date",
                                     "Dropped": false
                                 },
                                 {
@@ -1033,11 +1033,11 @@
                                 },
                                 {
                                     "Name": "created_at",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "updated_at",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "html_url",
