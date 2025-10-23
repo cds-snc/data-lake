@@ -15,12 +15,17 @@ S3_OBJECT_PREFIX = os.environ.get("S3_OBJECT_PREFIX")
 GLUE_CRAWLER_NAME = os.environ.get("GLUE_CRAWLER_NAME")
 
 # NPM package configuration
-NPM_PACKAGE = "@cdssnc/gcds-components-vue"
-START_YEAR = 2024  # Package start year
+NPM_PACKAGES = [
+    "@cdssnc/gcds-components-react",
+    "@cdssnc/gcds-components-vue", 
+    "@cdssnc/gcds-components-angular",
+    "@cdssnc/gcds-components-react-ssr"
+]
+START_YEAR = 2023  # Package start year
 
 
-def fetch_npm_downloads_for_year(year):
-    """Fetch NPM download statistics for a specific year."""
+def fetch_npm_downloads_for_year(year, package_name):
+    """Fetch NPM download statistics for a specific year and package."""
     start_date = f"{year}-01-01"
     end_date = f"{year}-12-31"
 
@@ -29,7 +34,7 @@ def fetch_npm_downloads_for_year(year):
     if year == current_year:
         end_date = datetime.now().strftime("%Y-%m-%d")
 
-    url = f"https://api.npmjs.org/downloads/range/{start_date}:{end_date}/{NPM_PACKAGE}"
+    url = f"https://api.npmjs.org/downloads/range/{start_date}:{end_date}/{package_name}"
 
     response = requests.get(url)
     response.raise_for_status()
@@ -37,26 +42,29 @@ def fetch_npm_downloads_for_year(year):
 
 
 def fetch_all_npm_data():
-    """Fetch NPM download data for all years from package start to current year."""
+    """Fetch NPM download data for all packages and years from package start to current year."""
     current_year = datetime.now().year
     all_data = []
 
-    for year in range(START_YEAR, current_year + 1):
-        try:
-            year_data = fetch_npm_downloads_for_year(year)
+    for package_name in NPM_PACKAGES:
+        for year in range(START_YEAR, current_year + 1):
+            try:
+                year_data = fetch_npm_downloads_for_year(year, package_name)
 
-            # Add metadata to each download record
-            for download in year_data.get("downloads", []):
-                download["package"] = year_data.get("package", NPM_PACKAGE)
-                download["year"] = year
-                download["fetched_at"] = datetime.utcnow().isoformat()
-                all_data.append(download)
+                # Add metadata to each download record
+                for download in year_data.get("downloads", []):
+                    download["package"] = year_data.get("package", package_name)
+                    download["year"] = year
+                    download["fetched_at"] = datetime.utcnow().isoformat()
+                    all_data.append(download)
 
-        except Exception as e:
-            error_msg = f"Failed to fetch NPM data for year {year}: {str(e)}"
-            logger.error(error_msg)
-            raise Exception(error_msg)
-        logger.info("Fetched NPM data for year %s", year)
+            except Exception as e:
+                error_msg = f"Failed to fetch NPM data for package {package_name}, year {year}: {str(e)}"
+                logger.error(error_msg)
+                # Continue with other packages/years instead of failing completely
+                continue
+            
+        logger.info("Fetched NPM data for package %s", package_name)
 
     return all_data
 
