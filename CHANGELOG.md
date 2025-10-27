@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.23.4](https://github.com/cds-snc/data-lake/compare/v1.23.3...v1.23.4) (2025-10-27)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#470](https://github.com/cds-snc/data-lake/issues/470)) ([6a1092a](https://github.com/cds-snc/data-lake/commit/6a1092adafd7d277b23a001cea83db6476cf4ede))
+* **deps:** update all patch dependencies ([#469](https://github.com/cds-snc/data-lake/issues/469)) ([79d9836](https://github.com/cds-snc/data-lake/commit/79d98362542a5dd8025a427d3ae046593284615d))
+
 ## [1.23.3](https://github.com/cds-snc/data-lake/compare/v1.23.2...v1.23.3) (2025-10-23)
 
 
