@@ -26,7 +26,7 @@ jobs:
           - platform/support/freshdesk
     steps:
       - name: Audit DNS requests
-        uses: cds-snc/dns-proxy-action@a0d442834e9028e22d0f919e48a5eb92de712976
+        uses: cds-snc/dns-proxy-action@b63a989befc20506036aab86a7d66c4159272637
         env:
           DNS_PROXY_FORWARDTOSENTINEL: "true"
           DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
@@ -68,7 +68,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Run PR tests
         working-directory: ./export/${{ matrix.export }}

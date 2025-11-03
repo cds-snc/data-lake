@@ -34,7 +34,7 @@ jobs:
 
     steps:
     - name: Audit DNS requests
-      uses: cds-snc/dns-proxy-action@a0d442834e9028e22d0f919e48a5eb92de712976
+      uses: cds-snc/dns-proxy-action@b63a989befc20506036aab86a7d66c4159272637
       env:
         DNS_PROXY_FORWARDTOSENTINEL: "true"
         DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
