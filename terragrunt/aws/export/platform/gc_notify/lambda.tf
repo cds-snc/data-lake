@@ -2,7 +2,7 @@
 # GC Notify RDS snapshot exports to the Data Lake's Raw bucket
 #
 module "platform_gc_notify_export" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.8.2"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.8.3"
 
   lambda_name                = local.gc_notify_lambda_name
   lambda_schedule_expression = local.cron_expression
