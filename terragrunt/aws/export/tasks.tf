@@ -47,3 +47,17 @@ module "platform_support_freshdesk_export" {
 
   billing_tag_value = var.billing_tag_value
 }
+
+module "platform_google_analytics_export" {
+  source = "./platform/google_analytics"
+
+  env                     = var.env
+  account_id              = var.account_id
+  region                  = var.region
+  transformed_bucket_arn  = var.transformed_bucket_arn
+  transformed_bucket_name = var.transformed_bucket_name
+  raw_bucket_arn          = var.raw_bucket_arn
+  raw_bucket_name         = var.raw_bucket_name
+
+  billing_tag_value = var.billing_tag_value
+}
