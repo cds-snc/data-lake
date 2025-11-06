@@ -1,22 +1,4 @@
 #
-# ECR repository for Google Analytics export Lambda
-#
-resource "aws_ecr_repository" "platform_google_analytics_export" {
-  name                 = "platform-google-analytics-export"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  tags = {
-    Name              = "platform-google-analytics-export"
-    Terraform         = true
-    (var.billing_tag_value) = true
-  }
-}
-
-#
 # Google Analytics data exports to the Data Lake's Raw bucket
 #
 module "platform_google_analytics_export" {
