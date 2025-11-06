@@ -1,16 +1,29 @@
 #
 # GC Notify RDS snapshot exports to the Data Lake's Raw bucket
 #
+
+data "aws_iam_policy_document" "assume_role_web_identity" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    principals {
+      type        = "Federated"
+      identifiers = ["arn:aws:iam::${var.account_id}:oidc-provider/sts.amazonaws.com"]
+    }
+  }
+}
+
+
 module "platform_gc_notify_export" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.8.3"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.8.6"
 
   lambda_name                = local.gc_notify_lambda_name
   lambda_schedule_expression = local.cron_expression
   lambda_timeout             = "60"
   lambda_architectures       = ["arm64"]
 
-  lambda_policies = [
-    data.aws_iam_policy_document.platform_gc_notify_export.json
+  lambda_assume_role_policies = [
+    data.aws_iam_policy_document.assume_role_web_identity.json
   ]
 
   lambda_environment_variables = {

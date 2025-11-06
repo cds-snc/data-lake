@@ -1,4 +1,4 @@
-.PHONY: test build push
+.PHONY: install test build push
 
 test:
 	python -m pytest main_test.py -v
