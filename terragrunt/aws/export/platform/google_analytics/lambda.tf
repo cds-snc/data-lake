@@ -23,6 +23,10 @@ module "platform_google_analytics_export" {
   lambda_timeout             = "60"
   lambda_architectures       = ["arm64"]
 
+  lambda_policies = [
+    data.aws_iam_policy_document.platform_google_analytics_export.json
+  ]
+
   lambda_assume_role_policies = [
     data.aws_iam_policy_document.assume_role_web_identity.json
   ]
