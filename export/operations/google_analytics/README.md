@@ -21,10 +21,10 @@ This Lambda function exports Google Analytics 4 (GA4) data to the Data Lake's S3
 ## GA4 Properties
 
 The function exports data from 4 properties:
-- `forms_marketing_site` (ID: 348891142)
-- `notification_ga4` (ID: 307565010)
-- `platform_form_client` (ID: 261232514)
-- `platform_core_superset_doc` (ID: 490027562)
+- `forms_marketing_site` 
+- `notification_ga4`
+- `platform_form_client` 
+- `platform_core_superset_doc`
 
 ## Reports Generated
 
@@ -91,13 +91,6 @@ The Lambda requires:
 - `s3:PutObjectAcl` - Set object permissions
 - `s3:ListBucket` - List bucket contents (with prefix restriction)
 
-## Google Cloud Configuration
-
-### Workload Identity Federation Settings
-- **Project Number**: 535589929467
-- **Pool ID**: aws-data-warehouse
-- **Provider ID**: datalake-production
-- **Service Account**: google-analytics-api@platform-core-data-warehouse.iam.gserviceaccount.com
 
 ## Dependencies
 
@@ -129,12 +122,3 @@ Check CloudWatch Logs for execution details.
 - Each report type is processed independently - if one fails, others continue
 - Detailed error messages are logged and returned in the response
 - Function returns HTTP 500 only if the entire execution fails (e.g., authentication)
-
-## Future Enhancements
-
-Potential improvements:
-- Add Glue crawler to automatically catalog the data
-- Support for custom date ranges via event parameters
-- Additional report types (traffic sources, devices, etc.)
-- Retry logic for transient Google API errors
-- CloudWatch metrics for data volume and API usage
