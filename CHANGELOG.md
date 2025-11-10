@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.24.0](https://github.com/cds-snc/data-lake/compare/v1.23.3...v1.24.0) (2025-11-10)
+
+
+### Features
+
+* add blank lambda function for GA pipeline ([#475](https://github.com/cds-snc/data-lake/issues/475)) ([06c819d](https://github.com/cds-snc/data-lake/commit/06c819d7b9d45dc40aceb13ee71cc4461a5d7973))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#470](https://github.com/cds-snc/data-lake/issues/470)) ([6a1092a](https://github.com/cds-snc/data-lake/commit/6a1092adafd7d277b23a001cea83db6476cf4ede))
+* **deps:** lock file maintenance ([#474](https://github.com/cds-snc/data-lake/issues/474)) ([878d860](https://github.com/cds-snc/data-lake/commit/878d8600f5ccf556d461332691b933db89f2476d))
+* **deps:** lock file maintenance ([#479](https://github.com/cds-snc/data-lake/issues/479)) ([b4de61c](https://github.com/cds-snc/data-lake/commit/b4de61c0c57db019edfe829d4e1694ec9764a0b8))
+* **deps:** update all non-major github action dependencies ([#472](https://github.com/cds-snc/data-lake/issues/472)) ([e259801](https://github.com/cds-snc/data-lake/commit/e25980180574ac629eb91fe7a25e940efd1380ee))
+* **deps:** update all patch dependencies ([#469](https://github.com/cds-snc/data-lake/issues/469)) ([79d9836](https://github.com/cds-snc/data-lake/commit/79d98362542a5dd8025a427d3ae046593284615d))
+* **deps:** update all patch dependencies ([#473](https://github.com/cds-snc/data-lake/issues/473)) ([2f10982](https://github.com/cds-snc/data-lake/commit/2f10982354f4f79b7319bda3cc7d4c333903fbb5))
+* **deps:** update all patch dependencies ([#476](https://github.com/cds-snc/data-lake/issues/476)) ([f51fdd1](https://github.com/cds-snc/data-lake/commit/f51fdd1a7c9ff5d3b45138eb2de2727af5a995d5))
+* **deps:** update dependency awswrangler to v3.14.0 ([#477](https://github.com/cds-snc/data-lake/issues/477)) ([e1c3c08](https://github.com/cds-snc/data-lake/commit/e1c3c08afb2e2146e936bdd45b623930e4e335e2))
+
 ## [1.23.3](https://github.com/cds-snc/data-lake/compare/v1.23.2...v1.23.3) (2025-10-23)
 
 
