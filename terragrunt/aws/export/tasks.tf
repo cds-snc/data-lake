@@ -57,5 +57,14 @@ module "operations_google_analytics_export" {
   raw_bucket_arn  = var.raw_bucket_arn
   raw_bucket_name = var.raw_bucket_name
 
+  gcp_project_number                         = var.gcp_project_number
+  gcp_pool_id                                = var.gcp_pool_id
+  gcp_provider_id                            = var.gcp_provider_id
+  gcp_service_account_email                  = var.gcp_service_account_email
+  gcp_ga_property_forms_marketing_site       = var.gcp_ga_property_forms_marketing_site
+  gcp_ga_property_notification_ga4           = var.gcp_ga_property_notification_ga4
+  gcp_ga_property_platform_form_client       = var.gcp_ga_property_platform_form_client
+  gcp_ga_property_platform_core_superset_doc = var.gcp_ga_property_platform_core_superset_doc
+
   billing_tag_value = var.billing_tag_value
 }

@@ -39,16 +39,16 @@ def test_save_to_s3_success(mock_s3_client):
         with patch.object(main, 'S3_EXPORT_PREFIX', 'operations/google-analytics'):
             data = [{"date": "20241110", "sessions": "100"}]
 
-            s3_keys = main.save_to_s3(data, "test_property")
+            s3_keys = main.save_to_s3(data, "test_property", "daily")
 
             assert len(s3_keys) == 1
-            assert s3_keys[0] == "operations/google-analytics/test_property/date=2024-11-10/data.json"
+            assert s3_keys[0] == "operations/google-analytics/test_property/daily/date=2024-11-10/data.json"
             mock_s3_client.put_object.assert_called_once()
 
 
 def test_save_to_s3_empty_data():
     """Test S3 save with empty data."""
-    result = main.save_to_s3([], "test_property")
+    result = main.save_to_s3([], "test_property", "daily")
     assert result == []
 
 
@@ -80,7 +80,7 @@ def test_handler_success(mock_run_report, mock_save_s3, mock_ga_client_class, mo
     mock_ga_client_class.return_value = mock_client
 
     mock_run_report.return_value = [{"date": "20241110", "sessions": "100"}]
-    mock_save_s3.return_value = ["operations/google-analytics/test/date=2024-11-10/data.json"]
+    mock_save_s3.return_value = ["operations/google-analytics/test/daily/date=2024-11-10/data.json"]
 
     # Call handler
     response = main.handler({}, {})

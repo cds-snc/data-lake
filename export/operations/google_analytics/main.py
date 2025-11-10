@@ -20,31 +20,39 @@ logger.setLevel(logging.INFO)
 S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME")
 S3_EXPORT_PREFIX = os.environ.get("S3_EXPORT_PREFIX")
 
-# Google Analytics Property IDs
-GOOGLE_ANALYTICS_PROPERTIES = {
-    "forms_marketing_site": "348891142",
-    "notification_ga4": "307565010",
-    "platform_form_client": "261232514",
-    "platform_core_superset_doc": "490027562",
-}
+# Google Cloud Platform configuration
+GCP_PROJECT_NUMBER = os.environ.get("GCP_PROJECT_NUMBER")  # Production: "535589929467"
+GCP_POOL_ID = os.environ.get("GCP_POOL_ID")  # Production: "aws-data-warehouse"
+GCP_PROVIDER_ID = os.environ.get("GCP_PROVIDER_ID")  # Production: "datalake-production"
+GCP_SERVICE_ACCOUNT_EMAIL = os.environ.get("GCP_SERVICE_ACCOUNT_EMAIL")  # Production: "google-analytics-api@platform-core-data-warehouse.iam.gserviceaccount.com"
 
-# Google Workload Identity Federation Configuration
-PROJECT_NUMBER = "535589929467"
-POOL_ID = "aws-data-warehouse"
-PROVIDER_ID = "datalake-production"
-SERVICE_ACCOUNT_EMAIL = "google-analytics-api@platform-core-data-warehouse.iam.gserviceaccount.com"
+# Google Analytics Property IDs
+GCP_GA_PROPERTY_FORMS_MARKETING_SITE = os.environ.get("GCP_GA_PROPERTY_FORMS_MARKETING_SITE")  # Production: "348891142"
+GCP_GA_PROPERTY_NOTIFICATION_GA4 = os.environ.get("GCP_GA_PROPERTY_NOTIFICATION_GA4")  # Production: "307565010"
+GCP_GA_PROPERTY_PLATFORM_FORM_CLIENT = os.environ.get("GCP_GA_PROPERTY_PLATFORM_FORM_CLIENT")  # Production: "261232514"
+GCP_GA_PROPERTY_PLATFORM_CORE_SUPERSET_DOC = os.environ.get("GCP_GA_PROPERTY_PLATFORM_CORE_SUPERSET_DOC")  # Production: "490027562"
+
+GOOGLE_ANALYTICS_PROPERTIES = {
+    "forms_marketing_site": GCP_GA_PROPERTY_FORMS_MARKETING_SITE,
+    "notification_ga4": GCP_GA_PROPERTY_NOTIFICATION_GA4,
+    "platform_form_client": GCP_GA_PROPERTY_PLATFORM_FORM_CLIENT,
+    "platform_core_superset_doc": GCP_GA_PROPERTY_PLATFORM_CORE_SUPERSET_DOC,
+}
 
 # Report configurations
 REPORT_CONFIGS = [
     {
+        "report_name": "daily",
         "dimensions": ["date"],
         "metrics": ["sessions", "activeUsers", "bounceRate", "userEngagementDuration"],
     },
     {
+        "report_name": "daily_pages",
         "dimensions": ["date", "pageTitle"],
         "metrics": ["sessions", "activeUsers", "bounceRate", "userEngagementDuration"],
     },
     {
+        "report_name": "daily_campaigns",
         "dimensions": ["date", "firstUserManualCampaignName"],
         "metrics": ["sessions", "activeUsers"],
     },
@@ -54,10 +62,10 @@ REPORT_CONFIGS = [
 def get_google_credentials():
     """Create and return AWS credentials for Google Cloud Workload Identity Federation."""
     return aws.Credentials(
-        audience=f"//iam.googleapis.com/projects/{PROJECT_NUMBER}/locations/global/workloadIdentityPools/{POOL_ID}/providers/{PROVIDER_ID}",
+        audience=f"//iam.googleapis.com/projects/{GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/{GCP_POOL_ID}/providers/{GCP_PROVIDER_ID}",
         subject_token_type="urn:ietf:params:aws:token-type:aws4_request",
         token_url="https://sts.googleapis.com/v1/token",
-        service_account_impersonation_url=f"https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/{SERVICE_ACCOUNT_EMAIL}:generateAccessToken",
+        service_account_impersonation_url=f"https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/{GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken",
         credential_source={
             "environment_id": "aws1",
             "region_url": "http://169.254.169.254/latest/meta-data/placement/availability-zone",
@@ -95,10 +103,10 @@ def run_ga4_report(client, property_id, dimensions, metrics, start_date="yesterd
     return rows
 
 
-def save_to_s3(data, property_name):
+def save_to_s3(data, property_name, report_name):
     """Save data to S3 in JSONL format, partitioned by date from the data itself."""
     if not data:
-        logger.info(f"No data to save for {property_name}")
+        logger.info(f"No data to save for {property_name}/{report_name}")
         return []
 
     # Group records by date
@@ -128,8 +136,8 @@ def save_to_s3(data, property_name):
         lines = [json.dumps(record) for record in records]
         content = "\n".join(lines).encode("utf-8")
 
-        # Partition by date: operations/google-analytics/{property}/date=YYYY-MM-DD/data.json
-        s3_key = f"{S3_EXPORT_PREFIX}/{property_name}/date={date_str}/data.json"
+        # Partition by date: operations/google-analytics/{property}/{report}/date=YYYY-MM-DD/data.json
+        s3_key = f"{S3_EXPORT_PREFIX}/{property_name}/{report_name}/date={date_str}/data.json"
 
         try:
             s3.put_object(
@@ -162,10 +170,11 @@ def handler(event, context):
             logger.info(f"Processing property: {property_name} (ID: {property_id})")
             
             try:
-                all_records = []
+                property_results = {}
                 
                 # Fetch data for each report configuration
                 for config in REPORT_CONFIGS:
+                    report_name = config["report_name"]
                     data = run_ga4_report(
                         client,
                         property_id,
@@ -174,12 +183,13 @@ def handler(event, context):
                         start_date="yesterday",
                         end_date="yesterday"
                     )
-                    all_records.extend(data)
-                    logger.info(f"Fetched {len(data)} records with dimensions: {config['dimensions']}")
+                    logger.info(f"Fetched {len(data)} records for {report_name}")
+                    
+                    # Save each report separately to S3, partitioned by date from data
+                    s3_keys = save_to_s3(data, property_name, report_name)
+                    property_results[report_name] = {"records": len(data), "s3_keys": s3_keys}
                 
-                # Save all records to S3, partitioned by date from data
-                s3_keys = save_to_s3(all_records, property_name)
-                results[property_name] = {"records": len(all_records), "s3_keys": s3_keys}
+                results[property_name] = property_results
                 
             except Exception as e:
                 logger.error(f"Failed to process property {property_name}: {str(e)}")
