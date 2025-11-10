@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "assume_role_web_identity" {
 }
 
 
-module "platform_google_analytics_export" {
+module "operations_google_analytics_export" {
   source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.8.6"
 
   lambda_name                = local.google_analytics_lambda_name
@@ -24,7 +24,7 @@ module "platform_google_analytics_export" {
   lambda_architectures       = ["arm64"]
 
   lambda_policies = [
-    data.aws_iam_policy_document.platform_google_analytics_export.json
+    data.aws_iam_policy_document.operations_google_analytics_export.json
   ]
 
   lambda_assume_role_policies = [
@@ -33,13 +33,13 @@ module "platform_google_analytics_export" {
 
   lambda_environment_variables = {
     S3_BUCKET_NAME   = var.raw_bucket_name
-    S3_EXPORT_PREFIX = "platform/google-analytics"
+    S3_EXPORT_PREFIX = "operations/google-analytics"
   }
 
   billing_tag_value = var.billing_tag_value
 }
 
-data "aws_iam_policy_document" "platform_google_analytics_export" {
+data "aws_iam_policy_document" "operations_google_analytics_export" {
   statement {
     sid    = "S3WriteAccess"
     effect = "Allow"
@@ -48,7 +48,7 @@ data "aws_iam_policy_document" "platform_google_analytics_export" {
       "s3:PutObjectAcl",
     ]
     resources = [
-      "arn:aws:s3:::${var.raw_bucket_name}/platform/google-analytics/*"
+      "arn:aws:s3:::${var.raw_bucket_name}/operations/google-analytics/*"
     ]
   }
 
@@ -64,7 +64,7 @@ data "aws_iam_policy_document" "platform_google_analytics_export" {
     condition {
       test     = "StringLike"
       variable = "s3:prefix"
-      values   = ["platform/google-analytics/*"]
+      values   = ["operations/google-analytics/*"]
     }
   }
 }
