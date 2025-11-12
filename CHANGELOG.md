@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.0](https://github.com/cds-snc/data-lake/compare/v1.24.0...v1.25.0) (2025-11-12)
+
+
+### Features
+
+* Google Analytics etl ([#480](https://github.com/cds-snc/data-lake/issues/480)) ([441d0f0](https://github.com/cds-snc/data-lake/commit/441d0f0b06843919e908db4fc1a66b07a2ab4997))
+
 ## [1.24.0](https://github.com/cds-snc/data-lake/compare/v1.23.3...v1.24.0) (2025-11-10)
 
 
