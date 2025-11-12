@@ -31,6 +31,8 @@ jobs:
             lambda: platform-gc-design-system-cloudfront-export
           - export: platform/support/freshdesk
             lambda: platform-support-freshdesk-export
+          - export: operations/google_analytics
+            lambda: operations-google-analytics-export
 
     steps:
     - name: Audit DNS requests
