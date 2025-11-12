@@ -75,12 +75,16 @@ def test_run_ga4_report(mock_ga_client):
 @patch("main.BetaAnalyticsDataClient")
 @patch("main.save_to_s3")
 @patch("main.run_ga4_report")
-@patch.object(main, "GOOGLE_ANALYTICS_PROPERTIES", {
-    "forms_marketing_site": "111111111",
-    "notification_ga4": "222222222",
-    "platform_form_client": "333333333",
-    "platform_core_superset_doc": "444444444",
-})
+@patch.object(
+    main,
+    "GOOGLE_ANALYTICS_PROPERTIES",
+    {
+        "forms_marketing_site": "111111111",
+        "notification_ga4": "222222222",
+        "platform_form_client": "333333333",
+        "platform_core_superset_doc": "444444444",
+    },
+)
 def test_handler_success(
     mock_run_report, mock_save_s3, mock_ga_client_class, mock_get_creds
 ):
