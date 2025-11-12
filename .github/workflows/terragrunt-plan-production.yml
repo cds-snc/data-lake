@@ -22,7 +22,7 @@ env:
   TF_VAR_airtable_table_name_services: ${{ secrets.PRODUCTION_AIRTABLE_TABLE_NAME_SERVICES }}
   TF_VAR_gcp_project_number: ${{ secrets.GCP_PROJECT_NUMBER }}
   TF_VAR_gcp_pool_id: ${{ secrets.GCP_POOL_ID }}
-  TF_VAR_gcp_provider_id: ${{ secrets.GCP_PROVIDER_ID }}
+  TF_VAR_gcp_provider_id: ${{ secrets.PRODUCTION_GCP_PROVIDER_ID }}
   TF_VAR_gcp_service_account_email: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
   TF_VAR_gcp_ga_property_forms_marketing_site: ${{ secrets.GCP_GA_PROPERTY_FORMS_MARKETING_SITE }}
   TF_VAR_gcp_ga_property_notification_ga4: ${{ secrets.GCP_GA_PROPERTY_NOTIFICATION_GA4 }}

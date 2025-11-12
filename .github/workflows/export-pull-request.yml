@@ -24,6 +24,7 @@ jobs:
           - platform/gc_notify
           - platform/gc_design_system/airtable
           - platform/support/freshdesk
+          - operations/google_analytics
     steps:
       - name: Audit DNS requests
         uses: cds-snc/dns-proxy-action@b63a989befc20506036aab86a7d66c4159272637
