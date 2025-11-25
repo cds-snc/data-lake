@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.26.0](https://github.com/cds-snc/data-lake/compare/v1.25.0...v1.26.0) (2025-11-24)
+
+
+### Features
+
+* add service.restricted to enriched table ([#491](https://github.com/cds-snc/data-lake/issues/491)) ([c2b1ddd](https://github.com/cds-snc/data-lake/commit/c2b1dddaa708f214628ee45cf5d5edda7ac39ca8))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#486](https://github.com/cds-snc/data-lake/issues/486)) ([5ee3269](https://github.com/cds-snc/data-lake/commit/5ee32690ac1e5a0b3a66c498f9697d201a7d9051))
+* **deps:** lock file maintenance ([#490](https://github.com/cds-snc/data-lake/issues/490)) ([3601f95](https://github.com/cds-snc/data-lake/commit/3601f952b4031c16d6d018060850f7b0cd9efac9))
+* **deps:** update all minor dependencies ([#484](https://github.com/cds-snc/data-lake/issues/484)) ([5b2df12](https://github.com/cds-snc/data-lake/commit/5b2df1274a93da4051a22c620b91a4ed04bc46c6))
+* **deps:** update all non-major github action dependencies ([#485](https://github.com/cds-snc/data-lake/issues/485)) ([32dbfd3](https://github.com/cds-snc/data-lake/commit/32dbfd3014e519bb7ec90825ed1cc92eb3324db9))
+* **deps:** update all non-major github action dependencies ([#488](https://github.com/cds-snc/data-lake/issues/488)) ([004e154](https://github.com/cds-snc/data-lake/commit/004e15465aabd376d8f71058f0c7703f695f3c7f))
+* **deps:** update all patch dependencies ([#483](https://github.com/cds-snc/data-lake/issues/483)) ([72ca291](https://github.com/cds-snc/data-lake/commit/72ca291339581d923773b66a3aa68c6f52c3ec00))
+* **deps:** update dependency boto3 to v1.40.74 ([#489](https://github.com/cds-snc/data-lake/issues/489)) ([cd44fb3](https://github.com/cds-snc/data-lake/commit/cd44fb3db89717ccd4a3b7e327fe95697aa18748))
+* synced file(s) with cds-snc/site-reliability-engineering ([#482](https://github.com/cds-snc/data-lake/issues/482)) ([0edf0b3](https://github.com/cds-snc/data-lake/commit/0edf0b3289ca3d4230b39d1d3eb81bc73d2c7c66))
+* synced local '.github/workflows/s3-backup.yml' with remote 'tools/sre_file_sync/s3-backup.yml' ([0edf0b3](https://github.com/cds-snc/data-lake/commit/0edf0b3289ca3d4230b39d1d3eb81bc73d2c7c66))
+
 ## [1.25.0](https://github.com/cds-snc/data-lake/compare/v1.24.0...v1.25.0) (2025-11-12)
 
 
