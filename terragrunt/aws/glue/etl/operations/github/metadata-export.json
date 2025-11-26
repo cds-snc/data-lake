@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-10-02T15:31:28.419000+00:00",
-        "LastModifiedOn": "2025-10-22T15:04:57.756000+00:00",
+        "LastModifiedOn": "2025-11-25T21:03:00.181000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -18,7 +18,7 @@
         "DefaultArguments": {
             "--enable-metrics": "true",
             "--enable-spark-ui": "true",
-            "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+            "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
             "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
@@ -35,6 +35,215 @@
         "NumberOfWorkers": 5,
         "GlueVersion": "5.0",
         "CodeGenConfigurationNodes": {
+            "node-1764103805208": {
+                "ApplyMapping": {
+                    "Name": "Change Schema",
+                    "Inputs": [
+                        "node-1764103785195"
+                    ],
+                    "Mapping": [
+                        {
+                            "ToKey": "metadata_owner",
+                            "FromPath": [
+                                "metadata_owner"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_repo",
+                            "FromPath": [
+                                "metadata_repo"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_query",
+                            "FromPath": [
+                                "metadata_query"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "metadata_time_in_days",
+                            "FromPath": [
+                                "metadata_time_in_days"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_since",
+                            "FromPath": [
+                                "metadata_since"
+                            ],
+                            "FromType": "string",
+                            "ToType": "date",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "commits",
+                            "FromPath": [
+                                "commits"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "",
+                            "FromPath": [
+                                "cc"
+                            ],
+                            "FromType": "object",
+                            "ToType": "object",
+                            "Dropped": false,
+                            "Children": [
+                                {
+                                    "ToKey": "author",
+                                    "FromPath": [
+                                        "cc",
+                                        "author"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "author_email",
+                                    "FromPath": [
+                                        "cc",
+                                        "author_email"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "date",
+                                    "FromPath": [
+                                        "cc",
+                                        "date"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "date",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "message",
+                                    "FromPath": [
+                                        "cc",
+                                        "message"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "sha",
+                                    "FromPath": [
+                                        "cc",
+                                        "sha"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "verified",
+                                    "FromPath": [
+                                        "cc",
+                                        "verified"
+                                    ],
+                                    "FromType": "boolean",
+                                    "ToType": "boolean",
+                                    "Dropped": false
+                                },
+                                {
+                                    "ToKey": "verified_reason",
+                                    "FromPath": [
+                                        "cc",
+                                        "verified_reason"
+                                    ],
+                                    "FromType": "string",
+                                    "ToType": "string",
+                                    "Dropped": false
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1764103785195": {
+                "DynamicTransform": {
+                    "Name": "Explode Array Or Map Into Rows",
+                    "TransformName": "gs_explode",
+                    "Inputs": [
+                        "node-1764103679369"
+                    ],
+                    "Parameters": [
+                        {
+                            "Name": "colName",
+                            "Type": "str",
+                            "Value": [
+                                "commits"
+                            ],
+                            "IsOptional": false
+                        },
+                        {
+                            "Name": "newCol",
+                            "Type": "str",
+                            "Value": [
+                                "cc"
+                            ],
+                            "IsOptional": false
+                        }
+                    ],
+                    "FunctionName": "gs_explode",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_time_in_days",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "metadata_since",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "commits",
+                                    "Type": "array<struct<author:string,author_email:string,date:string,message:string,sha:string,verified:boolean,verified_reason:string>>"
+                                },
+                                {
+                                    "Name": "cc",
+                                    "Type": "struct<author:string,author_email:string,date:string,message:string,sha:string,verified:boolean,verified_reason:string>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
             "node-1759433058672": {
                 "S3GlueParquetTarget": {
                     "Name": "Amazon S3",
@@ -81,7 +290,7 @@
             },
             "node-1759433038428": {
                 "S3JsonSource": {
-                    "Name": "Amazon S3",
+                    "Name": "Workflows",
                     "Paths": [
                         "s3://cds-data-lake-raw-production/operations/github/Workflows/"
                     ],
@@ -111,6 +320,69 @@
                                 {
                                     "Name": "workflows",
                                     "Type": "array<struct<id:bigint,name:string,workflow_id:int,run_number:int,event:string,status:string,conclusion:string,created_at:string,updated_at:string,html_url:string>>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1764103843121": {
+                "DynamicTransform": {
+                    "Name": "Flatten",
+                    "TransformName": "gs_flatten",
+                    "Inputs": [
+                        "node-1764103805208"
+                    ],
+                    "Parameters": [],
+                    "FunctionName": "gs_flatten",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_time_in_days",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "metadata_since",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "author",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "author_email",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "message",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sha",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "verified",
+                                    "Type": "boolean"
+                                },
+                                {
+                                    "Name": "verified_reason",
+                                    "Type": "string"
                                 }
                             ]
                         }
@@ -313,7 +585,7 @@
                                 },
                                 {
                                     "Name": "metadata_since",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "author",
@@ -321,7 +593,7 @@
                                 },
                                 {
                                     "Name": "date",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "verified",
@@ -348,7 +620,7 @@
                     "NumberTargetPartitions": "0",
                     "SchemaChangePolicy": {
                         "EnableUpdateCatalog": true,
-                        "UpdateBehavior": "UPDATE_IN_DATABASE",
+                        "UpdateBehavior": "LOG",
                         "Table": "operations_github_commits",
                         "Database": "operations_github_production"
                     },
@@ -719,6 +991,28 @@
                     ]
                 }
             },
+            "node-1764103920987": {
+                "S3GlueParquetTarget": {
+                    "Name": "Amazon S3",
+                    "Inputs": [
+                        "node-1764103876052"
+                    ],
+                    "PartitionKeys": [],
+                    "Path": "s3://cds-data-lake-transformed-production/operations/github/CommitCount/",
+                    "Compression": "snappy",
+                    "NumberTargetPartitions": "0",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "LOG",
+                        "Table": "operations_github_commits",
+                        "Database": "operations_github_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": true,
+                        "EvaluationContext": "EvaluateDataQuality_node1764103614001"
+                    }
+                }
+            },
             "node-1758728195328": {
                 "DynamicTransform": {
                     "Name": "Flatten",
@@ -975,6 +1269,117 @@
                                 {
                                     "Name": "commit_count",
                                     "Type": "array<struct<author:string,date:string,verified:boolean,verified_reason:string>>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1764103876052": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
+                    "Inputs": [
+                        "node-1764103843121"
+                    ],
+                    "SqlQuery": "SELECT *\nFROM myDataSource\nWHERE DATE_ADD(DATE(to_timestamp(metadata_since)), 59)\n      = DATE(to_timestamp(date))",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1764103843121",
+                            "Alias": "myDataSource"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_time_in_days",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "metadata_since",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "author",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "author_email",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "message",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sha",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "verified",
+                                    "Type": "boolean"
+                                },
+                                {
+                                    "Name": "verified_reason",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1764103679369": {
+                "S3JsonSource": {
+                    "Name": "Commits",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/github/Commits/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": false,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Commits/cds-snc-cds-superset-2025-11-25T07:27:05.603Z.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_time_in_days",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "metadata_since",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "commits",
+                                    "Type": "array<struct<author:string,author_email:string,date:string,message:string,sha:string,verified:boolean,verified_reason:string>>"
                                 }
                             ]
                         }
