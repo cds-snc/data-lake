@@ -2,4 +2,4 @@ black==25.11.0
 flake8==7.3.0
 pytest==8.4.2
 boto3==1.40.74
-moto==5.1.16
+moto==5.1.17
