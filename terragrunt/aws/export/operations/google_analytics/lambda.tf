@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "assume_role_web_identity" {
 
 
 module "operations_google_analytics_export" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.8.6"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.9.0"
 
   lambda_name                = local.google_analytics_lambda_name
   lambda_schedule_expression = local.cron_expression
