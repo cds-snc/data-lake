@@ -97,6 +97,26 @@ data "aws_iam_policy_document" "raw_bucket" {
     ]
   }
 
+  statement {
+    sid    = "NotifyReadOnly"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::239043911459:role/datalake-reader-cross-account-role",
+      ]
+    }
+    actions = [
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+    ]
+    resources = [
+      module.raw_bucket.s3_bucket_arn,
+      "${module.raw_bucket.s3_bucket_arn}/platform/gc-notify/*"
+    ]
+  }
+
   # Allow staging environment read-only access to production raw bucket
   dynamic "statement" {
     for_each = var.env == "production" ? [1] : []
