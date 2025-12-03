@@ -107,9 +107,9 @@ data "aws_iam_policy_document" "raw_bucket" {
       ]
     }
     actions = [
-        "s3:GetObject",
-        "s3:ListBucket",
-        "s3:GetBucketLocation"
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
     ]
     resources = [
       module.raw_bucket.s3_bucket_arn,
