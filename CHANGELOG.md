@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.27.0](https://github.com/cds-snc/data-lake/compare/v1.26.0...v1.27.0) (2025-12-03)
+
+
+### Features
+
+* allow Notify read-only access to their Raw data exports ([#500](https://github.com/cds-snc/data-lake/issues/500)) ([cc87361](https://github.com/cds-snc/data-lake/commit/cc8736120371b7977d366a795c726ad53d0a2806))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#493](https://github.com/cds-snc/data-lake/issues/493)) ([6d49706](https://github.com/cds-snc/data-lake/commit/6d497067850530a3caa990f5d4a5e9deb0cc11a7))
+* **deps:** update all minor dependencies ([#498](https://github.com/cds-snc/data-lake/issues/498)) ([7d0a25f](https://github.com/cds-snc/data-lake/commit/7d0a25f222c10b90cf880f2bf75c50ba3742a84d))
+* **deps:** update dependency moto to v5.1.17 ([#497](https://github.com/cds-snc/data-lake/issues/497)) ([49a16ec](https://github.com/cds-snc/data-lake/commit/49a16ec545457d064e83ad2bc0093bea7c2765ae))
+* enable Renovate OSV and GitHub vulnerability alert PRs ([#495](https://github.com/cds-snc/data-lake/issues/495)) ([25c4b65](https://github.com/cds-snc/data-lake/commit/25c4b653ffc2c88f3a62c55644e2ca838ceba228))
+* regenerate metadata-export.json for 2025-11-26 ([6d49706](https://github.com/cds-snc/data-lake/commit/6d497067850530a3caa990f5d4a5e9deb0cc11a7))
+* synced file(s) with cds-snc/site-reliability-engineering ([#492](https://github.com/cds-snc/data-lake/issues/492)) ([9e2c179](https://github.com/cds-snc/data-lake/commit/9e2c179f08bf4c8957face9a88176ca9023f2a5c))
+* synced local '.github/workflows/export_github_data.yml' with remote 'tools/sre_file_sync/export_github_data.yml' ([9e2c179](https://github.com/cds-snc/data-lake/commit/9e2c179f08bf4c8957face9a88176ca9023f2a5c))
+
 ## [1.26.0](https://github.com/cds-snc/data-lake/compare/v1.25.0...v1.26.0) (2025-11-24)
 
 
