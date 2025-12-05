@@ -104,6 +104,7 @@ data "aws_iam_policy_document" "raw_bucket" {
       type = "AWS"
       identifiers = [
         "arn:aws:iam::239043911459:role/datalake-reader-cross-account-role",
+        "arn:aws:iam::239043911459:role/service-role/aws-quicksight-service-role-v0",
       ]
     }
     actions = [
