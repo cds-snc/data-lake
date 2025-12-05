@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.2](https://github.com/cds-snc/data-lake/compare/v1.27.1...v1.27.2) (2025-12-05)
+
+
+### Miscellaneous Chores
+
+* remove default Renovate config ([#502](https://github.com/cds-snc/data-lake/issues/502)) ([6c32420](https://github.com/cds-snc/data-lake/commit/6c3242004d5b3fc689cf2e5122153a8c6cb138bd))
+
 ## [1.27.1](https://github.com/cds-snc/data-lake/compare/v1.27.0...v1.27.1) (2025-12-05)
 
 
