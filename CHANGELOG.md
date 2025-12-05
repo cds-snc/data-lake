@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.27.1](https://github.com/cds-snc/data-lake/compare/v1.27.0...v1.27.1) (2025-12-05)
+
+
+### Bug Fixes
+
+* allow Notify roles to use RDS export KMS key ([#501](https://github.com/cds-snc/data-lake/issues/501)) ([656dc15](https://github.com/cds-snc/data-lake/commit/656dc157c02f0c014fdda26c0b6141ab00c7e154))
+
 ## [1.27.0](https://github.com/cds-snc/data-lake/compare/v1.26.0...v1.27.0) (2025-12-03)
 
 
