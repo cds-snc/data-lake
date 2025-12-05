@@ -1,10 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "osvVulnerabilityAlerts": true,
-  "vulnerabilityAlerts": {
-    "enabled": true,
-    "vulnerabilityFixStrategy": "lowest"
-  },
   "extends": [
     "local>cds-snc/renovate-config"
   ]
