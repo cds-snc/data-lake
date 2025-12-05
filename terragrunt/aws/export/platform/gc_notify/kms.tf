@@ -42,8 +42,11 @@ data "aws_iam_policy_document" "platform_notify_rds_snapshot_exports_kms" {
     resources = ["*"]
 
     principals {
-      type        = "AWS"
-      identifiers = [local.gc_notify_rds_export_role_arn]
+      type = "AWS"
+      identifiers = concat(
+        [local.gc_notify_rds_export_role_arn],
+        local.gc_notify_quicksight_role_arns,
+      )
     }
 
     principals {
