@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.27.2](https://github.com/cds-snc/data-lake/compare/v1.27.1...v1.27.2) (2025-12-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#507](https://github.com/cds-snc/data-lake/issues/507)) ([18ec44a](https://github.com/cds-snc/data-lake/commit/18ec44a0f136280c342799aca61e6f6a17d62352))
+* **deps:** update all patch dependencies ([#505](https://github.com/cds-snc/data-lake/issues/505)) ([fc8f98b](https://github.com/cds-snc/data-lake/commit/fc8f98b6c31bf69bb5012ca42c319e8806a1ae58))
+* **deps:** update dependency boto3 to v1.42.0 ([#506](https://github.com/cds-snc/data-lake/issues/506)) ([613993a](https://github.com/cds-snc/data-lake/commit/613993a23729fc03751d4c8192bc3b02729329b5))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to 7916038 ([#496](https://github.com/cds-snc/data-lake/issues/496)) ([d620a75](https://github.com/cds-snc/data-lake/commit/d620a75bf782a70c513babec7bed39235e042d0b))
+* remove default Renovate config ([#502](https://github.com/cds-snc/data-lake/issues/502)) ([6c32420](https://github.com/cds-snc/data-lake/commit/6c3242004d5b3fc689cf2e5122153a8c6cb138bd))
+
 ## [1.27.1](https://github.com/cds-snc/data-lake/compare/v1.27.0...v1.27.1) (2025-12-05)
 
 
