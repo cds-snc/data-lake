@@ -33,13 +33,13 @@ resource "aws_glue_catalog_database" "operations_github_production_raw" {
   description = "RAW: data source path: /operations/github/*"
 }
 
-resource "aws_glue_catalog_database" "operations_google-analytics_production" {
-  name        = "operations_google-analytics_${var.env}"
+resource "aws_glue_catalog_database" "operations_google_analytics_production" {
+  name        = "operations_google_analytics_${var.env}"
   description = "TRANSFORMED: data source path: /operations/google-analytics/*"
 }
 
-resource "aws_glue_catalog_database" "operations_google-analytics_production_raw" {
-  name        = "operations_google-analytics_${var.env}_raw"
+resource "aws_glue_catalog_database" "operations_google_analytics_production_raw" {
+  name        = "operations_google_analytics_${var.env}_raw"
   description = "RAW: data source path: /operations/google-analytics/*"
 }
 
