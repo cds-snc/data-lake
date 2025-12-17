@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.28.0](https://github.com/cds-snc/data-lake/compare/v1.27.1...v1.28.0) (2025-12-17)
+
+
+### Features
+
+* add google analytics database ([#511](https://github.com/cds-snc/data-lake/issues/511)) ([85bf688](https://github.com/cds-snc/data-lake/commit/85bf688f2c943019e21b227101520f933ae5d6e5))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#507](https://github.com/cds-snc/data-lake/issues/507)) ([18ec44a](https://github.com/cds-snc/data-lake/commit/18ec44a0f136280c342799aca61e6f6a17d62352))
+* **deps:** lock file maintenance ([#510](https://github.com/cds-snc/data-lake/issues/510)) ([8327931](https://github.com/cds-snc/data-lake/commit/8327931e5981b1100141d9fbb53aabf3edb81030))
+* **deps:** update all non-major github action dependencies ([#499](https://github.com/cds-snc/data-lake/issues/499)) ([616c4e9](https://github.com/cds-snc/data-lake/commit/616c4e94a0e1c6582a64c164d26f704c7902ac9d))
+* **deps:** update all patch dependencies ([#505](https://github.com/cds-snc/data-lake/issues/505)) ([fc8f98b](https://github.com/cds-snc/data-lake/commit/fc8f98b6c31bf69bb5012ca42c319e8806a1ae58))
+* **deps:** update all patch dependencies ([#508](https://github.com/cds-snc/data-lake/issues/508)) ([0026530](https://github.com/cds-snc/data-lake/commit/0026530f460593b42b0252ba336312c064860b29))
+* **deps:** update dependency black to v25.12.0 ([#509](https://github.com/cds-snc/data-lake/issues/509)) ([b1d4d96](https://github.com/cds-snc/data-lake/commit/b1d4d969683c327c4d188ec71517474d6fff91ec))
+* **deps:** update dependency boto3 to v1.42.0 ([#506](https://github.com/cds-snc/data-lake/issues/506)) ([613993a](https://github.com/cds-snc/data-lake/commit/613993a23729fc03751d4c8192bc3b02729329b5))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to 7916038 ([#496](https://github.com/cds-snc/data-lake/issues/496)) ([d620a75](https://github.com/cds-snc/data-lake/commit/d620a75bf782a70c513babec7bed39235e042d0b))
+* remove default Renovate config ([#502](https://github.com/cds-snc/data-lake/issues/502)) ([6c32420](https://github.com/cds-snc/data-lake/commit/6c3242004d5b3fc689cf2e5122153a8c6cb138bd))
+
 ## [1.27.1](https://github.com/cds-snc/data-lake/compare/v1.27.0...v1.27.1) (2025-12-05)
 
 
