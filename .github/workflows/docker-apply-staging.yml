@@ -39,7 +39,7 @@ jobs:
 
     steps:
     - name: Audit DNS requests
-      uses: cds-snc/dns-proxy-action@b63a989befc20506036aab86a7d66c4159272637
+      uses: cds-snc/dns-proxy-action@efd50395ec485b6ba290418d0f9fb79e7c83b6c4
       env:
         DNS_PROXY_FORWARDTOSENTINEL: "true"
         DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
@@ -69,7 +69,7 @@ jobs:
       uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
 
     - name: Configure AWS credentials using OIDC
-      uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
+      uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
       with:
         role-to-assume: arn:aws:iam::${{ vars.STAGING_AWS_ACCOUNT_ID }}:role/data-lake-apply
         role-session-name: DockerBuildPush
