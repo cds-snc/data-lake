@@ -41,11 +41,25 @@ fi
 
 # Commit changes through the GitHub API so the commits are signed
 echo "Committing changes..."
-FILES_CHANGED="$(git status --porcelain | awk '{print $2}')"
-for FILE in $FILES_CHANGED; do
+
+# Parse files changed, expanding directories to get files
+ACTUAL_FILES=()
+while IFS= read -r FILE; do
+    if [[ "$FILE" == */ ]] || [[ -d "$FILE" ]]; then
+        echo "Expanding directory: $FILE"
+        while IFS= read -r ACTUAL_FILE; do
+            ACTUAL_FILES+=("$ACTUAL_FILE")
+        done < <(find "$FILE" -type f)
+    else
+        ACTUAL_FILES+=("$FILE")
+    fi
+done < <(git status --porcelain | awk '{print $2}')
+
+# Commit each file
+for FILE in "${ACTUAL_FILES[@]}"; do
     echo "Committing $FILE..."
     MESSAGE="chore: regenerate $(basename "$FILE") for $(date -u '+%Y-%m-%d')"
-    SHA="$(git rev-parse $BRANCH_NAME:"$FILE" || echo "")"
+    SHA="$(git rev-parse $BRANCH_NAME:"$FILE" 2>/dev/null || echo "")"
     gh api --method PUT /repos/cds-snc/data-lake/contents/"$FILE" \
         --field message="$MESSAGE" \
         --field content="$(base64 -w 0 "$FILE")" \
