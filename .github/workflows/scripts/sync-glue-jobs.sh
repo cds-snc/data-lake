@@ -56,7 +56,6 @@ while IFS= read -r FILE; do
 done < <(git status --porcelain | awk '{print $2}')
 
 # Commit each file
-echo "Files to commit: ${ACTUAL_FILES[@]}"
 for FILE in "${ACTUAL_FILES[@]}"; do
     echo "Committing $FILE..."
     MESSAGE="chore: regenerate $(basename "$FILE") for $(date -u '+%Y-%m-%d')"
