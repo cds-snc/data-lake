@@ -43,6 +43,10 @@ fi
 echo "Committing changes..."
 FILES_CHANGED="$(git status --porcelain | awk '{print $2}')"
 for FILE in $FILES_CHANGED; do
+    if [[ "$FILE" == */ ]]; then
+        echo "Skipping directory: $FILE"
+        continue
+    fi
     echo "Committing $FILE..."
     MESSAGE="chore: regenerate $(basename "$FILE") for $(date -u '+%Y-%m-%d')"
     SHA="$(git rev-parse $BRANCH_NAME:"$FILE" || echo "")"
