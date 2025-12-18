@@ -1,0 +1,419 @@
+{
+    "Job": {
+        "Name": "Operations / GoogleAnalytics / Daily",
+        "JobMode": "VISUAL",
+        "JobRunQueuingEnabled": false,
+        "Description": "",
+        "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+        "CreatedOn": "2025-12-17T17:19:46.807000+00:00",
+        "LastModifiedOn": "2025-12-17T17:19:46.807000+00:00",
+        "ExecutionProperty": {
+            "MaxConcurrentRuns": 1
+        },
+        "Command": {
+            "Name": "glueetl",
+            "ScriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Operations / GoogleAnalytics / Daily.py",
+            "PythonVersion": "3"
+        },
+        "DefaultArguments": {
+            "--enable-metrics": "true",
+            "--enable-spark-ui": "true",
+            "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
+            "--enable-job-insights": "true",
+            "--enable-observability-metrics": "true",
+            "--enable-glue-datacatalog": "true",
+            "--enable-continuous-cloudwatch-log": "true",
+            "--job-bookmark-option": "job-bookmark-disable",
+            "--job-language": "python",
+            "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/"
+        },
+        "MaxRetries": 0,
+        "AllocatedCapacity": 10,
+        "Timeout": 480,
+        "MaxCapacity": 10.0,
+        "WorkerType": "G.1X",
+        "NumberOfWorkers": 10,
+        "GlueVersion": "5.0",
+        "CodeGenConfigurationNodes": {
+            "node-1765980720494": {
+                "S3JsonSource": {
+                    "Name": "Amazon S3",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/google-analytics/platform_core_superset_doc/daily/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": false,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/platform_core_superset_doc/daily/date=2025-11-12/data.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeusers",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "bouncerate",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "userengagementduration",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1765980721031": {
+                "S3JsonSource": {
+                    "Name": "Amazon S3",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/google-analytics/platform_form_client/daily/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": false,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/platform_form_client/daily/date=2025-11-11/data.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeusers",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "bouncerate",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "userengagementduration",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1765980760918": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
+                    "Inputs": [
+                        "node-1765980721031"
+                    ],
+                    "SqlQuery": "select \n    \"platform_form_client\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource\n",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1765980721031",
+                            "Alias": "myDataSource"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "ga_property",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "date"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeusers",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "bouncerate",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "userengagementduration",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1765980847029": {
+                "Union": {
+                    "Name": "Union",
+                    "Inputs": [
+                        "node-1765980760918",
+                        "node-1765980764234"
+                    ],
+                    "UnionType": "ALL"
+                }
+            },
+            "node-1765980798239": {
+                "Union": {
+                    "Name": "Union",
+                    "Inputs": [
+                        "node-1765980664077",
+                        "node-1765980266597"
+                    ],
+                    "UnionType": "ALL"
+                }
+            },
+            "node-1765979699147": {
+                "S3JsonSource": {
+                    "Name": "Amazon S3",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/google-analytics/forms_marketing_site/daily/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": false,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/forms_marketing_site/daily/date=2025-11-11/data.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeusers",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "bouncerate",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "userengagementduration",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1765980764234": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
+                    "Inputs": [
+                        "node-1765980720494"
+                    ],
+                    "SqlQuery": "select \n    \"platform_core_superset_doc\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource\n",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1765980720494",
+                            "Alias": "myDataSource"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "ga_property",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "date"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeusers",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "bouncerate",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "userengagementduration",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1765980620381": {
+                "S3JsonSource": {
+                    "Name": "Amazon S3",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/google-analytics/notification_ga4/daily/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": false,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/notification_ga4/daily/date=2025-11-11/data.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeusers",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "bouncerate",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "userengagementduration",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1765980664077": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
+                    "Inputs": [
+                        "node-1765980620381"
+                    ],
+                    "SqlQuery": "select \n    \"notification_ga4\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource\n",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1765980620381",
+                            "Alias": "myDataSource"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "ga_property",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "date"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeusers",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "bouncerate",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "userengagementduration",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1765980847946": {
+                "Union": {
+                    "Name": "Union",
+                    "Inputs": [
+                        "node-1765980847029",
+                        "node-1765980798239"
+                    ],
+                    "UnionType": "ALL"
+                }
+            },
+            "node-1765980266597": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
+                    "Inputs": [
+                        "node-1765979699147"
+                    ],
+                    "SqlQuery": "select \n    \"forms_marketing_site\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource\n",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1765979699147",
+                            "Alias": "myDataSource"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "ga_property",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "date"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeusers",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "bouncerate",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "userengagementduration",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "ExecutionClass": "STANDARD"
+    }
+}
