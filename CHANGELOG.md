@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.29.0](https://github.com/cds-snc/data-lake/compare/v1.28.0...v1.29.0) (2025-12-19)
+
+
+### Features
+
+* grant superset GA tables access ([#515](https://github.com/cds-snc/data-lake/issues/515)) ([1bd8a7f](https://github.com/cds-snc/data-lake/commit/1bd8a7f2b1ff13bfeb933b6c6a6ed578af72feac))
+
+
+### Bug Fixes
+
+* commit files from new directories ([#512](https://github.com/cds-snc/data-lake/issues/512)) ([fcb456c](https://github.com/cds-snc/data-lake/commit/fcb456cfae693e35c1c798011c3001ce54387fbc))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#514](https://github.com/cds-snc/data-lake/issues/514)) ([8e31a89](https://github.com/cds-snc/data-lake/commit/8e31a89708992d93a7746af1a92f299d1d1d6cfb))
+* automated glue job sync ([#516](https://github.com/cds-snc/data-lake/issues/516)) ([add6277](https://github.com/cds-snc/data-lake/commit/add627782df832666cb8f86fcecb7be43f65bf6f))
+* regenerate daily.json for 2025-12-18 ([8e31a89](https://github.com/cds-snc/data-lake/commit/8e31a89708992d93a7746af1a92f299d1d1d6cfb))
+
 ## [1.28.0](https://github.com/cds-snc/data-lake/compare/v1.27.1...v1.28.0) (2025-12-17)
 
 
