@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-12-17T17:19:46.807000+00:00",
-        "LastModifiedOn": "2025-12-17T17:19:46.807000+00:00",
+        "LastModifiedOn": "2025-12-18T20:42:23.811000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -22,8 +22,7 @@
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
             "--enable-glue-datacatalog": "true",
-            "--enable-continuous-cloudwatch-log": "true",
-            "--job-bookmark-option": "job-bookmark-disable",
+            "--job-bookmark-option": "job-bookmark-enable",
             "--job-language": "python",
             "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/"
         },
@@ -125,7 +124,7 @@
                     "Inputs": [
                         "node-1765980721031"
                     ],
-                    "SqlQuery": "select \n    \"platform_form_client\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource\n",
+                    "SqlQuery": "select \n    \"platform_form_client\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource",
                     "SqlAliases": [
                         {
                             "From": "node-1765980721031",
@@ -184,6 +183,32 @@
                     "UnionType": "ALL"
                 }
             },
+            "node-1766089243013": {
+                "S3GlueParquetTarget": {
+                    "Name": "Amazon S3",
+                    "Inputs": [
+                        "node-1765980847946"
+                    ],
+                    "PartitionKeys": [
+                        [
+                            "date"
+                        ]
+                    ],
+                    "Path": "s3://cds-data-lake-transformed-production/operations/google-analytics/daily/",
+                    "Compression": "snappy",
+                    "NumberTargetPartitions": "0",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "UPDATE_IN_DATABASE",
+                        "Table": "operations_google_analytics_daily",
+                        "Database": "operations_google_analytics_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": true,
+                        "EvaluationContext": "EvaluateDataQuality_node1766089210397"
+                    }
+                }
+            },
             "node-1765979699147": {
                 "S3JsonSource": {
                     "Name": "Amazon S3",
@@ -232,7 +257,7 @@
                     "Inputs": [
                         "node-1765980720494"
                     ],
-                    "SqlQuery": "select \n    \"platform_core_superset_doc\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource\n",
+                    "SqlQuery": "select \n    \"platform_core_superset_doc\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource",
                     "SqlAliases": [
                         {
                             "From": "node-1765980720494",
@@ -319,7 +344,7 @@
                     "Inputs": [
                         "node-1765980620381"
                     ],
-                    "SqlQuery": "select \n    \"notification_ga4\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource\n",
+                    "SqlQuery": "select \n    \"notification_ga4\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource",
                     "SqlAliases": [
                         {
                             "From": "node-1765980620381",
@@ -374,7 +399,7 @@
                     "Inputs": [
                         "node-1765979699147"
                     ],
-                    "SqlQuery": "select \n    \"forms_marketing_site\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource\n",
+                    "SqlQuery": "select \n    \"forms_marketing_site\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource",
                     "SqlAliases": [
                         {
                             "From": "node-1765979699147",
