@@ -1,18 +1,18 @@
 {
     "Job": {
-        "Name": "Operations / GoogleAnalytics / Daily",
+        "Name": "Operations / GoogleAnalytics / DailyCampaigns",
         "JobMode": "VISUAL",
         "JobRunQueuingEnabled": false,
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
-        "CreatedOn": "2025-12-17T17:19:46.807000+00:00",
-        "LastModifiedOn": "2025-12-18T20:42:23.811000+00:00",
+        "CreatedOn": "2025-12-18T20:38:55.294000+00:00",
+        "LastModifiedOn": "2025-12-18T20:42:12.805000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
         "Command": {
             "Name": "glueetl",
-            "ScriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Operations / GoogleAnalytics / Daily.py",
+            "ScriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Operations / GoogleAnalytics /Operations / GoogleAnalytics / DailyCampaigns.py",
             "PythonVersion": "3"
         },
         "DefaultArguments": {
@@ -38,13 +38,13 @@
                 "S3JsonSource": {
                     "Name": "Amazon S3",
                     "Paths": [
-                        "s3://cds-data-lake-raw-production/operations/google-analytics/platform_core_superset_doc/daily/"
+                        "s3://cds-data-lake-raw-production/operations/google-analytics/platform_core_superset_doc/daily_campaigns/"
                     ],
                     "Exclusions": [],
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/platform_core_superset_doc/daily/date=2025-11-12/data.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/platform_core_superset_doc/daily_campaigns/date=2025-11-12/data.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -80,13 +80,13 @@
                 "S3JsonSource": {
                     "Name": "Amazon S3",
                     "Paths": [
-                        "s3://cds-data-lake-raw-production/operations/google-analytics/platform_form_client/daily/"
+                        "s3://cds-data-lake-raw-production/operations/google-analytics/platform_form_client/daily_campaigns/"
                     ],
                     "Exclusions": [],
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/platform_form_client/daily/date=2025-11-11/data.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/platform_form_client/daily_campaigns/date=2025-11-11/data.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -98,19 +98,15 @@
                                     "Type": "string"
                                 },
                                 {
+                                    "Name": "firstusermanualcampaignname",
+                                    "Type": "string"
+                                },
+                                {
                                     "Name": "sessions",
                                     "Type": "string"
                                 },
                                 {
                                     "Name": "activeusers",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "bouncerate",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "userengagementduration",
                                     "Type": "string"
                                 }
                             ]
@@ -124,7 +120,7 @@
                     "Inputs": [
                         "node-1765980721031"
                     ],
-                    "SqlQuery": "select \n    \"platform_form_client\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource",
+                    "SqlQuery": "select \n    \"platform_form_client\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    firstusermanualcampaignname,\n    sessions,\n    activeusers\nfrom myDataSource",
                     "SqlAliases": [
                         {
                             "From": "node-1765980721031",
@@ -143,19 +139,15 @@
                                     "Type": "date"
                                 },
                                 {
+                                    "Name": "firstusermanualcampaignname",
+                                    "Type": "string"
+                                },
+                                {
                                     "Name": "sessions",
                                     "Type": "string"
                                 },
                                 {
                                     "Name": "activeusers",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "bouncerate",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "userengagementduration",
                                     "Type": "string"
                                 }
                             ]
@@ -194,13 +186,13 @@
                             "date"
                         ]
                     ],
-                    "Path": "s3://cds-data-lake-transformed-production/operations/google-analytics/daily/",
+                    "Path": "s3://cds-data-lake-transformed-production/operations/google-analytics/daily_campaigns/",
                     "Compression": "snappy",
                     "NumberTargetPartitions": "0",
                     "SchemaChangePolicy": {
                         "EnableUpdateCatalog": true,
                         "UpdateBehavior": "UPDATE_IN_DATABASE",
-                        "Table": "operations_google_analytics_daily",
+                        "Table": "operations_google_analytics_daily_campaigns",
                         "Database": "operations_google_analytics_production"
                     },
                     "AutoDataQuality": {
@@ -213,13 +205,13 @@
                 "S3JsonSource": {
                     "Name": "Amazon S3",
                     "Paths": [
-                        "s3://cds-data-lake-raw-production/operations/google-analytics/forms_marketing_site/daily/"
+                        "s3://cds-data-lake-raw-production/operations/google-analytics/forms_marketing_site/daily_campaigns/"
                     ],
                     "Exclusions": [],
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/forms_marketing_site/daily/date=2025-11-11/data.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/forms_marketing_site/daily_campaigns/date=2025-11-11/data.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -231,19 +223,15 @@
                                     "Type": "string"
                                 },
                                 {
+                                    "Name": "firstusermanualcampaignname",
+                                    "Type": "string"
+                                },
+                                {
                                     "Name": "sessions",
                                     "Type": "string"
                                 },
                                 {
                                     "Name": "activeusers",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "bouncerate",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "userengagementduration",
                                     "Type": "string"
                                 }
                             ]
@@ -257,7 +245,7 @@
                     "Inputs": [
                         "node-1765980720494"
                     ],
-                    "SqlQuery": "select \n    \"platform_core_superset_doc\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource",
+                    "SqlQuery": "select \n    \"platform_core_superset_doc\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    firstusermanualcampaignname,\n    sessions,\n    activeusers\nfrom myDataSource",
                     "SqlAliases": [
                         {
                             "From": "node-1765980720494",
@@ -276,19 +264,15 @@
                                     "Type": "date"
                                 },
                                 {
+                                    "Name": "firstusermanualcampaignname",
+                                    "Type": "string"
+                                },
+                                {
                                     "Name": "sessions",
                                     "Type": "string"
                                 },
                                 {
                                     "Name": "activeusers",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "bouncerate",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "userengagementduration",
                                     "Type": "string"
                                 }
                             ]
@@ -300,13 +284,13 @@
                 "S3JsonSource": {
                     "Name": "Amazon S3",
                     "Paths": [
-                        "s3://cds-data-lake-raw-production/operations/google-analytics/notification_ga4/daily/"
+                        "s3://cds-data-lake-raw-production/operations/google-analytics/notification_ga4/daily_campaigns/"
                     ],
                     "Exclusions": [],
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/notification_ga4/daily/date=2025-11-11/data.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/google-analytics/notification_ga4/daily_campaigns/date=2025-11-11/data.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -344,7 +328,7 @@
                     "Inputs": [
                         "node-1765980620381"
                     ],
-                    "SqlQuery": "select \n    \"notification_ga4\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource",
+                    "SqlQuery": "select \n    \"notification_ga4\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    firstusermanualcampaignname,\n    sessions,\n    activeusers\nfrom myDataSource",
                     "SqlAliases": [
                         {
                             "From": "node-1765980620381",
@@ -363,19 +347,15 @@
                                     "Type": "date"
                                 },
                                 {
+                                    "Name": "firstusermanualcampaignname",
+                                    "Type": "string"
+                                },
+                                {
                                     "Name": "sessions",
                                     "Type": "string"
                                 },
                                 {
                                     "Name": "activeusers",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "bouncerate",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "userengagementduration",
                                     "Type": "string"
                                 }
                             ]
@@ -399,7 +379,7 @@
                     "Inputs": [
                         "node-1765979699147"
                     ],
-                    "SqlQuery": "select \n    \"forms_marketing_site\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    sessions,\n    activeusers,\n    bouncerate,\n    userengagementduration\nfrom myDataSource",
+                    "SqlQuery": "select \n    \"forms_marketing_site\" as ga_property,\n    to_date(date, 'yyyyMMdd') as date, \n    firstusermanualcampaignname,\n    sessions,\n    activeusers\nfrom myDataSource",
                     "SqlAliases": [
                         {
                             "From": "node-1765979699147",
@@ -418,19 +398,15 @@
                                     "Type": "date"
                                 },
                                 {
+                                    "Name": "firstusermanualcampaignname",
+                                    "Type": "string"
+                                },
+                                {
                                     "Name": "sessions",
                                     "Type": "string"
                                 },
                                 {
                                     "Name": "activeusers",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "bouncerate",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "userengagementduration",
                                     "Type": "string"
                                 }
                             ]
