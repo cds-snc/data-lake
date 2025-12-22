@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.29.1](https://github.com/cds-snc/data-lake/compare/v1.29.0...v1.29.1) (2025-12-22)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#520](https://github.com/cds-snc/data-lake/issues/520)) ([024f26b](https://github.com/cds-snc/data-lake/commit/024f26ba980f859e78a71377ad83b6bf18b8816f))
+* **deps:** update terraform github.com/cds-snc/terraform-modules to v10.10.1 ([#519](https://github.com/cds-snc/data-lake/issues/519)) ([19c5550](https://github.com/cds-snc/data-lake/commit/19c555061a06a6c3f74a3e54f201d1de537f2633))
+
 ## [1.29.0](https://github.com/cds-snc/data-lake/compare/v1.28.0...v1.29.0) (2025-12-19)
 
 
