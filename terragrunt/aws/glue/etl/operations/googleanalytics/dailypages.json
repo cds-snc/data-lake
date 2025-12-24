@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-12-18T20:44:51.146000+00:00",
-        "LastModifiedOn": "2025-12-18T20:45:08.597000+00:00",
+        "LastModifiedOn": "2025-12-22T13:25:27.901000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -185,11 +185,7 @@
                     "Inputs": [
                         "node-1765980847946"
                     ],
-                    "PartitionKeys": [
-                        [
-                            "date"
-                        ]
-                    ],
+                    "PartitionKeys": [],
                     "Path": "s3://cds-data-lake-transformed-production/operations/google-analytics/daily_pages/",
                     "Compression": "snappy",
                     "NumberTargetPartitions": "0",
