@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-12-18T20:38:55.294000+00:00",
-        "LastModifiedOn": "2025-12-23T13:08:53.781000+00:00",
+        "LastModifiedOn": "2025-12-24T14:07:57.737000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -36,7 +36,7 @@
         "CodeGenConfigurationNodes": {
             "node-1765980720494": {
                 "S3JsonSource": {
-                    "Name": "Amazon S3",
+                    "Name": "Superset",
                     "Paths": [
                         "s3://cds-data-lake-raw-production/operations/google-analytics/platform_core_superset_doc/daily_campaigns/"
                     ],
@@ -74,7 +74,7 @@
             },
             "node-1765980721031": {
                 "S3JsonSource": {
-                    "Name": "Amazon S3",
+                    "Name": "Client",
                     "Paths": [
                         "s3://cds-data-lake-raw-production/operations/google-analytics/platform_form_client/daily_campaigns/"
                     ],
@@ -110,31 +110,176 @@
                     ]
                 }
             },
-            "node-1765980847029": {
-                "Union": {
-                    "Name": "Union",
+            "node-1766583670300": {
+                "ApplyMapping": {
+                    "Name": "Change Schema",
                     "Inputs": [
-                        "node-1765980721031",
-                        "node-1765980720494"
+                        "node-1766585174199"
                     ],
-                    "UnionType": "ALL"
+                    "Mapping": [
+                        {
+                            "ToKey": "ga_property",
+                            "FromPath": [
+                                "ga_property"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "date",
+                            "FromPath": [
+                                "dt"
+                            ],
+                            "FromType": "date",
+                            "ToType": "date",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "date",
+                            "FromPath": [
+                                "date"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "firstUserManualCampaignName",
+                            "FromPath": [
+                                "firstUserManualCampaignName"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "sessions",
+                            "FromPath": [
+                                "sessions"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "activeUsers",
+                            "FromPath": [
+                                "activeUsers"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        }
+                    ]
                 }
             },
-            "node-1765980798239": {
-                "Union": {
-                    "Name": "Union",
+            "node-1766583672122": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
                     "Inputs": [
-                        "node-1765980620381",
-                        "node-1765979699147"
+                        "node-1765980720494",
+                        "node-1765980721031",
+                        "node-1765979699147",
+                        "node-1765980620381"
                     ],
-                    "UnionType": "ALL"
+                    "SqlQuery": "select\n\"forms_marketing_site\" as ga_property,\n*\nfrom superset\nUNION ALL\nselect\n\"platform_form_client\" as ga_property,\n*\nfrom client\nUNION ALL\nselect\n\"forms_marketing_site\" as ga_property,\n*\nfrom marketing\nUNION ALL\nselect\n\"notification_ga4\" as ga_property,\n*\nfrom notification",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1765980720494",
+                            "Alias": "superset"
+                        },
+                        {
+                            "From": "node-1765980721031",
+                            "Alias": "client"
+                        },
+                        {
+                            "From": "node-1765979699147",
+                            "Alias": "marketing"
+                        },
+                        {
+                            "From": "node-1765980620381",
+                            "Alias": "notification"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "ga_property",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "firstUserManualCampaignName",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeUsers",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1766585174199": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
+                    "Inputs": [
+                        "node-1766583672122"
+                    ],
+                    "SqlQuery": "select\nto_date(date, 'yyyyMMdd') as dt,\n*\nfrom myDataSource",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1766583672122",
+                            "Alias": "myDataSource"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "dt",
+                                    "Type": "date"
+                                },
+                                {
+                                    "Name": "ga_property",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "firstUserManualCampaignName",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "activeUsers",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
                 }
             },
             "node-1766089243013": {
                 "S3GlueParquetTarget": {
                     "Name": "Amazon S3",
                     "Inputs": [
-                        "node-1765980847946"
+                        "node-1766583670300"
                     ],
                     "PartitionKeys": [],
                     "Path": "s3://cds-data-lake-transformed-production/operations/google-analytics/daily_campaigns/",
@@ -154,7 +299,7 @@
             },
             "node-1765979699147": {
                 "S3JsonSource": {
-                    "Name": "Amazon S3",
+                    "Name": "Marketing",
                     "Paths": [
                         "s3://cds-data-lake-raw-production/operations/google-analytics/forms_marketing_site/daily_campaigns/"
                     ],
@@ -192,7 +337,7 @@
             },
             "node-1765980620381": {
                 "S3JsonSource": {
-                    "Name": "Amazon S3",
+                    "Name": "Notification",
                     "Paths": [
                         "s3://cds-data-lake-raw-production/operations/google-analytics/notification_ga4/daily_campaigns/"
                     ],
@@ -226,16 +371,6 @@
                             ]
                         }
                     ]
-                }
-            },
-            "node-1765980847946": {
-                "Union": {
-                    "Name": "Union",
-                    "Inputs": [
-                        "node-1765980847029",
-                        "node-1765980798239"
-                    ],
-                    "UnionType": "ALL"
                 }
             }
         },
