@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-12-18T20:38:55.294000+00:00",
-        "LastModifiedOn": "2025-12-24T14:07:57.737000+00:00",
+        "LastModifiedOn": "2025-12-29T14:23:20.543000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -110,176 +110,20 @@
                     ]
                 }
             },
-            "node-1766583670300": {
-                "ApplyMapping": {
-                    "Name": "Change Schema",
+            "node-1767017074870": {
+                "SelectFromCollection": {
+                    "Name": "Select From Collection",
                     "Inputs": [
-                        "node-1766585174199"
+                        "node-1767015373008"
                     ],
-                    "Mapping": [
-                        {
-                            "ToKey": "ga_property",
-                            "FromPath": [
-                                "ga_property"
-                            ],
-                            "FromType": "string",
-                            "ToType": "string",
-                            "Dropped": false
-                        },
-                        {
-                            "ToKey": "date",
-                            "FromPath": [
-                                "dt"
-                            ],
-                            "FromType": "date",
-                            "ToType": "date",
-                            "Dropped": false
-                        },
-                        {
-                            "ToKey": "date",
-                            "FromPath": [
-                                "date"
-                            ],
-                            "FromType": "string",
-                            "ToType": "string",
-                            "Dropped": true
-                        },
-                        {
-                            "ToKey": "firstUserManualCampaignName",
-                            "FromPath": [
-                                "firstUserManualCampaignName"
-                            ],
-                            "FromType": "string",
-                            "ToType": "string",
-                            "Dropped": false
-                        },
-                        {
-                            "ToKey": "sessions",
-                            "FromPath": [
-                                "sessions"
-                            ],
-                            "FromType": "string",
-                            "ToType": "string",
-                            "Dropped": false
-                        },
-                        {
-                            "ToKey": "activeUsers",
-                            "FromPath": [
-                                "activeUsers"
-                            ],
-                            "FromType": "string",
-                            "ToType": "string",
-                            "Dropped": false
-                        }
-                    ]
-                }
-            },
-            "node-1766583672122": {
-                "SparkSQL": {
-                    "Name": "SQL Query",
-                    "Inputs": [
-                        "node-1765980720494",
-                        "node-1765980721031",
-                        "node-1765979699147",
-                        "node-1765980620381"
-                    ],
-                    "SqlQuery": "select\n\"forms_marketing_site\" as ga_property,\n*\nfrom superset\nUNION ALL\nselect\n\"platform_form_client\" as ga_property,\n*\nfrom client\nUNION ALL\nselect\n\"forms_marketing_site\" as ga_property,\n*\nfrom marketing\nUNION ALL\nselect\n\"notification_ga4\" as ga_property,\n*\nfrom notification",
-                    "SqlAliases": [
-                        {
-                            "From": "node-1765980720494",
-                            "Alias": "superset"
-                        },
-                        {
-                            "From": "node-1765980721031",
-                            "Alias": "client"
-                        },
-                        {
-                            "From": "node-1765979699147",
-                            "Alias": "marketing"
-                        },
-                        {
-                            "From": "node-1765980620381",
-                            "Alias": "notification"
-                        }
-                    ],
-                    "OutputSchemas": [
-                        {
-                            "Columns": [
-                                {
-                                    "Name": "ga_property",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "date",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "firstUserManualCampaignName",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "sessions",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "activeUsers",
-                                    "Type": "string"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            },
-            "node-1766585174199": {
-                "SparkSQL": {
-                    "Name": "SQL Query",
-                    "Inputs": [
-                        "node-1766583672122"
-                    ],
-                    "SqlQuery": "select\nto_date(date, 'yyyyMMdd') as dt,\n*\nfrom myDataSource",
-                    "SqlAliases": [
-                        {
-                            "From": "node-1766583672122",
-                            "Alias": "myDataSource"
-                        }
-                    ],
-                    "OutputSchemas": [
-                        {
-                            "Columns": [
-                                {
-                                    "Name": "dt",
-                                    "Type": "date"
-                                },
-                                {
-                                    "Name": "ga_property",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "date",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "firstUserManualCampaignName",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "sessions",
-                                    "Type": "string"
-                                },
-                                {
-                                    "Name": "activeUsers",
-                                    "Type": "string"
-                                }
-                            ]
-                        }
-                    ]
+                    "Index": 0
                 }
             },
             "node-1766089243013": {
                 "S3GlueParquetTarget": {
                     "Name": "Amazon S3",
                     "Inputs": [
-                        "node-1766583670300"
+                        "node-1767017074870"
                     ],
                     "PartitionKeys": [],
                     "Path": "s3://cds-data-lake-transformed-production/operations/google-analytics/daily_campaigns/",
@@ -329,6 +173,45 @@
                                 {
                                     "Name": "activeusers",
                                     "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1767015373008": {
+                "CustomCode": {
+                    "Name": "Custom Transform",
+                    "Inputs": [
+                        "node-1765980720494",
+                        "node-1765980721031",
+                        "node-1765979699147",
+                        "node-1765980620381"
+                    ],
+                    "Code": "from awsglue.dynamicframe import DynamicFrame, DynamicFrameCollection\nfrom pyspark.sql.types import StructType, StructField, StringType\nfrom pyspark.sql import functions as F\nspark = glueContext.spark_session\n\nBASE_SCHEMA = StructType([\n    StructField(\"date\", StringType(), True),  # yyyyMMdd\n    StructField(\"firstusermanualcampaignname\", StringType(), True),\n    StructField(\"sessions\", StringType(), True),\n    StructField(\"activeusers\", StringType(), True),\n])\n\nsuperset     = dfc.select(list(dfc.keys())[0]).toDF()\nclient       = dfc.select(list(dfc.keys())[1]).toDF()\nmarketing    = dfc.select(list(dfc.keys())[2]).toDF()\nnotification = dfc.select(list(dfc.keys())[3]).toDF()\n\ndef normalize(df, ga_property):\n    if len(df.take(1)) == 0:\n        df = spark.createDataFrame([], BASE_SCHEMA)\n\n    return (\n        df\n        .withColumn(\"date\", F.to_date(F.col(\"date\"), \"yyyyMMdd\"))  # string -> date\n        .withColumn(\"firstusermanualcampaignname\", F.col(\"firstusermanualcampaignname\").cast(\"string\"))\n        .withColumn(\"sessions\", F.when(F.trim(F.col(\"sessions\")) == \"\", None).otherwise(F.col(\"sessions\")).cast(\"int\"))\n        .withColumn(\"activeusers\", F.when(F.trim(F.col(\"activeusers\")) == \"\", None).otherwise(F.col(\"activeusers\")).cast(\"int\"))\n        .select(\"date\", \"firstusermanualcampaignname\", \"sessions\", \"activeusers\")\n        .withColumn(\"ga_property\", F.lit(ga_property))\n        .select(\"ga_property\", \"date\", \"firstUserManualCampaignName\", \"sessions\", \"activeUsers\")\n    )\n\ncombined = (\n    normalize(superset,     \"platform_core_superset_doc\")\n    .unionByName(normalize(client,       \"platform_form_client\"), allowMissingColumns=True)\n    .unionByName(normalize(marketing,    \"forms_marketing_site\"), allowMissingColumns=True)\n    .unionByName(normalize(notification, \"notification_ga4\"), allowMissingColumns=True)\n)\n\nreturn DynamicFrameCollection(\n    {\"output\": DynamicFrame.fromDF(combined, glueContext, \"output\")},\n    glueContext\n)",
+                    "ClassName": "MyTransform",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "ga_property",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "date",
+                                    "Type": "date"
+                                },
+                                {
+                                    "Name": "firstUserManualCampaignName",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sessions",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "activeUsers",
+                                    "Type": "int"
                                 }
                             ]
                         }
