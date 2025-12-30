@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.29.1](https://github.com/cds-snc/data-lake/compare/v1.29.0...v1.29.1) (2025-12-30)
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#522](https://github.com/cds-snc/data-lake/issues/522)) ([042056b](https://github.com/cds-snc/data-lake/commit/042056bf3fd0c6de57e15be04333259ad6e28d7a))
+* **deps:** lock file maintenance ([#520](https://github.com/cds-snc/data-lake/issues/520)) ([024f26b](https://github.com/cds-snc/data-lake/commit/024f26ba980f859e78a71377ad83b6bf18b8816f))
+* **deps:** update all minor dependencies ([#523](https://github.com/cds-snc/data-lake/issues/523)) ([d4abbd9](https://github.com/cds-snc/data-lake/commit/d4abbd9f6ddf6a8f1b5698b8a2a2cb9d4cd08996))
+* **deps:** update all non-major github action dependencies ([#524](https://github.com/cds-snc/data-lake/issues/524)) ([6a0fdb1](https://github.com/cds-snc/data-lake/commit/6a0fdb184cce7b7a14587126eaffdeb63a3a7793))
+* **deps:** update all patch dependencies ([#518](https://github.com/cds-snc/data-lake/issues/518)) ([24fb796](https://github.com/cds-snc/data-lake/commit/24fb796a4000b191d9b0d4fd39230338699f698a))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to 03e618a ([#517](https://github.com/cds-snc/data-lake/issues/517)) ([5108180](https://github.com/cds-snc/data-lake/commit/51081800fd43ba93b0efbab577df9f4cdceb810f))
+* **deps:** update terraform github.com/cds-snc/terraform-modules to v10.10.1 ([#519](https://github.com/cds-snc/data-lake/issues/519)) ([19c5550](https://github.com/cds-snc/data-lake/commit/19c555061a06a6c3f74a3e54f201d1de537f2633))
+
 ## [1.29.0](https://github.com/cds-snc/data-lake/compare/v1.28.0...v1.29.0) (2025-12-19)
 
 
