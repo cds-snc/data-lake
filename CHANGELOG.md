@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.29.2](https://github.com/cds-snc/data-lake/compare/v1.29.1...v1.29.2) (2026-01-05)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all patch dependencies ([#525](https://github.com/cds-snc/data-lake/issues/525)) ([4ce8566](https://github.com/cds-snc/data-lake/commit/4ce856610d67886451736b25c899ec0aa79deec6))
+
 ## [1.29.1](https://github.com/cds-snc/data-lake/compare/v1.29.0...v1.29.1) (2025-12-30)
 
 
