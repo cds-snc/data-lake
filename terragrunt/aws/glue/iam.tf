@@ -403,10 +403,10 @@ data "aws_iam_policy_document" "qualtrics_s3_access" {
     condition {
       test     = "StringLike"
       variable = "s3:prefix"
-      values   = [
-         "operations/qualtrics",
-         "operations/qualtrics/",
-         "operations/qualtrics/*"
+      values = [
+        "operations/qualtrics",
+        "operations/qualtrics/",
+        "operations/qualtrics/*"
       ]
     }
   }
