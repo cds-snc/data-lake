@@ -37,3 +37,9 @@ variable "transformed_bucket_name" {
   description = "The name of the Transformed bucket"
   type        = string
 }
+
+variable "qualtrics_external_id" {
+  description = "External ID for Qualtrics cross-account access"
+  type        = string
+  sensitive   = true
+}
