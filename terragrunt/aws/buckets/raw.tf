@@ -118,6 +118,15 @@ data "aws_iam_policy_document" "raw_bucket" {
     resources = [
       "${module.raw_bucket.s3_bucket_arn}/operations/qualtrics/*"
     ]
+    condition {
+      test     = "StringLike"
+      variable = "s3:prefix"
+      values = [
+        "operations/qualtrics",
+        "operations/qualtrics/",
+        "operations/qualtrics/*"
+      ]
+    }
   }
 
   statement {
