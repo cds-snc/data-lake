@@ -27,7 +27,7 @@ jobs:
           - operations/google_analytics
     steps:
       - name: Audit DNS requests
-        uses: cds-snc/dns-proxy-action@efd50395ec485b6ba290418d0f9fb79e7c83b6c4
+        uses: cds-snc/dns-proxy-action@b9ffe8da86bdc1f890ad0c2678e499592cacd442
         env:
           DNS_PROXY_FORWARDTOSENTINEL: "true"
           DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
