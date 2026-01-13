@@ -28,6 +28,7 @@ env:
   TF_VAR_gcp_ga_property_notification_ga4: ${{ secrets.GCP_GA_PROPERTY_NOTIFICATION_GA4 }}
   TF_VAR_gcp_ga_property_platform_form_client: ${{ secrets.GCP_GA_PROPERTY_PLATFORM_FORM_CLIENT }}
   TF_VAR_gcp_ga_property_platform_core_superset_doc: ${{ secrets.GCP_GA_PROPERTY_PLATFORM_CORE_SUPERSET_DOC }}
+  TF_VAR_qualtrics_external_id: ${{ secrets.QUALTRICS_EXTERNAL_ID }}
 
 permissions:
   id-token: write

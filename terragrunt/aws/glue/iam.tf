@@ -350,3 +350,84 @@ data "aws_iam_policy_document" "bes_strategic_data_access" {
     ]
   }
 }
+
+#
+# Qualtrics Data Integration
+# Grants Qualtrics cross-account access to write data to the raw/operations/qualtrics/* S3 prefix
+#
+resource "aws_iam_role" "qualtrics_s3_access" {
+  name               = "QualtricsExportToDataLake"
+  path               = "/"
+  assume_role_policy = data.aws_iam_policy_document.qualtrics_assume_role.json
+}
+
+data "aws_iam_policy_document" "qualtrics_assume_role" {
+  statement {
+    sid = "QualtricsAssumeRole"
+    actions = [
+      "sts:AssumeRole",
+    ]
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::604163242721:root"
+      ]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "sts:ExternalId"
+      values   = [var.qualtrics_external_id]
+    }
+  }
+}
+
+resource "aws_iam_policy" "qualtrics_s3_access" {
+  name   = "QualtricsExportToDataLake"
+  path   = "/"
+  policy = data.aws_iam_policy_document.qualtrics_s3_access.json
+}
+
+data "aws_iam_policy_document" "qualtrics_s3_access" {
+  version = "2012-10-17"
+
+  statement {
+    sid    = "QualtricsListBucket"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      var.raw_bucket_arn
+    ]
+    condition {
+      test     = "StringLike"
+      variable = "s3:prefix"
+      values   = [
+         "operations/qualtrics",
+         "operations/qualtrics/",
+         "operations/qualtrics/*"
+      ]
+    }
+  }
+
+  statement {
+    sid    = "QualtricsS3Objects"
+    effect = "Allow"
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:AbortMultipartUpload",
+      "s3:ListMultipartUploadParts"
+    ]
+    resources = [
+      "${var.raw_bucket_arn}/operations/qualtrics/*"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "qualtrics_s3_access" {
+  policy_arn = aws_iam_policy.qualtrics_s3_access.arn
+  role       = aws_iam_role.qualtrics_s3_access.name
+}

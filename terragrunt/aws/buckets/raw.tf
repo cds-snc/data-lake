@@ -98,6 +98,29 @@ data "aws_iam_policy_document" "raw_bucket" {
   }
 
   statement {
+    sid    = "QualtricsExportToBucket"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${var.account_id}:role/QualtricsExportToDataLake",
+      ]
+    }
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:AbortMultipartUpload",
+      "s3:ListMultipartUploadParts",
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
+    ]
+    resources = [
+      "${module.raw_bucket.s3_bucket_arn}/operations/qualtrics/*"
+    ]
+  }
+
+  statement {
     sid    = "NotifyReadOnly"
     effect = "Allow"
     principals {
