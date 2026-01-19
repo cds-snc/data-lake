@@ -317,3 +317,50 @@ resource "aws_glue_crawler" "platform_gc_design_system_cloudfront_history" {
     CostCentre = var.billing_tag_value
   }
 }
+
+#
+# Operations / Qualtrics / PostSupport
+#
+resource "aws_glue_crawler" "operations_qualtrics_postsupport" {
+  name          = "Operations / Qualtrics / PostSupport"
+  description   = "Classify the Qualtrics PostSupport survey data"
+  database_name = aws_glue_catalog_database.operations_qualtrics_production.name
+  table_prefix  = "operations_qualtrics_postsupport_"
+
+  role                   = aws_iam_role.glue_crawler.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+  schedule               = local.is_production ? "cron(0 6 * * ? *)" : null # Daily at 6am UTC
+
+  s3_target {
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/forms/"
+  }
+
+  s3_target {
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/gcds/"
+  }
+
+  s3_target {
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/notify/"
+  }
+
+  schema_change_policy {
+    update_behavior = "UPDATE_IN_DATABASE"
+    delete_behavior = "DELETE_FROM_DATABASE"
+  }
+
+  configuration = jsonencode({
+    CrawlerOutput = {
+      Partitions = {
+        AddOrUpdateBehavior = "InheritFromTable"
+      }
+      Tables = {
+        AddOrUpdateBehavior = "MergeNewColumns"
+      }
+    }
+    Version = 1
+  })
+
+  tags = {
+    CostCentre = var.billing_tag_value
+  }
+}
