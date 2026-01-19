@@ -77,3 +77,13 @@ resource "aws_glue_catalog_database" "platform_gc_design_system" {
   name        = "platform_gc_design_system_${var.env}"
   description = "TRANSFORMED: data source path: /platform/gc-design-system/*"
 }
+
+resource "aws_glue_catalog_database" "operations_qualtrics_production" {
+  name        = "operations_qualtrics_${var.env}"
+  description = "TRANSFORMED: data source path: /operations/qualtrics/*"
+}
+
+resource "aws_glue_catalog_database" "operations_qualtrics_production_raw" {
+  name        = "operations_qualtrics_${var.env}_raw"
+  description = "RAW: data source path: /operations/qualtrics/*"
+}
