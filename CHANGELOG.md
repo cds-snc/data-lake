@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.31.0](https://github.com/cds-snc/data-lake/compare/v1.30.0...v1.31.0) (2026-01-19)
+
+
+### Features
+
+* qualtrics crawler ([#535](https://github.com/cds-snc/data-lake/issues/535)) ([dee60e3](https://github.com/cds-snc/data-lake/commit/dee60e39c172afd86fae9b4f8752e7d90ed10423))
+
+
+### Miscellaneous Chores
+
+* add new Notify reader role ([#537](https://github.com/cds-snc/data-lake/issues/537)) ([a281eed](https://github.com/cds-snc/data-lake/commit/a281eedd1799f86eae660af80428ebd6fa41dae3))
+
 ## [1.30.0](https://github.com/cds-snc/data-lake/compare/v1.29.1...v1.30.0) (2026-01-14)
 
 
