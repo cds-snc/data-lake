@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.32.0](https://github.com/cds-snc/data-lake/compare/v1.31.0...v1.32.0) (2026-01-20)
+
+
+### Features
+
+* add qualtrics role ([#538](https://github.com/cds-snc/data-lake/issues/538)) ([1efe23c](https://github.com/cds-snc/data-lake/commit/1efe23c66899d623be79f9618bcdbedd5ab3822d))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all minor dependencies ([#534](https://github.com/cds-snc/data-lake/issues/534)) ([3eea20a](https://github.com/cds-snc/data-lake/commit/3eea20ac54d2f1e8417f962f90d554e3f19523eb))
+* **deps:** update all non-major github action dependencies ([#532](https://github.com/cds-snc/data-lake/issues/532)) ([be8c475](https://github.com/cds-snc/data-lake/commit/be8c475e96b94b7fb6a68e214cf2a6f2d7028d59))
+* **deps:** update all patch dependencies ([#533](https://github.com/cds-snc/data-lake/issues/533)) ([f1ce735](https://github.com/cds-snc/data-lake/commit/f1ce735049042c13b6b99b99bcbbb9f9a8b4518d))
+
 ## [1.31.0](https://github.com/cds-snc/data-lake/compare/v1.30.0...v1.31.0) (2026-01-19)
 
 
