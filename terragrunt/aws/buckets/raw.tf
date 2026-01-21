@@ -144,11 +144,14 @@ data "aws_iam_policy_document" "raw_bucket" {
   }
 
   statement {
-    sid    = "SupersetRead"
+    sid    = "SupersetQualtricsRead"
     effect = "Allow"
     principals {
-      type        = "AWS"
-      identifiers = var.superset_iam_role_arns
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::066023111852:role/SupersetAthenaRead-operations_qualtrics_production",
+        "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_qualtrics_production",
+      ]
     }
     actions = [
       "s3:GetBucketLocation",
@@ -157,7 +160,7 @@ data "aws_iam_policy_document" "raw_bucket" {
     ]
     resources = [
       module.raw_bucket.s3_bucket_arn,
-      "${module.raw_bucket.s3_bucket_arn}/*"
+      "${module.raw_bucket.s3_bucket_arn}/operations/qualtrics/*"
     ]
   }
 }
