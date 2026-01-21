@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.32.1](https://github.com/cds-snc/data-lake/compare/v1.32.0...v1.32.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* missing superset access ([#541](https://github.com/cds-snc/data-lake/issues/541)) ([c1ab595](https://github.com/cds-snc/data-lake/commit/c1ab5953db6502bcb429301c61ea78b2a4ec2328))
+
 ## [1.32.0](https://github.com/cds-snc/data-lake/compare/v1.31.0...v1.32.0) (2026-01-20)
 
 
