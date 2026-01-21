@@ -143,3 +143,28 @@ data "aws_iam_policy_document" "raw_bucket" {
     }
   }
 }
+
+resource "aws_s3_bucket_policy" "raw_bucket" {
+  bucket = module.raw_bucket.s3_bucket_id
+  policy = data.aws_iam_policy_document.raw_bucket.json
+}
+
+data "aws_iam_policy_document" "raw_bucket" {
+  statement {
+    sid    = "SupersetRead"
+    effect = "Allow"
+    principals {
+      type        = "AWS"
+      identifiers = var.superset_iam_role_arns
+    }
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket"
+    ]
+    resources = [
+      module.raw_bucket.s3_bucket_arn,
+      "${module.raw_bucket.s3_bucket_arn}/*"
+    ]
+  }
+}
