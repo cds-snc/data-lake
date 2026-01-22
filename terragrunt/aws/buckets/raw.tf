@@ -159,7 +159,7 @@ data "aws_iam_policy_document" "raw_bucket" {
       "s3:ListBucket"
     ]
     resources = [
-      "${module.raw_bucket.s3_bucket_arn}/operations/qualtrics",
+      module.raw_bucket.s3_bucket_arn,
       "${module.raw_bucket.s3_bucket_arn}/operations/qualtrics/*"
     ]
   }
