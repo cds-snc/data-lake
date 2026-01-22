@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.32.2](https://github.com/cds-snc/data-lake/compare/v1.32.1...v1.32.2) (2026-01-22)
+
+
+### Bug Fixes
+
+* issue with the config file ([#543](https://github.com/cds-snc/data-lake/issues/543)) ([753e796](https://github.com/cds-snc/data-lake/commit/753e796cd85e2e96faa2e6a9e075d00b0ea9f6d4))
+
 ## [1.32.1](https://github.com/cds-snc/data-lake/compare/v1.32.0...v1.32.1) (2026-01-21)
 
 
