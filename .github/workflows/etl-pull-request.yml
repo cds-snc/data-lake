@@ -32,7 +32,7 @@ jobs:
             module_path: platform/gc_notify
     steps:
       - name: Audit DNS requests
-        uses: cds-snc/dns-proxy-action@b9ffe8da86bdc1f890ad0c2678e499592cacd442
+        uses: cds-snc/dns-proxy-action@85118f9b128d57d13dc3cc2ee11d014658dd3e1a
         env:
           DNS_PROXY_FORWARDTOSENTINEL: "true"
           DNS_PROXY_LOGANALYTICSWORKSPACEID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}

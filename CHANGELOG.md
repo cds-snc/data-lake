@@ -1,5 +1,65 @@
 # Changelog
 
+## [1.32.2](https://github.com/cds-snc/data-lake/compare/v1.32.1...v1.32.2) (2026-01-22)
+
+
+### Bug Fixes
+
+* issue with the config file ([#543](https://github.com/cds-snc/data-lake/issues/543)) ([753e796](https://github.com/cds-snc/data-lake/commit/753e796cd85e2e96faa2e6a9e075d00b0ea9f6d4))
+
+## [1.32.1](https://github.com/cds-snc/data-lake/compare/v1.32.0...v1.32.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* missing superset access ([#541](https://github.com/cds-snc/data-lake/issues/541)) ([c1ab595](https://github.com/cds-snc/data-lake/commit/c1ab5953db6502bcb429301c61ea78b2a4ec2328))
+
+## [1.32.0](https://github.com/cds-snc/data-lake/compare/v1.31.0...v1.32.0) (2026-01-20)
+
+
+### Features
+
+* add qualtrics role ([#538](https://github.com/cds-snc/data-lake/issues/538)) ([1efe23c](https://github.com/cds-snc/data-lake/commit/1efe23c66899d623be79f9618bcdbedd5ab3822d))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all minor dependencies ([#534](https://github.com/cds-snc/data-lake/issues/534)) ([3eea20a](https://github.com/cds-snc/data-lake/commit/3eea20ac54d2f1e8417f962f90d554e3f19523eb))
+* **deps:** update all non-major github action dependencies ([#532](https://github.com/cds-snc/data-lake/issues/532)) ([be8c475](https://github.com/cds-snc/data-lake/commit/be8c475e96b94b7fb6a68e214cf2a6f2d7028d59))
+* **deps:** update all patch dependencies ([#533](https://github.com/cds-snc/data-lake/issues/533)) ([f1ce735](https://github.com/cds-snc/data-lake/commit/f1ce735049042c13b6b99b99bcbbb9f9a8b4518d))
+
+## [1.31.0](https://github.com/cds-snc/data-lake/compare/v1.30.0...v1.31.0) (2026-01-19)
+
+
+### Features
+
+* qualtrics crawler ([#535](https://github.com/cds-snc/data-lake/issues/535)) ([dee60e3](https://github.com/cds-snc/data-lake/commit/dee60e39c172afd86fae9b4f8752e7d90ed10423))
+
+
+### Miscellaneous Chores
+
+* add new Notify reader role ([#537](https://github.com/cds-snc/data-lake/issues/537)) ([a281eed](https://github.com/cds-snc/data-lake/commit/a281eedd1799f86eae660af80428ebd6fa41dae3))
+
+## [1.30.0](https://github.com/cds-snc/data-lake/compare/v1.29.1...v1.30.0) (2026-01-14)
+
+
+### Features
+
+* give qualtics write access ([#530](https://github.com/cds-snc/data-lake/issues/530)) ([1471c7d](https://github.com/cds-snc/data-lake/commit/1471c7da12c5f5b920711642bc3353be5bbcb085))
+
+
+### Bug Fixes
+
+* remove qualtrics bucket policies ([#531](https://github.com/cds-snc/data-lake/issues/531)) ([b400204](https://github.com/cds-snc/data-lake/commit/b400204fe4512d90e6000cb69259072c68f49f33))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#529](https://github.com/cds-snc/data-lake/issues/529)) ([931ba1a](https://github.com/cds-snc/data-lake/commit/931ba1abd831826ba305c3fdbb0af4340dede8c5))
+* **deps:** update all non-major github action dependencies ([#527](https://github.com/cds-snc/data-lake/issues/527)) ([02cff5d](https://github.com/cds-snc/data-lake/commit/02cff5d9493373acfefd50c9beb5013f8a826011))
+* **deps:** update all patch dependencies ([#525](https://github.com/cds-snc/data-lake/issues/525)) ([4ce8566](https://github.com/cds-snc/data-lake/commit/4ce856610d67886451736b25c899ec0aa79deec6))
+* **deps:** update dependency boto3 to v1.42.22 ([#528](https://github.com/cds-snc/data-lake/issues/528)) ([98ea132](https://github.com/cds-snc/data-lake/commit/98ea13239a74975b3be4eab70d300659d997ff1b))
+
 ## [1.29.1](https://github.com/cds-snc/data-lake/compare/v1.29.0...v1.29.1) (2025-12-30)
 
 
