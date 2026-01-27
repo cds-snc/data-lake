@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.32.3](https://github.com/cds-snc/data-lake/compare/v1.32.2...v1.32.3) (2026-01-26)
+
+
+### Bug Fixes
+
+* select only subset ([#548](https://github.com/cds-snc/data-lake/issues/548)) ([0a8536c](https://github.com/cds-snc/data-lake/commit/0a8536c32bfc1b16ce9723194b33043250a2f14b))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all patch dependencies ([#545](https://github.com/cds-snc/data-lake/issues/545)) ([493d2fd](https://github.com/cds-snc/data-lake/commit/493d2fdc868ea22057150e85b624ba61d6968bcf))
+* **deps:** update dependency awswrangler to v3.15.0 ([#546](https://github.com/cds-snc/data-lake/issues/546)) ([3a555cd](https://github.com/cds-snc/data-lake/commit/3a555cd38952db7ed4cecc53188ab00b6c0eb02d))
+
 ## [1.32.2](https://github.com/cds-snc/data-lake/compare/v1.32.1...v1.32.2) (2026-01-22)
 
 
