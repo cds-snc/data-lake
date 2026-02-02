@@ -1,5 +1,46 @@
 # Changelog
 
+## [1.32.3](https://github.com/cds-snc/data-lake/compare/v1.32.2...v1.32.3) (2026-01-26)
+
+
+### Bug Fixes
+
+* select only subset ([#548](https://github.com/cds-snc/data-lake/issues/548)) ([0a8536c](https://github.com/cds-snc/data-lake/commit/0a8536c32bfc1b16ce9723194b33043250a2f14b))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all patch dependencies ([#545](https://github.com/cds-snc/data-lake/issues/545)) ([493d2fd](https://github.com/cds-snc/data-lake/commit/493d2fdc868ea22057150e85b624ba61d6968bcf))
+* **deps:** update dependency awswrangler to v3.15.0 ([#546](https://github.com/cds-snc/data-lake/issues/546)) ([3a555cd](https://github.com/cds-snc/data-lake/commit/3a555cd38952db7ed4cecc53188ab00b6c0eb02d))
+
+## [1.32.2](https://github.com/cds-snc/data-lake/compare/v1.32.1...v1.32.2) (2026-01-22)
+
+
+### Bug Fixes
+
+* issue with the config file ([#543](https://github.com/cds-snc/data-lake/issues/543)) ([753e796](https://github.com/cds-snc/data-lake/commit/753e796cd85e2e96faa2e6a9e075d00b0ea9f6d4))
+
+## [1.32.1](https://github.com/cds-snc/data-lake/compare/v1.32.0...v1.32.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* missing superset access ([#541](https://github.com/cds-snc/data-lake/issues/541)) ([c1ab595](https://github.com/cds-snc/data-lake/commit/c1ab5953db6502bcb429301c61ea78b2a4ec2328))
+
+## [1.32.0](https://github.com/cds-snc/data-lake/compare/v1.31.0...v1.32.0) (2026-01-20)
+
+
+### Features
+
+* add qualtrics role ([#538](https://github.com/cds-snc/data-lake/issues/538)) ([1efe23c](https://github.com/cds-snc/data-lake/commit/1efe23c66899d623be79f9618bcdbedd5ab3822d))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all minor dependencies ([#534](https://github.com/cds-snc/data-lake/issues/534)) ([3eea20a](https://github.com/cds-snc/data-lake/commit/3eea20ac54d2f1e8417f962f90d554e3f19523eb))
+* **deps:** update all non-major github action dependencies ([#532](https://github.com/cds-snc/data-lake/issues/532)) ([be8c475](https://github.com/cds-snc/data-lake/commit/be8c475e96b94b7fb6a68e214cf2a6f2d7028d59))
+* **deps:** update all patch dependencies ([#533](https://github.com/cds-snc/data-lake/issues/533)) ([f1ce735](https://github.com/cds-snc/data-lake/commit/f1ce735049042c13b6b99b99bcbbb9f9a8b4518d))
+
 ## [1.31.0](https://github.com/cds-snc/data-lake/compare/v1.30.0...v1.31.0) (2026-01-19)
 
 

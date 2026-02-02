@@ -142,4 +142,25 @@ data "aws_iam_policy_document" "raw_bucket" {
       ]
     }
   }
+
+  statement {
+    sid    = "SupersetQualtricsRead"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::066023111852:role/SupersetAthenaRead-operations_qualtrics_production",
+        "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_qualtrics_production",
+      ]
+    }
+    actions = [
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket"
+    ]
+    resources = [
+      module.raw_bucket.s3_bucket_arn,
+      "${module.raw_bucket.s3_bucket_arn}/operations/qualtrics/*"
+    ]
+  }
 }

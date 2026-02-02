@@ -287,7 +287,8 @@ def test_initial_load(
     """Test the main initial_load function."""
     mock_get_dataset_config.return_value = sample_dataset_config
     mock_load_data.side_effect = [100, 200]
-    mock_time.side_effect = [1000, 1050, 1100, 1200]
+    # Use return_value instead of side_effect to avoid StopIteration issues
+    mock_time.return_value = 1000.0
 
     initial_load()
 

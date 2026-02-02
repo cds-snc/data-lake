@@ -360,6 +360,9 @@ def get_new_data(
             logger.warning(f"Some configured fields missing in data: {missing_fields}")
             logger.info(f"Available columns: {existing_columns}")
 
+        # Filter df to only include the specified fields
+        df = df.select(available_fields)
+
         # Apply schema transformations for proper data types
         for field in fields:
             field_name = field["name"]

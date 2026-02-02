@@ -32,6 +32,10 @@
         "type": "varchar"
       },
       {
+        "name": "verified_phonenumber",
+        "type": "bool"
+      },
+      {
         "name": "platform_admin",
         "type": "bool"
       },

@@ -1,4 +1,4 @@
 great_expectations==0.18.22
 numpy>=1.26.0
-awswrangler==3.14.0
+awswrangler==3.15.0
 pandas==2.3.3
