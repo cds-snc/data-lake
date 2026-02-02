@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.32.4](https://github.com/cds-snc/data-lake/compare/v1.32.3...v1.32.4) (2026-02-02)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#552](https://github.com/cds-snc/data-lake/issues/552)) ([5996588](https://github.com/cds-snc/data-lake/commit/59965887c45c5302f46f091a3b279a35699bd3d7))
+* **deps:** update all non-major github action dependencies ([#551](https://github.com/cds-snc/data-lake/issues/551)) ([4b890b3](https://github.com/cds-snc/data-lake/commit/4b890b34707d004e683756dcb14b09c7f5e8da4a))
+* **deps:** update dependency boto3 to v1.42.34 ([#550](https://github.com/cds-snc/data-lake/issues/550)) ([198b1c3](https://github.com/cds-snc/data-lake/commit/198b1c31814cfab825f7d34a80ba8b250acad978))
+
 ## [1.32.3](https://github.com/cds-snc/data-lake/compare/v1.32.2...v1.32.3) (2026-01-26)
 
 
