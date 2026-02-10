@@ -1,11 +1,15 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: data-lake
-  description: Infrastructure for the Platform Data Lake
-  labels:
-    license: MIT
+  name: data-warehouse
+  title: Data Warehouse
+  description: The infrastructure-as-code and ETL scripts used to run the Platform Data Warehouse.
+  annotations:
+    github.com/project-slug: cds-snc/data-lake
+    backstage.io/techdocs-ref: dir:docs
 spec:
-  type: website
-  lifecycle: experimental
-  owner: platform-core-services
+  type: service
+  lifecycle: production
+  owner: group:cds-snc/platform-core
+  system: business-intelligence
+
