@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.32.4](https://github.com/cds-snc/data-lake/compare/v1.32.3...v1.32.4) (2026-02-10)
+
+
+### Bug Fixes
+
+* longer timeout and better alarm name ([#560](https://github.com/cds-snc/data-lake/issues/560)) ([b1abba0](https://github.com/cds-snc/data-lake/commit/b1abba08b21ad68fdf761272f7c78d333346cc83))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#552](https://github.com/cds-snc/data-lake/issues/552)) ([5996588](https://github.com/cds-snc/data-lake/commit/59965887c45c5302f46f091a3b279a35699bd3d7))
+* **deps:** lock file maintenance ([#557](https://github.com/cds-snc/data-lake/issues/557)) ([f4319e3](https://github.com/cds-snc/data-lake/commit/f4319e3c73e666ccb33e5fecaba89b2b0133d44b))
+* **deps:** update all non-major github action dependencies ([#551](https://github.com/cds-snc/data-lake/issues/551)) ([4b890b3](https://github.com/cds-snc/data-lake/commit/4b890b34707d004e683756dcb14b09c7f5e8da4a))
+* **deps:** update all non-major github action dependencies ([#554](https://github.com/cds-snc/data-lake/issues/554)) ([6204ff6](https://github.com/cds-snc/data-lake/commit/6204ff6c99d3ea881c70cf10681cff9032c7d736))
+* **deps:** update all patch dependencies ([#555](https://github.com/cds-snc/data-lake/issues/555)) ([4da380d](https://github.com/cds-snc/data-lake/commit/4da380df0b21c9aae9c2950faee38df76b2e824f))
+* **deps:** update dependency boto3 to v1.42.34 ([#550](https://github.com/cds-snc/data-lake/issues/550)) ([198b1c3](https://github.com/cds-snc/data-lake/commit/198b1c31814cfab825f7d34a80ba8b250acad978))
+* **deps:** update dependency google-auth to v2.48.0 ([#556](https://github.com/cds-snc/data-lake/issues/556)) ([0fb675c](https://github.com/cds-snc/data-lake/commit/0fb675c3bb3688926292574606e5d651ef621b3b))
+
 ## [1.32.3](https://github.com/cds-snc/data-lake/compare/v1.32.2...v1.32.3) (2026-01-26)
 
 
