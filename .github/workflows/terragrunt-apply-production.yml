@@ -1,5 +1,9 @@
 name: "Terragrunt apply PRODUCTION"
 
+concurrency:
+  group: terragrunt-apply-production
+  cancel-in-progress: false
+
 on:
   release:
     types:
