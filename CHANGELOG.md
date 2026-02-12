@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.33.0](https://github.com/cds-snc/data-lake/compare/v1.32.4...v1.33.0) (2026-02-12)
+
+
+### Features
+
+* tf apply run one at a time ([#562](https://github.com/cds-snc/data-lake/issues/562)) ([9b82624](https://github.com/cds-snc/data-lake/commit/9b82624f0f0f8d7bfb4b62429b1ed3dd8b05a146))
+
+
+### Miscellaneous Chores
+
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to fb17cc9 ([#549](https://github.com/cds-snc/data-lake/issues/549)) ([bf93967](https://github.com/cds-snc/data-lake/commit/bf939679dad3f78980e3977d5559e07f16cd31d4))
+
 ## [1.32.4](https://github.com/cds-snc/data-lake/compare/v1.32.3...v1.32.4) (2026-02-10)
 
 
