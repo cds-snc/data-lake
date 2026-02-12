@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.33.1](https://github.com/cds-snc/data-lake/compare/v1.33.0...v1.33.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* switch to ARM64 GitHub runners ([#563](https://github.com/cds-snc/data-lake/issues/563)) ([2dc45e8](https://github.com/cds-snc/data-lake/commit/2dc45e852164dc2333aa1d68762eeeeafd8b2bfe))
+
 ## [1.33.0](https://github.com/cds-snc/data-lake/compare/v1.32.4...v1.33.0) (2026-02-12)
 
 
