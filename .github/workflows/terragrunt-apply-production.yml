@@ -1,7 +1,7 @@
 name: "Terragrunt apply PRODUCTION"
 
 concurrency:
-  group: terragrunt-apply-production
+  group: terragrunt-production
   cancel-in-progress: false
 
 on:

@@ -1,7 +1,7 @@
 name: "Terragrunt apply STAGING"
 
 concurrency:
-  group: terragrunt-apply-staging
+  group: terragrunt-staging
   cancel-in-progress: false
 
 on:
