@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.34.1](https://github.com/cds-snc/data-lake/compare/v1.34.0...v1.34.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* edited output path for better naming ([#569](https://github.com/cds-snc/data-lake/issues/569)) ([b4f7e14](https://github.com/cds-snc/data-lake/commit/b4f7e147ec9c7f74f87c3f70156468a0c3779318))
+
 ## [1.34.0](https://github.com/cds-snc/data-lake/compare/v1.33.1...v1.34.0) (2026-02-18)
 
 
