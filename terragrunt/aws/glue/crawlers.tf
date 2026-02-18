@@ -332,15 +332,15 @@ resource "aws_glue_crawler" "operations_qualtrics_postdemo" {
   schedule               = local.is_production ? "cron(0 6 * * ? *)" : null # Daily at 6am UTC
 
   s3_target {
-    path = "s3://${var.raw_bucket_name}/operations/qualtrics/forms/postdemo/"
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/postdemo/forms/"
   }
 
   s3_target {
-    path = "s3://${var.raw_bucket_name}/operations/qualtrics/gcds/postdemo/"
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/postdemo/gcds/"
   }
 
   s3_target {
-    path = "s3://${var.raw_bucket_name}/operations/qualtrics/notify/postdemo/"
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/postdemo/notify/"
   }
 
   schema_change_policy {
@@ -379,15 +379,15 @@ resource "aws_glue_crawler" "operations_qualtrics_postsupport" {
   schedule               = local.is_production ? "cron(0 6 * * ? *)" : null # Daily at 6am UTC
 
   s3_target {
-    path = "s3://${var.raw_bucket_name}/operations/qualtrics/forms/postsupport/"
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/postsupport/forms/"
   }
 
   s3_target {
-    path = "s3://${var.raw_bucket_name}/operations/qualtrics/gcds/postsupport/"
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/postsupport/gcds/"
   }
 
   s3_target {
-    path = "s3://${var.raw_bucket_name}/operations/qualtrics/notify/postsupport/"
+    path = "s3://${var.raw_bucket_name}/operations/qualtrics/postsupport/notify/"
   }
 
   schema_change_policy {
