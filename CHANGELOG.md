@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.34.0](https://github.com/cds-snc/data-lake/compare/v1.33.1...v1.34.0) (2026-02-18)
+
+
+### Features
+
+* add post demo qualtrics data ([#568](https://github.com/cds-snc/data-lake/issues/568)) ([7d92592](https://github.com/cds-snc/data-lake/commit/7d92592a807e22fad31293ca76e82a05071c0578))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#566](https://github.com/cds-snc/data-lake/issues/566)) ([5ff78d1](https://github.com/cds-snc/data-lake/commit/5ff78d161031887d1f455a5505b570d7dff917d1))
+* **deps:** update all patch dependencies ([#565](https://github.com/cds-snc/data-lake/issues/565)) ([f64563f](https://github.com/cds-snc/data-lake/commit/f64563fffbd5352069bab72bfc07a0e5182acf8d))
+
 ## [1.33.1](https://github.com/cds-snc/data-lake/compare/v1.33.0...v1.33.1) (2026-02-12)
 
 
