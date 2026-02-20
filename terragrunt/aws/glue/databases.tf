@@ -87,8 +87,3 @@ resource "aws_glue_catalog_database" "operations_qualtrics_production_raw" {
   name        = "operations_qualtrics_${var.env}_raw"
   description = "RAW: data source path: /operations/qualtrics/*"
 }
-
-resource "aws_glue_catalog_database" "unified_production" {
-  name        = "unified_${var.env}"
-  description = "UNIFIED: combined and processed data from all sources for analytics and BI tools"
-}
