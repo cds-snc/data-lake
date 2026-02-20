@@ -1,0 +1,283 @@
+{
+    "Job": {
+        "Name": "Enhanced / DepartmentTotals",
+        "JobMode": "VISUAL",
+        "JobRunQueuingEnabled": false,
+        "Description": "",
+        "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+        "CreatedOn": "2026-02-19T14:36:01.640000+00:00",
+        "LastModifiedOn": "2026-02-19T16:45:36.064000+00:00",
+        "ExecutionProperty": {
+            "MaxConcurrentRuns": 1
+        },
+        "Command": {
+            "Name": "glueetl",
+            "ScriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Enhanced / DepartmentTotals.py",
+            "PythonVersion": "3"
+        },
+        "DefaultArguments": {
+            "--enable-metrics": "true",
+            "--enable-spark-ui": "true",
+            "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
+            "--enable-job-insights": "true",
+            "--enable-observability-metrics": "true",
+            "--enable-glue-datacatalog": "true",
+            "--job-bookmark-option": "job-bookmark-enable",
+            "--job-language": "python",
+            "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/",
+            "--enable-auto-scaling": "true"
+        },
+        "MaxRetries": 0,
+        "AllocatedCapacity": 40,
+        "Timeout": 480,
+        "MaxCapacity": 40.0,
+        "WorkerType": "G.4X",
+        "NumberOfWorkers": 10,
+        "GlueVersion": "5.0",
+        "CodeGenConfigurationNodes": {
+            "node-1771511541486": {
+                "CatalogSource": {
+                    "Name": "templatetouser",
+                    "Database": "platform_gc_forms_production",
+                    "Table": "platform_gc_forms_templatetouser",
+                    "PartitionPredicate": ""
+                }
+            },
+            "node-1771511619118": {
+                "CatalogSource": {
+                    "Name": "user",
+                    "Database": "platform_gc_forms_production",
+                    "Table": "platform_gc_forms_user",
+                    "PartitionPredicate": ""
+                }
+            },
+            "node-1771512699009": {
+                "CatalogSource": {
+                    "Name": "notifications_enriched",
+                    "Database": "platform_gc_notify_production",
+                    "Table": "platform_gc_notify_notifications_enriched",
+                    "PartitionPredicate": ""
+                }
+            },
+            "node-1771512852229": {
+                "CatalogSource": {
+                    "Name": "system_teams",
+                    "Database": "platform_gc_design_system_production",
+                    "Table": "platform_gc_design_system_teams",
+                    "PartitionPredicate": ""
+                }
+            },
+            "node-1771516555678": {
+                "S3GlueParquetTarget": {
+                    "Name": "Amazon S3",
+                    "Inputs": [
+                        "node-1771511597584"
+                    ],
+                    "PartitionKeys": [
+                        [
+                            "month"
+                        ]
+                    ],
+                    "Path": "s3://cds-data-lake-transformed-production/platform/gc-forms/departments_stats/",
+                    "Compression": "snappy",
+                    "NumberTargetPartitions": "0",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "UPDATE_IN_DATABASE",
+                        "Table": "platform_gc_forms_departments_stats",
+                        "Database": "platform_gc_forms_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": true,
+                        "EvaluationContext": "EvaluateDataQuality_node1771516047384"
+                    }
+                }
+            },
+            "node-1771512718119": {
+                "SparkSQL": {
+                    "Name": "platform_gc_notify_departments_stats",
+                    "Inputs": [
+                        "node-1771512699009"
+                    ],
+                    "SqlQuery": "SELECT \n    month,\n    split(organisation_name, ' /')[1] AS department,\n    count(*) AS notification_count\nFROM platform_gc_notify_notifications_enriched\nGROUP BY \n    month,\n    split(organisation_name, ' /')[1]\nORDER BY\n    month DESC,\n    split(organisation_name, ' /')[1]",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1771512699009",
+                            "Alias": "platform_gc_notify_notifications_enriched"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "month",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "organisation_name",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "notification_count",
+                                    "Type": "bigint"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1771511618331": {
+                "CatalogSource": {
+                    "Name": "template",
+                    "Database": "platform_gc_forms_production",
+                    "Table": "platform_gc_forms_template",
+                    "PartitionPredicate": ""
+                }
+            },
+            "node-1771511720866": {
+                "CatalogSource": {
+                    "Name": "email_lookup",
+                    "Database": "platform_gc_forms_production",
+                    "Table": "platform_gc_forms_department_email_lookup",
+                    "PartitionPredicate": ""
+                }
+            },
+            "node-1771511597584": {
+                "SparkSQL": {
+                    "Name": "platform_gc_forms_departments_stats",
+                    "Inputs": [
+                        "node-1771511541486",
+                        "node-1771511618331",
+                        "node-1771511619118",
+                        "node-1771511685673",
+                        "node-1771511720866"
+                    ],
+                    "SqlQuery": "WITH latest_templates AS (\n    SELECT \n        *,\n        ROW_NUMBER() OVER(PARTITION BY id ORDER BY timestamp DESC) as rn_template\n    FROM \n        platform_gc_forms_template\n),\nlatest_template_to_user AS (\n    SELECT \n        *,\n        ROW_NUMBER() OVER(PARTITION BY templateid, userid ORDER BY timestamp DESC) as rn_tu\n    FROM \n        platform_gc_forms_templatetouser\n),\nlatest_users AS (\n    SELECT \n        *,\n        ROW_NUMBER() OVER(PARTITION BY id ORDER BY timestamp DESC) as rn_user\n    FROM \n        platform_gc_forms_user\n),\nsubmission_counts AS (\n    SELECT \n        form_id, \n        COUNT(*) AS submission_count\n    FROM \n        platform_gc_forms_submissions\n    GROUP BY \n        form_id\n),\nform_data AS (\n    SELECT \n        t.*, \n        COALESCE(s.submission_count, 0) AS submission_count,\n        CASE\n          WHEN u.email IN ('tpsgc-pwgsc.gc.ca', 'pwgsc-tpsgc.gc.ca', 'pwgsc.gc.ca') THEN 'pwgsc-tpsgc.gc.ca'\n          WHEN u.email IN ('nrcan-rncan.gc.ca', 'rncan-nrcan.gc.ca', 'nrcan.gc.ca') THEN 'nrcan-rncan.gc.ca'\n          WHEN u.email IN ('nrc-cnrc.gc.ca', 'cnrc-nrc.gc.ca') THEN 'nrc-cnrc.gc.ca'\n          WHEN u.email IN ('cbsa.gc.ca', 'cbsa-asfc.gc.ca') THEN 'cbsa-asfc.gc.ca'\n          WHEN u.email IN ('scc-csc.gc.ca', 'csc-scc.gc.ca') THEN 'scc-csc.gc.ca'\n          WHEN u.email IN ('bac-lac.gc.ca', 'lac-bac.gc.ca') THEN 'bac-lac.gc.ca'\n          WHEN u.email IN ('nfb.ca', 'nfb-onf.gc.ca') THEN 'nfb-onf.gc.ca'\n          WHEN u.email IN ('ecn.forces.gc.ca', 'forces.gc.ca') THEN 'forces.gc.ca'\n          ELSE u.email\n        END AS normalized_email,\n        lu.department\n    FROM \n        (SELECT * FROM latest_templates WHERE rn_template = 1) t\n    INNER JOIN \n        (SELECT * FROM latest_template_to_user WHERE rn_tu = 1) tu ON t.id = tu.templateid\n    INNER JOIN \n        (SELECT * FROM latest_users WHERE rn_user = 1) u ON tu.userid = u.id\n    LEFT JOIN \n        submission_counts s ON t.id = s.form_id\n    LEFT JOIN \n      platform_gc_forms_department_email_lookup lu on lower(u.email)=lower(lu.email_domain)\n)\nSELECT \n    department,\n    month,\n    SUM(submission_count) AS total_submissions,\n    SUM(addresscomplete_count) AS total_addresscomplete,\n    SUM(checkbox_count) AS total_checkbox,\n    SUM(combobox_count) AS total_combobox,\n    SUM(dropdown_count) AS total_dropdown,\n    SUM(dynamicrow_count) AS total_dynamicrow,\n    SUM(fileinput_count) AS total_fileinput,\n    SUM(formatteddate_count) AS total_formatteddate,\n    SUM(radio_count) AS total_radio,\n    SUM(richtext_count) AS total_richtext,\n    SUM(textarea_count) AS total_textarea,\n    SUM(textfield_count) AS total_textfield,\n    COUNT(*) AS total_forms\nFROM \n    form_data\nGROUP BY \n    department, month\nORDER BY \n    month DESC, department;",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1771511541486",
+                            "Alias": "platform_gc_forms_templatetouser"
+                        },
+                        {
+                            "From": "node-1771511618331",
+                            "Alias": "platform_gc_forms_template"
+                        },
+                        {
+                            "From": "node-1771511619118",
+                            "Alias": "platform_gc_forms_user"
+                        },
+                        {
+                            "From": "node-1771511685673",
+                            "Alias": "platform_gc_forms_submissions"
+                        },
+                        {
+                            "From": "node-1771511720866",
+                            "Alias": "platform_gc_forms_department_email_lookup"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "department",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "month",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "total_submissions",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_addresscomplete",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_checkbox",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_combobox",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_dropdown",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_dynamicrow",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_fileinput",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_formatteddate",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_radio",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_richtext",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_textarea",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_textfield",
+                                    "Type": "bigint"
+                                },
+                                {
+                                    "Name": "total_forms",
+                                    "Type": "bigint"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1771516152261": {
+                "S3GlueParquetTarget": {
+                    "Name": "Amazon S3",
+                    "Inputs": [
+                        "node-1771512718119"
+                    ],
+                    "PartitionKeys": [
+                        [
+                            "month"
+                        ]
+                    ],
+                    "Path": "s3://cds-data-lake-transformed-production/platform/gc-notify/departments_stats/",
+                    "Compression": "snappy",
+                    "NumberTargetPartitions": "0",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "UPDATE_IN_DATABASE",
+                        "Table": "platform_gc_notify_departments_stats",
+                        "Database": "platform_gc_notify_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": true,
+                        "EvaluationContext": "EvaluateDataQuality_node1771516047384"
+                    }
+                }
+            },
+            "node-1771511685673": {
+                "CatalogSource": {
+                    "Name": "submissions",
+                    "Database": "platform_gc_forms_production",
+                    "Table": "platform_gc_forms_submissions",
+                    "PartitionPredicate": ""
+                }
+            }
+        },
+        "ExecutionClass": "STANDARD"
+    }
+}
