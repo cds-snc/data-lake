@@ -6,10 +6,9 @@ resource "aws_glue_resource_policy" "cross_account_access" {
 }
 
 data "aws_iam_policy_document" "cross_account_access_combined" {
-  source_policy_documents = concat(
-    [for policy in data.aws_iam_policy_document.cross_account_access : policy.json],
-    length([for arn in var.superset_iam_role_arns : arn if endswith(arn, "unified_${var.env}")]) > 0 ? [data.aws_iam_policy_document.cross_account_access_unified.json] : []
-  )
+  source_policy_documents = [
+    for policy in data.aws_iam_policy_document.cross_account_access : policy.json
+  ]
 }
 
 data "aws_iam_policy_document" "cross_account_access" {
@@ -34,35 +33,8 @@ data "aws_iam_policy_document" "cross_account_access" {
     ]
     resources = [
       "arn:aws:glue:${var.region}:${var.account_id}:catalog",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value}/*",
-    ]
-  }
-}
-
-# Policy to grant unified role access to ALL Glue databases
-data "aws_iam_policy_document" "cross_account_access_unified" {
-  statement {
-    sid = "SupersetReadAccess${join("", [for word in split("_", replace("unified_${var.env}", "/[^a-zA-Z0-9_]/", "")) : title(word)])}"
-    principals {
-      type        = "AWS"
-      identifiers = [for arn in var.superset_iam_role_arns : arn if endswith(arn, "unified_${var.env}")]
-    }
-    actions = [
-      "glue:BatchGetPartition",
-      "glue:GetDatabase",
-      "glue:GetDatabases",
-      "glue:GetPartition",
-      "glue:GetPartitions",
-      "glue:GetTable",
-      "glue:GetTables",
-      "glue:GetTableVersion",
-      "glue:GetTableVersions"
-    ]
-    resources = [
-      "arn:aws:glue:${var.region}:${var.account_id}:catalog",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/*",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/*/*",
+      "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value == "unified_${var.env}" ? "*" : each.value}",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value == "unified_${var.env}" ? "*" : each.value}/*",
     ]
   }
 }
