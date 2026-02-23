@@ -12,6 +12,7 @@ inputs = {
     "arn:aws:iam::066023111852:role/SupersetAthenaRead-platform_gc_notify_production",
     "arn:aws:iam::066023111852:role/SupersetAthenaRead-platform_gc_design_system_production",
     "arn:aws:iam::066023111852:role/SupersetAthenaRead-platform_support_production",
+    "arn:aws:iam::066023111852:role/SupersetAthenaRead-unified_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_aws_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_github_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_google_analytics_production",
@@ -20,6 +21,7 @@ inputs = {
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_notify_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_design_system_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_support_production",
-    "arn:aws:iam::257394494478:role/SupersetAthenaRead-bes_crm_salesforce_production"
+    "arn:aws:iam::257394494478:role/SupersetAthenaRead-bes_crm_salesforce_production",
+    "arn:aws:iam::257394494478:role/SupersetAthenaRead-unified_production",
   ]
 }

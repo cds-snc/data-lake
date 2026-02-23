@@ -11,6 +11,7 @@ inputs = {
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_github_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_google_analytics_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-operations_qualtrics_production",
+    "arn:aws:iam::257394494478:role/SupersetAthenaRead-unified_staging",
 
   ]
 }
