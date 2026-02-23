@@ -2,7 +2,7 @@
 # ETL jobs process the `Raw` bucket and store the transformed data here
 #
 module "transformed_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v10.10.2"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=v10.11.0"
   bucket_name       = "cds-data-lake-transformed-${var.env}"
   billing_tag_value = var.billing_tag_value
 
