@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.35.1](https://github.com/cds-snc/data-lake/compare/v1.35.0...v1.35.1) (2026-02-23)
+
+
+### Bug Fixes
+
+* staging shouldnt have prod unified creds ([#579](https://github.com/cds-snc/data-lake/issues/579)) ([cdaaefd](https://github.com/cds-snc/data-lake/commit/cdaaefd90f929fbc8360c381baabae9f83ebd05b))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#577](https://github.com/cds-snc/data-lake/issues/577)) ([37c0d2a](https://github.com/cds-snc/data-lake/commit/37c0d2a409d908d249e155b239ad606cb43119a4))
+* **deps:** update all patch dependencies ([#575](https://github.com/cds-snc/data-lake/issues/575)) ([658d05b](https://github.com/cds-snc/data-lake/commit/658d05bcd401cd6935c5ee2e543e96c5e3a2390a))
+* **deps:** update terraform github.com/cds-snc/terraform-modules to v10.11.0 ([#576](https://github.com/cds-snc/data-lake/issues/576)) ([1d12c14](https://github.com/cds-snc/data-lake/commit/1d12c14e19b5333e3ef23779cd55395a025ee537))
+* synced file(s) with cds-snc/site-reliability-engineering ([#571](https://github.com/cds-snc/data-lake/issues/571)) ([e92d663](https://github.com/cds-snc/data-lake/commit/e92d66397032658bc72e346ae8214b1e7a2779e6))
+* synced local '.github/workflows/export_github_data.yml' with remote 'tools/sre_file_sync/export_github_data.yml' ([e92d663](https://github.com/cds-snc/data-lake/commit/e92d66397032658bc72e346ae8214b1e7a2779e6))
+
 ## [1.35.0](https://github.com/cds-snc/data-lake/compare/v1.34.1...v1.35.0) (2026-02-23)
 
 
