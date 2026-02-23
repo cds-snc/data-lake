@@ -22,6 +22,5 @@ inputs = {
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_gc_design_system_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-platform_support_production",
     "arn:aws:iam::257394494478:role/SupersetAthenaRead-bes_crm_salesforce_production",
-    "arn:aws:iam::257394494478:role/SupersetAthenaRead-unified_production",
   ]
 }
