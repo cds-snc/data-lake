@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.35.0](https://github.com/cds-snc/data-lake/compare/v1.34.1...v1.35.0) (2026-02-23)
+
+
+### Features
+
+* Add unified IAM with all glue acces ([#574](https://github.com/cds-snc/data-lake/issues/574)) ([ffc2515](https://github.com/cds-snc/data-lake/commit/ffc2515991ea49d15daabcbcf83d50b289fcd684))
+
 ## [1.34.1](https://github.com/cds-snc/data-lake/compare/v1.34.0...v1.34.1) (2026-02-18)
 
 
