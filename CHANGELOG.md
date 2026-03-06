@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.36.0](https://github.com/cds-snc/data-lake/compare/v1.35.1...v1.36.0) (2026-03-06)
+
+
+### Features
+
+* updated gh workflow ([#587](https://github.com/cds-snc/data-lake/issues/587)) ([50c70aa](https://github.com/cds-snc/data-lake/commit/50c70aa138adc372980842c5202469623133b8fb))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#581](https://github.com/cds-snc/data-lake/issues/581)) ([ead7858](https://github.com/cds-snc/data-lake/commit/ead78587b261111db06525c757a793d35892a0fe))
+* **deps:** update all patch dependencies ([#582](https://github.com/cds-snc/data-lake/issues/582)) ([9124e34](https://github.com/cds-snc/data-lake/commit/9124e34ed95e174b8637331ef4e2ce13d91db50b))
+* **deps:** update cds-snc/security-tools action to v4 ([#583](https://github.com/cds-snc/data-lake/issues/583)) ([01f6109](https://github.com/cds-snc/data-lake/commit/01f6109aaaf3075b7d0889577b5fcf4bc77989cb))
+
 ## [1.35.1](https://github.com/cds-snc/data-lake/compare/v1.35.0...v1.35.1) (2026-02-23)
 
 
