@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.36.1](https://github.com/cds-snc/data-lake/compare/v1.36.0...v1.36.1) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#592](https://github.com/cds-snc/data-lake/issues/592)) ([5a6bd10](https://github.com/cds-snc/data-lake/commit/5a6bd10999373ea1ad9d0bed30daf427067ef50e))
+* **deps:** lock file maintenance ([#590](https://github.com/cds-snc/data-lake/issues/590)) ([fbb3ad4](https://github.com/cds-snc/data-lake/commit/fbb3ad49380b7d8e4d1692469bc5365c7472a7b8))
+* **deps:** update dependency boto3 to v1.42.59 ([#588](https://github.com/cds-snc/data-lake/issues/588)) ([96b4f5d](https://github.com/cds-snc/data-lake/commit/96b4f5d75b02549c47d1ae756ca5e712c6eb88f3))
+* synced file(s) with cds-snc/site-reliability-engineering ([#589](https://github.com/cds-snc/data-lake/issues/589)) ([1fbf537](https://github.com/cds-snc/data-lake/commit/1fbf537adeaa36343bb0518b9ca82045b6a353b3))
+* synced local '.github/workflows/export_github_data.yml' with remote 'tools/sre_file_sync/export_github_data.yml' ([1fbf537](https://github.com/cds-snc/data-lake/commit/1fbf537adeaa36343bb0518b9ca82045b6a353b3))
+
 ## [1.36.0](https://github.com/cds-snc/data-lake/compare/v1.35.1...v1.36.0) (2026-03-06)
 
 
