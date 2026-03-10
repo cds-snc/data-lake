@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-10-02T15:31:28.419000+00:00",
-        "LastModifiedOn": "2025-11-25T21:03:00.181000+00:00",
+        "LastModifiedOn": "2026-03-10T14:15:25.168000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -22,6 +22,7 @@
             "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
+            "--conf": "spark.eventLog.rolling.enabled=true",
             "--enable-glue-datacatalog": "true",
             "--job-bookmark-option": "job-bookmark-enable",
             "--job-language": "python",
@@ -354,7 +355,7 @@
                                 },
                                 {
                                     "Name": "metadata_since",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "author",
@@ -366,7 +367,7 @@
                                 },
                                 {
                                     "Name": "date",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "message",
@@ -760,7 +761,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-ADR-2025-10-08T07:26:25.332Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-1password-scim-bridge-2026-01-06T07:31:41.214Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -1305,7 +1306,7 @@
                                 },
                                 {
                                     "Name": "metadata_since",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "author",
@@ -1317,7 +1318,7 @@
                                 },
                                 {
                                     "Name": "date",
-                                    "Type": "string"
+                                    "Type": "date"
                                 },
                                 {
                                     "Name": "message",
@@ -1350,7 +1351,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Commits/cds-snc-cds-superset-2025-11-25T07:27:05.603Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Commits/cds-snc-1password-scim-bridge-2026-01-06T07:31:42.490Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
