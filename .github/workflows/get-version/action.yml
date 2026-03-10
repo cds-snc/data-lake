@@ -37,7 +37,7 @@ runs:
           shell: bash
           
         - name: Fail if no version set
-          if: !env.VERSION
+          if: env.VERSION == ''
           run: exit 1
           shell: bash  
 
