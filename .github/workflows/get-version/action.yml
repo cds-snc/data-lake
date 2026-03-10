@@ -8,7 +8,7 @@ inputs:
 outputs:
     version:
         description: "Version to deploy"
-        value: ${{ steps.get-version.outputs.version }}
+        value: ${{ steps.output-version.outputs.version }}
 
 runs:
     using: "composite"
@@ -37,7 +37,7 @@ runs:
           shell: bash
           
         - name: Fail if no version set
-          if: env.VERSION == ''
+          if: !env.VERSION
           run: exit 1
           shell: bash  
 

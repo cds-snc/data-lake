@@ -108,7 +108,7 @@ jobs:
         if: always()
         uses: cds-snc/sentinel-forward-data-action@0c349852373284a1130f87f8b91896132b0fc138
         with:
-          input_data: '{"product": "data-lake", "sha": "${{ github.ref_name }}", "version": "Infrastructure ${{ github.ref_name }}", "repository": "${{ github.repository }}", "environment": "production", "status": "${{ job.status }}"}'
+          input_data: '{"product": "data-lake", "sha": "${{ github.ref_name }}", "version": "Infrastructure ${{ env.VERSION }}", "repository": "${{ github.repository }}", "environment": "production", "status": "${{ job.status }}"}'
           log_type: CDS_Product_Deployment_Data
           log_analytics_workspace_id: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
           log_analytics_workspace_key: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}

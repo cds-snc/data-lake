@@ -58,8 +58,3 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
     ]
   }
 }
-
-data "aws_iam_policy" "admin" {
-  # checkov:skip=CKV_AWS_275:This policy is required for the Terraform apply
-  name = "AdministratorAccess"
-}
