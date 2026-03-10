@@ -5,9 +5,11 @@ concurrency:
   cancel-in-progress: false
 
 on:
-  release:
-    types:
-    - published
+  push:
+    branches:
+      - main
+    paths:
+      - "version.txt"  
 
 env:
   AWS_REGION: ca-central-1
@@ -37,11 +39,32 @@ permissions:
   contents: read
 
 jobs:
-  terragrunt-apply-production:
+  get-version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Get version to deploy
+        id: get-version
+        uses: ./.github/workflows/get-version
+        with:
+          is-tagged: "true"
+  terragrunt-apply-production:
+    runs-on: ubuntu-latest
+    needs: get-version
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ env.VERSION }}
+          persist-credentials: false
 
       - name: Setup terraform tools
         uses: cds-snc/terraform-tools-setup@5a19984bcb888600ad646e0caf5c6f4d0a54c165 # v1.2.0
@@ -49,7 +72,7 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
         with:
-          role-to-assume: arn:aws:iam::${{ vars.PROD_AWS_ACCOUNT_ID }}:role/data-lake-release
+          role-to-assume: arn:aws:iam::${{ vars.PROD_AWS_ACCOUNT_ID }}:role/data-lake-apply
           role-session-name: TFApply
           aws-region: ${{ env.AWS_REGION }}
 
@@ -85,7 +108,7 @@ jobs:
         if: always()
         uses: cds-snc/sentinel-forward-data-action@0c349852373284a1130f87f8b91896132b0fc138
         with:
-          input_data: '{"product": "data-lake", "sha": "${{ github.ref_name }}", "version": "Infrastructure ${{ github.ref_name }}", "repository": "${{ github.repository }}", "environment": "production", "status": "${{ job.status }}"}'
+          input_data: '{"product": "data-lake", "sha": "${{ github.ref_name }}", "version": "Infrastructure ${{ env.VERSION }}", "repository": "${{ github.repository }}", "environment": "production", "status": "${{ job.status }}"}'
           log_type: CDS_Product_Deployment_Data
           log_analytics_workspace_id: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
           log_analytics_workspace_key: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
