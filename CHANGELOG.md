@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.37.0](https://github.com/cds-snc/data-lake/compare/v1.36.1...v1.37.0) (2026-03-10)
+
+
+### Features
+
+* support GitHub PR revert of prod deploys ([#593](https://github.com/cds-snc/data-lake/issues/593)) ([7e150ef](https://github.com/cds-snc/data-lake/commit/7e150efadfa831749f9ead5b310dc71f88331c37))
+
+
+### Bug Fixes
+
+* check for empt VERSION ([#595](https://github.com/cds-snc/data-lake/issues/595)) ([c2fcbdd](https://github.com/cds-snc/data-lake/commit/c2fcbdd286707bdc81dbde30cafd5638c7035eb5))
+
 ## [1.36.1](https://github.com/cds-snc/data-lake/compare/v1.36.0...v1.36.1) (2026-03-10)
 
 
