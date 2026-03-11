@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.38.0](https://github.com/cds-snc/data-lake/compare/v1.37.0...v1.38.0) (2026-03-11)
+
+
+### Features
+
+* export ft_billing table to DW ([#596](https://github.com/cds-snc/data-lake/issues/596)) ([24c6a5a](https://github.com/cds-snc/data-lake/commit/24c6a5ab11e17087fc05b51d7246e559c51289df))
+
 ## [1.37.0](https://github.com/cds-snc/data-lake/compare/v1.36.1...v1.37.0) (2026-03-10)
 
 
