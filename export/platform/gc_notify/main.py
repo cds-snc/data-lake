@@ -32,6 +32,7 @@ EXPORT_TABLES = [
     "user_to_organisation",
     "user_to_service",
     "users",
+    "ft_billing",
 ]
 
 
