@@ -1,0 +1,67 @@
+{
+  "table_name": "ft_billing",
+  "partition_timestamp": "created_at",
+  "partition_cols": ["year", "month"],
+  "fields": [
+    {
+      "name": "bst_date",
+      "type": "timestamp"
+    },
+    {
+      "name": "template_id",
+      "type": "uuid"
+    },
+    {
+      "name": "service_id",
+      "type": "uuid"
+    },
+    {
+      "name": "notification_type",
+      "type": "notification_type"
+    },
+    {
+      "name": "provider",
+      "type": "varchar"
+    },
+    {
+      "name": "rate_multiplier",
+      "type": "numeric"
+    },
+    {
+      "name": "international",
+      "type": "boolean"
+    },
+    {
+      "name": "rate",
+      "type": "numeric"
+    },
+    {
+      "name": "billable_units",
+      "type": "integer"
+    },
+    {
+      "name": "notifications_sent",
+      "type": "integer"
+    },
+    {
+      "name": "updated_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "postage",
+      "type": "varchar"
+    },
+    {
+      "name": "sms_sending_vehicle",
+      "type": "varchar"
+    },
+    {
+      "name": "billing_total",
+      "type": "numeric"
+    }
+  ]
+}
