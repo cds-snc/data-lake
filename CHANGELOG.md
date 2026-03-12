@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.39.0](https://github.com/cds-snc/data-lake/compare/v1.38.0...v1.39.0) (2026-03-12)
+
+
+### Features
+
+* create ft billing glue table and expectations ([#598](https://github.com/cds-snc/data-lake/issues/598)) ([b58c033](https://github.com/cds-snc/data-lake/commit/b58c033f9b8a2c412adcc495fa2ede8f848d7047))
+
 ## [1.38.0](https://github.com/cds-snc/data-lake/compare/v1.37.0...v1.38.0) (2026-03-11)
 
 
