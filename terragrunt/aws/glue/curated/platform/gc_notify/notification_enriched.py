@@ -224,15 +224,13 @@ def write_to_curated(df: SparkDataFrame, table_name: str):
         # Drop table if exists to avoid schema drift
         spark.sql(f"DROP TABLE IF EXISTS {DATABASE_NAME_TRANSFORMED}.{table_name}")
         # Create the table in Glue Data Catalog using the original DataFrame's schema
-        spark.sql(
-            f"""
+        spark.sql(f"""
             CREATE TABLE IF NOT EXISTS {DATABASE_NAME_TRANSFORMED}.{table_name}
             USING PARQUET
             LOCATION '{s3_path}'
             PARTITIONED BY (year, month)
             AS SELECT * FROM temp_table_for_registration WHERE 1=0
-        """
-        )
+        """)
 
         # Refresh partitions to ensure Glue knows about the new partitions
         spark.sql(f"MSCK REPAIR TABLE {DATABASE_NAME_TRANSFORMED}.{table_name}")

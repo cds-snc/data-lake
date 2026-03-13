@@ -13,7 +13,6 @@ from awsglue.utils import getResolvedOptions
 import great_expectations as gx
 import os
 
-
 args = getResolvedOptions(
     sys.argv,
     [

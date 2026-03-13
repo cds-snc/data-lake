@@ -31,7 +31,6 @@ from pyspark.sql.types import (
 
 import great_expectations as gx
 
-
 args = getResolvedOptions(
     sys.argv,
     [
