@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.39.1](https://github.com/cds-snc/data-lake/compare/v1.39.0...v1.39.1) (2026-03-13)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency black to v26 [security] ([#602](https://github.com/cds-snc/data-lake/issues/602)) ([8c524d4](https://github.com/cds-snc/data-lake/commit/8c524d4ed1a4041b1367aa21f1fc7a92712b893b))
+
 ## [1.39.0](https://github.com/cds-snc/data-lake/compare/v1.38.0...v1.39.0) (2026-03-12)
 
 
