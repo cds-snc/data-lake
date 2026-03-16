@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.39.2](https://github.com/cds-snc/data-lake/compare/v1.39.1...v1.39.2) (2026-03-16)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#608](https://github.com/cds-snc/data-lake/issues/608)) ([2eb32eb](https://github.com/cds-snc/data-lake/commit/2eb32eb9866be4178ef1c074752e31e36319bf6f))
+* **deps:** update all non-major github action dependencies ([#606](https://github.com/cds-snc/data-lake/issues/606)) ([150560c](https://github.com/cds-snc/data-lake/commit/150560c5cfc84aef473bc9bab1def9e7d16f3b50))
+* **deps:** update all patch dependencies ([#605](https://github.com/cds-snc/data-lake/issues/605)) ([b4e3e48](https://github.com/cds-snc/data-lake/commit/b4e3e48c48fdb40758935c1dab8466d3cd8d25fa))
+* **deps:** update dependency google-auth to v2.49.0 ([#607](https://github.com/cds-snc/data-lake/issues/607)) ([89e56ef](https://github.com/cds-snc/data-lake/commit/89e56ef89fc742006cfaf23bd23c5e1a598dc942))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to c4a714f ([#604](https://github.com/cds-snc/data-lake/issues/604)) ([27af341](https://github.com/cds-snc/data-lake/commit/27af3414e5bfcd1fd5ec401fe51734518e129d48))
+
 ## [1.39.1](https://github.com/cds-snc/data-lake/compare/v1.39.0...v1.39.1) (2026-03-13)
 
 
