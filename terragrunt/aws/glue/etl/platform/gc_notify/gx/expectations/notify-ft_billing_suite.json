@@ -1,0 +1,140 @@
+{
+  "expectation_suite_name": "notify-ft_billing_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "bst_date",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]",
+          "TimestampType",
+          "timestamp"
+        ]
+      },
+      "meta": {
+        "description": "bst_date should be a timestamp"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "template_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "template_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "service_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "service_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "notification_type",
+        "value_set": ["sms", "email"]
+      },
+      "meta": {
+        "description": "notification_type should be either 'sms' or 'email'"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "provider",
+        "regex": ".*"
+      },
+      "meta": {
+        "description": "provider should be string-like"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "rate_multiplier",
+        "min_value": 0
+      },
+      "meta": {
+        "description": "rate_multiplier should be non-negative"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "international",
+        "value_set": [
+          true,
+          false
+        ]
+      },
+      "meta": {
+        "description": "international should be boolean-like values"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "rate",
+        "min_value": 0
+      },
+      "meta": {
+        "description": "rate should be non-negative"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "billable_units",
+        "min_value": 0
+      },
+      "meta": {
+        "description": "billable_units should be non-negative"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "notifications_sent",
+        "min_value": 0
+      },
+      "meta": {
+        "description": "notifications_sent should be non-negative"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "created_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]",
+          "TimestampType",
+          "timestamp"
+        ]
+      },
+      "meta": {
+        "description": "created_at should be a timestamp"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "sms_sending_vehicle",
+        "value_set": ["long_code", "short_code"]
+      },
+      "meta": {
+        "description": "sms_sending_vehicle should be either 'long_code' or 'short_code'"
+      }
+    }
+  ]
+}

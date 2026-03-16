@@ -1,5 +1,4 @@
 locals {
-  data_lake_release            = "data-lake-release"
   data_lake_github_data_export = "data-lake-github-data-export"
 }
 
@@ -11,14 +10,9 @@ locals {
 module "github_workflow_roles" {
   count = var.env == "production" ? 1 : 0
 
-  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v10.10.2"
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v10.11.0"
   billing_tag_value = var.billing_tag_value
   roles = [
-    {
-      name      = local.data_lake_release
-      repo_name = "data-lake"
-      claim     = "ref:refs/tags/v*" # Version tags prefixed with v
-    },
     {
       name      = local.data_lake_github_data_export
       repo_name = "*" # Allow any CDS repo to use this role
@@ -63,22 +57,4 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
       "${var.raw_bucket_arn}/operations/github/*"
     ]
   }
-}
-
-#
-# Runs after a new GitHub release is created to update Prod infrastructure
-#
-resource "aws_iam_role_policy_attachment" "data_lake_release" {
-  count = var.env == "production" ? 1 : 0
-
-  role       = local.data_lake_release
-  policy_arn = data.aws_iam_policy.admin.arn
-  depends_on = [
-    module.github_workflow_roles[0]
-  ]
-}
-
-data "aws_iam_policy" "admin" {
-  # checkov:skip=CKV_AWS_275:This policy is required for the Terraform apply
-  name = "AdministratorAccess"
 }

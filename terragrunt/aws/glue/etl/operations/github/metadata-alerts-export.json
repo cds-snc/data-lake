@@ -1,0 +1,1490 @@
+{
+    "Job": {
+        "Name": "Operations / Github / Metadata Alerts export",
+        "JobMode": "VISUAL",
+        "JobRunQueuingEnabled": false,
+        "Description": "",
+        "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
+        "CreatedOn": "2026-03-10T14:13:13.870000+00:00",
+        "LastModifiedOn": "2026-03-10T14:17:03.845000+00:00",
+        "ExecutionProperty": {
+            "MaxConcurrentRuns": 1
+        },
+        "Command": {
+            "Name": "glueetl",
+            "ScriptLocation": "s3://aws-glue-assets-739275439843-ca-central-1/scripts/Operations /Operations / Github /Operations / Github / Metadata Alerts export.py",
+            "PythonVersion": "3"
+        },
+        "DefaultArguments": {
+            "--enable-metrics": "true",
+            "--enable-spark-ui": "true",
+            "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+            "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
+            "--enable-job-insights": "true",
+            "--enable-observability-metrics": "true",
+            "--conf": "spark.eventLog.rolling.enabled=true",
+            "--enable-glue-datacatalog": "true",
+            "--job-bookmark-option": "job-bookmark-enable",
+            "--job-language": "python",
+            "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/"
+        },
+        "MaxRetries": 0,
+        "AllocatedCapacity": 5,
+        "Timeout": 480,
+        "MaxCapacity": 5.0,
+        "WorkerType": "G.1X",
+        "NumberOfWorkers": 5,
+        "GlueVersion": "5.0",
+        "CodeGenConfigurationNodes": {
+            "node-1772211819212": {
+                "SparkSQL": {
+                    "Name": "SQL Query",
+                    "Inputs": [
+                        "node-1772208119883"
+                    ],
+                    "SqlQuery": "SELECT\n  *,\n  coalesce(size(dependabot_alerts), 0) AS n_alerts\nFROM myDataSource",
+                    "SqlAliases": [
+                        {
+                            "From": "node-1772208119883",
+                            "Alias": "myDataSource"
+                        }
+                    ],
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "dependabot_alerts",
+                                    "Type": "array<null>"
+                                },
+                                {
+                                    "Name": "n_alerts",
+                                    "Type": "int"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1772212037915": {
+                "S3GlueParquetTarget": {
+                    "Name": "Amazon S3",
+                    "Inputs": [
+                        "node-1772209834345"
+                    ],
+                    "PartitionKeys": [],
+                    "Path": "s3://cds-data-lake-transformed-production/operations/github/DepndabotAlerts/",
+                    "Compression": "snappy",
+                    "NumberTargetPartitions": "0",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "LOG",
+                        "Table": "operations_github_dependabot",
+                        "Database": "operations_github_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": true,
+                        "EvaluationContext": "EvaluateDataQuality_node1772208049273"
+                    }
+                }
+            },
+            "node-1772209689843": {
+                "DynamicTransform": {
+                    "Name": "Explode Array Or Map Into Rows",
+                    "TransformName": "gs_explode",
+                    "Inputs": [
+                        "node-1772208650979"
+                    ],
+                    "Parameters": [
+                        {
+                            "Name": "colName",
+                            "Type": "str",
+                            "Value": [
+                                "alert_cwes"
+                            ],
+                            "IsOptional": false
+                        },
+                        {
+                            "Name": "newCol",
+                            "Type": "str",
+                            "Value": [
+                                "cwes"
+                            ],
+                            "IsOptional": false
+                        }
+                    ],
+                    "FunctionName": "gs_explode",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "dependabot_alerts",
+                                    "Type": "array<struct<cvss:struct<vector_string:string,score:struct<int:int,double:double>>,created_at:string,ghsa_id:string,severity:string,dependency:struct<manifest_path:string,scope:string,package:struct<name:string,ecosystem:string>,relationship:string>,cve_id:string,cwes:array<struct<cwe_id:string,name:string>>,id:int>>"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "n_alerts",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "alert_cvss_vector_string",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cvss_score_int",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "alert_cvss_score_double",
+                                    "Type": "double"
+                                },
+                                {
+                                    "Name": "alert_created_at",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_ghsa_id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_severity",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_manifest_path",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_scope",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_package_name",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_package_ecosystem",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_relationship",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cve_id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cwes",
+                                    "Type": "array<struct<cwe_id:string,name:string>>"
+                                },
+                                {
+                                    "Name": "alert_id",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "cw",
+                                    "Type": "struct<cwe_id:string,name:string>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1772208650979": {
+                "DynamicTransform": {
+                    "Name": "Flatten",
+                    "TransformName": "gs_flatten",
+                    "Inputs": [
+                        "node-1772208439545"
+                    ],
+                    "Parameters": [
+                        {
+                            "Name": "separator",
+                            "Type": "str",
+                            "Value": [
+                                "_"
+                            ],
+                            "IsOptional": true
+                        }
+                    ],
+                    "FunctionName": "gs_flatten",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "dependabot_alerts",
+                                    "Type": "array<struct<cvss:struct<vector_string:string,score:struct<int:int,double:double>>,created_at:string,ghsa_id:string,severity:string,dependency:struct<manifest_path:string,scope:string,package:struct<name:string,ecosystem:string>,relationship:string>,cve_id:string,cwes:array<struct<cwe_id:string,name:string>>,id:int>>"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "n_alerts",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "alert_cvss_vector_string",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cvss_score_int",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "alert_cvss_score_double",
+                                    "Type": "double"
+                                },
+                                {
+                                    "Name": "alert_created_at",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_ghsa_id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_severity",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_manifest_path",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_scope",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_package_name",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_package_ecosystem",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_relationship",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cve_id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cwes",
+                                    "Type": "array<struct<cwe_id:string,name:string>>"
+                                },
+                                {
+                                    "Name": "alert_id",
+                                    "Type": "int"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1772209834345": {
+                "ApplyMapping": {
+                    "Name": "Change Schema",
+                    "Inputs": [
+                        "node-1772212793309"
+                    ],
+                    "Mapping": [
+                        {
+                            "ToKey": "metadata_owner",
+                            "FromPath": [
+                                "metadata_owner"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "dependabot_alerts",
+                            "FromPath": [
+                                "dependabot_alerts"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "metadata_repo",
+                            "FromPath": [
+                                "metadata_repo"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_query",
+                            "FromPath": [
+                                "metadata_query"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "n_alerts",
+                            "FromPath": [
+                                "n_alerts"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "alert_cvss_vector_string",
+                            "FromPath": [
+                                "alert_cvss_vector_string"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_cvss_score_int",
+                            "FromPath": [
+                                "alert_cvss_score_int"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_cvss_score_double",
+                            "FromPath": [
+                                "alert_cvss_score_double"
+                            ],
+                            "FromType": "double",
+                            "ToType": "double",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_created_at",
+                            "FromPath": [
+                                "alert_created_at"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_ghsa_id",
+                            "FromPath": [
+                                "alert_ghsa_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_severity",
+                            "FromPath": [
+                                "alert_severity"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_dependency_manifest_path",
+                            "FromPath": [
+                                "alert_dependency_manifest_path"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_dependency_scope",
+                            "FromPath": [
+                                "alert_dependency_scope"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_dependency_package_name",
+                            "FromPath": [
+                                "alert_dependency_package_name"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_dependency_package_ecosystem",
+                            "FromPath": [
+                                "alert_dependency_package_ecosystem"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_dependency_relationship",
+                            "FromPath": [
+                                "alert_dependency_relationship"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_cve_id",
+                            "FromPath": [
+                                "alert_cve_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "alert_cwes",
+                            "FromPath": [
+                                "alert_cwes"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "alert_id",
+                            "FromPath": [
+                                "alert_id"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "cwes_cwe_id",
+                            "FromPath": [
+                                "cwes_cwe_id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "cwes_name",
+                            "FromPath": [
+                                "cwes_name"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        }
+                    ]
+                }
+            },
+            "node-1772212793309": {
+                "DynamicTransform": {
+                    "Name": "Flatten",
+                    "TransformName": "gs_flatten",
+                    "Inputs": [
+                        "node-1772209689843"
+                    ],
+                    "Parameters": [
+                        {
+                            "Name": "separator",
+                            "Type": "str",
+                            "Value": [
+                                "_"
+                            ],
+                            "IsOptional": true
+                        }
+                    ],
+                    "FunctionName": "gs_flatten",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "dependabot_alerts",
+                                    "Type": "array<struct<cvss:struct<vector_string:string,score:struct<int:int,double:double>>,created_at:string,ghsa_id:string,severity:string,dependency:struct<manifest_path:string,scope:string,package:struct<name:string,ecosystem:string>,relationship:string>,cve_id:string,cwes:array<struct<cwe_id:string,name:string>>,id:int>>"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "n_alerts",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "alert_cvss_vector_string",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cvss_score_int",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "alert_cvss_score_double",
+                                    "Type": "double"
+                                },
+                                {
+                                    "Name": "alert_created_at",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_ghsa_id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_severity",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_manifest_path",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_scope",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_package_name",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_package_ecosystem",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_dependency_relationship",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cve_id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "alert_cwes",
+                                    "Type": "array<struct<cwe_id:string,name:string>>"
+                                },
+                                {
+                                    "Name": "alert_id",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "cwes_cwe_id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "cwes_name",
+                                    "Type": "string"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1772211879524": {
+                "Route": {
+                    "Name": "Conditional Router",
+                    "Inputs": [
+                        "node-1772211819212"
+                    ],
+                    "GroupFiltersList": [
+                        {
+                            "GroupName": "default_group",
+                            "Filters": [],
+                            "LogicalOperator": "AND"
+                        },
+                        {
+                            "GroupName": "NoAlerts",
+                            "Filters": [
+                                {
+                                    "Operation": "EQ",
+                                    "Negated": false,
+                                    "Values": [
+                                        {
+                                            "Type": "COLUMNEXTRACTED",
+                                            "Value": [
+                                                "n_alerts"
+                                            ]
+                                        },
+                                        {
+                                            "Type": "CONSTANT",
+                                            "Value": [
+                                                "0"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "LogicalOperator": "AND"
+                        }
+                    ]
+                }
+            },
+            "node-1772211879853": {
+                "SelectFromCollection": {
+                    "Name": "NoAlerts",
+                    "Inputs": [
+                        "node-1772211879524"
+                    ],
+                    "Index": 0
+                }
+            },
+            "node-1773067446349": {
+                "ApplyMapping": {
+                    "Name": "Change Schema",
+                    "Inputs": [
+                        "node-1773067330596"
+                    ],
+                    "Mapping": [
+                        {
+                            "ToKey": "metadata_owner",
+                            "FromPath": [
+                                "metadata_owner"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_repo",
+                            "FromPath": [
+                                "metadata_repo"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "metadata_query",
+                            "FromPath": [
+                                "metadata_query"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "code_scanning_alerts",
+                            "FromPath": [
+                                "code_scanning_alerts"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "number",
+                            "FromPath": [
+                                "sa.number"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "created_at",
+                            "FromPath": [
+                                "sa.created_at"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "updated_at",
+                            "FromPath": [
+                                "sa.updated_at"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "url",
+                            "FromPath": [
+                                "sa.url"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "html_url",
+                            "FromPath": [
+                                "sa.html_url"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "state",
+                            "FromPath": [
+                                "sa.state"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "fixed_at",
+                            "FromPath": [
+                                "sa.fixed_at"
+                            ],
+                            "FromType": "null",
+                            "ToType": "null",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "dismissed_by",
+                            "FromPath": [
+                                "sa.dismissed_by"
+                            ],
+                            "FromType": "null",
+                            "ToType": "null",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "dismissed_at",
+                            "FromPath": [
+                                "sa.dismissed_at"
+                            ],
+                            "FromType": "null",
+                            "ToType": "null",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "dismissed_reason",
+                            "FromPath": [
+                                "sa.dismissed_reason"
+                            ],
+                            "FromType": "null",
+                            "ToType": "null",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "dismissed_comment",
+                            "FromPath": [
+                                "sa.dismissed_comment"
+                            ],
+                            "FromType": "null",
+                            "ToType": "null",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "rule.id",
+                            "FromPath": [
+                                "sa.rule.id"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "rule.severity",
+                            "FromPath": [
+                                "sa.rule.severity"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "rule.description",
+                            "FromPath": [
+                                "sa.rule.description"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "rule.name",
+                            "FromPath": [
+                                "sa.rule.name"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "rule.tags",
+                            "FromPath": [
+                                "sa.rule.tags"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "rule.full_description",
+                            "FromPath": [
+                                "sa.rule.full_description"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "rule.help",
+                            "FromPath": [
+                                "sa.rule.help"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "rule.security_severity_level",
+                            "FromPath": [
+                                "sa.rule.security_severity_level"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tool.name",
+                            "FromPath": [
+                                "sa.tool.name"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tool.guid",
+                            "FromPath": [
+                                "sa.tool.guid"
+                            ],
+                            "FromType": "null",
+                            "ToType": "null",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "tool.version",
+                            "FromPath": [
+                                "sa.tool.version"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.ref",
+                            "FromPath": [
+                                "sa.most_recent_instance.ref"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.analysis_key",
+                            "FromPath": [
+                                "sa.most_recent_instance.analysis_key"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.environment",
+                            "FromPath": [
+                                "sa.most_recent_instance.environment"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.category",
+                            "FromPath": [
+                                "sa.most_recent_instance.category"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.state",
+                            "FromPath": [
+                                "sa.most_recent_instance.state"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.commit_sha",
+                            "FromPath": [
+                                "sa.most_recent_instance.commit_sha"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.message.text",
+                            "FromPath": [
+                                "sa.most_recent_instance.message.text"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.location.path",
+                            "FromPath": [
+                                "sa.most_recent_instance.location.path"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.location.start_line",
+                            "FromPath": [
+                                "sa.most_recent_instance.location.start_line"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.location.end_line",
+                            "FromPath": [
+                                "sa.most_recent_instance.location.end_line"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.location.start_column",
+                            "FromPath": [
+                                "sa.most_recent_instance.location.start_column"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.location.end_column",
+                            "FromPath": [
+                                "sa.most_recent_instance.location.end_column"
+                            ],
+                            "FromType": "int",
+                            "ToType": "int",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "most_recent_instance.classifications",
+                            "FromPath": [
+                                "sa.most_recent_instance.classifications"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        },
+                        {
+                            "ToKey": "instances_url",
+                            "FromPath": [
+                                "sa.instances_url"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "dismissal_approved_by",
+                            "FromPath": [
+                                "sa.dismissal_approved_by"
+                            ],
+                            "FromType": "null",
+                            "ToType": "null",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "assignees",
+                            "FromPath": [
+                                "sa.assignees"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
+                            "Dropped": true
+                        }
+                    ]
+                }
+            },
+            "node-1772208439545": {
+                "DynamicTransform": {
+                    "Name": "Explode Array Or Map Into Rows",
+                    "TransformName": "gs_explode",
+                    "Inputs": [
+                        "node-1772211879806"
+                    ],
+                    "Parameters": [
+                        {
+                            "Name": "colName",
+                            "Type": "str",
+                            "Value": [
+                                "dependabot_alerts"
+                            ],
+                            "IsOptional": false
+                        },
+                        {
+                            "Name": "newCol",
+                            "Type": "str",
+                            "Value": [
+                                "alert"
+                            ],
+                            "IsOptional": false
+                        },
+                        {
+                            "Name": "outer",
+                            "Type": "bool",
+                            "Value": [
+                                "false"
+                            ],
+                            "IsOptional": true
+                        }
+                    ],
+                    "FunctionName": "gs_explode",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "dependabot_alerts",
+                                    "Type": "array<struct<cvss:struct<vector_string:string,score:struct<int:int,double:double>>,created_at:string,ghsa_id:string,severity:string,dependency:struct<manifest_path:string,scope:string,package:struct<name:string,ecosystem:string>,relationship:string>,cve_id:string,cwes:array<struct<cwe_id:string,name:string>>,id:int>>"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "n_alerts",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "da",
+                                    "Type": "struct<cvss:struct<vector_string:string,score:struct<int:int,double:double>>,created_at:string,ghsa_id:string,severity:string,dependency:struct<manifest_path:string,scope:string,package:struct<name:string,ecosystem:string>,relationship:string>,cve_id:string,cwes:array<struct<cwe_id:string,name:string>>,id:int>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1773067058100": {
+                "S3JsonSource": {
+                    "Name": "CodeScanningAlerts",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/github/CodeScanningAlerts/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": false,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/CodeScanningAlerts/cds-snc-data-lake-2026-03-07T07:30:38.288Z.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "code_scanning_alerts",
+                                    "Type": "array<struct<number:int,created_at:string,updated_at:string,url:string,html_url:string,state:string,fixed_at:null,dismissed_by:null,dismissed_at:null,dismissed_reason:null,dismissed_comment:null,rule:struct<id:string,severity:string,description:string,name:string,tags:array<string>,full_description:string,help:string,security_severity_level:string>,tool:struct<name:string,guid:null,version:string>,most_recent_instance:struct<ref:string,analysis_key:string,environment:string,category:string,state:string,commit_sha:string,message:struct<text:string>,location:struct<path:string,start_line:int,end_line:int,start_column:int,end_column:int>,classifications:array<null>>,instances_url:string,dismissal_approved_by:null,assignees:array<null>>>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1772211879806": {
+                "SelectFromCollection": {
+                    "Name": "default_group",
+                    "Inputs": [
+                        "node-1772211879524"
+                    ],
+                    "Index": 0
+                }
+            },
+            "node-1773067852667": {
+                "S3GlueParquetTarget": {
+                    "Name": "Amazon S3",
+                    "Inputs": [
+                        "node-1773067446349"
+                    ],
+                    "PartitionKeys": [],
+                    "Path": "s3://cds-data-lake-transformed-production/operations/github/CodeScanningAlerts/",
+                    "Compression": "snappy",
+                    "NumberTargetPartitions": "0",
+                    "SchemaChangePolicy": {
+                        "EnableUpdateCatalog": true,
+                        "UpdateBehavior": "LOG",
+                        "Table": "operations_github_code_scanning_alerts",
+                        "Database": "operations_github_production"
+                    },
+                    "AutoDataQuality": {
+                        "IsEnabled": true,
+                        "EvaluationContext": "EvaluateDataQuality_node1773067047944"
+                    }
+                }
+            },
+            "node-1772208119883": {
+                "S3JsonSource": {
+                    "Name": "Dependabot",
+                    "Paths": [
+                        "s3://cds-data-lake-raw-production/operations/github/DependabotAlerts/"
+                    ],
+                    "Exclusions": [],
+                    "Recurse": true,
+                    "AdditionalOptions": {
+                        "EnableSamplePath": true,
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/DependabotAlerts/cds-snc-cds-superset-2025-12-05T07:27:48.868Z.json"
+                    },
+                    "JsonPath": "",
+                    "Multiline": false,
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "dependabot_alerts",
+                                    "Type": "array<null>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1773067254040": {
+                "DynamicTransform": {
+                    "Name": "Explode Array Or Map Into Rows",
+                    "TransformName": "gs_explode",
+                    "Inputs": [
+                        "node-1773067058100"
+                    ],
+                    "Parameters": [
+                        {
+                            "Name": "colName",
+                            "Type": "str",
+                            "Value": [
+                                "code_scanning_alerts"
+                            ],
+                            "IsOptional": false
+                        },
+                        {
+                            "Name": "newCol",
+                            "Type": "str",
+                            "Value": [
+                                "sa"
+                            ],
+                            "IsOptional": false
+                        }
+                    ],
+                    "FunctionName": "gs_explode",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "code_scanning_alerts",
+                                    "Type": "array<struct<number:int,created_at:string,updated_at:string,url:string,html_url:string,state:string,fixed_at:null,dismissed_by:null,dismissed_at:null,dismissed_reason:null,dismissed_comment:null,rule:struct<id:string,severity:string,description:string,name:string,tags:array<string>,full_description:string,help:string,security_severity_level:string>,tool:struct<name:string,guid:null,version:string>,most_recent_instance:struct<ref:string,analysis_key:string,environment:string,category:string,state:string,commit_sha:string,message:struct<text:string>,location:struct<path:string,start_line:int,end_line:int,start_column:int,end_column:int>,classifications:array<null>>,instances_url:string,dismissal_approved_by:null,assignees:array<null>>>"
+                                },
+                                {
+                                    "Name": "sa",
+                                    "Type": "struct<number:int,created_at:string,updated_at:string,url:string,html_url:string,state:string,fixed_at:null,dismissed_by:null,dismissed_at:null,dismissed_reason:null,dismissed_comment:null,rule:struct<id:string,severity:string,description:string,name:string,tags:array<string>,full_description:string,help:string,security_severity_level:string>,tool:struct<name:string,guid:null,version:string>,most_recent_instance:struct<ref:string,analysis_key:string,environment:string,category:string,state:string,commit_sha:string,message:struct<text:string>,location:struct<path:string,start_line:int,end_line:int,start_column:int,end_column:int>,classifications:array<null>>,instances_url:string,dismissal_approved_by:null,assignees:array<null>>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            "node-1773067330596": {
+                "DynamicTransform": {
+                    "Name": "Flatten",
+                    "TransformName": "gs_flatten",
+                    "Inputs": [
+                        "node-1773067254040"
+                    ],
+                    "Parameters": [],
+                    "FunctionName": "gs_flatten",
+                    "Path": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
+                    "Version": "1.0.0",
+                    "OutputSchemas": [
+                        {
+                            "Columns": [
+                                {
+                                    "Name": "metadata_owner",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_repo",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "metadata_query",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "code_scanning_alerts",
+                                    "Type": "array<struct<number:int,created_at:string,updated_at:string,url:string,html_url:string,state:string,fixed_at:null,dismissed_by:null,dismissed_at:null,dismissed_reason:null,dismissed_comment:null,rule:struct<id:string,severity:string,description:string,name:string,tags:array<string>,full_description:string,help:string,security_severity_level:string>,tool:struct<name:string,guid:null,version:string>,most_recent_instance:struct<ref:string,analysis_key:string,environment:string,category:string,state:string,commit_sha:string,message:struct<text:string>,location:struct<path:string,start_line:int,end_line:int,start_column:int,end_column:int>,classifications:array<null>>,instances_url:string,dismissal_approved_by:null,assignees:array<null>>>"
+                                },
+                                {
+                                    "Name": "sa.number",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "sa.created_at",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.updated_at",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.url",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.html_url",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.state",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.fixed_at",
+                                    "Type": "null"
+                                },
+                                {
+                                    "Name": "sa.dismissed_by",
+                                    "Type": "null"
+                                },
+                                {
+                                    "Name": "sa.dismissed_at",
+                                    "Type": "null"
+                                },
+                                {
+                                    "Name": "sa.dismissed_reason",
+                                    "Type": "null"
+                                },
+                                {
+                                    "Name": "sa.dismissed_comment",
+                                    "Type": "null"
+                                },
+                                {
+                                    "Name": "sa.rule.id",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.rule.severity",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.rule.description",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.rule.name",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.rule.tags",
+                                    "Type": "array<string>"
+                                },
+                                {
+                                    "Name": "sa.rule.full_description",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.rule.help",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.rule.security_severity_level",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.tool.name",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.tool.guid",
+                                    "Type": "null"
+                                },
+                                {
+                                    "Name": "sa.tool.version",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.ref",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.analysis_key",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.environment",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.category",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.state",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.commit_sha",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.message.text",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.location.path",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.location.start_line",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.location.end_line",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.location.start_column",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.location.end_column",
+                                    "Type": "int"
+                                },
+                                {
+                                    "Name": "sa.most_recent_instance.classifications",
+                                    "Type": "array<null>"
+                                },
+                                {
+                                    "Name": "sa.instances_url",
+                                    "Type": "string"
+                                },
+                                {
+                                    "Name": "sa.dismissal_approved_by",
+                                    "Type": "null"
+                                },
+                                {
+                                    "Name": "sa.assignees",
+                                    "Type": "array<null>"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "ExecutionClass": "STANDARD"
+    }
+}

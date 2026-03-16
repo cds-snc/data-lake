@@ -1,5 +1,143 @@
 # Changelog
 
+## [1.39.1](https://github.com/cds-snc/data-lake/compare/v1.39.0...v1.39.1) (2026-03-13)
+
+
+### Miscellaneous Chores
+
+* **deps:** update dependency black to v26 [security] ([#602](https://github.com/cds-snc/data-lake/issues/602)) ([8c524d4](https://github.com/cds-snc/data-lake/commit/8c524d4ed1a4041b1367aa21f1fc7a92712b893b))
+
+## [1.39.0](https://github.com/cds-snc/data-lake/compare/v1.38.0...v1.39.0) (2026-03-12)
+
+
+### Features
+
+* create ft billing glue table and expectations ([#598](https://github.com/cds-snc/data-lake/issues/598)) ([b58c033](https://github.com/cds-snc/data-lake/commit/b58c033f9b8a2c412adcc495fa2ede8f848d7047))
+
+## [1.38.0](https://github.com/cds-snc/data-lake/compare/v1.37.0...v1.38.0) (2026-03-11)
+
+
+### Features
+
+* export ft_billing table to DW ([#596](https://github.com/cds-snc/data-lake/issues/596)) ([24c6a5a](https://github.com/cds-snc/data-lake/commit/24c6a5ab11e17087fc05b51d7246e559c51289df))
+
+## [1.37.0](https://github.com/cds-snc/data-lake/compare/v1.36.1...v1.37.0) (2026-03-10)
+
+
+### Features
+
+* support GitHub PR revert of prod deploys ([#593](https://github.com/cds-snc/data-lake/issues/593)) ([7e150ef](https://github.com/cds-snc/data-lake/commit/7e150efadfa831749f9ead5b310dc71f88331c37))
+
+
+### Bug Fixes
+
+* check for empt VERSION ([#595](https://github.com/cds-snc/data-lake/issues/595)) ([c2fcbdd](https://github.com/cds-snc/data-lake/commit/c2fcbdd286707bdc81dbde30cafd5638c7035eb5))
+
+## [1.36.1](https://github.com/cds-snc/data-lake/compare/v1.36.0...v1.36.1) (2026-03-10)
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#592](https://github.com/cds-snc/data-lake/issues/592)) ([5a6bd10](https://github.com/cds-snc/data-lake/commit/5a6bd10999373ea1ad9d0bed30daf427067ef50e))
+* **deps:** lock file maintenance ([#590](https://github.com/cds-snc/data-lake/issues/590)) ([fbb3ad4](https://github.com/cds-snc/data-lake/commit/fbb3ad49380b7d8e4d1692469bc5365c7472a7b8))
+* **deps:** update dependency boto3 to v1.42.59 ([#588](https://github.com/cds-snc/data-lake/issues/588)) ([96b4f5d](https://github.com/cds-snc/data-lake/commit/96b4f5d75b02549c47d1ae756ca5e712c6eb88f3))
+* synced file(s) with cds-snc/site-reliability-engineering ([#589](https://github.com/cds-snc/data-lake/issues/589)) ([1fbf537](https://github.com/cds-snc/data-lake/commit/1fbf537adeaa36343bb0518b9ca82045b6a353b3))
+* synced local '.github/workflows/export_github_data.yml' with remote 'tools/sre_file_sync/export_github_data.yml' ([1fbf537](https://github.com/cds-snc/data-lake/commit/1fbf537adeaa36343bb0518b9ca82045b6a353b3))
+
+## [1.36.0](https://github.com/cds-snc/data-lake/compare/v1.35.1...v1.36.0) (2026-03-06)
+
+
+### Features
+
+* updated gh workflow ([#587](https://github.com/cds-snc/data-lake/issues/587)) ([50c70aa](https://github.com/cds-snc/data-lake/commit/50c70aa138adc372980842c5202469623133b8fb))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all non-major github action dependencies ([#581](https://github.com/cds-snc/data-lake/issues/581)) ([ead7858](https://github.com/cds-snc/data-lake/commit/ead78587b261111db06525c757a793d35892a0fe))
+* **deps:** update all patch dependencies ([#582](https://github.com/cds-snc/data-lake/issues/582)) ([9124e34](https://github.com/cds-snc/data-lake/commit/9124e34ed95e174b8637331ef4e2ce13d91db50b))
+* **deps:** update cds-snc/security-tools action to v4 ([#583](https://github.com/cds-snc/data-lake/issues/583)) ([01f6109](https://github.com/cds-snc/data-lake/commit/01f6109aaaf3075b7d0889577b5fcf4bc77989cb))
+
+## [1.35.1](https://github.com/cds-snc/data-lake/compare/v1.35.0...v1.35.1) (2026-02-23)
+
+
+### Bug Fixes
+
+* staging shouldnt have prod unified creds ([#579](https://github.com/cds-snc/data-lake/issues/579)) ([cdaaefd](https://github.com/cds-snc/data-lake/commit/cdaaefd90f929fbc8360c381baabae9f83ebd05b))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#577](https://github.com/cds-snc/data-lake/issues/577)) ([37c0d2a](https://github.com/cds-snc/data-lake/commit/37c0d2a409d908d249e155b239ad606cb43119a4))
+* **deps:** update all patch dependencies ([#575](https://github.com/cds-snc/data-lake/issues/575)) ([658d05b](https://github.com/cds-snc/data-lake/commit/658d05bcd401cd6935c5ee2e543e96c5e3a2390a))
+* **deps:** update terraform github.com/cds-snc/terraform-modules to v10.11.0 ([#576](https://github.com/cds-snc/data-lake/issues/576)) ([1d12c14](https://github.com/cds-snc/data-lake/commit/1d12c14e19b5333e3ef23779cd55395a025ee537))
+* synced file(s) with cds-snc/site-reliability-engineering ([#571](https://github.com/cds-snc/data-lake/issues/571)) ([e92d663](https://github.com/cds-snc/data-lake/commit/e92d66397032658bc72e346ae8214b1e7a2779e6))
+* synced local '.github/workflows/export_github_data.yml' with remote 'tools/sre_file_sync/export_github_data.yml' ([e92d663](https://github.com/cds-snc/data-lake/commit/e92d66397032658bc72e346ae8214b1e7a2779e6))
+
+## [1.35.0](https://github.com/cds-snc/data-lake/compare/v1.34.1...v1.35.0) (2026-02-23)
+
+
+### Features
+
+* Add unified IAM with all glue acces ([#574](https://github.com/cds-snc/data-lake/issues/574)) ([ffc2515](https://github.com/cds-snc/data-lake/commit/ffc2515991ea49d15daabcbcf83d50b289fcd684))
+
+## [1.34.1](https://github.com/cds-snc/data-lake/compare/v1.34.0...v1.34.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* edited output path for better naming ([#569](https://github.com/cds-snc/data-lake/issues/569)) ([b4f7e14](https://github.com/cds-snc/data-lake/commit/b4f7e147ec9c7f74f87c3f70156468a0c3779318))
+
+## [1.34.0](https://github.com/cds-snc/data-lake/compare/v1.33.1...v1.34.0) (2026-02-18)
+
+
+### Features
+
+* add post demo qualtrics data ([#568](https://github.com/cds-snc/data-lake/issues/568)) ([7d92592](https://github.com/cds-snc/data-lake/commit/7d92592a807e22fad31293ca76e82a05071c0578))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#566](https://github.com/cds-snc/data-lake/issues/566)) ([5ff78d1](https://github.com/cds-snc/data-lake/commit/5ff78d161031887d1f455a5505b570d7dff917d1))
+* **deps:** update all patch dependencies ([#565](https://github.com/cds-snc/data-lake/issues/565)) ([f64563f](https://github.com/cds-snc/data-lake/commit/f64563fffbd5352069bab72bfc07a0e5182acf8d))
+
+## [1.33.1](https://github.com/cds-snc/data-lake/compare/v1.33.0...v1.33.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* switch to ARM64 GitHub runners ([#563](https://github.com/cds-snc/data-lake/issues/563)) ([2dc45e8](https://github.com/cds-snc/data-lake/commit/2dc45e852164dc2333aa1d68762eeeeafd8b2bfe))
+
+## [1.33.0](https://github.com/cds-snc/data-lake/compare/v1.32.4...v1.33.0) (2026-02-12)
+
+
+### Features
+
+* tf apply run one at a time ([#562](https://github.com/cds-snc/data-lake/issues/562)) ([9b82624](https://github.com/cds-snc/data-lake/commit/9b82624f0f0f8d7bfb4b62429b1ed3dd8b05a146))
+
+
+### Miscellaneous Chores
+
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to fb17cc9 ([#549](https://github.com/cds-snc/data-lake/issues/549)) ([bf93967](https://github.com/cds-snc/data-lake/commit/bf939679dad3f78980e3977d5559e07f16cd31d4))
+
+## [1.32.4](https://github.com/cds-snc/data-lake/compare/v1.32.3...v1.32.4) (2026-02-10)
+
+
+### Bug Fixes
+
+* longer timeout and better alarm name ([#560](https://github.com/cds-snc/data-lake/issues/560)) ([b1abba0](https://github.com/cds-snc/data-lake/commit/b1abba08b21ad68fdf761272f7c78d333346cc83))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#552](https://github.com/cds-snc/data-lake/issues/552)) ([5996588](https://github.com/cds-snc/data-lake/commit/59965887c45c5302f46f091a3b279a35699bd3d7))
+* **deps:** lock file maintenance ([#557](https://github.com/cds-snc/data-lake/issues/557)) ([f4319e3](https://github.com/cds-snc/data-lake/commit/f4319e3c73e666ccb33e5fecaba89b2b0133d44b))
+* **deps:** update all non-major github action dependencies ([#551](https://github.com/cds-snc/data-lake/issues/551)) ([4b890b3](https://github.com/cds-snc/data-lake/commit/4b890b34707d004e683756dcb14b09c7f5e8da4a))
+* **deps:** update all non-major github action dependencies ([#554](https://github.com/cds-snc/data-lake/issues/554)) ([6204ff6](https://github.com/cds-snc/data-lake/commit/6204ff6c99d3ea881c70cf10681cff9032c7d736))
+* **deps:** update all patch dependencies ([#555](https://github.com/cds-snc/data-lake/issues/555)) ([4da380d](https://github.com/cds-snc/data-lake/commit/4da380df0b21c9aae9c2950faee38df76b2e824f))
+* **deps:** update dependency boto3 to v1.42.34 ([#550](https://github.com/cds-snc/data-lake/issues/550)) ([198b1c3](https://github.com/cds-snc/data-lake/commit/198b1c31814cfab825f7d34a80ba8b250acad978))
+* **deps:** update dependency google-auth to v2.48.0 ([#556](https://github.com/cds-snc/data-lake/issues/556)) ([0fb675c](https://github.com/cds-snc/data-lake/commit/0fb675c3bb3688926292574606e5d651ef621b3b))
+
 ## [1.32.3](https://github.com/cds-snc/data-lake/compare/v1.32.2...v1.32.3) (2026-01-26)
 
 

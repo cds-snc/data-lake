@@ -1,5 +1,9 @@
 name: "Terragrunt plan PRODUCTION"
 
+concurrency:
+  group: terragrunt-production
+  cancel-in-progress: false
+
 on:
   pull_request:
     branches:
@@ -10,7 +14,7 @@ on:
 env:
   AWS_REGION: ca-central-1
   CONFTEST_VERSION: 0.27.0
-  TERRAFORM_VERSION: 1.14.3
+  TERRAFORM_VERSION: 1.14.6
   TERRAGRUNT_VERSION: 0.68.6
   TF_INPUT: false
   TF_VAR_cloudwatch_alarm_slack_webhook: ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}
@@ -36,11 +40,32 @@ permissions:
   pull-requests: write
 
 jobs:
-  terragrunt-plan-production:
+  get-version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Get version to deploy
+        id: get-version
+        uses: ./.github/workflows/get-version
+        with:
+          is-tagged: ${{ !startsWith(github.head_ref, 'release-please--') }} # If not the release PR branch, assume it is a revert PR
+  terragrunt-plan-production:
+    runs-on: ubuntu-latest
+    needs: get-version
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ env.VERSION }}
+          persist-credentials: false
 
       - name: Setup terraform tools
         uses: cds-snc/terraform-tools-setup@5a19984bcb888600ad646e0caf5c6f4d0a54c165 # v1.2.0

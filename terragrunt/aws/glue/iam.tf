@@ -33,8 +33,8 @@ data "aws_iam_policy_document" "cross_account_access" {
     ]
     resources = [
       "arn:aws:glue:${var.region}:${var.account_id}:catalog",
-      "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value}",
-      "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value}/*",
+      "arn:aws:glue:${var.region}:${var.account_id}:database/${each.value == "unified_${var.env}" ? "*" : each.value}",
+      "arn:aws:glue:${var.region}:${var.account_id}:table/${each.value == "unified_${var.env}" ? "*" : each.value}/*",
     ]
   }
 }
