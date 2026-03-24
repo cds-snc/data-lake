@@ -397,10 +397,10 @@ Here's a descriptive list of the fields in each table:
 | notification_type | string | Type of notification (sms or email). |
 | provider | string | Name of the provider that delivered the notification. |
 | rate_multiplier | double | Pricing multiplier applied based on the type and complexity of the notification. |
-| international | boolean | Indicates whether the notification was sent internationally. |
+| international | bool | Indicates whether the notification was sent internationally. |
 | rate | double | Rate charged per billable unit. |
-| billable_units | int | Number of billing units consumed by notifications in this aggregation. |
-| notifications_sent | int | Total number of notifications sent in this aggregation. |
+| billable_units | integer | Number of billing units consumed by notifications in this aggregation. |
+| notifications_sent | integer | Total number of notifications sent in this aggregation. |
 | updated_at | timestamp | Date and time when the billing record was last updated. |
 | created_at | timestamp | Date and time when the billing record was created. |
 | postage | string | Postage classification of the notification. |
