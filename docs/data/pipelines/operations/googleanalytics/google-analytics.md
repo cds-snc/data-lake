@@ -6,7 +6,7 @@
 
 ## Description
 
-The Google Analytics pipeline extracts web traffic metrics from multiple CDS web properties using the Google Analytics Reporting API. It captures daily aggregated analytics metrics including sessions, active users, bounce rates, and engagement metrics, optionally broken down by campaign and page dimensions.
+The Google Analytics pipeline extracts web traffic metrics from multiple CDS web properties using the Google Analytics Data API (GA4). It captures daily aggregated analytics metrics including sessions, active users, bounce rates, and engagement metrics, optionally broken down by campaign and page dimensions.
 
 This data pipeline creates three Glue data catalog tables in the `operations_google_analytics_production` database:
 - `operations_google_analytics_daily`: Overall property-level analytics metrics
