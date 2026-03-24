@@ -106,9 +106,9 @@ The data is extracted daily from each GA property using the Google Analytics Rep
 Raw data is stored in the data lake's Raw `cds-data-lake-raw-production` S3 bucket, organized by property and metric dimension:
 
 ```
-cds-data-lake-raw-production/operations/google-analytics/[property]/daily/*.json
-cds-data-lake-raw-production/operations/google-analytics/[property]/daily_campaigns/*.json
-cds-data-lake-raw-production/operations/google-analytics/[property]/daily_pages/*.json
+cds-data-lake-raw-production/operations/google-analytics/[property]/daily/date=YYYY-MM-DD/data.json
+cds-data-lake-raw-production/operations/google-analytics/[property]/daily_campaigns/date=YYYY-MM-DD/data.json
+cds-data-lake-raw-production/operations/google-analytics/[property]/daily_pages/date=YYYY-MM-DD/data.json
 ```
 
 ### Crawlers
