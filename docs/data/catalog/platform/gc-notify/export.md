@@ -1,6 +1,6 @@
 # Platform / GC Notify
 
-Dataset providing GC Notify data.  There are fourteen tables as part of this dataset:
+Dataset providing GC Notify data.  There are fifteen tables as part of this dataset:
 
 - `jobs`: Batch jobs for email and SMS notification sending
 - `login_events`: Records of user login activity
@@ -16,6 +16,7 @@ Dataset providing GC Notify data.  There are fourteen tables as part of this dat
 - `user_to_organisation`: Mapping between users and their organizations
 - `user_to_service`: Mapping between users and their services
 - `users`: Users accounts within the system
+- `ft_billing`: Fact table for billing metrics and costs per notification
 
 No personally identifiable information (PII) is included as part of this dataset.
 
@@ -35,6 +36,7 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the f
 - `platform_gc_notify_user_to_organisation`
 - `platform_gc_notify_user_to_service`
 - `platform_gc_notify_users`
+- `platform_gc_notify_ft_billing`
 
 `Keywords`: Platform, GC Notify
 
@@ -65,6 +67,7 @@ cds-data-lake-transformed-production/platform/gc-notify/templates_history/year=Y
 cds-data-lake-transformed-production/platform/gc-notify/user_to_organisation/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/user_to_service/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/users/year=YYYY/month=YYYY-MM/*.parquet
+cds-data-lake-transformed-production/platform/gc-notify/ft_billing/year=YYYY/month=YYYY-MM/*.parquet
 ```
 
 ## Fields
@@ -381,5 +384,27 @@ Here's a descriptive list of the fields in each table:
 | auth_type | varchar | 2FA authentication method used by this user (email_auth, sms_auth). |
 | blocked | bool | Indicates whether the user is currently blocked from accessing the system. |
 | password_expired | bool | Indicates whether the user's password has expired and needs to be reset. |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
+
+### Table: platform_gc_notify_ft_billing
+
+| Field | Type | Description |
+|-------|------|-------------|
+| bst_date | timestamp | Date in British Summer Time for which the billing metrics are aggregated. |
+| template_id | string | Template identifier associated with the billing record. |
+| service_id | string | Service identifier associated with the billing record. |
+| notification_type | string | Type of notification (sms or email). |
+| provider | string | Name of the provider that delivered the notification. |
+| rate_multiplier | double | Pricing multiplier applied based on the type and complexity of the notification. |
+| international | bool | Indicates whether the notification was sent internationally. |
+| rate | double | Rate charged per billable unit. |
+| billable_units | integer | Number of billing units consumed by notifications in this aggregation. |
+| notifications_sent | integer | Total number of notifications sent in this aggregation. |
+| updated_at | timestamp | Date and time when the billing record was last updated. |
+| created_at | timestamp | Date and time when the billing record was created. |
+| postage | string | Postage classification of the notification. |
+| sms_sending_vehicle | string | Type of SMS sending vehicle (long_code or short_code). |
+| billing_total | double | Total amount charged for all notifications in this aggregation. |
 | year | string | Partition key in the format of YYYY |
 | month | string | Partition key in the format of YYYY-MM |

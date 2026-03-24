@@ -21,6 +21,7 @@ The GC Notify dataset is an export of the following database tables in [Parquet 
 - `user_to_organisation`: Mapping between users and their organizations
 - `user_to_service`: Mapping between users and their services
 - `users`: Users accounts within the system
+- `ft_billing`: Fact table for billing metrics and costs per notification
 
 There is no personally identifiable information (PII) included in this dataset. The data is updated daily and partitioned by year and month using the `created_at` date.  It can be queried in Superset as follows:
 
@@ -122,6 +123,13 @@ SELECT
 FROM 
     "platform_gc_notify_production"."platform_gc_notify_users" 
 LIMIT 10;
+
+-- FT Billing
+SELECT 
+    * 
+FROM 
+    "platform_gc_notify_production"."platform_gc_notify_ft_billing" 
+LIMIT 10;
 ```
 
 ---
@@ -179,6 +187,7 @@ cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-productio
 cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-production-cluster-YYYY-MM-DD/NotificationCanadaCaproduction/public.user_to_organisation/1/*.parquet
 cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-production-cluster-YYYY-MM-DD/NotificationCanadaCaproduction/public.user_to_service/1/*.parquet
 cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-production-cluster-YYYY-MM-DD/NotificationCanadaCaproduction/public.users/1/*.parquet
+cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-production-cluster-YYYY-MM-DD/NotificationCanadaCaproduction/public.ft_billing/1/*.parquet
 ```
 
 ### Extract, Transform and Load (ETL) Jobs
@@ -202,6 +211,7 @@ cds-data-lake-transformed-production/platform/gc-notify/templates_history/year=Y
 cds-data-lake-transformed-production/platform/gc-notify/user_to_organisation/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/user_to_service/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/users/year=YYYY/month=YYYY-MM/*.parquet
+cds-data-lake-transformed-production/platform/gc-notify/ft_billing/year=YYYY/month=YYYY-MM/*.parquet
 ```
 
 Additionally, data catalog tables are created in the [`platform_gc_notify_production` database](https://github.com/cds-snc/data-lake/blob/318387c230a3ec2b271492129b8066289e7160b3/terragrunt/aws/glue/databases.tf#L11-L14):
@@ -220,3 +230,4 @@ Additionally, data catalog tables are created in the [`platform_gc_notify_produc
 - `platform_gc_notify_user_to_organisation`: Mapping between users and their organizations
 - `platform_gc_notify_user_to_service`: Mapping between users and their services
 - `platform_gc_notify_users`: Users accounts within the system
+- `platform_gc_notify_ft_billing`: Fact table for billing metrics and costs per notification
