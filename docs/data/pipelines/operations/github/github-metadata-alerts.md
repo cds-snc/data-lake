@@ -49,7 +49,7 @@ graph TD
     RawCodeScanning["`**Raw S3**<br/>CodeScanningAlerts/`"]
     
     %% Transformed Storage
-    TransDependabot["`**Transformed S3**<br/>DepndabotAlerts/`"]
+    TransDependabot["`**Transformed S3**<br/>DependabotAlerts/`"]
     TransCodeScanning["`**Transformed S3**<br/>CodeScanningAlerts/`"]
     
     %% Processing
