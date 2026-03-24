@@ -115,7 +115,7 @@ Each day, the `Operations / GitHub / Metadata Alerts export` Glue ETL job runs a
 The transformed data is saved in the data lake's Transformed `cds-data-lake-transformed-production` S3 bucket:
 
 ```
-cds-data-lake-transformed-production/operations/github/DepndabotAlerts/*.parquet
+cds-data-lake-transformed-production/operations/github/DependabotAlerts/*.parquet
 cds-data-lake-transformed-production/operations/github/CodeScanningAlerts/*.parquet
 ```
 
