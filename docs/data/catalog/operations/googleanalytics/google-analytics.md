@@ -14,7 +14,7 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as Physi
 
 ## Provenance
 
-This dataset is extracted daily from Google Analytics 4 properties using the Google Analytics Reporting API. The data is transformed through AWS Glue ETL jobs that normalize data across multiple GA properties and aggregate metrics. Three separate data aggregations are produced:
+This dataset is extracted daily from Google Analytics 4 properties using the Google Analytics Data API (GA4). The data is transformed through AWS Glue ETL jobs that normalize data across multiple GA properties and aggregate metrics. Three separate data aggregations are produced:
 - **Daily Aggregated Metrics**: Overall platform performance metrics aggregated by date
 - **Daily Campaign Performance**: Campaign-level performance metrics including sessions and active users by campaign
 - **Daily Page Performance**: Page-level performance metrics including bounce rate and engagement duration by page
