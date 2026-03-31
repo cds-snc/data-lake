@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2026-03-10T14:13:13.870000+00:00",
-        "LastModifiedOn": "2026-03-10T14:17:03.845000+00:00",
+        "LastModifiedOn": "2026-03-30T12:48:43.942000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -18,7 +18,7 @@
         "DefaultArguments": {
             "--enable-metrics": "true",
             "--enable-spark-ui": "true",
-            "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py",
+            "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
             "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
@@ -26,13 +26,14 @@
             "--enable-glue-datacatalog": "true",
             "--job-bookmark-option": "job-bookmark-enable",
             "--job-language": "python",
-            "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/"
+            "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/",
+            "--enable-auto-scaling": "true"
         },
         "MaxRetries": 0,
-        "AllocatedCapacity": 5,
+        "AllocatedCapacity": 10,
         "Timeout": 480,
-        "MaxCapacity": 5.0,
-        "WorkerType": "G.1X",
+        "MaxCapacity": 10.0,
+        "WorkerType": "G.2X",
         "NumberOfWorkers": 5,
         "GlueVersion": "5.0",
         "CodeGenConfigurationNodes": {
@@ -1144,7 +1145,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/CodeScanningAlerts/cds-snc-data-lake-2026-03-07T07:30:38.288Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/CodeScanningAlerts/cds-snc-aws-sentinel-connector-layer-2026-03-24T07:40:37.295Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
