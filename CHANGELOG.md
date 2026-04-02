@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.39.3](https://github.com/cds-snc/data-lake/compare/v1.39.2...v1.39.3) (2026-04-02)
+
+
+### Bug Fixes
+
+* tighten up workflow security ([#623](https://github.com/cds-snc/data-lake/issues/623)) ([82b9a23](https://github.com/cds-snc/data-lake/commit/82b9a232f471c8a0d76240ea63696f938c9cb7f5))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#621](https://github.com/cds-snc/data-lake/issues/621)) ([b2e9192](https://github.com/cds-snc/data-lake/commit/b2e9192dabbe8fe658663650feeb06094ed08d5a))
+* **deps:** lock file maintenance ([#614](https://github.com/cds-snc/data-lake/issues/614)) ([2e6e756](https://github.com/cds-snc/data-lake/commit/2e6e7566a4debedbda8b0d079e8cf53ce4375ecb))
+* **deps:** lock file maintenance ([#620](https://github.com/cds-snc/data-lake/issues/620)) ([1ec9bb2](https://github.com/cds-snc/data-lake/commit/1ec9bb218c971f9966a2ba385f3f023ae34e0918))
+* **deps:** update all non-major github action dependencies ([#611](https://github.com/cds-snc/data-lake/issues/611)) ([8d5d7a9](https://github.com/cds-snc/data-lake/commit/8d5d7a982d7409c206ea03e3c7ec711b8d6e85d7))
+* **deps:** update all patch dependencies ([#612](https://github.com/cds-snc/data-lake/issues/612)) ([c2ce0fb](https://github.com/cds-snc/data-lake/commit/c2ce0fb8b08e3298435015bea1b47eccf44ead12))
+* **deps:** update cds-snc/terraform-plan action to v4 ([#624](https://github.com/cds-snc/data-lake/issues/624)) ([0243de2](https://github.com/cds-snc/data-lake/commit/0243de2f2f0f69e9b9a3b8bd9ada4dadbbb77760))
+* **deps:** update dependency boto3 to v1.42.73 ([#618](https://github.com/cds-snc/data-lake/issues/618)) ([bce6bb1](https://github.com/cds-snc/data-lake/commit/bce6bb14a7ed91fbe7620f0867ad1f3730774e10))
+* **deps:** update dependency python to v3.14.3 ([#613](https://github.com/cds-snc/data-lake/issues/613)) ([0933aa3](https://github.com/cds-snc/data-lake/commit/0933aa352ac1c7ed232e681d2c1c3007881b571e))
+* **deps:** update dependency requests to v2.33.0 [security] ([#617](https://github.com/cds-snc/data-lake/issues/617)) ([66c25a6](https://github.com/cds-snc/data-lake/commit/66c25a618cbff6e1ab08e88dd4f46033850df2a1))
+* regenerate metadata-alerts-export.json for 2026-03-31 ([b2e9192](https://github.com/cds-snc/data-lake/commit/b2e9192dabbe8fe658663650feeb06094ed08d5a))
+* update documentation ([#615](https://github.com/cds-snc/data-lake/issues/615)) ([9a2df1b](https://github.com/cds-snc/data-lake/commit/9a2df1b12a61ac976b699fbd90699e0621971ae2))
+
 ## [1.39.2](https://github.com/cds-snc/data-lake/compare/v1.39.1...v1.39.2) (2026-03-16)
 
 
