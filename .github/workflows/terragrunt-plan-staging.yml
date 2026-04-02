@@ -54,8 +54,8 @@ jobs:
           CONFTEST_CHECKSUM: d98783276c4fd47c779a1ece4c0decba9ee6462687839d25389882a468c362cc
           TERRAFORM_VERSION: 1.14.7
           TERRAFORM_CHECKSUM: e8bbcefea8015156e04e2a325cde37a0b2fb761728bda548e2fe3b8ad7c18c96
-          TERRAGRUNT_VERSION: 0.68.6
-          TERRAGRUNT_CHECKSUM: e26c02f65e7478a570a2ece6773bba705c432921088556f6e4fd91f4749d87a2
+          TERRAGRUNT_VERSION: 0.98.0
+          TERRAGRUNT_CHECKSUM: 68a9e029b438957c4164e505dfade123c67d6c3c3e11880bcadf3f2b33a8d865
           TF_SUMMARIZE_VERSION: 0.3.5
           TF_SUMMARIZE_CHECKSUM: e0ea7b514f7a57a85e5e4594acdccbf2dce3af7e00fe90580b2ad9cc1288d317
           TRUFFLEHOG_VERSION: 3.90.12
@@ -69,7 +69,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terragrunt plan buckets
-        uses: cds-snc/terraform-plan@7e4f9169732f9503a909006409d9b1de5d21e208 # v4.1.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
         with:
           directory: "terragrunt/env/staging/buckets"
           comment-delete: "true"
@@ -78,7 +78,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan oidc
-        uses: cds-snc/terraform-plan@7e4f9169732f9503a909006409d9b1de5d21e208 # v4.1.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
         with:
           directory: "terragrunt/env/staging/oidc"
           comment-delete: "true"
@@ -87,7 +87,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan glue
-        uses: cds-snc/terraform-plan@7e4f9169732f9503a909006409d9b1de5d21e208 # v4.1.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
         with:
           directory: "terragrunt/env/staging/glue"
           comment-delete: "true"
@@ -96,7 +96,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan athena
-        uses: cds-snc/terraform-plan@7e4f9169732f9503a909006409d9b1de5d21e208 # v4.1.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
         with:
           directory: "terragrunt/env/staging/athena"
           comment-delete: "true"
@@ -105,7 +105,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@7e4f9169732f9503a909006409d9b1de5d21e208 # v4.1.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
         with:
           directory: "terragrunt/env/staging/alarms"
           comment-delete: "true"
@@ -114,7 +114,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan export
-        uses: cds-snc/terraform-plan@7e4f9169732f9503a909006409d9b1de5d21e208 # v4.1.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
         with:
           directory: "terragrunt/env/staging/export"
           comment-delete: "true"
@@ -123,7 +123,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan stepfunctions
-        uses: cds-snc/terraform-plan@7e4f9169732f9503a909006409d9b1de5d21e208 # v4.1.0
+        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
         with:
           directory: "terragrunt/env/staging/stepfunctions"
           comment-delete: "true"
