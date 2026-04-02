@@ -69,8 +69,8 @@ jobs:
           CONFTEST_VERSION: NONE
           TERRAFORM_VERSION: 1.14.7
           TERRAFORM_CHECKSUM: e8bbcefea8015156e04e2a325cde37a0b2fb761728bda548e2fe3b8ad7c18c96
-          TERRAGRUNT_VERSION: 0.68.6
-          TERRAGRUNT_CHECKSUM: e26c02f65e7478a570a2ece6773bba705c432921088556f6e4fd91f4749d87a2
+          TERRAGRUNT_VERSION: 0.98.0
+          TERRAGRUNT_CHECKSUM: 68a9e029b438957c4164e505dfade123c67d6c3c3e11880bcadf3f2b33a8d865
           TF_SUMMARIZE_VERSION: NONE
           TRUFFLEHOG_VERSION: NONE
 
@@ -83,31 +83,31 @@ jobs:
 
       - name: Terragrunt apply buckets
         working-directory: terragrunt/env/production/buckets
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+        run: terragrunt run --non-interactive -- apply -auto-approve
 
       - name: Terragrunt apply oidc
         working-directory: terragrunt/env/production/oidc
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+        run: terragrunt run --non-interactive -- apply -auto-approve
 
       - name: Terragrunt apply glue
         working-directory: terragrunt/env/production/glue
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+        run: terragrunt run --non-interactive -- apply -auto-approve
 
       - name: Terragrunt apply athena
         working-directory: terragrunt/env/production/athena
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+        run: terragrunt run --non-interactive -- apply -auto-approve
 
       - name: Terragrunt apply alarms
         working-directory: terragrunt/env/production/alarms
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+        run: terragrunt run --non-interactive -- apply -auto-approve
 
       - name: Terragrunt apply export
         working-directory: terragrunt/env/production/export
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+        run: terragrunt run --non-interactive -- apply -auto-approve
 
       - name: Terragrunt apply stepfunctions
         working-directory: terragrunt/env/production/stepfunctions
-        run: terragrunt apply --terragrunt-non-interactive -auto-approve
+        run: terragrunt run --non-interactive -- apply -auto-approve
 
       - name: Report deployment to Sentinel
         if: always()
