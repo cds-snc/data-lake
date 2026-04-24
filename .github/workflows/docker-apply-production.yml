@@ -105,15 +105,3 @@ jobs:
           --image-uri $REGISTRY/${{matrix.lambda}}:${VERSION}  > /dev/null 2>&1
         aws lambda wait function-updated \
           --function-name ${{matrix.lambda}}
-
-    - name: Docker generate SBOM
-      uses: cds-snc/security-tools/.github/actions/generate-sbom@f077180d5e51bb3aa94ff42c5164d53dd7342761
-      env:
-        TRIVY_DB_REPOSITORY: ${{ vars.TRIVY_DB_REPOSITORY }}
-      with:
-        docker_image: "$REGISTRY/${{matrix.lambda}}:${VERSION}"
-        dockerfile_path: "./export/${{ matrix.export }}/Dockerfile"
-        platform: "linux/arm64"
-        sbom_name: "${{matrix.lambda}}"
-        token: "${{ secrets.GITHUB_TOKEN }}"
-  

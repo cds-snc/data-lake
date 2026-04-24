@@ -1,0 +1,62 @@
+name: Docker SBOM Staging
+
+on:
+  workflow_run:
+    workflows: ["Docker build, push and deploy Staging"]
+    types:
+    - completed
+
+permissions:
+  contents: read
+  
+jobs:
+  docker-sbom:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - export: platform/gc_notify
+            lambda: platform-gc-notify-export
+          - export: platform/gc_design_system/airtable
+            lambda: platform-gc-design-system-airtable-export
+          - export: platform/gc_design_system/npm
+            lambda: platform-gc-design-system-npm-export
+          - export: platform/gc_design_system/cloudfront
+            lambda: platform-gc-design-system-cloudfront-export
+          - export: platform/support/freshdesk
+            lambda: platform-support-freshdesk-export
+          - export: operations/google_analytics
+            lambda: operations-google-analytics-export
+
+    steps:
+    - name: Audit DNS requests
+      uses: cds-snc/dns-proxy-action@9ad793100229573be3f5ba78cc69ec523f2c8b7e # v1.1.0
+      env:
+        DNS_PROXY_FORWARDTOSENTINEL: "true"
+        DNS_PROXY_LOGANALYTICSWORKSPACEID: "${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}"
+        DNS_PROXY_LOGANALYTICSSHAREDKEY: "${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}"
+        DNS_PROXY_SAFELIST: "${{ vars.DNS_PROXY_SAFELIST }}"
+        DNS_PROXY_WILDCARDGREEDY: "true"
+
+    - name: Checkout
+      uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      with:
+        persist-credentials: false
+
+    - name: Build Docker image
+      working-directory: ./export/${{ matrix.export }}
+      run: |
+        make docker
+
+    - name: Docker generate SBOM
+      uses: cds-snc/security-tools/.github/actions/generate-sbom@837a88b6337d4842543184c8eac97a8adac8f302 # v4.0.3
+      env:
+        TRIVY_DB_REPOSITORY: ${{ vars.TRIVY_DB_REPOSITORY }}
+      with:
+        docker_image: "${{matrix.lambda}}"
+        dockerfile_path: "./export/${{ matrix.export }}/Dockerfile"
+        platform: "linux/arm64"
+        token: "${{ secrets.GITHUB_TOKEN }}"
+ 
