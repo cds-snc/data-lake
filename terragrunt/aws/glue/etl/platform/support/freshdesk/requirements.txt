@@ -1,4 +1,4 @@
 awswrangler==3.16.0
-boto3==1.42.88
+boto3==1.42.91
 pandas==2.3.3
 great_expectations==0.18.22
