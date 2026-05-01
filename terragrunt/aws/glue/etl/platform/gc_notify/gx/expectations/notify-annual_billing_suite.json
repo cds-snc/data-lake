@@ -1,0 +1,77 @@
+{
+  "expectation_suite_name": "notify-annual_billing_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "service_id",
+        "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
+      },
+      "meta": {
+        "description": "service_id should match UUID format"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "financial_year_start",
+        "min_value": 0
+      },
+      "meta": {
+        "description": "financial_year_start should be a non-negative integer"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "free_sms_fragment_limit",
+        "min_value": 0
+      },
+      "meta": {
+        "description": "free_sms_fragment_limit should be a non-negative integer"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "updated_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]",
+          "TimestampType",
+          "timestamp"
+        ]
+      },
+      "meta": {
+        "description": "updated_at should be a timestamp"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "kwargs": {
+        "column": "created_at",
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]",
+          "<M8[us]",
+          "TimestampType",
+          "timestamp"
+        ]
+      },
+      "meta": {
+        "description": "created_at should be a timestamp"
+      }
+    }
+  ]
+}
