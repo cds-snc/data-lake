@@ -1,0 +1,31 @@
+{
+  "table_name": "annual_billing",
+  "partition_timestamp": "created_at",
+  "partition_cols": ["year", "month"],
+  "fields": [
+    {
+      "name": "id",
+      "type": "uuid"
+    },
+    {
+      "name": "service_id",
+      "type": "uuid"
+    },
+    {
+      "name": "financial_year_start",
+      "type": "integer"
+    },
+    {
+      "name": "free_sms_fragment_limit",
+      "type": "integer"
+    },
+    {
+      "name": "updated_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp"
+    }
+  ]
+}

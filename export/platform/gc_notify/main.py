@@ -18,6 +18,7 @@ S3_EXPORT_PREFIX = os.environ["S3_EXPORT_PREFIX"]
 
 # Only the following tables will be exported
 EXPORT_TABLES = [
+    "annual_billing",
     "jobs",
     "login_events",
     "notification_history",

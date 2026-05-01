@@ -2,6 +2,7 @@
 
 Dataset providing GC Notify data.  There are fifteen tables as part of this dataset:
 
+- `annual_billing`: The annual free SMS limit for each Notification service
 - `jobs`: Batch jobs for email and SMS notification sending
 - `login_events`: Records of user login activity
 - `notification_history`: Historical record of all notifications
@@ -22,6 +23,7 @@ No personally identifiable information (PII) is included as part of this dataset
 
 This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the following Physical datasets:
 
+- `platform_gc_notify_annual_billing`
 - `platform_gc_notify_jobs`
 - `platform_gc_notify_login_events`
 - `platform_gc_notify_notification_history`
@@ -53,6 +55,7 @@ This dataset is exported daily from the GC Notify database's automated snapshots
 * `Contact`: [Jimmy Royer](mailto:jimmy.royer@cds-snc.ca)
 * `Location`: 
 ```
+cds-data-lake-transformed-production/platform/gc-notify/annual_billing/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/jobs/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/login_events/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/notification_history/year=YYYY/month=YYYY-MM/*.parquet
@@ -77,6 +80,17 @@ All fields are sourced directly from the GC Notify database tables.
 [Queries to return example data](examples/export.sql) have also been provided.
 
 Here's a descriptive list of the fields in each table:
+
+### Table: platform_gc_notify_annual_billing
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | uuid | Unique identifier for each annual billing row. Primary key for the table. |
+| service_id | uuid | Foreign key linking to the service the row applies to. |
+| financial_year_start | integer | The year this limit applies to. |
+| free_sms_fragment_limit | integer | The number of free SMS fragments a service is entitled to each year. |
+| created_at | timestamp | Date and time when the annual billing was created. |
+| updated_at | timestamp | Date and time when the annual billing was last updated. |
 
 ### Table: platform_gc_notify_jobs
 
