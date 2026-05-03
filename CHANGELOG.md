@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.40.0](https://github.com/cds-snc/data-lake/compare/v1.39.3...v1.40.0) (2026-05-01)
+
+
+### Features
+
+* add Notify `annual_billing` table ([#643](https://github.com/cds-snc/data-lake/issues/643)) ([2e33a9b](https://github.com/cds-snc/data-lake/commit/2e33a9ba86c358cc8f238af22d67c00d0c9b8613))
+* setup DNS proxy safelist ([#632](https://github.com/cds-snc/data-lake/issues/632)) ([ef2be24](https://github.com/cds-snc/data-lake/commit/ef2be244e1669616d699c9912518bd568841e16d))
+
+
+### Bug Fixes
+
+* build images as part of SBOM workflow ([#637](https://github.com/cds-snc/data-lake/issues/637)) ([8b39cab](https://github.com/cds-snc/data-lake/commit/8b39cab659dbad6108c7c150f6ab8c90dd20bf28))
+* SBOM workflow permissions ([#638](https://github.com/cds-snc/data-lake/issues/638)) ([bded182](https://github.com/cds-snc/data-lake/commit/bded182b9ab48242359366b855e3ab0e49859f73))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#626](https://github.com/cds-snc/data-lake/issues/626)) ([a5486c8](https://github.com/cds-snc/data-lake/commit/a5486c89c9fc21b742c6cf96eb3e341b830652bb))
+* **deps:** lock file maintenance ([#631](https://github.com/cds-snc/data-lake/issues/631)) ([7dcf51a](https://github.com/cds-snc/data-lake/commit/7dcf51acf665084380e63762cc5f47135701cb82))
+* **deps:** lock file maintenance ([#642](https://github.com/cds-snc/data-lake/issues/642)) ([88467ff](https://github.com/cds-snc/data-lake/commit/88467ff16e1f5c3cd389340105da9a57c78f6c00))
+* **deps:** update all non-major github action dependencies ([#619](https://github.com/cds-snc/data-lake/issues/619)) ([e7b859b](https://github.com/cds-snc/data-lake/commit/e7b859bd51c4ec2546e8f39be7c7daeb4a40c5c3))
+* **deps:** update all non-major github action dependencies ([#628](https://github.com/cds-snc/data-lake/issues/628)) ([d37b84c](https://github.com/cds-snc/data-lake/commit/d37b84c06936dd3e2b46c34addfe6f29630815a3))
+* **deps:** update all patch dependencies ([#625](https://github.com/cds-snc/data-lake/issues/625)) ([effe248](https://github.com/cds-snc/data-lake/commit/effe248dc581c745fc1a1876f14e11c9c67ae527))
+* **deps:** update all patch dependencies ([#629](https://github.com/cds-snc/data-lake/issues/629)) ([4777909](https://github.com/cds-snc/data-lake/commit/4777909d3d7ed701dd76bffbc2f9bcee672ddf31))
+* **deps:** update all patch dependencies ([#634](https://github.com/cds-snc/data-lake/issues/634)) ([08d511d](https://github.com/cds-snc/data-lake/commit/08d511d76d4f05025e6d9dd46f11b068698f3354))
+* **deps:** update aws-actions/amazon-ecr-login action to v2.1.3 ([#640](https://github.com/cds-snc/data-lake/issues/640)) ([c2f3013](https://github.com/cds-snc/data-lake/commit/c2f30139f096ffb967efd23c1f85113a40d98456))
+* **deps:** update dependency awswrangler to v3.16.0 ([#636](https://github.com/cds-snc/data-lake/issues/636)) ([8197817](https://github.com/cds-snc/data-lake/commit/8197817f6621ccc6eb97c00ad9ed69a96a465845))
+* **deps:** update dependency boto3 to v1.42.91 ([#641](https://github.com/cds-snc/data-lake/issues/641)) ([24b0779](https://github.com/cds-snc/data-lake/commit/24b0779a85d3460abdf7e329e3d4abab6d164620))
+* **deps:** update dependency google-analytics-data to v0.21.0 ([#630](https://github.com/cds-snc/data-lake/issues/630)) ([84e9879](https://github.com/cds-snc/data-lake/commit/84e9879b6381f972b798ed55403b41ae643b63ad))
+* **deps:** update dependency pytest to v9 [security] ([#633](https://github.com/cds-snc/data-lake/issues/633)) ([b74fb7f](https://github.com/cds-snc/data-lake/commit/b74fb7fc275f0e41a83e38367fe99c3a74cbda7a))
+* **deps:** update googleapis/release-please-action action to v4.4.1 ([#635](https://github.com/cds-snc/data-lake/issues/635)) ([bda77c7](https://github.com/cds-snc/data-lake/commit/bda77c799a41bd825be2cab849cb7c2ca6469590))
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to 5139be2 ([#639](https://github.com/cds-snc/data-lake/issues/639)) ([fdb3446](https://github.com/cds-snc/data-lake/commit/fdb3446ec765bb3efac460f33c9274cb19956118))
+
 ## [1.39.3](https://github.com/cds-snc/data-lake/compare/v1.39.2...v1.39.3) (2026-04-02)
 
 
