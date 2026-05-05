@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.40.1](https://github.com/cds-snc/data-lake/compare/v1.40.0...v1.40.1) (2026-05-05)
+
+
+### Bug Fixes
+
+* run Notify ETL and export after snapshot ([#647](https://github.com/cds-snc/data-lake/issues/647)) ([e798527](https://github.com/cds-snc/data-lake/commit/e7985272f37322248d5d3f759d2601fb56cfafac))
+
 ## [1.40.0](https://github.com/cds-snc/data-lake/compare/v1.39.3...v1.40.0) (2026-05-01)
 
 
