@@ -169,7 +169,7 @@ resource "aws_glue_job" "platform_gc_notify_job" {
 
 resource "aws_glue_trigger" "platform_gc_notify_job" {
   name     = "Platform / GC Notify"
-  schedule = "cron(0 7 * * ? *)" # Daily at 7am UTC
+  schedule = "cron(0 11 * * ? *)" # Daily at 11am UTC
   type     = "SCHEDULED"
   enabled  = false # Change for local.is_production to enable
 
