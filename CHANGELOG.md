@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.40.2](https://github.com/cds-snc/data-lake/compare/v1.40.1...v1.40.2) (2026-05-06)
+
+
+### Bug Fixes
+
+* update ETL orchestrator schedule ([#649](https://github.com/cds-snc/data-lake/issues/649)) ([4f66f2a](https://github.com/cds-snc/data-lake/commit/4f66f2ace15393c42e96d2b1fb83af535a0ae2c7))
+
 ## [1.40.1](https://github.com/cds-snc/data-lake/compare/v1.40.0...v1.40.1) (2026-05-05)
 
 
