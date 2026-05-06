@@ -21,8 +21,8 @@ resource "aws_sfn_state_machine" "data_orchestrator" {
 # Enabled in production, disabled in staging for testing
 resource "aws_cloudwatch_event_rule" "data_orchestrator_schedule" {
   name                = "data-orchestrator-daily-schedule"
-  description         = "Trigger DataLakeOrchestrator state machine daily at 2AM UTC"
-  schedule_expression = "cron(0 7 * * ? *)" # Daily at 7am UTC
+  description         = "Trigger DataLakeOrchestrator state machine daily at 9:30AM UTC"
+  schedule_expression = "cron(30 9 * * ? *)" # Daily at 9:30am UTC
   state               = var.env == "production" ? "ENABLED" : "DISABLED"
 }
 
