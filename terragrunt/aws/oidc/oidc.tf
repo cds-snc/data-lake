@@ -1,7 +1,6 @@
 locals {
   data_lake_github_data_export = "data-lake-github-data-export"
   data_lake_docker_push        = "data-lake-docker-push"
-  data_lake_docker_deploy      = "data-lake-docker-deploy"
 }
 
 #
@@ -63,8 +62,8 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
 
 #
 # Allow GitHub workflows in the data-lake repo to push Docker images to ECR
-# and update Lambda function code.  Each role is scoped to only the permissions
-# needed by its respective workflow step.
+# and update Lambda function code.  This role is scoped to only the permissions
+# needed by the Docker build, push and deploy workflows.
 #
 module "docker_roles" {
   source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v10.11.4"
@@ -72,11 +71,6 @@ module "docker_roles" {
   roles = [
     {
       name      = local.data_lake_docker_push
-      repo_name = "data-lake"
-      claim     = "ref:refs/heads/main"
-    },
-    {
-      name      = local.data_lake_docker_deploy
       repo_name = "data-lake"
       claim     = "ref:refs/heads/main"
     }
@@ -89,22 +83,10 @@ resource "aws_iam_role_policy_attachment" "data_lake_docker_push" {
   depends_on = [module.docker_roles]
 }
 
-resource "aws_iam_role_policy_attachment" "data_lake_docker_deploy" {
-  role       = local.data_lake_docker_deploy
-  policy_arn = aws_iam_policy.data_lake_docker_deploy.arn
-  depends_on = [module.docker_roles]
-}
-
 resource "aws_iam_policy" "data_lake_docker_push" {
   name   = local.data_lake_docker_push
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.data_lake_docker_push.json
-}
-
-resource "aws_iam_policy" "data_lake_docker_deploy" {
-  name   = local.data_lake_docker_deploy
-  path   = "/service-role/"
-  policy = data.aws_iam_policy_document.data_lake_docker_deploy.json
 }
 
 #trivy:ignore:AWS-0342
@@ -130,9 +112,7 @@ data "aws_iam_policy_document" "data_lake_docker_push" {
       "arn:aws:ecr:${var.region}:${var.account_id}:repository/*-export",
     ]
   }
-}
 
-data "aws_iam_policy_document" "data_lake_docker_deploy" {
   statement {
     sid = "LambdaUpdateFunctionCode"
     actions = [
