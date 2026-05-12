@@ -117,6 +117,7 @@ data "aws_iam_policy_document" "data_lake_docker_push" {
     sid = "LambdaUpdateFunctionCode"
     actions = [
       "lambda:GetFunction",
+      "lambda:GetFunctionConfiguration",
       "lambda:UpdateFunctionCode",
     ]
     resources = [
