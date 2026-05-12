@@ -3,6 +3,11 @@ locals {
   data_lake_docker_push        = "data-lake-docker-push"
 }
 
+#
+# Create the OIDC roles used by the GitHub workflows
+# The roles can be assumed by the GitHub workflows according to the `claim`
+# attribute of each role.
+# 
 module "github_workflow_roles" {
   count = var.env == "production" ? 1 : 0
 
@@ -11,13 +16,20 @@ module "github_workflow_roles" {
   roles = [
     {
       name      = local.data_lake_github_data_export
-      repo_name = "data-lake"
+      repo_name = "*" # Allow any CDS repo to use this role
       claim     = "ref:refs/heads/main"
     }
   ]
 }
 
+#
+# Attach polices to the OIDC roles to grant them permissions.  These
+# attachments are scoped to only the environments that require the role.
+#
 
+#
+# Allow GitHub workflows in CDS repos to export data to the Raw S3 bucket
+#
 resource "aws_iam_role_policy_attachment" "data_lake_github_data_export" {
   count = var.env == "production" ? 1 : 0
 
@@ -47,6 +59,12 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
     ]
   }
 }
+
+#
+# Allow GitHub workflows in the data-lake repo to push Docker images to ECR
+# and update Lambda function code.  This role is scoped to only the permissions
+# needed by the Docker build, push and deploy workflows.
+#
 module "docker_push_role" {
   source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v10.11.4"
   billing_tag_value = var.billing_tag_value
