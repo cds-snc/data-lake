@@ -41,7 +41,7 @@ jobs:
         with:
           is-tagged: "true"
   
-  docker-build-push-deploy:
+  docker-build-push:
     runs-on: ubuntu-24.04-arm
     needs: get-version
     env:
@@ -97,6 +97,51 @@ jobs:
         docker tag ${{matrix.lambda}} $REGISTRY/${{matrix.lambda}}:latest
         docker push $REGISTRY/${{matrix.lambda}}:${VERSION}
         docker push $REGISTRY/${{matrix.lambda}}:latest
+
+  docker-deploy:
+    runs-on: ubuntu-24.04-arm
+    needs: [get-version, docker-build-push]
+    env:
+      VERSION: ${{ needs.get-version.outputs.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - export: platform/gc_notify
+            lambda: platform-gc-notify-export
+          - export: platform/gc_design_system/airtable
+            lambda: platform-gc-design-system-airtable-export
+          - export: platform/gc_design_system/npm
+            lambda: platform-gc-design-system-npm-export
+          - export: platform/gc_design_system/cloudfront
+            lambda: platform-gc-design-system-cloudfront-export
+          - export: platform/support/freshdesk
+            lambda: platform-support-freshdesk-export
+          - export: operations/google_analytics
+            lambda: operations-google-analytics-export
+
+    steps:
+    - name: Audit DNS requests
+      uses: cds-snc/dns-proxy-action@9ad793100229573be3f5ba78cc69ec523f2c8b7e # v1.1.0
+      env:
+        DNS_PROXY_FORWARDTOSENTINEL: "true"
+        DNS_PROXY_LOGANALYTICSWORKSPACEID: "${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}"
+        DNS_PROXY_LOGANALYTICSSHAREDKEY: "${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}"
+        DNS_PROXY_SAFELIST: "${{ vars.DNS_PROXY_SAFELIST }}"
+        DNS_PROXY_WILDCARDGREEDY: "true"
+
+    - name: Checkout
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        ref: ${{ env.VERSION }}
+        persist-credentials: false
+
+    - name: Configure AWS credentials using OIDC
+      uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
+      with:
+        role-to-assume: arn:aws:iam::${{ vars.PROD_AWS_ACCOUNT_ID }}:role/data-lake-docker-deploy
+        role-session-name: DockerDeploy
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Update Lambda Docker image
       run: |

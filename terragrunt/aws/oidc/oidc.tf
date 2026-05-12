@@ -1,6 +1,7 @@
 locals {
   data_lake_github_data_export = "data-lake-github-data-export"
   data_lake_docker_push        = "data-lake-docker-push"
+  data_lake_docker_deploy      = "data-lake-docker-deploy"
 }
 
 #
@@ -62,10 +63,10 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
 
 #
 # Allow GitHub workflows in the data-lake repo to push Docker images to ECR
-# and update Lambda function code.  This role is scoped to only the permissions
-# needed by the Docker build, push and deploy workflows.
+# and update Lambda function code.  Each role is scoped to only the permissions
+# needed by its respective workflow step.
 #
-module "docker_push_role" {
+module "docker_roles" {
   source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v10.11.4"
   billing_tag_value = var.billing_tag_value
   roles = [
@@ -73,35 +74,41 @@ module "docker_push_role" {
       name      = local.data_lake_docker_push
       repo_name = "data-lake"
       claim     = "ref:refs/heads/main"
+    },
+    {
+      name      = local.data_lake_docker_deploy
+      repo_name = "data-lake"
+      claim     = "ref:refs/heads/main"
     }
   ]
 }
 
-resource "aws_iam_role_policy_attachment" "data_lake_docker_push_ecr" {
+resource "aws_iam_role_policy_attachment" "data_lake_docker_push" {
   role       = local.data_lake_docker_push
-  policy_arn = aws_iam_policy.data_lake_docker_push_ecr.arn
-  depends_on = [module.docker_push_role]
+  policy_arn = aws_iam_policy.data_lake_docker_push.arn
+  depends_on = [module.docker_roles]
 }
 
-resource "aws_iam_role_policy_attachment" "data_lake_docker_push_lambda" {
-  role       = local.data_lake_docker_push
-  policy_arn = aws_iam_policy.data_lake_docker_push_lambda.arn
-  depends_on = [module.docker_push_role]
+resource "aws_iam_role_policy_attachment" "data_lake_docker_deploy" {
+  role       = local.data_lake_docker_deploy
+  policy_arn = aws_iam_policy.data_lake_docker_deploy.arn
+  depends_on = [module.docker_roles]
 }
 
-resource "aws_iam_policy" "data_lake_docker_push_ecr" {
-  name   = "${local.data_lake_docker_push}-ecr"
+resource "aws_iam_policy" "data_lake_docker_push" {
+  name   = local.data_lake_docker_push
   path   = "/service-role/"
-  policy = data.aws_iam_policy_document.data_lake_docker_push_ecr.json
+  policy = data.aws_iam_policy_document.data_lake_docker_push.json
 }
 
-resource "aws_iam_policy" "data_lake_docker_push_lambda" {
-  name   = "${local.data_lake_docker_push}-lambda"
+resource "aws_iam_policy" "data_lake_docker_deploy" {
+  name   = local.data_lake_docker_deploy
   path   = "/service-role/"
-  policy = data.aws_iam_policy_document.data_lake_docker_push_lambda.json
+  policy = data.aws_iam_policy_document.data_lake_docker_deploy.json
 }
 
-data "aws_iam_policy_document" "data_lake_docker_push_ecr" {
+#trivy:ignore:AWS-0342
+data "aws_iam_policy_document" "data_lake_docker_push" {
   statement {
     sid = "ECRGetAuthorizationToken"
     actions = [
@@ -125,7 +132,7 @@ data "aws_iam_policy_document" "data_lake_docker_push_ecr" {
   }
 }
 
-data "aws_iam_policy_document" "data_lake_docker_push_lambda" {
+data "aws_iam_policy_document" "data_lake_docker_deploy" {
   statement {
     sid = "LambdaUpdateFunctionCode"
     actions = [
