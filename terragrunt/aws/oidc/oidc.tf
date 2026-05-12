@@ -1,5 +1,6 @@
 locals {
   data_lake_github_data_export = "data-lake-github-data-export"
+  data_lake_docker_push        = "data-lake-docker-push"
 }
 
 #
@@ -55,6 +56,71 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
     ]
     resources = [
       "${var.raw_bucket_arn}/operations/github/*"
+    ]
+  }
+}
+
+#
+# Allow GitHub workflows in the data-lake repo to push Docker images to ECR
+# and update Lambda function code.  This role is scoped to only the permissions
+# needed by the Docker build, push and deploy workflows.
+#
+module "docker_roles" {
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v10.11.4"
+  billing_tag_value = var.billing_tag_value
+  roles = [
+    {
+      name      = local.data_lake_docker_push
+      repo_name = "data-lake"
+      claim     = "ref:refs/heads/main"
+    }
+  ]
+}
+
+resource "aws_iam_role_policy_attachment" "data_lake_docker_push" {
+  role       = local.data_lake_docker_push
+  policy_arn = aws_iam_policy.data_lake_docker_push.arn
+  depends_on = [module.docker_roles]
+}
+
+resource "aws_iam_policy" "data_lake_docker_push" {
+  name   = local.data_lake_docker_push
+  path   = "/service-role/"
+  policy = data.aws_iam_policy_document.data_lake_docker_push.json
+}
+
+#trivy:ignore:AWS-0342
+data "aws_iam_policy_document" "data_lake_docker_push" {
+  statement {
+    sid = "ECRGetAuthorizationToken"
+    actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "ECRPushImages"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:CompleteLayerUpload",
+      "ecr:InitiateLayerUpload",
+      "ecr:PutImage",
+      "ecr:UploadLayerPart",
+    ]
+    resources = [
+      "arn:aws:ecr:${var.region}:${var.account_id}:repository/*-export",
+    ]
+  }
+
+  statement {
+    sid = "LambdaUpdateFunctionCode"
+    actions = [
+      "lambda:GetFunction",
+      "lambda:UpdateFunctionCode",
+    ]
+    resources = [
+      "arn:aws:lambda:${var.region}:${var.account_id}:function:*-export",
     ]
   }
 }
