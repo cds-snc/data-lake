@@ -1,20 +1,30 @@
 name: Workflow failure
 
 on:
-  workflow_run:
-    workflows:
-      - "Docker build, push and deploy Production"
-      - "Docker build, push and deploy Staging"
-      - "Glue Job Sync"
-      - "Terragrunt apply PRODUCTION"
-      - "Terragrunt apply STAGING"
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      workflow_name:
+        required: true
+        type: string
+      workflow_url:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+    secrets:
+      LOG_ANALYTICS_WORKSPACE_ID:
+        required: true
+      LOG_ANALYTICS_WORKSPACE_KEY:
+        required: true
+      STAGING_SLACK_WEBHOOK_OPS:
+        required: true
+      PRODUCTION_SLACK_WEBHOOK_OPS:
+        required: true
 
 jobs:
   on-failure:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'failure'
     steps:
       - name: Audit DNS requests
         uses: cds-snc/dns-proxy-action@9ad793100229573be3f5ba78cc69ec523f2c8b7e # v1.1.0
@@ -27,8 +37,8 @@ jobs:
 
       - name: Determine target ops channel
         run: |
-          WORKFLOW_NAME_LOWER="$(echo ${{ github.event.workflow_run.name }} | tr '[:upper:]' '[:lower:]')"
-          if [[ "$WORKFLOW_NAME_LOWER" == *"staging"* ]]; then
+          ENVIRONMENT_LOWER="$(echo "${{ inputs.environment }}" | tr '[:upper:]' '[:lower:]')"
+          if [[ "$ENVIRONMENT_LOWER" == *"staging"* ]]; then
             echo "SLACK_WEBHOOK_URL=${{ secrets.STAGING_SLACK_WEBHOOK_OPS }}" >> $GITHUB_ENV
           else
             echo "SLACK_WEBHOOK_URL=${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}" >> $GITHUB_ENV
@@ -36,5 +46,5 @@ jobs:
 
       - name: Notify Slack
         run: |
-          json='{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: Data Lake workflow failed: <${{ github.event.workflow_run.html_url }}|${{ github.event.workflow.name }}>"}}]}'
-          curl -X POST -H 'Content-type: application/json' --data "$json" ${{ env.SLACK_WEBHOOK_URL }}
+          json='{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: Data Lake workflow failed: <${{ inputs.workflow_url }}|${{ inputs.workflow_name }}>"}}]}'
+          curl -X POST -H 'Content-type: application/json' --data "$json" "$SLACK_WEBHOOK_URL"
