@@ -92,3 +92,20 @@ jobs:
           --image-uri $REGISTRY/${{matrix.lambda}}:${{ env.TAG_VERSION }} > /dev/null 2>&1
         aws lambda wait function-updated \
           --function-name ${{matrix.lambda}}
+
+  docker-sbom:
+    needs: docker-build-push-deploy
+    uses: ./.github/workflows/docker-sbom-staging.yml
+    secrets: inherit
+
+  notify-workflow-failure:
+    if: ${{ always() && failure() }}
+    needs:
+      - docker-build-push-deploy
+      - docker-sbom
+    uses: ./.github/workflows/workflow-failure.yml
+    with:
+      workflow_name: ${{ github.workflow }}
+      workflow_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      environment: staging
+    secrets: inherit
