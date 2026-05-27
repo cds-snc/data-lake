@@ -108,7 +108,6 @@ jobs:
     with:
       workflow_name: ${{ github.workflow }}
       workflow_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      environment: staging
     secrets:
       LOG_ANALYTICS_WORKSPACE_ID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
       LOG_ANALYTICS_WORKSPACE_KEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}

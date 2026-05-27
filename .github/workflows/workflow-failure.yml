@@ -9,9 +9,6 @@ on:
       workflow_url:
         required: true
         type: string
-      environment:
-        required: true
-        type: string
     secrets:
       LOG_ANALYTICS_WORKSPACE_ID:
         required: true
