@@ -96,7 +96,9 @@ jobs:
   docker-sbom:
     needs: docker-build-push-deploy
     uses: ./.github/workflows/docker-sbom-staging.yml
-    secrets: inherit
+    secrets:
+      LOG_ANALYTICS_WORKSPACE_ID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+      LOG_ANALYTICS_WORKSPACE_KEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
 
   notify-workflow-failure:
     if: ${{ always() && failure() }}
@@ -108,4 +110,8 @@ jobs:
       workflow_name: ${{ github.workflow }}
       workflow_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       environment: staging
-    secrets: inherit
+    secrets:
+      LOG_ANALYTICS_WORKSPACE_ID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+      LOG_ANALYTICS_WORKSPACE_KEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
+      STAGING_SLACK_WEBHOOK_OPS: ${{ secrets.STAGING_SLACK_WEBHOOK_OPS }}
+      PRODUCTION_SLACK_WEBHOOK_OPS: ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}
