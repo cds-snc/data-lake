@@ -17,9 +17,7 @@ on:
         required: true
       LOG_ANALYTICS_WORKSPACE_KEY:
         required: true
-      STAGING_SLACK_WEBHOOK_OPS:
-        required: true
-      PRODUCTION_SLACK_WEBHOOK_OPS:
+      SLACK_WEBHOOK_URL:
         required: true
 
 jobs:
@@ -35,16 +33,7 @@ jobs:
           DNS_PROXY_SAFELIST: "${{ vars.DNS_PROXY_SAFELIST }}"
           DNS_PROXY_WILDCARDGREEDY: "true"
 
-      - name: Determine target ops channel
-        run: |
-          ENVIRONMENT_LOWER="$(echo "${{ inputs.environment }}" | tr '[:upper:]' '[:lower:]')"
-          if [[ "$ENVIRONMENT_LOWER" == *"staging"* ]]; then
-            echo "SLACK_WEBHOOK_URL=${{ secrets.STAGING_SLACK_WEBHOOK_OPS }}" >> $GITHUB_ENV
-          else
-            echo "SLACK_WEBHOOK_URL=${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}" >> $GITHUB_ENV
-          fi
-
       - name: Notify Slack
         run: |
           json='{"blocks":[{"type":"section","text":{"type":"mrkdwn","text":":red: Data Lake workflow failed: <${{ inputs.workflow_url }}|${{ inputs.workflow_name }}>"}}]}'
-          curl -X POST -H 'Content-type: application/json' --data "$json" "$SLACK_WEBHOOK_URL"
+          curl -X POST -H 'Content-type: application/json' --data "$json" "${{ secrets.SLACK_WEBHOOK_URL }}"

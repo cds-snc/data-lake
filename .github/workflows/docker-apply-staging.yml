@@ -104,7 +104,6 @@ jobs:
     if: ${{ always() && failure() }}
     needs:
       - docker-build-push-deploy
-      - docker-sbom
     uses: ./.github/workflows/workflow-failure.yml
     with:
       workflow_name: ${{ github.workflow }}
@@ -113,5 +112,4 @@ jobs:
     secrets:
       LOG_ANALYTICS_WORKSPACE_ID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
       LOG_ANALYTICS_WORKSPACE_KEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
-      STAGING_SLACK_WEBHOOK_OPS: ${{ secrets.STAGING_SLACK_WEBHOOK_OPS }}
-      PRODUCTION_SLACK_WEBHOOK_OPS: ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}
+      SLACK_WEBHOOK_URL: ${{ secrets.STAGING_SLACK_WEBHOOK_OPS }}
