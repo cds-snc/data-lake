@@ -1,17 +1,18 @@
 name: Docker SBOM Staging
 
 on:
-  workflow_run:
-    workflows: ["Docker build, push and deploy Staging"]
-    types:
-    - completed
+  workflow_call:
+    secrets:
+      LOG_ANALYTICS_WORKSPACE_ID:
+        required: true
+      LOG_ANALYTICS_WORKSPACE_KEY:
+        required: true
 
 permissions:
   contents: write
   
 jobs:
   docker-sbom:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04-arm
     strategy:
       fail-fast: false
