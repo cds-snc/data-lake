@@ -43,3 +43,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: ./.github/workflows/scripts/sync-glue-jobs.sh
+
+  notify-workflow-failure:
+    if: ${{ always() && failure() }}
+    needs:
+      - glue-job-sync
+    uses: ./.github/workflows/workflow-failure.yml
+    with:
+      workflow_name: ${{ github.workflow }}
+      workflow_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      LOG_ANALYTICS_WORKSPACE_ID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+      LOG_ANALYTICS_WORKSPACE_KEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.PRODUCTION_SLACK_WEBHOOK_OPS }}

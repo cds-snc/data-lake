@@ -111,3 +111,16 @@ jobs:
           log_type: CDS_Product_Deployment_Data
           log_analytics_workspace_id: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
           log_analytics_workspace_key: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
+
+  notify-workflow-failure:
+    if: ${{ always() && failure() }}
+    needs:
+      - terragrunt-apply-staging
+    uses: ./.github/workflows/workflow-failure.yml
+    with:
+      workflow_name: ${{ github.workflow }}
+      workflow_url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    secrets:
+      LOG_ANALYTICS_WORKSPACE_ID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
+      LOG_ANALYTICS_WORKSPACE_KEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.STAGING_SLACK_WEBHOOK_OPS }}
