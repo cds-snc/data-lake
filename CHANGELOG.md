@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.41.0](https://github.com/cds-snc/data-lake/compare/v1.40.2...v1.41.0) (2026-05-29)
+
+
+### Features
+
+* replace workflow_run triggers with workflow_call ([#661](https://github.com/cds-snc/data-lake/issues/661)) ([c1b5cd4](https://github.com/cds-snc/data-lake/commit/c1b5cd46ec108f200aa37357cd1552d32bbcf02c))
+
+
+### Bug Fixes
+
+* added GetFunctionConfiguration ([#654](https://github.com/cds-snc/data-lake/issues/654)) ([b7e60bf](https://github.com/cds-snc/data-lake/commit/b7e60bf4b1d97360b7fcb1832af812b4d0068510))
+* incremental date load start of day ([#662](https://github.com/cds-snc/data-lake/issues/662)) ([e67b50c](https://github.com/cds-snc/data-lake/commit/e67b50c9e2219b076f9dbb25198dd4ec622489fd))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#646](https://github.com/cds-snc/data-lake/issues/646)) ([a57e525](https://github.com/cds-snc/data-lake/commit/a57e5254cd433cb5392dd96c53e73b7a0ad42ff5))
+* **deps:** lock file maintenance ([#657](https://github.com/cds-snc/data-lake/issues/657)) ([830b32e](https://github.com/cds-snc/data-lake/commit/830b32e334364334c9e5687ea1cc86bfc98e92c6))
+* **deps:** lock file maintenance ([#660](https://github.com/cds-snc/data-lake/issues/660)) ([8d74a81](https://github.com/cds-snc/data-lake/commit/8d74a816d6fc61342bbfa0783e4605573c0ed447))
+* **deps:** update all minor dependencies ([#651](https://github.com/cds-snc/data-lake/issues/651)) ([ddeeeab](https://github.com/cds-snc/data-lake/commit/ddeeeab313e41af42507594dfa0a6d4ed46e47d3))
+* **deps:** update aws-actions/amazon-ecr-login action to v2.1.4 ([#645](https://github.com/cds-snc/data-lake/issues/645)) ([ddd0390](https://github.com/cds-snc/data-lake/commit/ddd0390b0a932bce823d11d0ba04ce8037d42c4a))
+* **deps:** update aws-actions/amazon-ecr-login action to v2.1.5 ([#655](https://github.com/cds-snc/data-lake/issues/655)) ([0ee0714](https://github.com/cds-snc/data-lake/commit/0ee07142952dc06f7c2462e26e63c1d8adb04f26))
+* **deps:** update dependency awswrangler to v3.16.1 ([#656](https://github.com/cds-snc/data-lake/issues/656)) ([30bc14f](https://github.com/cds-snc/data-lake/commit/30bc14f0629e792201006965dfe5cc1b49ea6ef4))
+* **deps:** update dependency pyarrow to v23 [security] ([#658](https://github.com/cds-snc/data-lake/issues/658)) ([1a9ecae](https://github.com/cds-snc/data-lake/commit/1a9ecae7dfa998da57f83026f15c04d451ef3a4b))
+
 ## [1.40.2](https://github.com/cds-snc/data-lake/compare/v1.40.1...v1.40.2) (2026-05-06)
 
 
