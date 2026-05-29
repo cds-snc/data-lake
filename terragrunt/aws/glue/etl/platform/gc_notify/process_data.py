@@ -468,7 +468,9 @@ def get_incremental_load_date_from(data_look_back_days: int) -> str:
     all data within the overwritten month partition(s) while respecting the data retention policy.
     """
     today = datetime.now()
-    month_start = (today - timedelta(days=data_look_back_days)).replace(day=1)
+    month_start = (today - timedelta(days=data_look_back_days)).replace(
+        day=1, hour=0, minute=0, second=0, microsecond=0
+    )
     return month_start.strftime("%Y-%m-%d %H:%M:%S")
 
 
