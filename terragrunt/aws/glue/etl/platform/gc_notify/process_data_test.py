@@ -429,6 +429,7 @@ def test_get_incremental_load_date_from(mock_datetime):
 def test_get_incremental_load_date_from_month_boundary_regression(mock_datetime):
     """Ensure day-1 records are included by using a midnight month-start cutoff."""
     import datetime as real_datetime
+
     mock_datetime.now.return_value = real_datetime.datetime(2024, 5, 3, 6, 15, 27)
     result = get_incremental_load_date_from(14)
     assert result == "2024-04-01 00:00:00"
