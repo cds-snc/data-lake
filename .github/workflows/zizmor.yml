@@ -1,0 +1,141 @@
+name: GitHub Actions security analysis
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+  issues: write
+  security-events: write
+
+jobs:
+  zizmor-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor scan
+        id: zizmor
+        run: |
+          # Install zizmor
+          curl -sSfL https://raw.githubusercontent.com/zizmorcore/zizmor/main/install.sh | sh -s -- -b /usr/local/bin
+          
+          # Run scan and output JSON
+          zizmor .github/workflows --format json > zizmor-results.json 2>&1 || true
+          cat zizmor-results.json
+
+      - name: Parse zizmor results
+        id: parse
+        run: |
+          if [ -f zizmor-results.json ] && [ -s zizmor-results.json ]; then
+            # Count critical findings
+            CRITICAL_COUNT=$(jq '[.[] | select(.level=="critical" or .level=="CRITICAL")] | length' zizmor-results.json 2>/dev/null || echo 0)
+            TOTAL_COUNT=$(jq 'length' zizmor-results.json 2>/dev/null || echo 0)
+            echo "critical_count=${CRITICAL_COUNT:-0}" >> $GITHUB_OUTPUT
+            echo "total_count=${TOTAL_COUNT:-0}" >> $GITHUB_OUTPUT
+            echo "has_results=true" >> $GITHUB_OUTPUT
+          else
+            echo "critical_count=0" >> $GITHUB_OUTPUT
+            echo "total_count=0" >> $GITHUB_OUTPUT
+            echo "has_results=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Comment PR with zizmor results
+        if: github.event_name == 'pull_request' && steps.parse.outputs.total_count != '0'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('zizmor-results.json', 'utf8'));
+            
+            if (!results || results.length === 0) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '✅ **Workflow Security Scan** - No vulnerabilities detected.'
+              });
+              return;
+            }
+            
+            const bySeverity = results.reduce((acc, finding) => {
+              const level = finding.level?.toUpperCase() || 'UNKNOWN';
+              acc[level] = (acc[level] || 0) + 1;
+              return acc;
+            }, {});
+            
+            let comment = '⚠️ **Workflow Security Scan Results**\n\n';
+            Object.entries(bySeverity)
+              .sort((a, b) => {
+                const order = {CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3};
+                return (order[a[0]] || 999) - (order[b[0]] || 999);
+              })
+              .forEach(([severity, count]) => {
+                const emoji = severity === 'CRITICAL' ? '🔴' : severity === 'HIGH' ? '🟠' : '🟡';
+                comment += `${emoji} **${severity}**: ${count}\n`;
+              });
+            
+            comment += '\n### Details\n\n';
+            results.slice(0, 20).forEach(finding => {
+              const level = finding.level?.toUpperCase() || 'UNKNOWN';
+              comment += `- **${level}** in \`${finding.location?.file || 'unknown'}\`: ${finding.message}\n`;
+            });
+            
+            if (results.length > 20) {
+              comment += `\n... and ${results.length - 20} more finding(s)`;
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Create issue for critical findings
+        if: steps.parse.outputs.critical_count != '0'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('zizmor-results.json', 'utf8'));
+            const criticalFindings = results.filter(f => f.level?.toLowerCase() === 'critical');
+            
+            if (criticalFindings.length === 0) return;
+            
+            const issueBody = criticalFindings
+              .map(finding => `- **${finding.location?.file || 'unknown'}**: ${finding.message}`)
+              .join('\n');
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🔴 Critical GitHub Workflow Vulnerabilities Detected',
+              body: `Zizmor workflow security scan found critical vulnerabilities:\n\n${issueBody}\n\nPlease address these issues immediately.`,
+              labels: ['security', 'workflow-vulnerability']
+            });
+
+      - name: Fail on critical vulnerabilities
+        if: steps.parse.outputs.critical_count != '0'
+        run: |
+          echo "❌ Critical workflow vulnerabilities detected: ${{ steps.parse.outputs.critical_count }}"
+          exit 1
+
+      - name: Display summary
+        if: always() && steps.parse.outputs.total_count != '0'
+        run: |
+          echo "## Workflow Security Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total Findings**: ${{ steps.parse.outputs.total_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Critical**: ${{ steps.parse.outputs.critical_count }}" >> $GITHUB_STEP_SUMMARY
+
