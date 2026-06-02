@@ -22,6 +22,9 @@ jobs:
           DNS_PROXY_WILDCARDGREEDY: "true"
 
       - name: Send Slack notification
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           curl \
             --request POST \
@@ -32,7 +35,7 @@ jobs:
                   \"type\": \"section\",
                   \"text\": {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"🔒 Security dependency PR opened for the Data Lake:\n<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\"
+                    \"text\": \"🔒 Security dependency PR opened for the Data Lake:\n<${{ env.PR_URL }}|${{ env.PR_TITLE }}>\"
                   }
                 }
               ]
