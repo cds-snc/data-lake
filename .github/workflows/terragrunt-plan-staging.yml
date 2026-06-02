@@ -39,11 +39,11 @@ permissions: {}
 
 jobs:
   terragrunt-plan-staging:
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
       pull-requests: write
-    runs-on: ubuntu-latest
     steps:
       - name: Audit DNS requests
         uses: cds-snc/dns-proxy-action@9ad793100229573be3f5ba78cc69ec523f2c8b7e # v1.1.0
