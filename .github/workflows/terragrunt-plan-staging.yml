@@ -35,13 +35,14 @@ env:
   TF_VAR_gcp_ga_property_platform_core_superset_doc: ${{ secrets.GCP_GA_PROPERTY_PLATFORM_CORE_SUPERSET_DOC }}
   TF_VAR_qualtrics_external_id: ${{ secrets.QUALTRICS_EXTERNAL_ID }}
 
-permissions:
-  id-token: write
-  contents: read
-  pull-requests: write
+permissions: {}
 
 jobs:
   terragrunt-plan-staging:
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Audit DNS requests
