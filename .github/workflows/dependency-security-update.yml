@@ -10,7 +10,7 @@ permissions:
 jobs:
   dependency-security-update:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.title, '[security]') && github.actor == 'renovate[bot]'
+    if: contains(github.event.pull_request.title, '[security]') && github.event.pull_request.user.login == 'renovate[bot]'
     steps:
       - name: Audit DNS requests
         uses: cds-snc/dns-proxy-action@9ad793100229573be3f5ba78cc69ec523f2c8b7e # v1.1.0
