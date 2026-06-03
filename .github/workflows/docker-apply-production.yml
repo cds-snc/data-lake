@@ -44,7 +44,7 @@ jobs:
     needs: get-version
     permissions:
       id-token: write
-      contents: write
+      contents: read
     env:
       VERSION: ${{ needs.get-version.outputs.version }}
     strategy:
@@ -108,7 +108,7 @@ jobs:
           --function-name ${{matrix.lambda}}
 
   notify-workflow-failure:
-    if: ${{ always() && failure() }}
+    if: failure()
     needs:
       - get-version
       - docker-build-push-deploy

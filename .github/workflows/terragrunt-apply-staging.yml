@@ -114,7 +114,7 @@ jobs:
           log_analytics_workspace_key: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
 
   notify-workflow-failure:
-    if: ${{ always() && failure() }}
+    if: failure()
     needs:
       - terragrunt-apply-staging
     uses: ./.github/workflows/workflow-failure.yml

@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
     permissions:
       id-token: write
-      contents: write
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -102,7 +102,7 @@ jobs:
       LOG_ANALYTICS_WORKSPACE_KEY: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
 
   notify-workflow-failure:
-    if: ${{ always() && failure() }}
+    if: failure()
     needs:
       - docker-build-push-deploy
     uses: ./.github/workflows/workflow-failure.yml

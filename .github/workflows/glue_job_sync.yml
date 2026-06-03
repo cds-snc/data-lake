@@ -46,7 +46,7 @@ jobs:
         run: ./.github/workflows/scripts/sync-glue-jobs.sh
 
   notify-workflow-failure:
-    if: ${{ always() && failure() }}
+    if: failure()
     needs:
       - glue-job-sync
     uses: ./.github/workflows/workflow-failure.yml
