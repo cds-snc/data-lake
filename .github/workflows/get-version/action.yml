@@ -14,13 +14,15 @@ runs:
     using: "composite"
     steps:
         - name: Get version, release PR branch
+          id: version-from-branch
           if: inputs.is-tagged == 'false' && startsWith(github.head_ref, 'release-please--')
           env:
             GITHUB_HEAD_REF: ${{ github.head_ref }}
-          run: echo "VERSION=$GITHUB_HEAD_REF" >> $GITHUB_ENV                  
+          run: echo "VERSION=$GITHUB_HEAD_REF" >> $GITHUB_OUTPUT                  
           shell: bash
 
         - name: Get version, perform release of tag
+          id: version-from-tag 
           if: inputs.is-tagged == 'true'
           run: |
             VERSION="$(tr -d '\n\r' < version.txt)"
@@ -28,16 +30,18 @@ runs:
               echo "::error::Invalid version format in version.txt: '$VERSION'"
               exit 1
             fi
-            echo "VERSION=v${VERSION}" >> $GITHUB_ENV
+            echo "VERSION=v${VERSION}" >> $GITHUB_OUTPUT
           shell: bash
           
         - name: Wait for ref to exist
           if: inputs.is-tagged == 'true'
-          run: ./.github/workflows/scripts/wait-for-ref.sh "${VERSION}"
+          env:
+            VERSION: ${{ steps.version-from-tag.outputs.version }}
+          run: ./.github/workflows/scripts/wait-for-ref.sh "$VERSION"
           shell: bash
           
         - name: Fail if no version set
-          if: env.VERSION == ''
+          if: steps.version-from-branch.outputs.version == '' && steps.version-from-tag.outputs.version == ''
           run: exit 1
           shell: bash  
 

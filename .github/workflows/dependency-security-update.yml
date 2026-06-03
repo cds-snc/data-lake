@@ -10,7 +10,7 @@ permissions:
 jobs:
   dependency-security-update:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.title, '[security]') && github.actor == 'renovate[bot]'
+    if: contains(github.event.pull_request.title, '[security]') && github.event.pull_request.user.login == 'renovate[bot]'
     steps:
       - name: Audit DNS requests
         uses: cds-snc/dns-proxy-action@9ad793100229573be3f5ba78cc69ec523f2c8b7e # v1.1.0
@@ -22,6 +22,9 @@ jobs:
           DNS_PROXY_WILDCARDGREEDY: "true"
 
       - name: Send Slack notification
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           curl \
             --request POST \
@@ -32,7 +35,7 @@ jobs:
                   \"type\": \"section\",
                   \"text\": {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"🔒 Security dependency PR opened for the Data Lake:\n<${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>\"
+                    \"text\": \"🔒 Security dependency PR opened for the Data Lake:\n<${{ env.PR_URL }}|${{ env.PR_TITLE }}>\"
                   }
                 }
               ]

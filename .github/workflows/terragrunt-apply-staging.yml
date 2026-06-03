@@ -35,13 +35,14 @@ env:
   TF_VAR_gcp_ga_property_platform_core_superset_doc: ${{ secrets.GCP_GA_PROPERTY_PLATFORM_CORE_SUPERSET_DOC }}
   TF_VAR_qualtrics_external_id: ${{ secrets.QUALTRICS_EXTERNAL_ID }}
 
-permissions:
-  id-token: write
-  contents: read
+permissions: {}
 
 jobs:
   terragrunt-apply-staging:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Audit DNS requests
         uses: cds-snc/dns-proxy-action@9ad793100229573be3f5ba78cc69ec523f2c8b7e # v1.1.0
@@ -113,7 +114,7 @@ jobs:
           log_analytics_workspace_key: ${{ secrets.LOG_ANALYTICS_WORKSPACE_KEY }}
 
   notify-workflow-failure:
-    if: ${{ always() && failure() }}
+    if: failure()
     needs:
       - terragrunt-apply-staging
     uses: ./.github/workflows/workflow-failure.yml
