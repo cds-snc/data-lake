@@ -12,6 +12,7 @@ data "aws_iam_policy_document" "sfn_assume_role" {
 resource "aws_iam_role" "sfn_role" {
   name               = "DataLakeOrchestratorRole"
   assume_role_policy = data.aws_iam_policy_document.sfn_assume_role.json
+  tags               = var.core_tags
 }
 
 data "aws_iam_policy_document" "sfn_glue_policy" {
@@ -89,6 +90,7 @@ data "aws_iam_policy_document" "sfn_glue_policy" {
 resource "aws_iam_policy" "sfn_glue_policy" {
   name   = "DataLakeOrchestratorGluePolicy"
   policy = data.aws_iam_policy_document.sfn_glue_policy.json
+  tags   = var.core_tags
 }
 
 resource "aws_iam_role_policy_attachment" "sfn_glue_policy_attachment" {
@@ -111,6 +113,7 @@ data "aws_iam_policy_document" "eventbridge_sfn_assume_role" {
 resource "aws_iam_role" "eventbridge_sfn_role" {
   name               = "DataLakeOrchestratorEventBridgeRole"
   assume_role_policy = data.aws_iam_policy_document.eventbridge_sfn_assume_role.json
+  tags               = var.core_tags
 }
 
 data "aws_iam_policy_document" "eventbridge_sfn_policy" {
@@ -128,6 +131,7 @@ data "aws_iam_policy_document" "eventbridge_sfn_policy" {
 resource "aws_iam_policy" "eventbridge_sfn_policy" {
   name   = "DataLakeOrchestratorEventBridgePolicy"
   policy = data.aws_iam_policy_document.eventbridge_sfn_policy.json
+  tags   = var.core_tags
 }
 
 resource "aws_iam_role_policy_attachment" "eventbridge_sfn_policy_attachment" {

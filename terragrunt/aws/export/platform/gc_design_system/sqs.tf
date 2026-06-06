@@ -15,9 +15,7 @@ resource "aws_sqs_queue" "cloudfront_processing_queue" {
   # Encryption
   kms_master_key_id = aws_kms_key.gc_design_system_exports.arn
 
-  tags = {
-    Billing = var.billing_tag_value
-  }
+  tags = var.core_tags
 }
 
 # Dead letter queue for failed messages
@@ -27,9 +25,7 @@ resource "aws_sqs_queue" "cloudfront_processing_dlq" {
   # Encryption
   kms_master_key_id = aws_kms_key.gc_design_system_exports.arn
 
-  tags = {
-    Billing = var.billing_tag_value
-  }
+  tags = var.core_tags
 }
 
 # Redrive policy for main queue

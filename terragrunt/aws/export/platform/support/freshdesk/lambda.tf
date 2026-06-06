@@ -41,4 +41,5 @@ resource "aws_ssm_parameter" "freshdesk_api_key" {
   name  = "/platform/support/freshdesk-api-key"
   type  = "SecureString"
   value = var.freshdesk_api_key
+  tags  = var.core_tags
 }

@@ -26,6 +26,8 @@ resource "aws_cloudwatch_metric_alarm" "platform_support_freshdesk_export_error_
 
   alarm_actions = [var.sns_topic_alarm_action_arn]
   ok_actions    = [var.sns_topic_ok_action_arn]
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "platform_support_freshdesk_export_errors" {
@@ -46,4 +48,6 @@ resource "aws_cloudwatch_metric_alarm" "platform_support_freshdesk_export_errors
 
   alarm_actions = [var.sns_topic_alarm_action_arn]
   ok_actions    = [var.sns_topic_ok_action_arn]
+
+  tags = var.core_tags
 }

@@ -6,14 +6,13 @@ resource "aws_kms_key" "gc_design_system_exports" {
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.gc_design_system_exports_kms.json
 
-  tags = {
-    CostCentre = var.billing_tag_value
-  }
+  tags = var.core_tags
 }
 
 resource "aws_kms_alias" "gc_design_system_exports" {
   name          = "alias/gc-design-system-exports"
   target_key_id = aws_kms_key.gc_design_system_exports.key_id
+  tags          = var.core_tags
 }
 
 data "aws_iam_policy_document" "gc_design_system_exports_kms" {

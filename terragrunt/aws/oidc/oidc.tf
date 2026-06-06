@@ -46,6 +46,7 @@ resource "aws_iam_policy" "data_lake_github_data_export" {
   name   = local.data_lake_github_data_export
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.s3_read_write_raw_github.json
+  tags   = var.core_tags
 }
 
 data "aws_iam_policy_document" "s3_read_write_raw_github" {
@@ -87,6 +88,7 @@ resource "aws_iam_policy" "data_lake_docker_push" {
   name   = local.data_lake_docker_push
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.data_lake_docker_push.json
+  tags   = var.core_tags
 }
 
 #trivy:ignore:AWS-0342

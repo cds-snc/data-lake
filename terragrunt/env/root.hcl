@@ -8,6 +8,11 @@ inputs = {
   env                    = "${local.vars.inputs.env}"
   region                 = "ca-central-1"
   superset_iam_role_arns = local.vars.inputs.superset_iam_role_arns
+  core_tags = {
+    Terraform  = "true"
+    CostCentre = local.vars.inputs.billing_tag_value
+    ssc_cbrid  = "22DH"      
+  }
 }
 
 remote_state {

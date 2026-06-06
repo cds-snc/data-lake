@@ -29,6 +29,8 @@ resource "aws_cloudwatch_metric_alarm" "glue_crawler_error" {
 
   alarm_actions = [aws_sns_topic.cloudwatch_alarm_action.arn]
   ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
+
+  tags = var.core_tags
 }
 
 #
@@ -76,6 +78,8 @@ resource "aws_cloudwatch_metric_alarm" "glue_etl_pythonshell_error" {
 
   alarm_actions = [aws_sns_topic.cloudwatch_alarm_action.arn]
   ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "glue_etl_spark_error" {
@@ -92,6 +96,8 @@ resource "aws_cloudwatch_metric_alarm" "glue_etl_spark_error" {
 
   alarm_actions = [aws_sns_topic.cloudwatch_alarm_action.arn]
   ok_actions    = [aws_sns_topic.cloudwatch_ok_action.arn]
+
+  tags = var.core_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
@@ -112,4 +118,6 @@ resource "aws_cloudwatch_metric_alarm" "glue_job_failures" {
   dimensions = {
     RuleName = aws_cloudwatch_event_rule.glue_job_failure.name
   }
+
+  tags = var.core_tags
 }

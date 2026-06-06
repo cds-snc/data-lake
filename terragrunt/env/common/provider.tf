@@ -21,15 +21,3 @@ provider "aws" {
     }
   }
 }
-
-provider "aws" {
-  alias               = "core_services"
-  region              = var.region
-  allowed_account_ids = [var.account_id]
- 
-  default_tags {
-    tags = {
-      ssc_cbrid = "22DH"
-    }
-  }
-}

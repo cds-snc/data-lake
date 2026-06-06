@@ -46,12 +46,14 @@ resource "aws_iam_role" "glue_crawler" {
   name               = "AWSGlueCrawler-DataLake"
   path               = "/service-role/"
   assume_role_policy = data.aws_iam_policy_document.glue_assume.json
+  tags               = var.core_tags
 }
 
 resource "aws_iam_policy" "glue_crawler" {
   name   = "AWSGlueCrawler-DataLake"
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.glue_crawler_combined.json
+  tags   = var.core_tags
 }
 
 data "aws_iam_policy_document" "glue_crawler_combined" {
@@ -78,12 +80,14 @@ resource "aws_iam_role" "glue_etl" {
   name               = "AWSGlueETL-DataLake"
   path               = "/service-role/"
   assume_role_policy = data.aws_iam_policy_document.glue_assume.json
+  tags               = var.core_tags
 }
 
 resource "aws_iam_policy" "glue_etl" {
   name   = "AWSGlueETL-DataLake"
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.glue_etl_combined.json
+  tags   = var.core_tags
 }
 
 data "aws_iam_policy_document" "glue_etl_combined" {
@@ -231,6 +235,7 @@ resource "aws_iam_policy" "bes_strategic_data_access" {
   name   = "bes-strategic-data-access"
   path   = "/"
   policy = data.aws_iam_policy_document.bes_strategic_data_access.json
+  tags   = var.core_tags
 }
 
 data "aws_iam_policy_document" "bes_strategic_data_access" {
@@ -359,6 +364,7 @@ resource "aws_iam_role" "qualtrics_s3_access" {
   name               = "QualtricsExportToDataLake"
   path               = "/"
   assume_role_policy = data.aws_iam_policy_document.qualtrics_assume_role.json
+  tags               = var.core_tags
 }
 
 data "aws_iam_policy_document" "qualtrics_assume_role" {
@@ -385,6 +391,7 @@ resource "aws_iam_policy" "qualtrics_s3_access" {
   name   = "QualtricsExportToDataLake"
   path   = "/"
   policy = data.aws_iam_policy_document.qualtrics_s3_access.json
+  tags   = var.core_tags
 }
 
 data "aws_iam_policy_document" "qualtrics_s3_access" {

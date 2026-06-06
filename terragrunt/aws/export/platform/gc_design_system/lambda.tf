@@ -72,6 +72,7 @@ resource "aws_ssm_parameter" "airtable_api_key" {
   name  = "/platform/gc-design-system/airtable-api-key"
   type  = "SecureString"
   value = var.airtable_api_key
+  tags  = var.core_tags
 }
 
 #

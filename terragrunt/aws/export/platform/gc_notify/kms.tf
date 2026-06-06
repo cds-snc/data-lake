@@ -5,11 +5,13 @@ resource "aws_kms_key" "platform_notify_rds_snapshot_exports" {
   description         = "Encrypt Notify RDS Snapshot exports"
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.platform_notify_rds_snapshot_exports_kms.json
+  tags                = var.core_tags
 }
 
 resource "aws_kms_alias" "platform_notify_rds_snapshot_exports" {
   name          = "alias/platform-notify-rds-snapshot-exports"
   target_key_id = aws_kms_key.platform_notify_rds_snapshot_exports.key_id
+  tags          = var.core_tags
 }
 
 data "aws_iam_policy_document" "platform_notify_rds_snapshot_exports_kms" {
