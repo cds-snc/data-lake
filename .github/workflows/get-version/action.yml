@@ -47,5 +47,7 @@ runs:
 
         - name: Output version
           id: output-version
+          env:
+            VERSION: ${{ steps.version-from-tag.outputs.VERSION || steps.version-from-branch.outputs.VERSION }}
           run: echo "version=${VERSION}" >> $GITHUB_OUTPUT  
           shell: bash
