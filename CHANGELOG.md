@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.42.1](https://github.com/cds-snc/data-lake/compare/v1.42.0...v1.42.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* added missing version ([#674](https://github.com/cds-snc/data-lake/issues/674)) ([4c86cdc](https://github.com/cds-snc/data-lake/commit/4c86cdcff716d12281f73b145d7e78f86ddb982f))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#672](https://github.com/cds-snc/data-lake/issues/672)) ([260d4eb](https://github.com/cds-snc/data-lake/commit/260d4eb43867d8b8398b23f44c4c922e76675bd7))
+
 ## [1.42.0](https://github.com/cds-snc/data-lake/compare/v1.41.1...v1.42.0) (2026-06-08)
 
 
