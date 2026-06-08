@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.42.2](https://github.com/cds-snc/data-lake/compare/v1.42.1...v1.42.2) (2026-06-08)
+
+
+### Bug Fixes
+
+* sbom permission issues ([#676](https://github.com/cds-snc/data-lake/issues/676)) ([a28e6e0](https://github.com/cds-snc/data-lake/commit/a28e6e0c5340b2c4342b75e62ed4585c984b786b))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all patch dependencies ([#671](https://github.com/cds-snc/data-lake/issues/671)) ([ead98c5](https://github.com/cds-snc/data-lake/commit/ead98c5327a506363fdfe77faf25c407ec6b6408))
+
 ## [1.42.1](https://github.com/cds-snc/data-lake/compare/v1.42.0...v1.42.1) (2026-06-08)
 
 
