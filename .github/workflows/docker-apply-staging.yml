@@ -13,7 +13,8 @@ env:
   REGISTRY: ${{ vars.STAGING_AWS_ACCOUNT_ID }}.dkr.ecr.ca-central-1.amazonaws.com
   TAG_VERSION: ${{ github.sha }}
 
-permissions: {}
+permissions:
+  contents: write
   
 jobs:
   docker-build-push-deploy:
