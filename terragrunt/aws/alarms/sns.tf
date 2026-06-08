@@ -4,11 +4,13 @@
 resource "aws_sns_topic" "cloudwatch_alarm_action" {
   name              = "cloudwatch-alarm-action"
   kms_master_key_id = aws_kms_key.cloudwatch.arn
+  tags              = var.core_tags
 }
 
 resource "aws_sns_topic" "cloudwatch_ok_action" {
   name              = "cloudwatch-ok-action"
   kms_master_key_id = aws_kms_key.cloudwatch.arn
+  tags              = var.core_tags
 }
 
 #

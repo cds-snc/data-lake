@@ -2,7 +2,7 @@
 # Freshdesk export via a scheduled Lambda function
 #
 module "platform_support_freshdesk_export" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.11.4"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v11.3.5"
 
   lambda_name                = local.freshdesk_lambda_name
   lambda_schedule_expression = local.cron_expression
@@ -41,4 +41,5 @@ resource "aws_ssm_parameter" "freshdesk_api_key" {
   name  = "/platform/support/freshdesk-api-key"
   type  = "SecureString"
   value = var.freshdesk_api_key
+  tags  = var.core_tags
 }

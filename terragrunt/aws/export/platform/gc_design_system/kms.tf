@@ -5,10 +5,7 @@ resource "aws_kms_key" "gc_design_system_exports" {
   description         = "KMS key for GC Design System data export encryption"
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.gc_design_system_exports_kms.json
-
-  tags = {
-    CostCentre = var.billing_tag_value
-  }
+  tags                = var.core_tags
 }
 
 resource "aws_kms_alias" "gc_design_system_exports" {

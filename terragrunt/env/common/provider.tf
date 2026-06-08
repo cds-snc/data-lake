@@ -17,6 +17,7 @@ provider "aws" {
     tags = {
       CostCentre = "PlatformDataLake"
       Terraform  = true
+      ssc_cbrid  = "22DI"
     }
   }
 }

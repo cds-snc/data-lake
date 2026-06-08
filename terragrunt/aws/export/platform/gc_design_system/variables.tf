@@ -7,6 +7,12 @@ variable "region" {
   description = "The AWS region."
   type        = string
 }
+
+variable "core_tags" {
+  description = "A map of core tags to apply to resources."
+  type        = map(string)
+}
+
 variable "billing_tag_value" {
   description = "The billing tag value to apply to resources."
   type        = string

@@ -8,6 +8,11 @@ variable "billing_tag_value" {
   type        = string
 }
 
+variable "core_tags" {
+  description = "(Required) Core tags to apply to all resources"
+  type        = map(string)
+}
+
 variable "env" {
   description = "(Required) The current running environment"
   type        = string

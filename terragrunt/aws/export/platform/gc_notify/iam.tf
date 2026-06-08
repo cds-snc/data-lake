@@ -2,11 +2,13 @@ resource "aws_iam_role" "platform_notify_rds_snapshot_exports" {
   name               = "platform-notify-export"
   description        = "Trigger exports of Notify RDS snapshots to the Data Lake"
   assume_role_policy = data.aws_iam_policy_document.platform_notify_rds_snapshot_exports_assume.json
+  tags               = var.core_tags
 }
 
 resource "aws_iam_policy" "platform_notify_rds_snapshot_exports" {
   name   = "platform-notify-export"
   policy = data.aws_iam_policy_document.platform_notify_rds_snapshot_exports.json
+  tags   = var.core_tags
 }
 
 resource "aws_iam_role_policy_attachment" "platform_notify_rds_snapshot_exports" {

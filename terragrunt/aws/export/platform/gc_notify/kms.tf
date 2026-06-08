@@ -5,6 +5,7 @@ resource "aws_kms_key" "platform_notify_rds_snapshot_exports" {
   description         = "Encrypt Notify RDS Snapshot exports"
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.platform_notify_rds_snapshot_exports_kms.json
+  tags                = var.core_tags
 }
 
 resource "aws_kms_alias" "platform_notify_rds_snapshot_exports" {

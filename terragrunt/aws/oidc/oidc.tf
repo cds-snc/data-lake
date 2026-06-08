@@ -11,7 +11,7 @@ locals {
 module "github_workflow_roles" {
   count = var.env == "production" ? 1 : 0
 
-  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v10.11.4"
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v11.3.5"
   billing_tag_value = var.billing_tag_value
   roles = [
     {
@@ -46,6 +46,7 @@ resource "aws_iam_policy" "data_lake_github_data_export" {
   name   = local.data_lake_github_data_export
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.s3_read_write_raw_github.json
+  tags   = var.core_tags
 }
 
 data "aws_iam_policy_document" "s3_read_write_raw_github" {
@@ -66,7 +67,7 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
 # needed by the Docker build, push and deploy workflows.
 #
 module "docker_roles" {
-  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v10.11.4"
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v11.3.5"
   billing_tag_value = var.billing_tag_value
   roles = [
     {
@@ -87,6 +88,7 @@ resource "aws_iam_policy" "data_lake_docker_push" {
   name   = local.data_lake_docker_push
   path   = "/service-role/"
   policy = data.aws_iam_policy_document.data_lake_docker_push.json
+  tags   = var.core_tags
 }
 
 #trivy:ignore:AWS-0342

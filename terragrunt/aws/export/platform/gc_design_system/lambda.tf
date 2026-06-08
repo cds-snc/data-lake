@@ -2,7 +2,7 @@
 # GC Design System data export via a scheduled Lambda function
 #
 module "platform_gc_design_system_export" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.11.4"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v11.3.5"
 
   lambda_name                = local.gc_design_system_lambda_name
   lambda_schedule_expression = local.cron_expression
@@ -72,13 +72,14 @@ resource "aws_ssm_parameter" "airtable_api_key" {
   name  = "/platform/gc-design-system/airtable-api-key"
   type  = "SecureString"
   value = var.airtable_api_key
+  tags  = var.core_tags
 }
 
 #
 # GC Design System NPM download data export via a scheduled Lambda function
 #
 module "platform_gc_design_system_npm_export" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.11.4"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v11.3.5"
 
   lambda_name                = local.gc_design_system_npm_lambda_name
   lambda_schedule_expression = local.cron_expression
@@ -131,7 +132,7 @@ data "aws_iam_policy_document" "platform_gc_design_system_npm_export" {
 # GC Design System CloudFront log processing via SQS-triggered Lambda function
 #
 module "platform_gc_design_system_cloudfront_export" {
-  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v10.11.4"
+  source = "github.com/cds-snc/terraform-modules//lambda_schedule?ref=v11.3.5"
 
   lambda_name                = local.gc_design_system_cloudfront_lambda_name
   lambda_schedule_expression = "rate(365 days)" # Effectively disabled - triggered by SQS instead
