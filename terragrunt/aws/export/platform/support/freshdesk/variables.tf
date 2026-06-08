@@ -3,6 +3,11 @@ variable "billing_tag_value" {
   type        = string
 }
 
+variable "core_tags" {
+  description = "A map of core tags to apply to resources."
+  type        = map(string)
+}
+
 variable "env" {
   description = "The environment for the resources."
   type        = string

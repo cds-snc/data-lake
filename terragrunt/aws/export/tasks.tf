@@ -7,6 +7,7 @@ module "platform_notify_export" {
   sns_topic_alarm_action_arn = var.sns_topic_alarm_action_arn
   sns_topic_ok_action_arn    = var.sns_topic_ok_action_arn
 
+  core_tags         = var.core_tags
   billing_tag_value = var.billing_tag_value
 }
 
@@ -32,6 +33,7 @@ module "platform_gc_design_system_export" {
   gc_design_system_npm_crawler_arn  = var.gc_design_system_npm_crawler_arn
   gc_design_system_npm_crawler_name = var.gc_design_system_npm_crawler_name
 
+  core_tags         = var.core_tags
   billing_tag_value = var.billing_tag_value
 }
 
@@ -45,6 +47,7 @@ module "platform_support_freshdesk_export" {
   sns_topic_alarm_action_arn = var.sns_topic_alarm_action_arn
   sns_topic_ok_action_arn    = var.sns_topic_ok_action_arn
 
+  core_tags         = var.core_tags
   billing_tag_value = var.billing_tag_value
 }
 
