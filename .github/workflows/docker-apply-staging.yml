@@ -13,8 +13,7 @@ env:
   REGISTRY: ${{ vars.STAGING_AWS_ACCOUNT_ID }}.dkr.ecr.ca-central-1.amazonaws.com
   TAG_VERSION: ${{ github.sha }}
 
-permissions:
-  contents: write
+permissions: {}
   
 jobs:
   docker-build-push-deploy:
@@ -97,6 +96,8 @@ jobs:
 
   docker-sbom:
     needs: docker-build-push-deploy
+    permissions:
+      contents: write
     uses: ./.github/workflows/docker-sbom-staging.yml
     secrets:
       LOG_ANALYTICS_WORKSPACE_ID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
