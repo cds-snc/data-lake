@@ -96,6 +96,8 @@ jobs:
 
   docker-sbom:
     needs: docker-build-push-deploy
+    permissions:
+      contents: write
     uses: ./.github/workflows/docker-sbom-staging.yml
     secrets:
       LOG_ANALYTICS_WORKSPACE_ID: ${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}
