@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.42.0](https://github.com/cds-snc/data-lake/compare/v1.41.1...v1.42.0) (2026-06-08)
+
+
+### Features
+
+* github workflow static analysis ([#666](https://github.com/cds-snc/data-lake/issues/666)) ([bf12720](https://github.com/cds-snc/data-lake/commit/bf1272021e697e2b05ce5d77ac0d5c44ecf4d24e))
+
+
+### Bug Fixes
+
+* single quote fix ([#668](https://github.com/cds-snc/data-lake/issues/668)) ([4fffdf8](https://github.com/cds-snc/data-lake/commit/4fffdf8409fc76ed41f4b7f396b9019bff73ac10))
+
+
+### Miscellaneous Chores
+
+* add SSC CBR ID tags ([#669](https://github.com/cds-snc/data-lake/issues/669)) ([8eb62cc](https://github.com/cds-snc/data-lake/commit/8eb62cc639854bd7d7b2dd8926045df5af005b10))
+
 ## [1.41.1](https://github.com/cds-snc/data-lake/compare/v1.41.0...v1.41.1) (2026-06-01)
 
 
