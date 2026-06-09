@@ -81,7 +81,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terragrunt plan buckets
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/staging/buckets"
           comment-delete: "true"
@@ -90,7 +90,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan oidc
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/staging/oidc"
           comment-delete: "true"
@@ -99,7 +99,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan glue
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/staging/glue"
           comment-delete: "true"
@@ -108,7 +108,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan athena
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/staging/athena"
           comment-delete: "true"
@@ -117,7 +117,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/staging/alarms"
           comment-delete: "true"
@@ -126,7 +126,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan export
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/staging/export"
           comment-delete: "true"
@@ -135,7 +135,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan stepfunctions
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/staging/stepfunctions"
           comment-delete: "true"
