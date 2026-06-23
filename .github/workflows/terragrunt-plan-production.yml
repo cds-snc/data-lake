@@ -49,7 +49,7 @@ jobs:
           DNS_PROXY_WILDCARDGREEDY: "true"
 
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           persist-credentials: false
 
@@ -79,7 +79,7 @@ jobs:
           DNS_PROXY_WILDCARDGREEDY: "true"
 
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: ${{ env.VERSION }}
           persist-credentials: false
@@ -106,7 +106,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terragrunt plan buckets
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/production/buckets"
           comment-delete: "true"
@@ -115,7 +115,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan oidc
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/production/oidc"
           comment-delete: "true"
@@ -124,7 +124,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan glue
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/production/glue"
           comment-delete: "true"
@@ -133,7 +133,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan athena
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/production/athena"
           comment-delete: "true"
@@ -142,7 +142,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan alarms
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/production/alarms"
           comment-delete: "true"
@@ -151,7 +151,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan export
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/production/export"
           comment-delete: "true"
@@ -160,7 +160,7 @@ jobs:
           terragrunt: "true"
 
       - name: Terragrunt plan stepfunctions
-        uses: cds-snc/terraform-plan@19444f6b6243b20d4c89a02f8277f1f6bfbd7915 # v5.0.3
+        uses: cds-snc/terraform-plan@529b272050a8f718d14c59e62b59c124eead7efc # v5.0.4
         with:
           directory: "terragrunt/env/production/stepfunctions"
           comment-delete: "true"
