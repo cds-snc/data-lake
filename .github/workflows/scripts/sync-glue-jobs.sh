@@ -35,6 +35,7 @@ if ! git status --porcelain "$JOB_DIR" | grep -q "."; then
     exit 0
 else
     echo "Changes detected:"
+    gh auth setup-git
     git diff -- "$JOB_DIR"
     git push "$REMOTE_REPO" "$BRANCH_NAME"
 fi
