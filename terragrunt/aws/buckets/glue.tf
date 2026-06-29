@@ -2,7 +2,7 @@
 # Holds ETL job scripts used by Glue
 #
 module "glue_bucket" {
-  source            = "github.com/cds-snc/terraform-modules//S3?ref=v11.3.5"
+  source            = "github.com/cds-snc/terraform-modules//S3?ref=v11.3.6"
   bucket_name       = "cds-data-lake-glue-${var.env}"
   billing_tag_value = var.billing_tag_value
 
