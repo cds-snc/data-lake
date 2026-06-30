@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.42.2](https://github.com/cds-snc/data-lake/compare/v1.42.1...v1.42.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* authenticate before branch push ([#686](https://github.com/cds-snc/data-lake/issues/686)) ([a9b74d5](https://github.com/cds-snc/data-lake/commit/a9b74d5209470841f2727a5e792113a00433cc95))
+* sbom permission issues ([#676](https://github.com/cds-snc/data-lake/issues/676)) ([a28e6e0](https://github.com/cds-snc/data-lake/commit/a28e6e0c5340b2c4342b75e62ed4585c984b786b))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#687](https://github.com/cds-snc/data-lake/issues/687)) ([e47081b](https://github.com/cds-snc/data-lake/commit/e47081b0c22bc61d7781e9354d67b73633f24696))
+* **deps:** lock file maintenance ([#690](https://github.com/cds-snc/data-lake/issues/690)) ([9d2246a](https://github.com/cds-snc/data-lake/commit/9d2246a6f86bf014b1f6e34215441a38c5e4288c))
+* **deps:** update actions/checkout action to v7 ([#681](https://github.com/cds-snc/data-lake/issues/681)) ([e95bbe1](https://github.com/cds-snc/data-lake/commit/e95bbe17b1e4ebcd411e51ac80f14bc062487c98))
+* **deps:** update actions/create-github-app-token action to v3 ([#682](https://github.com/cds-snc/data-lake/issues/682)) ([449896f](https://github.com/cds-snc/data-lake/commit/449896f46ec24c3212328b7bb0f4eb20ae621479))
+* **deps:** update actions/dependency-review-action action to v5 ([#683](https://github.com/cds-snc/data-lake/issues/683)) ([441bd2b](https://github.com/cds-snc/data-lake/commit/441bd2b74d428d8b43d6340f76678c54dcda52a3))
+* **deps:** update all minor dependencies ([#680](https://github.com/cds-snc/data-lake/issues/680)) ([0194023](https://github.com/cds-snc/data-lake/commit/0194023b509fd50a38df2ea79acb1d2fc9a5d325))
+* **deps:** update all minor dependencies to v0.23.0 ([#678](https://github.com/cds-snc/data-lake/issues/678)) ([8a27bd2](https://github.com/cds-snc/data-lake/commit/8a27bd255e6a29d624918597e00f9b34696569de))
+* **deps:** update all non-major github action dependencies ([#670](https://github.com/cds-snc/data-lake/issues/670)) ([5d31ed2](https://github.com/cds-snc/data-lake/commit/5d31ed2ed927316a281958a3f0b336e144e66c3e))
+* **deps:** update all patch dependencies ([#671](https://github.com/cds-snc/data-lake/issues/671)) ([ead98c5](https://github.com/cds-snc/data-lake/commit/ead98c5327a506363fdfe77faf25c407ec6b6408))
+* **deps:** update all patch dependencies ([#677](https://github.com/cds-snc/data-lake/issues/677)) ([a281153](https://github.com/cds-snc/data-lake/commit/a281153ed5171818364852379c8a263105c2d9fc))
+* **deps:** update all patch dependencies ([#679](https://github.com/cds-snc/data-lake/issues/679)) ([2d16b6f](https://github.com/cds-snc/data-lake/commit/2d16b6fc612b448e31b6fe571d603f69ede3075c))
+* **deps:** update all patch dependencies ([#688](https://github.com/cds-snc/data-lake/issues/688)) ([8ff1a0a](https://github.com/cds-snc/data-lake/commit/8ff1a0adbdffd39d0f99c5ce0f0599d73b013a4c))
+* **deps:** update aws-actions/configure-aws-credentials action to v6 ([#684](https://github.com/cds-snc/data-lake/issues/684)) ([c090dd2](https://github.com/cds-snc/data-lake/commit/c090dd2e6b72ff4552a6745ebb3fbe0b7331c33c))
+* **deps:** update dependency google-auth to v2.55.0 ([#689](https://github.com/cds-snc/data-lake/issues/689)) ([9f92f81](https://github.com/cds-snc/data-lake/commit/9f92f8103242c4184fece27d02f0cfa4cc57d901))
+* **deps:** update googleapis/release-please-action action to v5 ([#685](https://github.com/cds-snc/data-lake/issues/685)) ([e851db3](https://github.com/cds-snc/data-lake/commit/e851db372b748d3a298bf6ea83c9920d9dc898f6))
+* regenerate metadata-alerts-export.json for 2026-06-26 ([e47081b](https://github.com/cds-snc/data-lake/commit/e47081b0c22bc61d7781e9354d67b73633f24696))
+
 ## [1.42.1](https://github.com/cds-snc/data-lake/compare/v1.42.0...v1.42.1) (2026-06-08)
 
 
