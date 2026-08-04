@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.42.4](https://github.com/cds-snc/data-lake/compare/v1.42.3...v1.42.4) (2026-08-04)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#705](https://github.com/cds-snc/data-lake/issues/705)) ([cccd3a4](https://github.com/cds-snc/data-lake/commit/cccd3a4726db4fc15ed57b9fbc425eff27aa34dc))
+* **deps:** lock file maintenance ([#709](https://github.com/cds-snc/data-lake/issues/709)) ([06c9a46](https://github.com/cds-snc/data-lake/commit/06c9a468302cb43db3777c4ee2d0ce2fa0bae34e))
+* **deps:** update all minor dependencies ([#703](https://github.com/cds-snc/data-lake/issues/703)) ([ec3e4e5](https://github.com/cds-snc/data-lake/commit/ec3e4e51e12b50d836324649e0b9aa87b51543d8))
+* **deps:** update all non-major github action dependencies ([#704](https://github.com/cds-snc/data-lake/issues/704)) ([284a581](https://github.com/cds-snc/data-lake/commit/284a5819f01b8f7a76f7183336d7040c0e256f04))
+* **deps:** update all non-major github action dependencies ([#707](https://github.com/cds-snc/data-lake/issues/707)) ([338a994](https://github.com/cds-snc/data-lake/commit/338a9943013536a4095a68a60367a3866a304c4a))
+* **deps:** update all patch dependencies ([#702](https://github.com/cds-snc/data-lake/issues/702)) ([10969ee](https://github.com/cds-snc/data-lake/commit/10969ee19867bbde6b48220bf8e6a840da8f7156))
+* **deps:** update all patch dependencies ([#708](https://github.com/cds-snc/data-lake/issues/708)) ([a71e418](https://github.com/cds-snc/data-lake/commit/a71e41842fc364935258df5692e59def27f48e24))
+
 ## [1.42.3](https://github.com/cds-snc/data-lake/compare/v1.42.2...v1.42.3) (2026-07-27)
 
 
