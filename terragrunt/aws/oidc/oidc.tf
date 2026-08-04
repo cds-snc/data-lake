@@ -76,7 +76,7 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
 # needed by the Docker build, push and deploy workflows.
 #
 module "docker_roles" {
-  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v11.4.4"
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v11.4.5"
   billing_tag_value = var.billing_tag_value
   roles = [
     {
