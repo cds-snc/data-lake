@@ -255,6 +255,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                     "formatteddate_count",
                     "radio_count",
                     "richtext_count",
+                    "starrating_count",
                     "textarea_count",
                     "textfield_count",
                     "addresscomplete_count",
