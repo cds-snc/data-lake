@@ -386,6 +386,14 @@
     {
       "expectation_type": "expect_column_min_to_be_between",
       "kwargs": {
+        "column": "starrating_count",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_min_to_be_between",
+      "kwargs": {
         "column": "textarea_count",
         "min_value": 0
       },
