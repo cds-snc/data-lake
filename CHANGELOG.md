@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.43.0](https://github.com/cds-snc/data-lake/compare/v1.42.4...v1.43.0) (2026-08-27)
+
+
+### Features
+
+* add new GC Forms starRating component count ([#717](https://github.com/cds-snc/data-lake/issues/717)) ([c544fab](https://github.com/cds-snc/data-lake/commit/c544faba008ccf7876575ad56c4fff4970c8eed5))
+
 ## [1.42.4](https://github.com/cds-snc/data-lake/compare/v1.42.3...v1.42.4) (2026-08-24)
 
 
