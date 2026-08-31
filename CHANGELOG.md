@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.43.1](https://github.com/cds-snc/data-lake/compare/v1.43.0...v1.43.1) (2026-08-31)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all patch dependencies ([#719](https://github.com/cds-snc/data-lake/issues/719)) ([c12cc48](https://github.com/cds-snc/data-lake/commit/c12cc48eac5d0c9402fed891493b4279a75350d7))
+* **deps:** update aws-actions/amazon-ecr-login action to v2.1.7 ([#720](https://github.com/cds-snc/data-lake/issues/720)) ([4a738d0](https://github.com/cds-snc/data-lake/commit/4a738d0da144e5d1cb9d53e27a5844b9b3dd8773))
+
 ## [1.43.0](https://github.com/cds-snc/data-lake/compare/v1.42.4...v1.43.0) (2026-08-27)
 
 
