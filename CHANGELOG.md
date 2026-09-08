@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.43.1](https://github.com/cds-snc/data-lake/compare/v1.43.0...v1.43.1) (2026-09-08)
+
+
+### Miscellaneous Chores
+
+* **deps:** update all minor dependencies ([#723](https://github.com/cds-snc/data-lake/issues/723)) ([16841fd](https://github.com/cds-snc/data-lake/commit/16841fda0524bb8c20edfbc514b92a291edd2307))
+* **deps:** update all non-major github action dependencies ([#724](https://github.com/cds-snc/data-lake/issues/724)) ([529289c](https://github.com/cds-snc/data-lake/commit/529289c20077aa5373f3e066a330c2db7be3a04e))
+* **deps:** update all patch dependencies ([#719](https://github.com/cds-snc/data-lake/issues/719)) ([c12cc48](https://github.com/cds-snc/data-lake/commit/c12cc48eac5d0c9402fed891493b4279a75350d7))
+* **deps:** update aws-actions/amazon-ecr-login action to v2.1.7 ([#720](https://github.com/cds-snc/data-lake/issues/720)) ([4a738d0](https://github.com/cds-snc/data-lake/commit/4a738d0da144e5d1cb9d53e27a5844b9b3dd8773))
+* **deps:** update dependency boto3 to v1.43.85 ([#722](https://github.com/cds-snc/data-lake/issues/722)) ([2df8907](https://github.com/cds-snc/data-lake/commit/2df8907fc95a4ed96a946f73da6a24e5b423ed7a))
+
 ## [1.43.0](https://github.com/cds-snc/data-lake/compare/v1.42.4...v1.43.0) (2026-08-27)
 
 
