@@ -74,7 +74,7 @@ jobs:
           TRUFFLEHOG_CHECKSUM: 318fd1e8af68b54f4465437208582003a5948293ea401c5c67bb55f17e4e2102
 
       - name: Configure AWS credentials using OIDC
-        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        uses: aws-actions/configure-aws-credentials@cbe3b392738ccf3f987d68400dafcf4b0624a56c # v6.2.4
         with:
           role-to-assume: arn:aws:iam::454671348950:role/data-lake-plan
           role-session-name: TFPlan
