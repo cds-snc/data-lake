@@ -11,7 +11,7 @@ locals {
 module "github_workflow_roles" {
   count = var.env == "production" ? 1 : 0
 
-  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v11.4.5"
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v11.4.7"
   billing_tag_value = var.billing_tag_value
   roles = [
     {
@@ -76,7 +76,7 @@ data "aws_iam_policy_document" "s3_read_write_raw_github" {
 # needed by the Docker build, push and deploy workflows.
 #
 module "docker_roles" {
-  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v11.4.5"
+  source            = "github.com/cds-snc/terraform-modules//gh_oidc_role?ref=v11.4.7"
   billing_tag_value = var.billing_tag_value
   roles = [
     {
