@@ -3,7 +3,7 @@
   "partition_timestamp": "created_at",
   "partition_cols": ["year", "month"],
   "incremental_load": true,
-  "look_back_days": 21,
+  "look_back_days": 60,
   "fields": [
     {
       "name": "id",
