@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.43.2](https://github.com/cds-snc/data-lake/compare/v1.43.1...v1.43.2) (2026-09-17)
+
+
+### Miscellaneous Chores
+
+* revert notification_history refresh window ([#728](https://github.com/cds-snc/data-lake/issues/728)) ([1fc8734](https://github.com/cds-snc/data-lake/commit/1fc8734fc4929f8aad3dec11ea5c6f2d14d60676))
+
 ## [1.43.1](https://github.com/cds-snc/data-lake/compare/v1.43.0...v1.43.1) (2026-09-17)
 
 
