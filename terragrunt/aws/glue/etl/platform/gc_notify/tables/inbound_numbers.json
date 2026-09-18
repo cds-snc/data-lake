@@ -1,0 +1,35 @@
+{
+  "table_name": "inbound_numbers",
+  "partition_timestamp": "created_at",
+  "partition_cols": ["year", "month"],
+  "fields": [
+    {
+      "name": "id",
+      "type": "uuid"
+    },
+    {
+      "name": "number",
+      "type": "varchar"
+    },
+    {
+      "name": "provider",
+      "type": "varchar"
+    },
+    {
+      "name": "service_id",
+      "type": "uuid"
+    },
+    {
+      "name": "active",
+      "type": "boolean"
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "updated_at",
+      "type": "timestamp"
+    }
+  ]
+}
