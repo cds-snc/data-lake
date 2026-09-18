@@ -7,6 +7,7 @@
 ## Description
 The GC Notify dataset is an export of the following database tables in [Parquet format](https://parquet.apache.org/):
 
+- `inbound_numbers`: Inbound phone numbers configured for SMS services
 - `jobs`: Batch jobs for email and SMS notification sending
 - `login_events`: Records of user login activity
 - `notification_history`: Historical record of all notifications
@@ -26,6 +27,13 @@ The GC Notify dataset is an export of the following database tables in [Parquet 
 There is no personally identifiable information (PII) included in this dataset. The data is updated daily and partitioned by year and month using the `created_at` date.  It can be queried in Superset as follows:
 
 ```sql
+-- Inbound Numbers
+SELECT 
+    * 
+FROM 
+    "platform_gc_notify_production"."platform_gc_notify_inbound_numbers" 
+LIMIT 10;
+
 -- Jobs
 SELECT 
     * 
@@ -173,6 +181,7 @@ graph TD
 The source of this dataset is the GC Notify database tables.  To avoid any database performance impact, the data is taken from the daily database snapshots (backups) created by the Notify team.  [A Lambda function](https://github.com/cds-snc/data-lake/tree/318387c230a3ec2b271492129b8066289e7160b3/export/platform/gc_notify) runs on a daily schedule to trigger this export of the database snapshot to the Raw S3 bucket.
 
 ```
+cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-production-cluster-YYYY-MM-DD/NotificationCanadaCaproduction/public.inbound_numbers/1/*.parquet
 cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-production-cluster-YYYY-MM-DD/NotificationCanadaCaproduction/public.jobs/1/*.parquet
 cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-production-cluster-YYYY-MM-DD/NotificationCanadaCaproduction/public.login_events/1/*.parquet
 cds-data-lake-raw-production/platform/gc-notify/notification-canada-ca-production-cluster-YYYY-MM-DD/NotificationCanadaCaproduction/public.notification_history/1/*.parquet
@@ -197,6 +206,7 @@ Each day, the `Platform / GC Notify` Glue ETL job runs and updates existing data
 Note that for all data except for the `notification_history` table, it is a full data overwrite each day.  For `notification_history` data, an incremental load is performed that loads only the most recent month's partition of data.
 
 ```
+cds-data-lake-transformed-production/platform/gc-notify/inbound_numbers/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/jobs/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/login_events/year=YYYY/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-notify/notification_history/year=YYYY/month=YYYY-MM/*.parquet
@@ -216,6 +226,7 @@ cds-data-lake-transformed-production/platform/gc-notify/ft_billing/year=YYYY/mon
 
 Additionally, data catalog tables are created in the [`platform_gc_notify_production` database](https://github.com/cds-snc/data-lake/blob/318387c230a3ec2b271492129b8066289e7160b3/terragrunt/aws/glue/databases.tf#L11-L14):
 
+- `platform_gc_notify_inbound_numbers`: Inbound phone numbers configured for SMS services
 - `platform_gc_notify_jobs`: Batch jobs for email and SMS notification sending
 - `platform_gc_notify_login_events`: Records of user login activity
 - `platform_gc_notify_notification_history`: Historical record of all notifications

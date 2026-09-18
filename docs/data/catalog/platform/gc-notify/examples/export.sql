@@ -1,3 +1,10 @@
+-- Inbound Numbers
+SELECT 
+    * 
+FROM 
+    "platform_gc_notify_production"."platform_gc_notify_inbound_numbers" 
+LIMIT 10;
+
 -- Jobs
 SELECT 
     * 
