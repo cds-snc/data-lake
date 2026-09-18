@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.44.0](https://github.com/cds-snc/data-lake/compare/v1.43.2...v1.44.0) (2026-09-18)
+
+
+### Features
+
+* add inbound_numbers table to dataset ([#730](https://github.com/cds-snc/data-lake/issues/730)) ([7147155](https://github.com/cds-snc/data-lake/commit/7147155691316112f85aad4f2423d248f7db9261))
+
 ## [1.43.2](https://github.com/cds-snc/data-lake/compare/v1.43.1...v1.43.2) (2026-09-17)
 
 
