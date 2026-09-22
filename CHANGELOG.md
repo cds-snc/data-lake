@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.44.0](https://github.com/cds-snc/data-lake/compare/v1.43.2...v1.44.0) (2026-09-22)
+
+
+### Features
+
+* add inbound_numbers table to dataset ([#730](https://github.com/cds-snc/data-lake/issues/730)) ([7147155](https://github.com/cds-snc/data-lake/commit/7147155691316112f85aad4f2423d248f7db9261))
+
+
+### Miscellaneous Chores
+
+* **deps:** update actions/setup-java action to v6 ([#736](https://github.com/cds-snc/data-lake/issues/736)) ([3645c47](https://github.com/cds-snc/data-lake/commit/3645c47fbfffbc8bd7347255f9de44eff65a6dac))
+* **deps:** update actions/setup-python action to v7 ([#737](https://github.com/cds-snc/data-lake/issues/737)) ([2c40c9c](https://github.com/cds-snc/data-lake/commit/2c40c9c5cf878fa0d3af3d6b41de89bcfff4fb4e))
+* **deps:** update dependency google-auth to v2.58.0 ([#734](https://github.com/cds-snc/data-lake/issues/734)) ([8d30880](https://github.com/cds-snc/data-lake/commit/8d30880d9081393c2aa5ce602f43d3f7c9865692))
+* **deps:** update terraform github.com/cds-snc/terraform-modules to v12 ([#738](https://github.com/cds-snc/data-lake/issues/738)) ([490f592](https://github.com/cds-snc/data-lake/commit/490f5929e3ef942f694c50f08e6a0f274c3a60b2))
+* **deps:** update terraform hashicorp/terraform to v1.16.2 ([#732](https://github.com/cds-snc/data-lake/issues/732)) ([061f2c9](https://github.com/cds-snc/data-lake/commit/061f2c9b91b8b3031cb59041791199be477aa0a7))
+* **deps:** update zizmorcore/zizmor-action action to v0.6.4 ([#733](https://github.com/cds-snc/data-lake/issues/733)) ([916f0c5](https://github.com/cds-snc/data-lake/commit/916f0c5e05976ae3e0437b75b64e0a2e0060f8e0))
+* removed ossf-scorecard workflow ([#735](https://github.com/cds-snc/data-lake/issues/735)) ([3e32836](https://github.com/cds-snc/data-lake/commit/3e328368149b61891e89c43c54766f79f15ff226))
+
 ## [1.43.2](https://github.com/cds-snc/data-lake/compare/v1.43.1...v1.43.2) (2026-09-17)
 
 
