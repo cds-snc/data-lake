@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.44.1](https://github.com/cds-snc/data-lake/compare/v1.44.0...v1.44.1) (2026-10-05)
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#742](https://github.com/cds-snc/data-lake/issues/742)) ([c56bad4](https://github.com/cds-snc/data-lake/commit/c56bad4e6654e93369b5a2819cb5dc1773de863e))
+* **deps:** update all patch dependencies ([#739](https://github.com/cds-snc/data-lake/issues/739)) ([23bdfab](https://github.com/cds-snc/data-lake/commit/23bdfabcad6750031dd438244f0e17221bb55466))
+* **deps:** update all patch dependencies ([#744](https://github.com/cds-snc/data-lake/issues/744)) ([ca88fd5](https://github.com/cds-snc/data-lake/commit/ca88fd56a29fe28063f5d102b2abb05797bad54a))
+* **deps:** update aws-actions/configure-aws-credentials action to v6.3.0 ([#740](https://github.com/cds-snc/data-lake/issues/740)) ([de0b237](https://github.com/cds-snc/data-lake/commit/de0b2375d6c6e9fe20ca46da5ab22b2413b52f4d))
+* **deps:** update dependency flake8 to v7.4.1 ([#745](https://github.com/cds-snc/data-lake/issues/745)) ([6b4a1a9](https://github.com/cds-snc/data-lake/commit/6b4a1a956ff100c6963041d520e2d8b03ef28c0d))
+* **deps:** update terraform github.com/cds-snc/terraform-modules to v12.1.2 ([#741](https://github.com/cds-snc/data-lake/issues/741)) ([ffb346f](https://github.com/cds-snc/data-lake/commit/ffb346f6e5d9a73dfbd7f9bff186eab93d96d6ec))
+
 ## [1.44.0](https://github.com/cds-snc/data-lake/compare/v1.43.2...v1.44.0) (2026-09-22)
 
 
