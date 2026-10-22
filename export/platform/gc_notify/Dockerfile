@@ -1,4 +1,6 @@
-FROM public.ecr.aws/lambda/python:3.13@sha256:b281081b54f2b2df0ec1144ca128678fd0d4203eda3ee987c35e8bb64095b014
+FROM public.ecr.aws/lambda/python:3.13@sha256:e0237850eecd760896365e768bac1526ea01098e325fa590e5bc735b26d5dbb9
+
+RUN pip install --no-cache-dir --upgrade "pip==26.2.2"
 
 COPY requirements.txt ${LAMBDA_TASK_ROOT}
 COPY main.py ${LAMBDA_TASK_ROOT}
