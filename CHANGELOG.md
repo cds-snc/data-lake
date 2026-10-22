@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.44.2](https://github.com/cds-snc/data-lake/compare/v1.44.1...v1.44.2) (2026-10-22)
+
+
+### Bug Fixes
+
+* remove compromised root ([#752](https://github.com/cds-snc/data-lake/issues/752)) ([7cd1dfb](https://github.com/cds-snc/data-lake/commit/7cd1dfbdf3f1883fc3bc99958b282d80b56fd7ca))
+
+
+### Miscellaneous Chores
+
+* **deps:** update mcr.microsoft.com/devcontainers/base:bullseye docker digest to 6c9ed5e ([#659](https://github.com/cds-snc/data-lake/issues/659)) ([99ef939](https://github.com/cds-snc/data-lake/commit/99ef93983008b9ac5f3db9402b7a034d74d4e56d))
+
 ## [1.44.1](https://github.com/cds-snc/data-lake/compare/v1.44.0...v1.44.1) (2026-10-20)
 
 
