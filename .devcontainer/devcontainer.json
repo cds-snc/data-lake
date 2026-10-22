@@ -1,6 +1,6 @@
 {
   "name": "data-lake",
-  "image": "mcr.microsoft.com/devcontainers/base:bullseye@sha256:5139be2118c8a62624cd9256b78610458b05bd64d539e4b81f9c51bf70810a08",
+  "image": "mcr.microsoft.com/devcontainers/base:bullseye@sha256:6c9ed5e39f498694fcd2eb2ac4a28eeea16ab0e5f6c44393d692e6cbb2eef08b",
   "containerEnv": {
     "SHELL": "/bin/zsh"
   },
