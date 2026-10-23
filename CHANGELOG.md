@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.44.3](https://github.com/cds-snc/data-lake/compare/v1.44.2...v1.44.3) (2026-10-23)
+
+
+### Bug Fixes
+
+* disable Salesforce Glue job ([#754](https://github.com/cds-snc/data-lake/issues/754)) ([e4b136f](https://github.com/cds-snc/data-lake/commit/e4b136fa370766680f25940a92ced75f106485d4))
+
 ## [1.44.2](https://github.com/cds-snc/data-lake/compare/v1.44.1...v1.44.2) (2026-10-22)
 
 
