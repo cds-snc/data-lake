@@ -13,11 +13,6 @@ variable "platform_support_freshdesk_name" {
   type        = string
 }
 
-variable "bes_crm_salesforce_name" {
-  description = "Salesforce Glue job name."
-  type        = string
-}
-
 variable "platform_gc_notify_curated_job_name" {
   description = "GC Notify Curated Glue job name."
   type        = string

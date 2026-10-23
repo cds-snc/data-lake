@@ -6,7 +6,6 @@ data "template_file" "data_orchestrator_state_machine" {
     platform_gc_notify_job_name         = var.platform_gc_notify_job_name
     platform_support_freshdesk_name     = var.platform_support_freshdesk_name
     platform_gc_notify_curated_job_name = var.platform_gc_notify_curated_job_name
-    bes_crm_salesforce_name             = var.bes_crm_salesforce_name
     transformed_bucket_name             = var.transformed_bucket_name
   }
 }

@@ -17,7 +17,9 @@
               },
               "Catch": [
                 {
-                  "ErrorEquals": ["States.ALL"],
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
                   "Next": "GCFormsJobFailed"
                 }
               ],
@@ -41,7 +43,9 @@
               },
               "Catch": [
                 {
-                  "ErrorEquals": ["States.ALL"],
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
                   "Next": "GCNotifyJobFailed"
                 }
               ],
@@ -65,7 +69,9 @@
               },
               "Catch": [
                 {
-                  "ErrorEquals": ["States.ALL"],
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
                   "Next": "FreshdeskJobFailed"
                 }
               ],
@@ -74,30 +80,6 @@
             "FreshdeskJobFailed": {
               "Type": "Pass",
               "Result": "Freshdesk Glue job failed",
-              "End": true
-            }
-          }
-        },
-        {
-          "StartAt": "StartSalesforceJob",
-          "States": {
-            "StartSalesforceJob": {
-              "Type": "Task",
-              "Resource": "arn:aws:states:::glue:startJobRun.sync",
-              "Parameters": {
-                "JobName": "${bes_crm_salesforce_name}"
-              },
-              "Catch": [
-                {
-                  "ErrorEquals": ["States.ALL"],
-                  "Next": "SalesforceJobFailed"
-                }
-              ],
-              "End": true
-            },
-            "SalesforceJobFailed": {
-              "Type": "Pass",
-              "Result": "Salesforce Glue job failed",
               "End": true
             }
           }
@@ -119,7 +101,9 @@
               },
               "Catch": [
                 {
-                  "ErrorEquals": ["States.ALL"],
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
                   "Next": "GCNotifyCuratedJobFailed"
                 }
               ],
