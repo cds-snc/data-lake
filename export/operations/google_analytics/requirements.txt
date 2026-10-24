@@ -1,3 +1,3 @@
-boto3==1.43.111
+boto3==1.43.114
 google-analytics-data==0.23.3
 google-auth==2.60.0
