@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.45.0](https://github.com/cds-snc/data-lake/compare/v1.44.3...v1.45.0) (2026-10-26)
+
+
+### Features
+
+* add new Forms templateVersions table to ETL ([#761](https://github.com/cds-snc/data-lake/issues/761)) ([8023bf6](https://github.com/cds-snc/data-lake/commit/8023bf6f72fae96909be759739237bf63cae9fe3))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#759](https://github.com/cds-snc/data-lake/issues/759)) ([14a7b2b](https://github.com/cds-snc/data-lake/commit/14a7b2b3daaa6cd99deb10d493c7ed3cd8c14dd1))
+* **deps:** update all minor dependencies ([#757](https://github.com/cds-snc/data-lake/issues/757)) ([2d4ae17](https://github.com/cds-snc/data-lake/commit/2d4ae17924447f3a2cf5591dd694009af5159a32))
+* **deps:** update all non-major github action dependencies ([#758](https://github.com/cds-snc/data-lake/issues/758)) ([c497931](https://github.com/cds-snc/data-lake/commit/c4979311b0b34e4d5f02bc29e88876b5601ae87a))
+* **deps:** update all patch dependencies ([#756](https://github.com/cds-snc/data-lake/issues/756)) ([4e540a4](https://github.com/cds-snc/data-lake/commit/4e540a4e8c4a5befef357b1b9b93b63d97a2de28))
+
 ## [1.44.3](https://github.com/cds-snc/data-lake/compare/v1.44.2...v1.44.3) (2026-10-23)
 
 
