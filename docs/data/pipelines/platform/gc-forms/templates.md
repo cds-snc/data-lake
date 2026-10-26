@@ -33,6 +33,13 @@ FROM
     "platform_gc_forms_production"."platform_gc_forms_templatetouser" 
 LIMIT 10;
 
+-- Version history of templates
+SELECT 
+    * 
+FROM 
+    "platform_gc_forms_production"."platform_gc_forms_templateversions" 
+LIMIT 10;
+
 -- Users that have logged into GC Forms
 SELECT 
     * 
@@ -72,7 +79,7 @@ A high level view is shown below with more details about each step following the
 ```mermaid
 graph TD
     %% Source Systems
-    FormsETL["`**GC Forms ETL**<br/>Database 'Templates' and 'Users' tables<br/>Lambda 'Submission' logs`"]
+    FormsETL["`**GC Forms ETL**<br/>Database 'Templates', 'TemplateVersion' and 'Users' tables<br/>Lambda 'Submission' logs`"]
     
     %% Storage
     FormsS3["`**S3 Bucket**<br/>cds-forms-data-lake-bucket-production`"]
@@ -102,11 +109,12 @@ graph TD
 ```
 
 ### Source data
-The source of this dataset is the GC Forms database's `Templates` and `Users` tables and the `Submission` Lambda function's logs.  [A nightly ETL job](https://github.com/cds-snc/forms-terraform/blob/main/aws/glue/jobs.tf) runs in the `Forms-Production` AWS account that extracts, transforms and loads data into an S3 bucket.  An [S3 replication rule](https://github.com/cds-snc/forms-terraform/blob/main/aws/glue/s3.tf#L1-L13) then handles moving this data into the Data Lake's Raw bucket.
+The source of this dataset is the GC Forms database's `Templates`, `TemplateVersion` and `Users` tables and the `Submission` Lambda function's logs.  [A nightly ETL job](https://github.com/cds-snc/forms-terraform/blob/main/aws/glue/jobs.tf) runs in the `Forms-Production` AWS account that extracts, transforms and loads data into an S3 bucket.  An [S3 replication rule](https://github.com/cds-snc/forms-terraform/blob/main/aws/glue/s3.tf#L1-L13) then handles moving this data into the Data Lake's Raw bucket.
 ```
 cds-data-lake-raw-production/platform/gc-forms/processed-data/submissions/*.parquet
 cds-data-lake-raw-production/platform/gc-forms/processed-data/template/*.parquet
 cds-data-lake-raw-production/platform/gc-forms/processed-data/templateToUser/*.parquet
+cds-data-lake-raw-production/platform/gc-forms/processed-data/templateVersions/*.parquet
 cds-data-lake-raw-production/platform/gc-forms/processed-data/user/*.parquet
 ```
 
@@ -126,6 +134,7 @@ This crawler creates and manages the following data catalog tables in the [`plat
 - `platform_gc_forms_raw_submissions`: one-to-many relationship of templates to their submission IDs (no user submitted data).
 - `platform_gc_forms_raw_template`: GC Forms template data.
 - `platform_gc_forms_raw_templatetouser`: many-to-many relationship of templates to their owners.
+- `platform_gc_forms_raw_templateversions`: version history of templates.
 - `platform_gc_forms_raw_user`: GC Forms users that have logged into the service.
 
 ### Extract, Transform and Load (ETL) Jobs
@@ -137,6 +146,7 @@ cds-data-lake-transformed-production/platform/gc-forms/historical-data/month=YYY
 cds-data-lake-transformed-production/platform/gc-forms/processed-data/submissions/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-forms/processed-data/template/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-forms/processed-data/templateToUser/month=YYYY-MM/*.parquet
+cds-data-lake-transformed-production/platform/gc-forms/processed-data/templateVersions/month=YYYY-MM/*.parquet
 cds-data-lake-transformed-production/platform/gc-forms/processed-data/user/month=YYYY-MM/*.parquet
 ```
 
@@ -146,4 +156,5 @@ Additionally, a data catalog table is created in the [`platform_gc_forms_product
 - `platform_gc_forms_submissions`: one-to-many relationship of templates to their submission IDs (no user submitted data).
 - `platform_gc_forms_template`: GC Forms template data.
 - `platform_gc_forms_templatetouser`: many-to-many relationship of templates to their owners.
+- `platform_gc_forms_templateversions`: version history of templates.
 - `platform_gc_forms_user`: GC Forms users that have logged into the service.

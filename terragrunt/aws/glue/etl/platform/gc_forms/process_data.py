@@ -272,6 +272,19 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "partition_timestamp": "timestamp",
             },
             {
+                "path": "processed-data/templateVersions",
+                "date_columns": [
+                    "createdat",
+                    "updatedat",
+                    "publishedat",
+                    "supersededat",
+                    "timestamp",
+                ],
+                "partition_timestamp": "timestamp",
+                "partition_columns": ["year", "month"],
+                "gx_checkpoint": "forms-templateversions_checkpoint",
+            },
+            {
                 "path": "processed-data/user",
                 "date_columns": [
                     "emailverified",

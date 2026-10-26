@@ -1,11 +1,12 @@
 # Platform / GC Forms / Templates
 
-Dataset providing GC Forms template data.  There are five tables as part of this dataset:
+Dataset providing GC Forms template data.  There are six tables as part of this dataset:
 
 - `historical_data`: one-time snapshot of published form data that was previously managed in an external source.
 - `submissions`: one-to-many relationship of templates to their submission IDs (no user submitted data).
 - `template`: the templates that are used by GC Forms to render the form users fill out and submit.
 - `templateToUser`: a many-to-many relationship of templates to their owners.
+- `templateVersions`: the version history of each template (draft, published and superseded versions).
 - `user`: the users that have logged into GC Forms.
 
 No external user form submissions or personally identifiable information (PII) are part of this dataset.
@@ -16,6 +17,7 @@ This dataset is represented in [Superset](https://superset.cds-snc.ca/) as the f
 - `platform_gc_forms_submissions` 
 - `platform_gc_forms_template` 
 - `platform_gc_forms_templatetouser`
+- `platform_gc_forms_templateversions`
 - `platform_gc_forms_user`
 
 ## :warning: Note
@@ -37,7 +39,7 @@ WHERE timestamp =
 
 ## Provenance
 
-With the exception of the `historical_data`, this dataset is extracted daily from the GC Forms database's `Templates` and `Users` tables. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-forms/templates.md).
+With the exception of the `historical_data`, this dataset is extracted daily from the GC Forms database's `Templates`, `TemplateVersion` and `Users` tables. More documentation on the pipeline can be found [here](../../../pipelines/platform/gc-forms/templates.md).
 
 * `Updated`: Daily
 * `Steward`: GC Forms
@@ -48,12 +50,13 @@ s3://cds-data-lake-transformed-production/platform/gc-forms/historical-data/mont
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/submissions/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/template/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/templateToUser/month=YYYY-MM/*.parquet
+s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/templateVersions/month=YYYY-MM/*.parquet
 s3://cds-data-lake-transformed-production/platform/gc-forms/processed-data/user/month=YYYY-MM/*.parquet
 ```
 
 ## Fields
 
-Almost all fields are sourced directly from the GC Forms database's `Templates` and `Users` table.
+Almost all fields are sourced directly from the GC Forms database's `Templates`, `TemplateVersion` and `Users` tables.
 
 [Queries to return example data](examples/templates.sql) have also been provided.
 
@@ -137,6 +140,25 @@ Here's a descriptive list of the fields in each table:
 | userid | string | User ID of the relationship |
 | timestamp | timestamp | Time of the last extract of the relationship record |
 				
+### Table: platform_gc_forms_templateversions
+
+| Field | Type | Description |
+|-------|------|-------------|
+| id | string | Unique identifier for the template version |
+| templateid | string | Template ID the version belongs to |
+| versionnumber | integer | Sequential version number of the template |
+| status | string | Status of the version: [DRAFT, PUBLISHED, SUPERSEDED] |
+| createdat | timestamp | When the version was created |
+| createdbyuserid | string | User ID of the user that created the version |
+| updatedat | timestamp | When the version was last updated |
+| publishedat | timestamp | When the version was published, or null if never published |
+| publishedbyuserid | string | User ID of the user that published the version, or null if never published |
+| publishreason | string | Reason given for publishing the version |
+| supersededat | timestamp | When the version was superseded by a newer published version, or null if not superseded |
+| timestamp | timestamp | Time of the last extract of the template version record |
+| year | string | Partition key in the format of YYYY |
+| month | string | Partition key in the format of YYYY-MM |
+
 ### Table: platform_gc_forms_user		
 
 | Field | Type | Description |
