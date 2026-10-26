@@ -325,8 +325,8 @@ def test_process_data(
     process_data()
 
     # Verify a call for each dataset
-    assert mock_get_new_data.call_count == 6
-    assert mock_wr_s3.to_parquet.call_count == 6
+    assert mock_get_new_data.call_count == 7
+    assert mock_wr_s3.to_parquet.call_count == 7
 
 
 @patch("process_data.download_s3_object")
