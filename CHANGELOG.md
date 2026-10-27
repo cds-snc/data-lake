@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.45.1](https://github.com/cds-snc/data-lake/compare/v1.45.0...v1.45.1) (2026-10-27)
+
+
+### Bug Fixes
+
+* GX validation for status column ([#762](https://github.com/cds-snc/data-lake/issues/762)) ([980b30d](https://github.com/cds-snc/data-lake/commit/980b30d61f8819f31406233de441b79508f68240))
+
 ## [1.45.0](https://github.com/cds-snc/data-lake/compare/v1.44.3...v1.45.0) (2026-10-26)
 
 
