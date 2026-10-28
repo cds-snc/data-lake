@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.45.3](https://github.com/cds-snc/data-lake/compare/v1.45.2...v1.45.3) (2026-10-28)
+
+
+### Bug Fixes
+
+* upgrade dns-proxy-action to v1.2.1 ([#766](https://github.com/cds-snc/data-lake/issues/766)) ([84cdee6](https://github.com/cds-snc/data-lake/commit/84cdee6af92d3039fd7a77621f2054b082604bb3))
+
 ## [1.45.2](https://github.com/cds-snc/data-lake/compare/v1.45.1...v1.45.2) (2026-10-28)
 
 
