@@ -2,9 +2,7 @@ name: Backstage Catalog Info Helper
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 jobs:
   update-catalog-info:

@@ -4,8 +4,7 @@ on:
     types:
       - opened
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   dependency-security-update:
