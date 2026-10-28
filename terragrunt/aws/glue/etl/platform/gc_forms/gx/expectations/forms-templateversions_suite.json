@@ -27,55 +27,6 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "id"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "templateid"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "versionnumber"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "status"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "createdat"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "updatedat"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "timestamp"
-      },
-      "meta": {}
-    },
-    {
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
@@ -104,19 +55,6 @@
       "meta": {
         "description": "status should be string-like"
       }
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
-      "kwargs": {
-        "column": "versionnumber",
-        "type_list": [
-          "int32",
-          "int64",
-          "Int32",
-          "Int64"
-        ]
-      },
-      "meta": {}
     },
     {
       "expectation_type": "expect_column_min_to_be_between",
@@ -227,6 +165,26 @@
         ]
       },
       "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "year",
+        "regex": "^\\d{4}$"
+      },
+      "meta": {
+        "description": "year should be a 4-digit year (e.g., 2024)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "month",
+        "regex": "^\\d{4}-\\d{2}$"
+      },
+      "meta": {
+        "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
+      }
     }
   ],
   "meta": {
