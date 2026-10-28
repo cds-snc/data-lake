@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.45.2](https://github.com/cds-snc/data-lake/compare/v1.45.1...v1.45.2) (2026-10-28)
+
+
+### Bug Fixes
+
+* match templateVersion validations to other suites ([#764](https://github.com/cds-snc/data-lake/issues/764)) ([a9d8552](https://github.com/cds-snc/data-lake/commit/a9d85522560c99ba71f50b65fcd1aea77cc10b87))
+
 ## [1.45.1](https://github.com/cds-snc/data-lake/compare/v1.45.0...v1.45.1) (2026-10-27)
 
 
