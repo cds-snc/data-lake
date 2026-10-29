@@ -13,9 +13,13 @@ on:
       - "terragrunt/**"
       - ".github/workflows/terraform-security-scan.yml"
 
+permissions: {}
+
 jobs:
   terraform-security-scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Audit DNS requests
         uses: cds-snc/dns-proxy-action@58d95c286bfa233aec52055237b26a20c6ae13a5 # v1.2.1

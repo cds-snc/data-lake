@@ -17,6 +17,8 @@ on:
       SLACK_WEBHOOK_URL:
         required: true
 
+permissions: {}
+
 jobs:
   on-failure:
     runs-on: ubuntu-latest
