@@ -1,6 +1,7 @@
 locals {
   data_lake_github_data_export = "data-lake-github-data-export"
   data_lake_docker_push        = "data-lake-docker-push"
+  data_lake_docker_pull        = "data-lake-docker-pull"
 }
 
 #
@@ -83,6 +84,11 @@ module "docker_roles" {
       name      = local.data_lake_docker_push
       repo_name = "data-lake"
       claim     = "ref:refs/heads/main"
+    },
+    {
+      name      = local.data_lake_docker_pull
+      repo_name = "data-lake"
+      claim     = "ref:refs/heads/main"
     }
   ]
 }
@@ -134,5 +140,42 @@ data "aws_iam_policy_document" "data_lake_docker_push" {
     resources = [
       "arn:aws:lambda:${var.region}:${var.account_id}:function:*-export",
     ]
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "docker_pull" {
+  role       = local.data_lake_docker_pull
+  policy_arn = aws_iam_policy.docker_pull.arn
+
+  depends_on = [module.docker_roles]
+}
+
+resource "aws_iam_policy" "docker_pull" {
+  name   = local.data_lake_docker_pull
+  path   = "/"
+  policy = data.aws_iam_policy_document.docker_pull.json
+  tags   = var.core_tags
+}
+
+data "aws_iam_policy_document" "docker_pull" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:BatchImportUpstreamImage",
+      "ecr:GetDownloadUrlForLayer"
+    ]
+    resources = [
+      "arn:aws:ecr:${var.region}:${var.account_id}:repository/*"
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+    resources = ["*"]
   }
 }
