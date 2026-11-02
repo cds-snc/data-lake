@@ -28,7 +28,7 @@ resource "aws_s3_object" "platform_gc_forms_gx" {
 resource "aws_glue_job" "platform_gc_forms_job" {
   name = "Platform / GC Forms"
 
-  glue_version           = "5.0"
+  glue_version           = "6.0"
   timeout                = 15 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
@@ -129,7 +129,7 @@ resource "aws_s3_object" "platform_gc_notify_gx" {
 resource "aws_glue_job" "platform_gc_notify_job" {
   name = "Platform / GC Notify"
 
-  glue_version           = "5.0"
+  glue_version           = "6.0"
   timeout                = 90 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
@@ -208,7 +208,7 @@ resource "aws_s3_object" "platform_freshdesk_gx" {
 resource "aws_glue_job" "platform_support_freshdesk" {
   name = "Platform / Support / Freshdesk"
 
-  glue_version           = "5.0"
+  glue_version           = "6.0"
   timeout                = 15 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
@@ -270,7 +270,7 @@ resource "aws_s3_object" "bes_crm_salesforce_job" {
 resource "aws_glue_job" "bes_crm_salesforce" {
   name = "BES / CRM / Salesforce"
 
-  glue_version           = "5.0"
+  glue_version           = "6.0"
   timeout                = 15 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
