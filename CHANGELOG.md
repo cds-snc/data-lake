@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.45.4](https://github.com/cds-snc/data-lake/compare/v1.45.3...v1.45.4) (2026-11-03)
+
+
+### Bug Fixes
+
+* add ECR public pull through cache ([#777](https://github.com/cds-snc/data-lake/issues/777)) ([a84523c](https://github.com/cds-snc/data-lake/commit/a84523cd2c8f8b323badb74fb86212770d93b72b))
+
+
+### Miscellaneous Chores
+
+* automated glue job sync ([#778](https://github.com/cds-snc/data-lake/issues/778)) ([1622863](https://github.com/cds-snc/data-lake/commit/16228632be84f3e4ad3f45b5ae8d09d31da5c069))
+* **deps:** lock file maintenance ([#774](https://github.com/cds-snc/data-lake/issues/774)) ([d8b5591](https://github.com/cds-snc/data-lake/commit/d8b55919a036e7b9c0a0f7e2abcfab24962b41b8))
+* **deps:** update all non-major github action dependencies ([#772](https://github.com/cds-snc/data-lake/issues/772)) ([6512ab7](https://github.com/cds-snc/data-lake/commit/6512ab7c453d6663db9bc53339581d07c06f6a6a))
+* **deps:** update dependency boto3 to v1.43.118 ([#771](https://github.com/cds-snc/data-lake/issues/771)) ([1702ae1](https://github.com/cds-snc/data-lake/commit/1702ae11301a357eaaab8458ed65a62f0a5d2654))
+* **deps:** update dorny/paths-filter action to v4 ([#768](https://github.com/cds-snc/data-lake/issues/768)) ([85278f6](https://github.com/cds-snc/data-lake/commit/85278f69ebedec9285e395b795eda3db51f63071))
+* **deps:** update terraform github.com/cds-snc/terraform-modules to v13 ([#769](https://github.com/cds-snc/data-lake/issues/769)) ([bfe787c](https://github.com/cds-snc/data-lake/commit/bfe787cd1e3ac1ccc85fad52c9a921e7df0c222b))
+* **deps:** update terraform hashicorp/terraform to v1.17.0 ([#773](https://github.com/cds-snc/data-lake/issues/773)) ([cdadee2](https://github.com/cds-snc/data-lake/commit/cdadee251249b6a547d64db7fa03f256578be42c))
+* upgrade to Glue ETL v6.0 ([#776](https://github.com/cds-snc/data-lake/issues/776)) ([2c59a58](https://github.com/cds-snc/data-lake/commit/2c59a5870c9c5b5503646480785ae60258662965))
+
 ## [1.45.3](https://github.com/cds-snc/data-lake/compare/v1.45.2...v1.45.3) (2026-10-28)
 
 
