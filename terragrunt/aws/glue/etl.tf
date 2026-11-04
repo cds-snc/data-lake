@@ -129,7 +129,7 @@ resource "aws_s3_object" "platform_gc_notify_gx" {
 resource "aws_glue_job" "platform_gc_notify_job" {
   name = "Platform / GC Notify"
 
-  glue_version           = "6.0"
+  glue_version           = "5.0"
   timeout                = 90 # minutes
   role_arn               = aws_iam_role.glue_etl.arn
   security_configuration = aws_glue_security_configuration.encryption_at_rest.name
