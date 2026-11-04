@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.45.5](https://github.com/cds-snc/data-lake/compare/v1.45.4...v1.45.5) (2026-11-04)
+
+
+### Bug Fixes
+
+* revert Notify ETL to Glue 5.0 ([#779](https://github.com/cds-snc/data-lake/issues/779)) ([812e7b4](https://github.com/cds-snc/data-lake/commit/812e7b46493a069004b3b6e51feb8a3f68bcc923))
+
 ## [1.45.4](https://github.com/cds-snc/data-lake/compare/v1.45.3...v1.45.4) (2026-11-03)
 
 
