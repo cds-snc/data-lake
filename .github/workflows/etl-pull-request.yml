@@ -36,7 +36,7 @@ jobs:
             module_path: platform/gc_notify
     steps:
       - name: Audit DNS requests
-        uses: cds-snc/dns-proxy-action@58d95c286bfa233aec52055237b26a20c6ae13a5 # v1.2.1
+        uses: cds-snc/dns-proxy-action@db1dcfd7d049041985df926671cae9d356738008 # v1.2.2
         env:
           DNS_PROXY_FORWARDTOSENTINEL: "true"
           DNS_PROXY_LOGANALYTICSWORKSPACEID: "${{ secrets.LOG_ANALYTICS_WORKSPACE_ID }}"
@@ -61,7 +61,7 @@ jobs:
         if: steps.changes.outputs.module == 'true'
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.14"
+          python-version: "3.15"
 
       - name: Setup Java
         if: steps.changes.outputs.module == 'true'
