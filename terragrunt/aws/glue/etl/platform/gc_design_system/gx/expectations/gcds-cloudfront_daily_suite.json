@@ -1,0 +1,91 @@
+{
+  "expectation_suite_name": "gcds-cloudfront_daily_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "min_value": 1000
+      },
+      "meta": {
+        "description": "The re-processing window should contain at least 1000 aggregated rows"
+      }
+    },
+    {
+      "expectation_type": "expect_column_unique_value_count_to_be_between",
+      "kwargs": {
+        "column": "date",
+        "min_value": 3
+      },
+      "meta": {
+        "description": "The window should contain at least 3 distinct dates (no missing days)"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "date"
+      },
+      "meta": {
+        "description": "date should not be null"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "date",
+        "regex": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "meta": {
+        "description": "date should match YYYY-MM-DD"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "referrer_host"
+      },
+      "meta": {
+        "description": "referrer_host should not be null (blank referrers are (none))"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "uri_stem"
+      },
+      "meta": {
+        "description": "uri_stem should not be null"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "status",
+        "regex": "^\\d{3}$"
+      },
+      "meta": {
+        "description": "status should be a 3 digit HTTP status code"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "requests",
+        "min_value": 1
+      },
+      "meta": {
+        "description": "requests should be a positive count"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "bytes_sent",
+        "min_value": 0
+      },
+      "meta": {
+        "description": "bytes_sent should not be negative"
+      }
+    }
+  ]
+}
