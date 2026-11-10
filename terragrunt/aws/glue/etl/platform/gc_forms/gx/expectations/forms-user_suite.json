@@ -1,11 +1,22 @@
 {
-  "expectation_suite_name": "forms-user_suite",
+  "name": "forms-user_suite",
   "expectations": [
     {
-      "expectation_type": "expect_table_columns_to_match_set",
+      "type": "expect_table_columns_to_match_set",
       "kwargs": {
-        "column_set": ["id", "email", "emailverified", "lastlogin", "active", "createdat",
-       "notes", "timestamp", "canpublish", "year", "month"],
+        "column_set": [
+          "id",
+          "email",
+          "emailverified",
+          "lastlogin",
+          "active",
+          "createdat",
+          "notes",
+          "timestamp",
+          "canpublish",
+          "year",
+          "month"
+        ],
         "exact_match": false
       },
       "meta": {
@@ -13,7 +24,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
         "regex": "^[a-z0-9]{1,30}$"
@@ -23,7 +34,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "email",
         "regex": ".*"
@@ -33,7 +44,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "emailverified",
         "type_list": [
@@ -44,16 +55,15 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "emailverified",
-        "min_value": "1950-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "1950-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "lastlogin",
         "type_list": [
@@ -64,16 +74,15 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "lastlogin",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "active",
         "value_set": [
@@ -86,7 +95,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "createdat",
         "type_list": [
@@ -97,16 +106,15 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "createdat",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "notes",
         "regex": ".*"
@@ -116,7 +124,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "timestamp",
         "type_list": [
@@ -127,16 +135,15 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "timestamp",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "canpublish",
         "regex": ".*"
@@ -146,7 +153,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "year",
         "regex": "^\\d{4}$"
@@ -156,7 +163,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "month",
         "regex": "^\\d{4}-\\d{2}$"
@@ -165,8 +172,5 @@
         "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
       }
     }
-  ],
-  "meta": {
-    "great_expectations_version": "0.18.22"
-  }
+  ]
 }
