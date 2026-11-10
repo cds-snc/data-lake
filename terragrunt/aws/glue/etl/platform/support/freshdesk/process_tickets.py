@@ -1,3 +1,4 @@
+import json
 import logging
 import sys
 
@@ -12,6 +13,10 @@ import zipfile
 from awsglue.utils import getResolvedOptions
 
 import great_expectations as gx
+from great_expectations.core.expectation_suite import ExpectationSuite
+from great_expectations.expectations.expectation_configuration import (
+    ExpectationConfiguration,
+)
 import os
 
 args = getResolvedOptions(
@@ -38,7 +43,7 @@ DATABASE_NAME_RAW = args["database_name_raw"]
 DATABASE_NAME_TRANSFORMED = args["database_name_transformed"]
 TABLE_NAME = args["table_name"]
 GX_CONFIG_OBJECT = args["gx_config_object"]
-GX_CHECKPOINT_NAME = "freshdesk_checkpoint"
+GX_SUITE_NAME = "freshdesk_suite"
 
 
 # Initialize logging
@@ -50,34 +55,76 @@ handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 
 
-def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
+def load_expectation_suite(suite_name: str) -> ExpectationSuite:
     """
-    Properly configure all Great Expectations stores to use S3 at runtime.
-    This uses context.add_store to ensure the stores are actually registered.
+    Load a Great Expectations suite from the JSON files shipped in the gx
+    configuration archive (gx/expectations/<suite_name>.json).
     """
-    if "test" not in target_gx_bucket:
-        logger.info(f"Writing to S3 bucket: {target_gx_bucket}")
+    suite_path = os.path.join(os.getcwd(), "gx", "expectations", f"{suite_name}.json")
+    with open(suite_path, "r") as f:
+        suite_config = json.load(f)
 
-        context.add_store(
-            store_name="validations_store",
-            store_config={
-                "class_name": "ValidationsStore",
-                "store_backend": {
-                    "class_name": "TupleS3StoreBackend",
-                    "bucket": target_gx_bucket,
-                    "prefix": "platform/gc-forms/data-validation/validations/",
-                },
-            },
-        )
+    return ExpectationSuite(
+        name=suite_config["name"],
+        expectations=[
+            ExpectationConfiguration(
+                type=expectation["type"],
+                kwargs=expectation["kwargs"],
+                meta=expectation.get("meta", {}),
+            )
+            for expectation in suite_config["expectations"]
+        ],
+    )
 
-        context.add_store(
-            store_name="evaluation_parameter_store",
-            store_config={
-                "class_name": "EvaluationParameterStore",
-            },
+
+def store_validation_result(result, suite_name: str, target_gx_bucket: str) -> None:
+    """
+    Write the Great Expectations validation result to S3. Great Expectations 1.x
+    no longer ships an S3 store backend, so the result is written directly.
+    A failure to store the result never fails the validation itself.
+
+    The prefix sits outside the crawled raw data path (platform/support/freshdesk)
+    so the validation JSON is not picked up by the Freshdesk crawler.
+    """
+    if "test" in target_gx_bucket:
+        logger.info("Not writing validation result to S3 (test bucket)")
+        return
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    key = f"platform/support/data-validation/freshdesk/validations/{suite_name}/{timestamp}.json"
+    try:
+        boto3.client("s3").put_object(
+            Bucket=target_gx_bucket,
+            Key=key,
+            Body=json.dumps(result.to_json_dict(), default=str).encode("utf-8"),
         )
-    else:
-        logger.info("Writing Locally")
+        logger.info(f"Validation result written to s3://{target_gx_bucket}/{key}")
+    except Exception as e:
+        logger.warning(f"Could not write validation result to S3: {str(e)}")
+
+
+def log_failed_expectation(res, dataframe: pd.DataFrame) -> None:
+    """
+    Log the details of a failed expectation, including a sample of the actual
+    values in the column.
+    """
+    expectation_type = res.expectation_config.type
+    expectation_definition = res.expectation_config.kwargs
+    column = expectation_definition.get("column", "")
+    result_details = res.result or {}
+
+    logger.error(
+        f"Failed expectation: {expectation_type} on column '{column}'. "
+        f"Expectation definition: {expectation_definition}. "
+        f"Run details: {result_details}"
+    )
+
+    if column and column in dataframe.columns:
+        samples = dataframe[column].head(5).astype(str).tolist()
+        logger.error(f"Sample values in column '{column}': {samples}")
+        logger.error(f"Column dtype: {dataframe[column].dtype}")
+    elif column:
+        logger.error(f"Column '{column}' is missing from the DataFrame")
 
 
 def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
@@ -102,40 +149,43 @@ def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
 
 def validate_with_gx(dataframe: pd.DataFrame) -> bool:
     """
-    Validate the DataFrame using the specified Great Expectations checkpoint.
+    Validate the DataFrame using the Great Expectations suite.
     Logs detailed errors if validation fails.
     """
-    gx_context_path = os.path.join(os.getcwd(), "gx")
-    context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
+    try:
+        suite = load_expectation_suite(GX_SUITE_NAME)
 
-    configure_gx_stores(context, SOURCE_BUCKET)
+        # The context is built in code from the suite JSON file.
+        context = gx.get_context(mode="ephemeral")
+        data_source = context.data_sources.add_pandas(name="pandas_datasource")
+        data_asset = data_source.add_dataframe_asset(name="freshdesk_data")
+        batch_definition = data_asset.add_batch_definition_whole_dataframe(
+            "runtime_batch"
+        )
+        suite = context.suites.add(suite)
+        validation_definition = context.validation_definitions.add(
+            gx.ValidationDefinition(
+                name=f"{GX_SUITE_NAME}_validation",
+                data=batch_definition,
+                suite=suite,
+            )
+        )
 
-    result = context.run_checkpoint(
-        checkpoint_name=GX_CHECKPOINT_NAME,
-        batch_request={
-            "runtime_parameters": {"batch_data": dataframe},
-            "batch_identifiers": {"default_identifier_name": "runtime_batch"},
-        },
-    )
-    if not result["success"]:
-        logger.error(f"Validation failed for checkpoint '{GX_CHECKPOINT_NAME}'")
-        # Print detailed failed expectations
-        for run_result in result["run_results"].values():
-            validation_result = run_result["validation_result"]
-            for res in validation_result["results"]:
-                if not res["success"]:
-                    expectation_type = res["expectation_config"]["expectation_type"]
-                    expectation_definition = res["expectation_config"]["kwargs"]
-                    column = expectation_definition.get("column", "")
-                    result_details = res.get("result", {})
-                    logger.error(
-                        f"Failed expectation: {expectation_type} on column '{column}'. "
-                        f"Expectation definition: {expectation_definition}"
-                        f"Run details {result_details}"
-                    )
+        result = validation_definition.run(batch_parameters={"dataframe": dataframe})
+
+        store_validation_result(result, GX_SUITE_NAME, SOURCE_BUCKET)
+
+        if not result.success:
+            logger.error(f"Validation failed for suite '{GX_SUITE_NAME}'")
+            for res in result.results:
+                if not res.success:
+                    log_failed_expectation(res, dataframe)
+            return False
+        logger.info(f"Validation succeeded for suite '{GX_SUITE_NAME}'.")
+        return True
+    except Exception as e:
+        logger.error(f"Error during Great Expectations validation: {str(e)}")
         return False
-    logger.info(f"Validation succeeded for checkpoint '{GX_CHECKPOINT_NAME}'.")
-    return True
 
 
 def get_days_tickets(day: datetime) -> pd.DataFrame:
