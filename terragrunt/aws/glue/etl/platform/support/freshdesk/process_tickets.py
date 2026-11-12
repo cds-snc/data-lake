@@ -155,7 +155,6 @@ def validate_with_gx(dataframe: pd.DataFrame) -> bool:
     try:
         suite = load_expectation_suite(GX_SUITE_NAME)
 
-        # The context is built in code from the suite JSON file.
         context = gx.get_context(mode="ephemeral")
         data_source = context.data_sources.add_pandas(name="pandas_datasource")
         data_asset = data_source.add_dataframe_asset(name="freshdesk_data")

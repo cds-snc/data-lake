@@ -73,8 +73,6 @@ spark = glueContext.spark_session
 if spark is not None:
     spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
     spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
-    # Glue 6.0 (Spark 4.x) enables ANSI mode by default. Keep the previous behaviour
-    # where invalid casts return NULL rather than raising.
     spark.conf.set("spark.sql.ansi.enabled", "false")
 
 logger = glueContext.get_logger()
@@ -236,8 +234,6 @@ def validate_with_gx(
     try:
         suite = load_expectation_suite(suite_name)
 
-        # The context is built in code from the suite JSON files.  The Spark
-        # datasource reuses the active Spark session of the Glue job.
         context = gx.get_context(mode="ephemeral")
         data_source = context.data_sources.add_spark(name="spark_datasource")
         data_asset = data_source.add_dataframe_asset(name=suite_name)

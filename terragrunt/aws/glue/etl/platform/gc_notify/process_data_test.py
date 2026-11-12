@@ -521,11 +521,9 @@ def test_validate_with_gx_runs_against_dataframe(spark_session):
     with mock_gx(success=True) as gx_mock:
         validate_with_gx(df, "test_suite", "test_batch")
 
-        # The suite is loaded by name and the context is built in memory
         gx_mock.load_suite_mock.assert_called_once_with("test_suite")
         gx_mock.get_context.assert_called_once_with(mode="ephemeral")
 
-        # The DataFrame is passed as the batch parameter
         call_args = gx_mock.validation_definition.run.call_args
         assert call_args[1]["batch_parameters"] == {"dataframe": df}
 
