@@ -3,6 +3,7 @@ import json
 import datetime
 import sys
 import os
+from contextlib import contextmanager
 from unittest.mock import Mock, patch, mock_open, MagicMock
 from pyspark.sql import SparkSession
 from pyspark.sql.types import (
@@ -58,7 +59,6 @@ sys.modules["awsglue.utils"].getResolvedOptions.return_value = {
 }
 
 # Import after mocking AWS Glue modules
-import great_expectations as gx
 from process_data import (
     postgres_to_spark_type,
     get_new_data,
@@ -66,6 +66,8 @@ from process_data import (
     download_s3_object,
     get_incremental_load_date_from,
     validate_with_gx,
+    store_validation_result,
+    load_expectation_suite,
 )
 
 
@@ -438,6 +440,27 @@ def test_get_incremental_load_date_from_month_boundary_regression(mock_datetime)
 # ===== GREAT EXPECTATIONS VALIDATION TESTS =====
 
 
+@contextmanager
+def mock_gx(success=True, failed_results=None):
+    """
+    Patch the Great Expectations module used by process_data so that the
+    validation definition run returns a canned result.
+    """
+    result = MagicMock()
+    result.success = success
+    result.results = failed_results or []
+
+    with patch("process_data.gx") as gx_mock, patch(
+        "process_data.load_expectation_suite"
+    ) as load_suite_mock:
+        context = gx_mock.get_context.return_value
+        validation_definition = context.validation_definitions.add.return_value
+        validation_definition.run.return_value = result
+        gx_mock.load_suite_mock = load_suite_mock
+        gx_mock.validation_definition = validation_definition
+        yield gx_mock
+
+
 def test_validate_with_gx_basic_validation(spark_session):
     """Test basic GX validation with Spark DataFrame."""
     # Create test DataFrame
@@ -450,26 +473,11 @@ def test_validate_with_gx_basic_validation(spark_session):
         test_data, ["id", "email", "status", "created_at"]
     )
 
-    with patch("great_expectations.get_context") as mock_get_context, patch(
-        "process_data.configure_gx_stores"
-    ) as _, patch("process_data.SOURCE_BUCKET", "test-bucket"):
-
-        mock_context = MagicMock()
-        mock_get_context.return_value = mock_context
-
-        # Mock datasource structure
-        mock_context.datasources = {"spark_datasource": MagicMock()}
-        mock_context.datasources["spark_datasource"].execution_engine = MagicMock()
-
-        # Mock checkpoint result
-        mock_result = {"success": True}
-        mock_context.run_checkpoint.return_value = mock_result
-
-        # Test validation
-        result = validate_with_gx(df, spark_session, "test_checkpoint", "test_batch")
+    with mock_gx(success=True) as gx_mock:
+        result = validate_with_gx(df, "test_suite", "test_batch")
 
         assert result is True
-        mock_context.run_checkpoint.assert_called_once()
+        gx_mock.validation_definition.run.assert_called_once()
 
 
 def test_validate_with_gx_validation_failure(spark_session):
@@ -483,53 +491,41 @@ def test_validate_with_gx_validation_failure(spark_session):
         test_data, ["id", "email", "status", "created_at"]
     )
 
-    with patch("great_expectations.get_context") as mock_get_context, patch(
-        "process_data.configure_gx_stores"
-    ) as _, patch("process_data.SOURCE_BUCKET", "test-bucket"):
+    failed_expectation = MagicMock()
+    failed_expectation.success = False
+    failed_expectation.expectation_config.type = "expect_column_values_to_be_in_set"
+    failed_expectation.expectation_config.kwargs = {
+        "column": "status",
+        "value_set": ["delivered", "sending"],
+    }
+    failed_expectation.result = {
+        "partial_unexpected_list": ["unknown_status"],
+        "unexpected_count": 1,
+        "element_count": 2,
+    }
 
-        mock_context = MagicMock()
-        mock_get_context.return_value = mock_context
-
-        # Mock datasource structure
-        mock_context.datasources = {"spark_datasource": MagicMock()}
-        mock_context.datasources["spark_datasource"].execution_engine = MagicMock()
-
-        # Mock checkpoint result with failure
-        mock_result = {"success": False, "run_results": {}}
-        mock_context.run_checkpoint.return_value = mock_result
-
-        # Test validation failure
-        result = validate_with_gx(df, spark_session, "test_checkpoint", "test_batch")
+    with mock_gx(success=False, failed_results=[failed_expectation]) as gx_mock:
+        result = validate_with_gx(df, "test_suite", "test_batch")
 
         assert result is False
-        mock_context.run_checkpoint.assert_called_once()
+        gx_mock.validation_definition.run.assert_called_once()
 
 
-def test_validate_with_gx_runtime_batch_request(spark_session):
-    """Test that GX validation creates proper RuntimeBatchRequest with Spark DataFrame."""
+def test_validate_with_gx_runs_against_dataframe(spark_session):
+    """Test that GX validation runs the suite against the Spark DataFrame."""
     test_data = [("001", "user1@example.com", "delivered", "2024-01-01 12:00:00")]
     df = spark_session.createDataFrame(
         test_data, ["id", "email", "status", "created_at"]
     )
 
-    with patch("great_expectations.get_context") as mock_get_context:
-        mock_context = MagicMock()
-        mock_get_context.return_value = mock_context
+    with mock_gx(success=True) as gx_mock:
+        validate_with_gx(df, "test_suite", "test_batch")
 
-        mock_result = MagicMock()
-        mock_result.success = True
-        mock_context.run_checkpoint.return_value = mock_result
+        gx_mock.load_suite_mock.assert_called_once_with("test_suite")
+        gx_mock.get_context.assert_called_once_with(mode="ephemeral")
 
-        validate_with_gx(df, spark_session, "test_checkpoint", "test_batch")
-
-        # Check that run_checkpoint was called with the right parameters
-        call_args = mock_context.run_checkpoint.call_args
-        assert call_args[1]["checkpoint_name"] == "test_checkpoint"
-
-        # Check that batch_request contains runtime parameters
-        batch_request = call_args[1]["batch_request"]
-        assert "runtime_parameters" in batch_request
-        assert "batch_identifiers" in batch_request
+        call_args = gx_mock.validation_definition.run.call_args
+        assert call_args[1]["batch_parameters"] == {"dataframe": df}
 
 
 def test_validate_with_gx_exception_handling(spark_session):
@@ -539,12 +535,65 @@ def test_validate_with_gx_exception_handling(spark_session):
         test_data, ["id", "email", "status", "created_at"]
     )
 
-    with patch("great_expectations.get_context") as mock_get_context:
-        mock_get_context.side_effect = Exception("GX context error")
+    with mock_gx() as gx_mock:
+        gx_mock.get_context.side_effect = Exception("GX context error")
 
         # Should return False on exception
-        result = validate_with_gx(df, spark_session, "test_checkpoint", "test_batch")
+        result = validate_with_gx(df, "test_suite", "test_batch")
         assert result is False
+
+
+def test_all_expectation_suites_load():
+    """Every suite shipped in gx/expectations must load as a valid GX suite."""
+    suite_files = sorted(os.listdir(os.path.join(os.getcwd(), "gx", "expectations")))
+    assert len(suite_files) > 0
+
+    for suite_file in suite_files:
+        suite_name = suite_file.replace(".json", "")
+        suite = load_expectation_suite(suite_name)
+        assert suite.name == suite_name
+        assert len(suite.expectations) > 0
+
+
+def test_validate_with_gx_missing_suite(spark_session):
+    """Test GX validation returns False when the suite file does not exist."""
+    df = spark_session.createDataFrame([("001",)], ["id"])
+
+    result = validate_with_gx(df, "notify-does_not_exist_suite", "test_batch")
+    assert result is False
+
+
+def test_store_validation_result_writes_to_s3():
+    """Test that validation results are written to the GX S3 prefix."""
+    validation_result = MagicMock()
+    validation_result.to_json_dict.return_value = {"success": True}
+
+    with patch("process_data.boto3.client") as mock_client:
+        store_validation_result(validation_result, "notify-jobs_suite", "raw-bucket")
+
+        kwargs = mock_client.return_value.put_object.call_args[1]
+        assert kwargs["Bucket"] == "raw-bucket"
+        assert kwargs["Key"].startswith(
+            "platform/gc-notify/data-validation/validations/notify-jobs_suite/"
+        )
+        assert json.loads(kwargs["Body"]) == {"success": True}
+
+
+def test_store_validation_result_skipped_for_test_bucket():
+    """Test that validation results are not written to S3 for test buckets."""
+    with patch("process_data.boto3.client") as mock_client:
+        store_validation_result(MagicMock(), "notify-jobs_suite", "test-bucket")
+        mock_client.assert_not_called()
+
+
+def test_store_validation_result_does_not_raise_on_s3_failure():
+    """Test that an S3 write failure does not fail the validation."""
+    validation_result = MagicMock()
+    validation_result.to_json_dict.return_value = {"success": True}
+
+    with patch("process_data.boto3.client") as mock_client:
+        mock_client.return_value.put_object.side_effect = Exception("S3 error")
+        store_validation_result(validation_result, "notify-jobs_suite", "raw-bucket")
 
 
 def test_validate_with_gx_with_different_schemas(spark_session):
@@ -582,15 +631,8 @@ def test_validate_with_gx_with_different_schemas(spark_session):
 
     df = spark_session.createDataFrame(test_data, schema)
 
-    with patch("great_expectations.get_context") as mock_get_context:
-        mock_context = MagicMock()
-        mock_get_context.return_value = mock_context
-
-        mock_result = MagicMock()
-        mock_result.success = True
-        mock_context.run_checkpoint.return_value = mock_result
-
-        result = validate_with_gx(df, spark_session, "test_checkpoint", "test_batch")
+    with mock_gx(success=True):
+        result = validate_with_gx(df, "test_suite", "test_batch")
         assert result is True
 
 
@@ -671,24 +713,13 @@ def test_spark_dataframe_gx_integration_end_to_end(spark_session):
     assert len(status_counts) == 2
 
     # Test with GX validation (mocked)
-    with patch("great_expectations.get_context") as mock_get_context:
-        mock_context = MagicMock()
-        mock_get_context.return_value = mock_context
-
-        mock_result = MagicMock()
-        mock_result.success = True
-        mock_context.run_checkpoint.return_value = mock_result
-
+    with mock_gx(success=True):
         # Validate original dataset
-        result = validate_with_gx(
-            df, spark_session, "gc_notify_checkpoint", "test_batch"
-        )
+        result = validate_with_gx(df, "gc_notify_suite", "test_batch")
         assert result is True
 
         # Validate filtered dataset
-        result = validate_with_gx(
-            delivered_df, spark_session, "gc_notify_checkpoint", "delivered_batch"
-        )
+        result = validate_with_gx(delivered_df, "gc_notify_suite", "delivered_batch")
         assert result is True
 
 
@@ -725,17 +756,8 @@ def test_spark_dataframe_type_conversions_for_gx(spark_session):
     assert df_converted.schema["count"].dataType == IntegerType()
 
     # Test with GX validation
-    with patch("great_expectations.get_context") as mock_get_context:
-        mock_context = MagicMock()
-        mock_get_context.return_value = mock_context
-
-        mock_result = MagicMock()
-        mock_result.success = True
-        mock_context.run_checkpoint.return_value = mock_result
-
-        result = validate_with_gx(
-            df_converted, spark_session, "test_checkpoint", "converted_batch"
-        )
+    with mock_gx(success=True):
+        result = validate_with_gx(df_converted, "test_suite", "converted_batch")
         assert result is True
 
 
@@ -801,14 +823,10 @@ def test_real_gx_validation_with_valid_notify_jobs_data(spark_session):
     df = spark_session.createDataFrame(valid_data, schema)
 
     # Mock only the S3 dependencies but use real GX
-    with patch("process_data.configure_gx_stores") as _, patch(
-        "process_data.SOURCE_BUCKET", "test-bucket"
-    ):
+    with patch("process_data.SOURCE_BUCKET", "test-bucket"):
 
         # This should actually run Great Expectations validation
-        result = validate_with_gx(
-            df, spark_session, "notify-jobs_checkpoint", "valid_test_batch"
-        )
+        result = validate_with_gx(df, "notify-jobs_suite", "valid_test_batch")
 
         # The validation should pass because all data meets the expectations
         assert result is True
@@ -873,14 +891,10 @@ def test_real_gx_validation_with_invalid_notify_jobs_data(spark_session):
     df = spark_session.createDataFrame(invalid_data, schema)
 
     # Mock only the S3 dependencies but use real GX
-    with patch("process_data.configure_gx_stores") as _, patch(
-        "process_data.SOURCE_BUCKET", "test-bucket"
-    ):
+    with patch("process_data.SOURCE_BUCKET", "test-bucket"):
 
         # This should actually run Great Expectations validation
-        result = validate_with_gx(
-            df, spark_session, "notify-jobs_checkpoint", "invalid_test_batch"
-        )
+        result = validate_with_gx(df, "notify-jobs_suite", "invalid_test_batch")
 
         # The validation should fail because data violates multiple expectations
         assert result is False
@@ -970,14 +984,10 @@ def test_real_gx_validation_with_mixed_notify_jobs_data(spark_session):
     df = spark_session.createDataFrame(mixed_data, schema)
 
     # Mock only the S3 dependencies but use real GX
-    with patch("process_data.configure_gx_stores") as _, patch(
-        "process_data.SOURCE_BUCKET", "test-bucket"
-    ):
+    with patch("process_data.SOURCE_BUCKET", "test-bucket"):
 
         # This should actually run Great Expectations validation
-        result = validate_with_gx(
-            df, spark_session, "notify-jobs_checkpoint", "mixed_test_batch"
-        )
+        result = validate_with_gx(df, "notify-jobs_suite", "mixed_test_batch")
 
         # The validation should fail because some rows violate expectations
         assert result is False
@@ -1048,124 +1058,11 @@ def test_debug_gx_validation_failure(spark_session):
     # Try to run GX validation and capture detailed errors using the actual function
     from unittest.mock import patch
 
-    with patch("process_data.configure_gx_stores") as _, patch(
-        "process_data.SOURCE_BUCKET", "test-bucket"
-    ):
+    with patch("process_data.SOURCE_BUCKET", "test-bucket"):
 
         print("\n=== Running validate_with_gx function directly ===")
-        result = validate_with_gx(
-            df, spark_session, "notify-jobs_checkpoint", "debug_batch"
-        )
+        result = validate_with_gx(df, "notify-jobs_suite", "debug_batch")
         print(f"Validation result: {result}")
 
         # The actual function handles exceptions, so let's also try to capture more details
         # by temporarily modifying the logging or examining what happens
-
-
-def test_debug_gx_validation_without_exception_handling(spark_session):
-    """Debug test that bypasses exception handling to see the actual GX error."""
-    # Create the same valid data
-    schema = StructType(
-        [
-            StructField("id", StringType(), True),
-            StructField("original_file_name", StringType(), True),
-            StructField("service_id", StringType(), True),
-            StructField("template_id", StringType(), True),
-            StructField("created_at", TimestampType(), True),
-            StructField("updated_at", TimestampType(), True),
-            StructField("notification_count", IntegerType(), True),
-            StructField("notifications_sent", IntegerType(), True),
-            StructField("processing_started", TimestampType(), True),
-            StructField("processing_finished", TimestampType(), True),
-            StructField("created_by_id", StringType(), True),
-            StructField("template_version", IntegerType(), True),
-            StructField("notifications_delivered", IntegerType(), True),
-            StructField("notifications_failed", IntegerType(), True),
-            StructField("job_status", StringType(), True),
-            StructField("scheduled_for", TimestampType(), True),
-            StructField("archived", BooleanType(), True),
-            StructField("api_key_id", StringType(), True),
-            StructField("sender_id", StringType(), True),
-            StructField("year", StringType(), True),
-            StructField("month", StringType(), True),
-        ]
-    )
-
-    valid_data = [
-        (
-            "a1b2c3d4-e5f6-7890-abcd-ef1234567890",  # id (valid UUID)
-            "test_template.pdf",  # original_file_name
-            "f1e2d3c4-b5a6-9870-1234-567890abcdef",  # service_id (valid UUID)
-            "123e4567-e89b-12d3-a456-426614174000",  # template_id (valid UUID)
-            datetime.datetime(2024, 6, 1, 10, 0, 0),  # created_at
-            datetime.datetime(2024, 6, 1, 10, 5, 0),  # updated_at
-            100,  # notification_count (>= 0)
-            95,  # notifications_sent (>= 0)
-            datetime.datetime(2024, 6, 1, 10, 1, 0),  # processing_started
-            datetime.datetime(2024, 6, 1, 10, 4, 0),  # processing_finished
-            "abcd1234-5678-90ef-1234-567890abcdef",  # created_by_id (valid UUID)
-            1,  # template_version (>= 0)
-            90,  # notifications_delivered (>= 0)
-            5,  # notifications_failed (>= 0)
-            "completed",  # job_status
-            datetime.datetime(2024, 6, 1, 9, 0, 0),  # scheduled_for
-            False,  # archived (boolean)
-            "def56789-abcd-ef12-3456-7890abcdef12",  # api_key_id (valid UUID)
-            "12345678-1234-1234-1234-123456789012",  # sender_id (valid UUID)
-            "2024",  # year (4 digits)
-            "2024-06",  # month (yyyy-mm format)
-        )
-    ]
-
-    df = spark_session.createDataFrame(valid_data, schema)
-
-    # Copy the validate_with_gx logic but without exception handling
-    import os
-    from unittest.mock import patch
-
-    with patch("process_data.configure_gx_stores") as _, patch(
-        "process_data.SOURCE_BUCKET", "test-bucket"
-    ):
-
-        print("=== Running GX validation without exception handling ===")
-
-        gx_context_path = os.path.join(os.getcwd(), "gx")
-        context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
-
-        # Configure datasource to use our Spark session
-        context.datasources["spark_datasource"].execution_engine.spark = spark_session
-
-        # Try running checkpoint the simpler way by just adding the data to the datasource
-        # and letting the checkpoint use its predefined batch_request
-
-        # Add the DataFrame to the datasource context as the data asset
-        context.datasources["spark_datasource"]._data_context = context
-
-        # Try to run the checkpoint with runtime parameters instead
-        result = context.run_checkpoint(
-            checkpoint_name="notify-jobs_checkpoint",
-            batch_request={
-                "runtime_parameters": {"batch_data": df},
-                "batch_identifiers": {"default_identifier_name": "debug_test"},
-            },
-        )
-
-        print(f"SUCCESS: {result['success']}")
-
-        if not result["success"]:
-            print("\n=== DETAILED VALIDATION FAILURES ===")
-            for run_result in result["run_results"].values():
-                validation_result = run_result["validation_result"]
-                for res in validation_result["results"]:
-                    if not res["success"]:
-                        expectation_type = res["expectation_config"]["expectation_type"]
-                        column = res["expectation_config"]["kwargs"].get(
-                            "column", "N/A"
-                        )
-                        result_details = res.get("result", {})
-                        print(f"\n❌ FAILED: {expectation_type}")
-                        print(f"   Column: {column}")
-                        print(f"   Config: {res['expectation_config']['kwargs']}")
-                        print(f"   Result: {result_details}")
-        else:
-            print("✅ All validations passed!")

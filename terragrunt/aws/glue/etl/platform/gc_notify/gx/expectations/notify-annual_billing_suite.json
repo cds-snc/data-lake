@@ -1,8 +1,8 @@
 {
-  "expectation_suite_name": "notify-annual_billing_suite",
+  "name": "notify-annual_billing_suite",
   "expectations": [
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
         "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
@@ -12,7 +12,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "service_id",
         "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
@@ -22,7 +22,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "financial_year_start",
         "min_value": 0
@@ -32,7 +32,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "free_sms_fragment_limit",
         "min_value": 0
@@ -42,7 +42,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "updated_at",
         "type_list": [
@@ -58,7 +58,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "created_at",
         "type_list": [

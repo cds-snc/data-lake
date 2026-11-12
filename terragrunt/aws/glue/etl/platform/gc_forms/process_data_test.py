@@ -2,7 +2,7 @@ import pytest
 import sys
 
 from datetime import datetime, timezone
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pandas as pd
 import numpy as np
@@ -31,6 +31,8 @@ sys.modules["awsglue.utils"] = mock_glue_utils
 # flake8: noqa: E402
 from process_data import (
     get_new_data,
+    load_expectation_suite,
+    store_validation_result,
     process_data,
     validate_with_gx,
     SOURCE_BUCKET,
@@ -67,7 +69,7 @@ def datasets_params():
         "partition_timestamp": "timestamp",
         "partition_columns": ["year", "month"],
         "email_columns": ["deliveryemaildestination"],
-        "gx_checkpoint": "forms-template_checkpoint",
+        "gx_suite": "forms-template_suite",
     }
     return datasets_params
 
@@ -155,20 +157,18 @@ def sample_data_df():
 
 
 def test_validate_schema_valid(sample_data_df, datasets_params):
-    assert validate_with_gx(sample_data_df, datasets_params["gx_checkpoint"]) is True
+    assert validate_with_gx(sample_data_df, datasets_params["gx_suite"]) is True
 
 
 def test_validate_schema_missing_column(sample_data_df, datasets_params):
     df_missing_column = sample_data_df.drop("ispublished", axis=1)
-    assert (
-        validate_with_gx(df_missing_column, datasets_params["gx_checkpoint"]) is False
-    )
+    assert validate_with_gx(df_missing_column, datasets_params["gx_suite"]) is False
 
 
 def test_validate_schema_extra_column(sample_data_df, datasets_params):
     df_added_column = sample_data_df.copy()
     df_added_column["stuff"] = True
-    assert validate_with_gx(df_added_column, datasets_params["gx_checkpoint"]) is True
+    assert validate_with_gx(df_added_column, datasets_params["gx_suite"]) is True
 
 
 def test_validate_schema_wrong_type(sample_data_df, datasets_params):
@@ -176,7 +176,88 @@ def test_validate_schema_wrong_type(sample_data_df, datasets_params):
     df_wrong_type["ispublished"] = pd.to_datetime(
         ["2024-01-04", "2024-01-05", "2024-01-06"]
     )
-    assert validate_with_gx(df_wrong_type, datasets_params["gx_checkpoint"]) is False
+    assert validate_with_gx(df_wrong_type, datasets_params["gx_suite"]) is False
+
+
+@pytest.mark.parametrize(
+    "suite_name",
+    [
+        "forms-submissions_suite",
+        "forms-submissions_files_suite",
+        "forms-template_suite",
+        "forms-templatetouser_suite",
+        "forms-templateversions_suite",
+        "forms-user_suite",
+    ],
+)
+def test_load_expectation_suite(suite_name):
+    suite = load_expectation_suite(suite_name)
+    assert suite.name == suite_name
+    assert len(suite.expectations) > 0
+
+
+@pytest.fixture
+def user_df():
+    return pd.DataFrame(
+        {
+            "id": ["abc123", "def456"],
+            "email": ["a@example.com", "b@example.com"],
+            "emailverified": [pd.Timestamp("2024-01-01"), pd.NaT],
+            "lastlogin": [pd.Timestamp("2024-05-01"), pd.NaT],
+            "active": [True, False],
+            "createdat": [pd.Timestamp("2023-01-01"), pd.Timestamp("2023-02-01")],
+            "notes": ["", "note"],
+            "timestamp": [pd.Timestamp("2025-01-01"), pd.Timestamp("2025-01-02")],
+            "canpublish": [True, False],
+            "year": ["2025", "2025"],
+            "month": ["2025-01", "2025-01"],
+        }
+    )
+
+
+def test_validate_user_suite_valid(user_df):
+    assert validate_with_gx(user_df, "forms-user_suite") is True
+
+
+def test_validate_user_suite_date_before_minimum(user_df):
+    user_df["emailverified"] = [pd.Timestamp("1900-01-01"), pd.NaT]
+    assert validate_with_gx(user_df, "forms-user_suite") is False
+
+
+def test_validate_with_gx_unknown_suite_returns_false(user_df):
+    assert validate_with_gx(user_df, "does-not-exist_suite") is False
+
+
+@patch("process_data.boto3.client")
+def test_store_validation_result_writes_to_s3(mock_boto3_client):
+    result = MagicMock()
+    result.to_json_dict.return_value = {"success": True}
+
+    store_validation_result(result, "forms-template_suite", "raw-bucket")
+
+    put_object = mock_boto3_client.return_value.put_object
+    put_object.assert_called_once()
+    kwargs = put_object.call_args.kwargs
+    assert kwargs["Bucket"] == "raw-bucket"
+    assert kwargs["Key"].startswith(
+        "platform/gc-forms/data-validation/validations/forms-template_suite/"
+    )
+    assert kwargs["Key"].endswith(".json")
+
+
+@patch("process_data.boto3.client")
+def test_store_validation_result_skipped_for_test_bucket(mock_boto3_client):
+    store_validation_result(MagicMock(), "forms-template_suite", "test-source-bucket")
+    mock_boto3_client.assert_not_called()
+
+
+@patch("process_data.boto3.client")
+def test_store_validation_result_does_not_raise_on_s3_error(mock_boto3_client):
+    mock_boto3_client.return_value.put_object.side_effect = Exception("denied")
+    result = MagicMock()
+    result.to_json_dict.return_value = {}
+
+    store_validation_result(result, "forms-template_suite", "raw-bucket")
 
 
 @patch("pandas.Timestamp")

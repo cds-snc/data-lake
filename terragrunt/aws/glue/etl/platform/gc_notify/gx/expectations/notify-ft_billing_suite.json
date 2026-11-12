@@ -1,8 +1,8 @@
 {
-  "expectation_suite_name": "notify-ft_billing_suite",
+  "name": "notify-ft_billing_suite",
   "expectations": [
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "bst_date",
         "type_list": [
@@ -18,7 +18,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "template_id",
         "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
@@ -28,7 +28,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "service_id",
         "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
@@ -38,17 +38,20 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "notification_type",
-        "value_set": ["sms", "email"]
+        "value_set": [
+          "sms",
+          "email"
+        ]
       },
       "meta": {
         "description": "notification_type should be either 'sms' or 'email'"
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "provider",
         "regex": ".*"
@@ -58,7 +61,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "rate_multiplier",
         "min_value": 0
@@ -68,7 +71,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "international",
         "value_set": [
@@ -81,7 +84,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "rate",
         "min_value": 0
@@ -91,7 +94,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "billable_units",
         "min_value": 0
@@ -101,7 +104,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "notifications_sent",
         "min_value": 0
@@ -111,7 +114,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "created_at",
         "type_list": [
@@ -127,10 +130,13 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "sms_sending_vehicle",
-        "value_set": ["long_code", "short_code"]
+        "value_set": [
+          "long_code",
+          "short_code"
+        ]
       },
       "meta": {
         "description": "sms_sending_vehicle should be either 'long_code' or 'short_code'"
