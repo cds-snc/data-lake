@@ -103,30 +103,6 @@ def store_validation_result(result, suite_name: str, target_gx_bucket: str) -> N
         logger.warning(f"Could not write validation result to S3: {str(e)}")
 
 
-def log_failed_expectation(res, dataframe: pd.DataFrame) -> None:
-    """
-    Log the details of a failed expectation, including a sample of the actual
-    values in the column.
-    """
-    expectation_type = res.expectation_config.type
-    expectation_definition = res.expectation_config.kwargs
-    column = expectation_definition.get("column", "")
-    result_details = res.result or {}
-
-    logger.error(
-        f"Failed expectation: {expectation_type} on column '{column}'. "
-        f"Expectation definition: {expectation_definition}. "
-        f"Run details: {result_details}"
-    )
-
-    if column and column in dataframe.columns:
-        samples = dataframe[column].head(5).astype(str).tolist()
-        logger.error(f"Sample values in column '{column}': {samples}")
-        logger.error(f"Column dtype: {dataframe[column].dtype}")
-    elif column:
-        logger.error(f"Column '{column}' is missing from the DataFrame")
-
-
 def download_s3_object(s3: boto3.client, s3_url: str, filename: str) -> None:
     """
     Download an S3 object to a local file.
@@ -176,9 +152,6 @@ def validate_with_gx(dataframe: pd.DataFrame) -> bool:
 
         if not result.success:
             logger.error(f"Validation failed for suite '{GX_SUITE_NAME}'")
-            for res in result.results:
-                if not res.success:
-                    log_failed_expectation(res, dataframe)
             return False
         logger.info(f"Validation succeeded for suite '{GX_SUITE_NAME}'.")
         return True

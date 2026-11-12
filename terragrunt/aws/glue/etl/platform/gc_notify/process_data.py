@@ -130,89 +130,6 @@ def store_validation_result(result, suite_name: str, target_gx_bucket: str) -> N
         logger.warning(f"Could not write validation result to S3: {str(e)}")
 
 
-def log_failed_expectation(res, dataframe: SparkDataFrame) -> None:
-    """
-    Log the details of a failed expectation, including the actual values
-    that caused the failure.
-    """
-    expectation_type = res.expectation_config.type
-    expectation_definition = res.expectation_config.kwargs
-    column = expectation_definition.get("column", "")
-    result_details = res.result or {}
-
-    # Log basic failure info
-    logger.error(f"FAILED: {expectation_type} on column '{column}'")
-    logger.error(f"Expected: {expectation_definition}")
-
-    # Extract and log specific failure details
-    if "partial_unexpected_list" in result_details:
-        unexpected_values = result_details["partial_unexpected_list"]
-        logger.error(f"Sample failing values: {unexpected_values}")
-
-    if "unexpected_count" in result_details:
-        unexpected_count = result_details["unexpected_count"]
-        total_count = result_details.get("element_count", "unknown")
-        logger.error(f"Failed rows: {unexpected_count} out of {total_count}")
-
-    if "observed_value" in result_details:
-        observed = result_details["observed_value"]
-        logger.error(f"Observed value: {observed}")
-
-    # For regex failures, show actual vs expected pattern
-    if expectation_type == "expect_column_values_to_match_regex":
-        regex_pattern = expectation_definition.get("regex", "")
-        logger.error(f"Regex pattern that failed: {regex_pattern}")
-
-        # Get sample of actual values that failed - simple approach
-        if column and column in dataframe.columns:
-            try:
-                # Just get a few sample values as strings
-                samples = (
-                    dataframe.select(col(column).cast("string").alias("sample"))
-                    .limit(5)
-                    .collect()
-                )
-                sample_values = [row["sample"] for row in samples]
-                logger.error(f"Sample values in column '{column}': {sample_values}")
-            except Exception as sample_error:
-                logger.error(f"Could not sample column: {sample_error}")
-
-    # For range/between failures, show min/max values
-    if expectation_type == "expect_column_values_to_be_between":
-        min_val = expectation_definition.get("min_value")
-        max_val = expectation_definition.get("max_value")
-        logger.error(f"Expected range: {min_val} to {max_val}")
-
-        if column and column in dataframe.columns:
-            try:
-                stats = (
-                    dataframe.select(column).summary("min", "max", "count").collect()
-                )
-                for stat in stats:
-                    logger.error(f"Actual {stat['summary']}: {stat[column]}")
-            except Exception as stats_error:
-                logger.error(f"Could not get column stats: {stats_error}")
-
-    # For set membership failures, show what values were found
-    if expectation_type == "expect_column_values_to_be_in_set":
-        expected_set = expectation_definition.get("value_set", [])
-        logger.error(f"Expected values: {expected_set}")
-
-        if column and column in dataframe.columns:
-            try:
-                distinct_values = (
-                    dataframe.select(column).distinct().limit(20).collect()
-                )
-                actual_values = [row[column] for row in distinct_values]
-                logger.error(
-                    f"Actual distinct values in column '{column}': {actual_values}"
-                )
-            except Exception as distinct_error:
-                logger.error(f"Could not get distinct values: {distinct_error}")
-
-    logger.error("=" * 80)  # Separator between failures
-
-
 def validate_with_gx(
     dataframe: SparkDataFrame,
     suite_name: str,
@@ -251,11 +168,6 @@ def validate_with_gx(
 
         if not result.success:
             logger.error(f"Validation failed for suite '{suite_name}'")
-
-            # Print detailed failed expectations with actual values
-            for res in result.results:
-                if not res.success:
-                    log_failed_expectation(res, dataframe)
             return False
         logger.info(f"Validation succeeded for suite '{suite_name}'.")
         return True
