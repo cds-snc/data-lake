@@ -5,9 +5,10 @@ locals {
   gc_notify_account_id          = local.is_production ? "296255494825" : "239043911459"
   gc_notify_env                 = var.env
   gc_notify_lambda_name         = "platform-gc-notify-export"
-  gc_notify_rds_export_role_arn = "arn:aws:iam::${local.gc_notify_account_id}:role/NotifyExportToPlatformDataLake"
+  gc_notify_rds_export_role_arn = "arn:aws:iam::${local.gc_notify_account_id}:role/NotifyExportToPlatformDataLake",
   gc_notify_quicksight_role_arns = [
     "arn:aws:iam::239043911459:role/service-role/aws-quicksight-service-role-v0",
     "arn:aws:iam::296255494825:role/service-role/aws-quicksight-service-role-v0",
   ]
+  data_lake_staging_etl_role_arn = "arn:aws:iam::454671348950:role/service-role/AWSGlueETL-DataLake",
 }
