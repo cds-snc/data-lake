@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.46.0](https://github.com/cds-snc/data-lake/compare/v1.45.5...v1.46.0) (2026-11-13)
+
+
+### Features
+
+* staging s3 bucket prod s3 access ([#787](https://github.com/cds-snc/data-lake/issues/787)) ([14aa348](https://github.com/cds-snc/data-lake/commit/14aa348035fe200e5785ed462bf7e512b7c8d5fb))
+* upgrade Glue ETL jobs to 6.0 and Great Expectations 1.x ([#786](https://github.com/cds-snc/data-lake/issues/786)) ([bf41c60](https://github.com/cds-snc/data-lake/commit/bf41c608c7c69b43acb6bf51ee1b18597ee6ea15))
+
+
+### Miscellaneous Chores
+
+* **deps:** lock file maintenance ([#784](https://github.com/cds-snc/data-lake/issues/784)) ([7354fb9](https://github.com/cds-snc/data-lake/commit/7354fb91f0acb145f4bc106e5d6ae7bc3960eb8c))
+* **deps:** update all minor dependencies ([#783](https://github.com/cds-snc/data-lake/issues/783)) ([cb11057](https://github.com/cds-snc/data-lake/commit/cb110575c0d9fb9b794672195fa515f168565ceb))
+* **deps:** update all non-major github action dependencies ([#781](https://github.com/cds-snc/data-lake/issues/781)) ([517580e](https://github.com/cds-snc/data-lake/commit/517580e06bb16b6615f0dde6f7a8c899fefb29f7))
+* **deps:** update all patch dependencies ([#782](https://github.com/cds-snc/data-lake/issues/782)) ([ee691af](https://github.com/cds-snc/data-lake/commit/ee691afe148e687ba28ffa7ca670265fa419a6fa))
+
 ## [1.45.5](https://github.com/cds-snc/data-lake/compare/v1.45.4...v1.45.5) (2026-11-04)
 
 
