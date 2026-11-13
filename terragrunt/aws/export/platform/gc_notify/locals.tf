@@ -10,5 +10,5 @@ locals {
     "arn:aws:iam::239043911459:role/service-role/aws-quicksight-service-role-v0",
     "arn:aws:iam::296255494825:role/service-role/aws-quicksight-service-role-v0",
   ]
-  data_lake_staging_etl_role_arn = "arn:aws:iam::454671348950:role/service-role/AWSGlueETL-DataLake",
+  data_lake_staging_etl_role_arn = "arn:aws:iam::454671348950:role/service-role/AWSGlueETL-DataLake"
 }
