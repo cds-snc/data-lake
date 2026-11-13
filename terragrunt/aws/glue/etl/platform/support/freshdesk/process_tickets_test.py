@@ -30,6 +30,8 @@ sys.modules["awsglue.utils"] = mock_glue_utils
 # flake8: noqa: E402
 from process_tickets import (
     validate_with_gx,
+    store_validation_result,
+    load_expectation_suite,
     merge_tickets,
     process_tickets,
     get_days_tickets,
@@ -115,6 +117,44 @@ def test_validate_schema_wrong_type(sample_tickets_df):
         ["2024-01-04", "2024-01-05", "2024-01-06"]
     )
     assert validate_with_gx(df_wrong_type) is False
+
+
+def test_load_expectation_suite():
+    suite = load_expectation_suite("freshdesk_suite")
+    assert suite.name == "freshdesk_suite"
+    assert len(suite.expectations) == 25
+
+
+@patch("process_tickets.boto3.client")
+def test_store_validation_result_writes_to_s3(mock_boto3_client):
+    result = MagicMock()
+    result.to_json_dict.return_value = {"success": True}
+
+    store_validation_result(result, "freshdesk_suite", "raw-bucket")
+
+    put_object = mock_boto3_client.return_value.put_object
+    put_object.assert_called_once()
+    kwargs = put_object.call_args.kwargs
+    assert kwargs["Bucket"] == "raw-bucket"
+    assert kwargs["Key"].startswith(
+        "platform/support/data-validation/freshdesk/validations/freshdesk_suite/"
+    )
+    assert kwargs["Key"].endswith(".json")
+
+
+@patch("process_tickets.boto3.client")
+def test_store_validation_result_skipped_for_test_bucket(mock_boto3_client):
+    store_validation_result(MagicMock(), "freshdesk_suite", "test-source-bucket")
+    mock_boto3_client.assert_not_called()
+
+
+@patch("process_tickets.boto3.client")
+def test_store_validation_result_does_not_raise_on_s3_error(mock_boto3_client):
+    mock_boto3_client.return_value.put_object.side_effect = Exception("denied")
+    result = MagicMock()
+    result.to_json_dict.return_value = {}
+
+    store_validation_result(result, "freshdesk_suite", "raw-bucket")
 
 
 # Test ticket merging functionality

@@ -1,8 +1,8 @@
 {
-  "expectation_suite_name": "freshdesk_suite",
+  "name": "freshdesk_suite",
   "expectations": [
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "id",
         "min_value": 0
@@ -10,7 +10,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "status",
         "min_value": 0
@@ -18,7 +18,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "status_label",
         "regex": ".*"
@@ -28,7 +28,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "priority",
         "min_value": 0
@@ -36,7 +36,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "priority_label",
         "regex": ".*"
@@ -46,7 +46,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "source",
         "min_value": 0
@@ -54,7 +54,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "source_label",
         "regex": ".*"
@@ -64,7 +64,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "created_at",
         "type_list": [
@@ -76,7 +76,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "updated_at",
         "type_list": [
@@ -88,7 +88,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "month",
         "regex": "^\\d{4}-\\d{2}$"
@@ -98,7 +98,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "due_by",
         "type_list": [
@@ -110,7 +110,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "fr_due_by",
         "type_list": [
@@ -122,7 +122,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "is_escalated",
         "value_set": [
@@ -135,7 +135,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "tags",
         "regex": ".*"
@@ -145,7 +145,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "spam",
         "value_set": [
@@ -158,7 +158,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "requester_email_suffix",
         "regex": ".*"
@@ -168,7 +168,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "type",
         "regex": ".*"
@@ -178,7 +178,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "product_id",
         "min_value": 0
@@ -186,7 +186,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "product_name",
         "regex": ".*"
@@ -196,7 +196,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "conversations_total_count",
         "min_value": 0
@@ -204,7 +204,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "conversations_reply_count",
         "min_value": 0
@@ -212,7 +212,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "conversations_note_count",
         "min_value": 0
@@ -220,7 +220,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "language",
         "regex": ".*"
@@ -230,7 +230,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "province_or_territory",
         "regex": ".*"
@@ -240,7 +240,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "organization",
         "regex": ".*"
@@ -249,8 +249,5 @@
         "description": "organization should be string-like"
       }
     }
-  ],
-  "meta": {
-    "great_expectations_version": "0.18.22"
-  }
+  ]
 }

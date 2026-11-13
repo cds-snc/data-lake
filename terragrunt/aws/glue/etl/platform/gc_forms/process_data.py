@@ -1,6 +1,8 @@
+import json
 import logging
 import sys
 
+from datetime import datetime, timezone
 from typing import List, Optional
 import zipfile
 
@@ -11,6 +13,10 @@ import pandas as pd
 from awsglue.utils import getResolvedOptions
 
 import great_expectations as gx
+from great_expectations.core.expectation_suite import ExpectationSuite
+from great_expectations.expectations.expectation_configuration import (
+    ExpectationConfiguration,
+)
 import os
 
 args = getResolvedOptions(
@@ -48,72 +54,86 @@ handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 logger.addHandler(handler)
 
 
-def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
+def load_expectation_suite(suite_name: str) -> ExpectationSuite:
     """
-    Properly configure all Great Expectations stores to use S3 at runtime.
-    This uses context.add_store to ensure the stores are actually registered.
+    Load a Great Expectations suite from the JSON files shipped in the gx
+    configuration archive (gx/expectations/<suite_name>.json).
     """
-    if "test" not in target_gx_bucket:
-        logger.info(f"Writing to S3 bucket: {target_gx_bucket}")
+    suite_path = os.path.join(os.getcwd(), "gx", "expectations", f"{suite_name}.json")
+    with open(suite_path, "r") as f:
+        suite_config = json.load(f)
 
-        context.add_store(
-            store_name="validations_store",
-            store_config={
-                "class_name": "ValidationsStore",
-                "store_backend": {
-                    "class_name": "TupleS3StoreBackend",
-                    "bucket": target_gx_bucket,
-                    "prefix": "platform/gc-forms/data-validation/validations/",
-                },
-            },
+    return ExpectationSuite(
+        name=suite_config["name"],
+        expectations=[
+            ExpectationConfiguration(
+                type=expectation["type"],
+                kwargs=expectation["kwargs"],
+                meta=expectation.get("meta", {}),
+            )
+            for expectation in suite_config["expectations"]
+        ],
+    )
+
+
+def store_validation_result(result, suite_name: str, target_gx_bucket: str) -> None:
+    """
+    Write the Great Expectations validation result to S3. Great Expectations 1.x
+    no longer ships an S3 store backend, so the result is written directly.
+    A failure to store the result never fails the validation itself.
+    """
+    if "test" in target_gx_bucket:
+        logger.info("Not writing validation result to S3 (test bucket)")
+        return
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    key = f"platform/gc-forms/data-validation/validations/{suite_name}/{timestamp}.json"
+    try:
+        boto3.client("s3").put_object(
+            Bucket=target_gx_bucket,
+            Key=key,
+            Body=json.dumps(result.to_json_dict(), default=str).encode("utf-8"),
         )
-
-        context.add_store(
-            store_name="evaluation_parameter_store",
-            store_config={
-                "class_name": "EvaluationParameterStore",
-            },
-        )
-    else:
-        logger.info("Writing Locally")
+        logger.info(f"Validation result written to s3://{target_gx_bucket}/{key}")
+    except Exception as e:
+        logger.warning(f"Could not write validation result to S3: {str(e)}")
 
 
-def validate_with_gx(dataframe: pd.DataFrame, checkpoint_name: str) -> bool:
+def validate_with_gx(dataframe: pd.DataFrame, suite_name: str) -> bool:
     """
-    Validate the DataFrame using the specified Great Expectations checkpoint.
+    Validate the DataFrame using the specified Great Expectations suite.
     Logs detailed errors if validation fails.
     """
-    gx_context_path = os.path.join(os.getcwd(), "gx")
-    context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
+    try:
+        suite = load_expectation_suite(suite_name)
 
-    configure_gx_stores(context, SOURCE_BUCKET)
+        context = gx.get_context(mode="ephemeral")
+        data_source = context.data_sources.add_pandas(name="pandas_datasource")
+        data_asset = data_source.add_dataframe_asset(name=suite_name)
+        batch_definition = data_asset.add_batch_definition_whole_dataframe(
+            "runtime_batch"
+        )
+        suite = context.suites.add(suite)
+        validation_definition = context.validation_definitions.add(
+            gx.ValidationDefinition(
+                name=f"{suite_name}_validation",
+                data=batch_definition,
+                suite=suite,
+            )
+        )
 
-    result = context.run_checkpoint(
-        checkpoint_name=checkpoint_name,
-        batch_request={
-            "runtime_parameters": {"batch_data": dataframe},
-            "batch_identifiers": {"default_identifier_name": "runtime_batch"},
-        },
-    )
-    if not result["success"]:
-        logger.error(f"Validation failed for checkpoint '{checkpoint_name}'")
-        # Print detailed failed expectations
-        for run_result in result["run_results"].values():
-            validation_result = run_result["validation_result"]
-            for res in validation_result["results"]:
-                if not res["success"]:
-                    expectation_type = res["expectation_config"]["expectation_type"]
-                    expectation_definition = res["expectation_config"]["kwargs"]
-                    column = expectation_definition.get("column", "")
-                    result_details = res.get("result", {})
-                    logger.error(
-                        f"Failed expectation: {expectation_type} on column '{column}'. "
-                        f"Expectation definition: {expectation_definition}"
-                        f"Run details {result_details}"
-                    )
+        result = validation_definition.run(batch_parameters={"dataframe": dataframe})
+
+        store_validation_result(result, suite_name, SOURCE_BUCKET)
+
+        if not result.success:
+            logger.error(f"Validation failed for suite '{suite_name}'")
+            return False
+        logger.info(f"Validation succeeded for suite '{suite_name}'.")
+        return True
+    except Exception as e:
+        logger.error(f"Error during Great Expectations validation: {str(e)}")
         return False
-    logger.info(f"Validation succeeded for checkpoint '{checkpoint_name}'.")
-    return True
 
 
 def get_new_data(
@@ -228,13 +248,13 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "path": "processed-data/submissions",
                 "date_columns": ["timestamp"],
                 "partition_timestamp": "timestamp",
-                "gx_checkpoint": "forms-submissions_checkpoint",
+                "gx_suite": "forms-submissions_suite",
             },
             {
                 "path": "processed-data/submissions_files",
                 "date_columns": ["timestamp"],
                 "partition_timestamp": "timestamp",
-                "gx_checkpoint": "forms-submissions_files_checkpoint",
+                "gx_suite": "forms-submissions_files_suite",
             },
             {
                 "path": "processed-data/template",
@@ -263,12 +283,12 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "partition_timestamp": "timestamp",
                 "partition_columns": ["year", "month"],
                 "email_columns": ["deliveryemaildestination"],
-                "gx_checkpoint": "forms-template_checkpoint",
+                "gx_suite": "forms-template_suite",
             },
             {
                 "path": "processed-data/templateToUser",
                 "date_columns": ["timestamp"],
-                "gx_checkpoint": "forms-templatetouser_checkpoint",
+                "gx_suite": "forms-templatetouser_suite",
                 "partition_timestamp": "timestamp",
             },
             {
@@ -282,7 +302,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 ],
                 "partition_timestamp": "timestamp",
                 "partition_columns": ["year", "month"],
-                "gx_checkpoint": "forms-templateversions_checkpoint",
+                "gx_suite": "forms-templateversions_suite",
             },
             {
                 "path": "processed-data/user",
@@ -296,7 +316,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
                 "partition_columns": ["year", "month"],
                 "drop_columns": ["name"],
                 "email_columns": ["email"],
-                "gx_checkpoint": "forms-user_checkpoint",
+                "gx_suite": "forms-user_suite",
             },
         ]
     elif isinstance(datasets, dict):
@@ -311,7 +331,7 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
         field_count_columns = dataset.get("field_count_columns")
         partition_columns = dataset.get("partition_columns")
         partition_timestamp = dataset.get("partition_timestamp")
-        gx_checkpoint = dataset.get("gx_checkpoint")
+        gx_suite = dataset.get("gx_suite")
         write_mode = dataset.get("write_mode", "append")
         table_name = path.lower().replace("-", "_")
         if "/" in table_name:
@@ -334,8 +354,8 @@ def process_data(datasets: Optional[List[dict]] = None) -> None:
             continue
 
         if not data.empty:
-            if gx_checkpoint:
-                if not validate_with_gx(data, gx_checkpoint):
+            if gx_suite:
+                if not validate_with_gx(data, gx_suite):
                     raise ValueError(
                         f"Great Expectations validation failed for {path}. Aborting ETL process."
                     )

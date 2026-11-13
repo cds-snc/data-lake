@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-10-02T15:31:28.419000+00:00",
-        "LastModifiedOn": "2026-03-10T14:15:25.168000+00:00",
+        "LastModifiedOn": "2026-11-02T15:07:52.134000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -16,14 +16,14 @@
             "PythonVersion": "3"
         },
         "DefaultArguments": {
-            "--enable-metrics": "true",
+            "--enable-metrics": "",
             "--enable-spark-ui": "true",
             "--extra-py-files": "s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_common.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_explode.py,s3://aws-glue-studio-transforms-622716468547-prod-ca-central-1/gs_flatten.py",
             "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
-            "--conf": "spark.eventLog.rolling.enabled=true",
-            "--enable-glue-datacatalog": "true",
+            "--conf": "spark.eventLog.rolling.enabled=true --conf spark.sql.catalog.glue_catalog.glue.skip-name-validation=true",
+            "--enable-glue-datacatalog": "",
             "--job-bookmark-option": "job-bookmark-enable",
             "--job-language": "python",
             "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/"
@@ -34,7 +34,7 @@
         "MaxCapacity": 5.0,
         "WorkerType": "G.1X",
         "NumberOfWorkers": 5,
-        "GlueVersion": "5.0",
+        "GlueVersion": "6.0",
         "CodeGenConfigurationNodes": {
             "node-1764103805208": {
                 "ApplyMapping": {
@@ -299,7 +299,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Workflows/cds-snc-automatic-website-scanning-2025-10-07T07:25:49.143Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Workflows/cds-snc-.github-2026-10-21T07:38:52.479Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -761,7 +761,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-1password-scim-bridge-2026-01-06T07:31:41.214Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/AllPRs/cds-snc-.github-2026-10-21T07:38:51.051Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,
@@ -1351,7 +1351,7 @@
                     "Recurse": true,
                     "AdditionalOptions": {
                         "EnableSamplePath": false,
-                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Commits/cds-snc-1password-scim-bridge-2026-01-06T07:31:42.490Z.json"
+                        "SamplePath": "s3://cds-data-lake-raw-production/operations/github/Commits/cds-snc-.github-2026-10-21T07:38:54.468Z.json"
                     },
                     "JsonPath": "",
                     "Multiline": false,

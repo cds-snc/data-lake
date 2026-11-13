@@ -1,8 +1,8 @@
 {
-  "expectation_suite_name": "forms-templateversions_suite",
+  "name": "forms-templateversions_suite",
   "expectations": [
     {
-      "expectation_type": "expect_table_columns_to_match_set",
+      "type": "expect_table_columns_to_match_set",
       "kwargs": {
         "column_set": [
           "id",
@@ -27,7 +27,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
         "regex": ".*"
@@ -37,7 +37,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "templateid",
         "regex": ".*"
@@ -47,7 +47,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "status",
         "regex": ".*"
@@ -57,7 +57,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "versionnumber",
         "min_value": 0
@@ -67,16 +67,15 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "createdat",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "createdat",
         "type_list": [
@@ -87,16 +86,15 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "updatedat",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "updatedat",
         "type_list": [
@@ -107,16 +105,15 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "publishedat",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "publishedat",
         "type_list": [
@@ -127,16 +124,15 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "supersededat",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "supersededat",
         "type_list": [
@@ -147,16 +143,15 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "timestamp",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "timestamp",
         "type_list": [
@@ -167,7 +162,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "year",
         "regex": "^\\d{4}$"
@@ -177,7 +172,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "month",
         "regex": "^\\d{4}-\\d{2}$"
@@ -186,8 +181,5 @@
         "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
       }
     }
-  ],
-  "meta": {
-    "great_expectations_version": "0.18.22"
-  }
+  ]
 }

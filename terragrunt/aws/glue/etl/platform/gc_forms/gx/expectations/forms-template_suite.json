@@ -1,14 +1,35 @@
 {
-  "expectation_suite_name": "forms-template_suite",
+  "name": "forms-template_suite",
   "expectations": [
-      {
-      "expectation_type": "expect_table_columns_to_match_set",
+    {
+      "type": "expect_table_columns_to_match_set",
       "kwargs": {
-        "column_set": ["id", "ttl", "ispublished", "created_at", "updated_at", "name",
-       "securityattribute", "closingdate", "formpurpose", "publishdesc",
-       "publishformtype", "publishreason", "closeddetails", "saveandresume",
-       "deliveryemaildestination", "api_created_at", "api_id",
-       "deliveryoption", "timestamp", "titleen", "titlefr", "brand", "year", "month"],
+        "column_set": [
+          "id",
+          "ttl",
+          "ispublished",
+          "created_at",
+          "updated_at",
+          "name",
+          "securityattribute",
+          "closingdate",
+          "formpurpose",
+          "publishdesc",
+          "publishformtype",
+          "publishreason",
+          "closeddetails",
+          "saveandresume",
+          "deliveryemaildestination",
+          "api_created_at",
+          "api_id",
+          "deliveryoption",
+          "timestamp",
+          "titleen",
+          "titlefr",
+          "brand",
+          "year",
+          "month"
+        ],
         "exact_match": false
       },
       "meta": {
@@ -16,137 +37,159 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "ttl",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "ttl",
-        "type_list": ["datetime64", "datetime64[ns]"]
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "ispublished",
-        "value_set": [true, false]
+        "value_set": [
+          true,
+          false
+        ]
       },
       "meta": {
         "description": "ispublished should be boolean-like values"
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "created_at",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "created_at",
-        "type_list": ["datetime64", "datetime64[ns]"]
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "updated_at",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "updated_at",
-        "type_list": ["datetime64", "datetime64[ns]"]
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "closingdate",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "closingdate",
-        "type_list": ["datetime64", "datetime64[ns]"]
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "saveandresume",
-        "value_set": [true, false]
+        "value_set": [
+          true,
+          false
+        ]
       },
       "meta": {
         "description": "saveandresume should be boolean-like values"
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "api_created_at",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "api_created_at",
-        "type_list": ["datetime64", "datetime64[ns]"]
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "deliveryoption",
-        "value_set": [0, 1, 2]
+        "value_set": [
+          0,
+          1,
+          2
+        ]
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "timestamp",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "timestamp",
-        "type_list": ["datetime64", "datetime64[ns]"]
+        "type_list": [
+          "datetime64",
+          "datetime64[ns]"
+        ]
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
         "regex": ".*"
@@ -156,7 +199,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "name",
         "regex": ".*"
@@ -166,7 +209,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "securityattribute",
         "regex": ".*"
@@ -176,7 +219,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "formpurpose",
         "regex": ".*"
@@ -186,7 +229,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "publishdesc",
         "regex": ".*"
@@ -196,7 +239,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "publishformtype",
         "regex": ".*"
@@ -206,7 +249,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "publishreason",
         "regex": ".*"
@@ -216,7 +259,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "closeddetails",
         "regex": ".*"
@@ -226,7 +269,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "deliveryemaildestination",
         "regex": ".*"
@@ -236,7 +279,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "api_id",
         "regex": ".*"
@@ -246,7 +289,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "titleen",
         "regex": ".*"
@@ -256,7 +299,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "titlefr",
         "regex": ".*"
@@ -266,7 +309,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "brand",
         "regex": ".*"
@@ -276,7 +319,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
         "regex": "^[a-z0-9]{1,30}$"
@@ -286,7 +329,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "securityattribute",
         "value_set": [
@@ -300,7 +343,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "year",
         "regex": "^\\d{4}$"
@@ -310,7 +353,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "month",
         "regex": "^\\d{4}-\\d{2}$"
@@ -320,7 +363,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "checkbox_count",
         "min_value": 0
@@ -328,7 +371,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "combobox_count",
         "min_value": 0
@@ -336,7 +379,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "dropdown_count",
         "min_value": 0
@@ -344,7 +387,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "dynamicrow_count",
         "min_value": 0
@@ -352,7 +395,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "fileinput_count",
         "min_value": 0
@@ -360,7 +403,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "formatteddate_count",
         "min_value": 0
@@ -368,7 +411,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "radio_count",
         "min_value": 0
@@ -376,7 +419,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "richtext_count",
         "min_value": 0
@@ -384,7 +427,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "starrating_count",
         "min_value": 0
@@ -392,7 +435,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "textarea_count",
         "min_value": 0
@@ -400,7 +443,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "textfield_count",
         "min_value": 0
@@ -408,7 +451,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "notificationsinterval",
         "min_value": 0
@@ -416,15 +459,12 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_min_to_be_between",
+      "type": "expect_column_min_to_be_between",
       "kwargs": {
         "column": "addresscomplete_count",
         "min_value": 0
       },
       "meta": {}
     }
-  ],
-  "meta": {
-    "great_expectations_version": "0.18.22"
-  }
+  ]
 }

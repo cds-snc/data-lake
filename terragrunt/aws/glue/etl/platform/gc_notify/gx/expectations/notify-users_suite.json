@@ -1,8 +1,8 @@
 {
-  "expectation_suite_name": "notify-users_suite",
+  "name": "notify-users_suite",
   "expectations": [
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "id",
         "regex": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"
@@ -12,7 +12,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "created_at",
         "type_list": [
@@ -26,7 +26,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "updated_at",
         "type_list": [
@@ -40,7 +40,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "password_changed_at",
         "type_list": [
@@ -54,7 +54,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "logged_in_at",
         "type_list": [
@@ -68,7 +68,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "failed_login_count",
         "min_value": 0
@@ -76,7 +76,7 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "state",
         "regex": ".*"
@@ -86,7 +86,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "platform_admin",
         "value_set": [
@@ -99,7 +99,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "auth_type",
         "regex": ".*"
@@ -109,7 +109,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "blocked",
         "value_set": [
@@ -122,7 +122,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_set",
+      "type": "expect_column_values_to_be_in_set",
       "kwargs": {
         "column": "password_expired",
         "value_set": [
@@ -135,7 +135,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "year",
         "regex": "^\\d{4}$"
@@ -145,7 +145,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "month",
         "regex": "^\\d{4}-\\d{2}$"
@@ -154,8 +154,5 @@
         "description": "month should be in the format yyyy-mm (e.g., 2024-06)"
       }
     }
-  ],
-  "meta": {
-    "great_expectations_version": "0.18.22"
-  }
+  ]
 }

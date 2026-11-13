@@ -6,7 +6,7 @@
         "Description": "",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2025-12-18T20:38:55.294000+00:00",
-        "LastModifiedOn": "2025-12-29T14:23:20.543000+00:00",
+        "LastModifiedOn": "2026-11-02T15:08:21.872000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -16,12 +16,13 @@
             "PythonVersion": "3"
         },
         "DefaultArguments": {
-            "--enable-metrics": "true",
+            "--enable-metrics": "",
             "--enable-spark-ui": "true",
             "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
-            "--enable-glue-datacatalog": "true",
+            "--conf": "spark.eventLog.rolling.enabled=true --conf spark.sql.catalog.glue_catalog.glue.skip-name-validation=true",
+            "--enable-glue-datacatalog": "",
             "--job-bookmark-option": "job-bookmark-enable",
             "--job-language": "python",
             "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/"
@@ -32,7 +33,7 @@
         "MaxCapacity": 10.0,
         "WorkerType": "G.1X",
         "NumberOfWorkers": 10,
-        "GlueVersion": "5.0",
+        "GlueVersion": "6.0",
         "CodeGenConfigurationNodes": {
             "node-1765980720494": {
                 "S3JsonSource": {

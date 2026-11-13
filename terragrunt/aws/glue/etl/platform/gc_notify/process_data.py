@@ -3,7 +3,7 @@ import os
 import sys
 import zipfile
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, TypedDict
 
 import boto3
@@ -30,6 +30,10 @@ from pyspark.sql.types import (
 )
 
 import great_expectations as gx
+from great_expectations.core.expectation_suite import ExpectationSuite
+from great_expectations.expectations.expectation_configuration import (
+    ExpectationConfiguration,
+)
 
 args = getResolvedOptions(
     sys.argv,
@@ -69,6 +73,7 @@ spark = glueContext.spark_session
 if spark is not None:
     spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
     spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
+    spark.conf.set("spark.sql.ansi.enabled", "false")
 
 logger = glueContext.get_logger()
 
@@ -78,184 +83,93 @@ class Field(TypedDict):
     type: str
 
 
-def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
+def load_expectation_suite(suite_name: str) -> ExpectationSuite:
     """
-    Properly configure all Great Expectations stores to use S3 at runtime.
-    This uses context.add_store to ensure the stores are actually registered.
+    Load a Great Expectations suite from the JSON files shipped in the gx
+    configuration archive (gx/expectations/<suite_name>.json).
     """
-    if "test" not in target_gx_bucket:
-        logger.info(f"Writing to S3 bucket: {target_gx_bucket}")
+    suite_path = os.path.join(os.getcwd(), "gx", "expectations", f"{suite_name}.json")
+    with open(suite_path, "r") as f:
+        suite_config = json.load(f)
 
-        context.add_store(
-            store_name="validations_store",
-            store_config={
-                "class_name": "ValidationsStore",
-                "store_backend": {
-                    "class_name": "TupleS3StoreBackend",
-                    "bucket": target_gx_bucket,
-                    "prefix": "platform/gc-notify/data-validation/validations/",
-                },
-            },
-        )
+    return ExpectationSuite(
+        name=suite_config["name"],
+        expectations=[
+            ExpectationConfiguration(
+                type=expectation["type"],
+                kwargs=expectation["kwargs"],
+                meta=expectation.get("meta", {}),
+            )
+            for expectation in suite_config["expectations"]
+        ],
+    )
 
-        context.add_store(
-            store_name="evaluation_parameter_store",
-            store_config={
-                "class_name": "EvaluationParameterStore",
-            },
+
+def store_validation_result(result, suite_name: str, target_gx_bucket: str) -> None:
+    """
+    Write the Great Expectations validation result to S3.  Great Expectations 1.x
+    no longer ships an S3 store backend, so the result is written directly.
+    A failure to store the result never fails the validation itself.
+    """
+    if "test" in target_gx_bucket:
+        logger.info("Not writing validation result to S3 (test bucket)")
+        return
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    key = (
+        f"platform/gc-notify/data-validation/validations/{suite_name}/{timestamp}.json"
+    )
+    try:
+        boto3.client("s3").put_object(
+            Bucket=target_gx_bucket,
+            Key=key,
+            Body=json.dumps(result.to_json_dict(), default=str).encode("utf-8"),
         )
-    else:
-        logger.info("Writing Locally")
+        logger.info(f"Validation result written to s3://{target_gx_bucket}/{key}")
+    except Exception as e:
+        logger.warning(f"Could not write validation result to S3: {str(e)}")
 
 
 def validate_with_gx(
     dataframe: SparkDataFrame,
-    spark_session,
-    checkpoint_name: str,
+    suite_name: str,
     batch_name: str = "runtime_batch",
 ) -> bool:
     """
-    Validate the Spark DataFrame using the specified Great Expectations checkpoint.
+    Validate the Spark DataFrame using the specified Great Expectations suite.
     Uses Spark DataFrames natively with Great Expectations.
     Logs detailed errors if validation fails.
 
     Args:
         dataframe: Spark DataFrame to validate
-        spark_session: Spark session to use for validation
-        checkpoint_name: Name of the GX checkpoint to run
-        batch_name: Name for the batch identifier
+        suite_name: Name of the expectation suite to validate against
+        batch_name: Name for the batch definition
 
     Returns:
         bool: True if validation passes, False otherwise
     """
     try:
-        gx_context_path = os.path.join(os.getcwd(), "gx")
-        context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
+        suite = load_expectation_suite(suite_name)
 
-        configure_gx_stores(context, SOURCE_BUCKET)
-
-        # Ensure Great Expectations uses the provided Spark session
-        # This is important for Spark DataFrame validation
-        context.datasources["spark_datasource"].execution_engine.spark = spark_session
-
-        # Use Spark DataFrame directly with Great Expectations
-        result = context.run_checkpoint(
-            checkpoint_name=checkpoint_name,
-            batch_request={
-                "runtime_parameters": {"batch_data": dataframe},
-                "batch_identifiers": {"default_identifier_name": batch_name},
-            },
+        context = gx.get_context(mode="ephemeral")
+        data_source = context.data_sources.add_spark(name="spark_datasource")
+        data_asset = data_source.add_dataframe_asset(name=suite_name)
+        batch_definition = data_asset.add_batch_definition_whole_dataframe(batch_name)
+        suite = context.suites.add(suite)
+        validation_definition = context.validation_definitions.add(
+            gx.ValidationDefinition(
+                name=f"{suite_name}_validation", data=batch_definition, suite=suite
+            )
         )
 
-        if not result["success"]:
-            logger.error(f"Validation failed for checkpoint '{checkpoint_name}'")
+        result = validation_definition.run(batch_parameters={"dataframe": dataframe})
 
-            # Print detailed failed expectations with actual values
-            for run_result in result["run_results"].values():
-                validation_result = run_result["validation_result"]
-                for res in validation_result["results"]:
-                    if not res["success"]:
-                        expectation_type = res["expectation_config"]["expectation_type"]
-                        expectation_definition = res["expectation_config"]["kwargs"]
-                        column = expectation_definition.get("column", "")
-                        result_details = res.get("result", {})
+        store_validation_result(result, suite_name, SOURCE_BUCKET)
 
-                        # Log basic failure info
-                        logger.error(f"FAILED: {expectation_type} on column '{column}'")
-                        logger.error(f"Expected: {expectation_definition}")
-
-                        # Extract and log specific failure details
-                        if "partial_unexpected_list" in result_details:
-                            unexpected_values = result_details[
-                                "partial_unexpected_list"
-                            ]
-                            logger.error(f"Sample failing values: {unexpected_values}")
-
-                        if "unexpected_count" in result_details:
-                            unexpected_count = result_details["unexpected_count"]
-                            total_count = result_details.get("element_count", "unknown")
-                            logger.error(
-                                f"Failed rows: {unexpected_count} out of {total_count}"
-                            )
-
-                        if "observed_value" in result_details:
-                            observed = result_details["observed_value"]
-                            logger.error(f"Observed value: {observed}")
-
-                        # For regex failures, show actual vs expected pattern
-                        if expectation_type == "expect_column_values_to_match_regex":
-                            regex_pattern = expectation_definition.get("regex", "")
-                            logger.error(f"Regex pattern that failed: {regex_pattern}")
-
-                            # Get sample of actual values that failed - simple approach
-                            if column and column in dataframe.columns:
-                                try:
-                                    # Just get a few sample values as strings
-                                    samples = (
-                                        dataframe.select(
-                                            col(column).cast("string").alias("sample")
-                                        )
-                                        .limit(5)
-                                        .collect()
-                                    )
-                                    sample_values = [row["sample"] for row in samples]
-                                    logger.error(
-                                        f"Sample values in column '{column}': {sample_values}"
-                                    )
-                                except Exception as sample_error:
-                                    logger.error(
-                                        f"Could not sample column: {sample_error}"
-                                    )
-
-                        # For range/between failures, show min/max values
-                        if expectation_type == "expect_column_values_to_be_between":
-                            min_val = expectation_definition.get("min_value")
-                            max_val = expectation_definition.get("max_value")
-                            logger.error(f"Expected range: {min_val} to {max_val}")
-
-                            if column and column in dataframe.columns:
-                                try:
-                                    stats = (
-                                        dataframe.select(column)
-                                        .summary("min", "max", "count")
-                                        .collect()
-                                    )
-                                    for stat in stats:
-                                        logger.error(
-                                            f"Actual {stat['summary']}: {stat[column]}"
-                                        )
-                                except Exception as stats_error:
-                                    logger.error(
-                                        f"Could not get column stats: {stats_error}"
-                                    )
-
-                        # For set membership failures, show what values were found
-                        if expectation_type == "expect_column_values_to_be_in_set":
-                            expected_set = expectation_definition.get("value_set", [])
-                            logger.error(f"Expected values: {expected_set}")
-
-                            if column and column in dataframe.columns:
-                                try:
-                                    distinct_values = (
-                                        dataframe.select(column)
-                                        .distinct()
-                                        .limit(20)
-                                        .collect()
-                                    )
-                                    actual_values = [
-                                        row[column] for row in distinct_values
-                                    ]
-                                    logger.error(
-                                        f"Actual distinct values in column '{column}': {actual_values}"
-                                    )
-                                except Exception as distinct_error:
-                                    logger.error(
-                                        f"Could not get distinct values: {distinct_error}"
-                                    )
-
-                        logger.error("=" * 80)  # Separator between failures
+        if not result.success:
+            logger.error(f"Validation failed for suite '{suite_name}'")
             return False
-        logger.info(f"Validation succeeded for checkpoint '{checkpoint_name}'.")
+        logger.info(f"Validation succeeded for suite '{suite_name}'.")
         return True
     except Exception as e:
         logger.error(f"Error during Great Expectations validation: {str(e)}")
@@ -497,7 +411,7 @@ def process_data():
         partition_cols = dataset.get("partition_cols")
         incremental_load = dataset.get("incremental_load", False)
         look_back_days = dataset.get("look_back_days", 0)
-        gx_checkpoint = f"notify-{table_name}_checkpoint"
+        gx_suite = f"notify-{table_name}_suite"
 
         # Retrieve the new data using Spark
         logger.info(f"Processing {table_name} data...")
@@ -515,7 +429,7 @@ def process_data():
 
         row_count = data.count()
         if row_count > 0:
-            if not validate_with_gx(data, spark, gx_checkpoint):
+            if not validate_with_gx(data, gx_suite):
                 raise ValueError(
                     f"Great Expectations validation failed for {table_name}. Aborting ETL process."
                 )

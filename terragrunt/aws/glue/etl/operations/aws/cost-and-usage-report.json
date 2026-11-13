@@ -6,7 +6,7 @@
         "Description": "Joins the AWS Cost and Usage Report data with the Organization account tags so that cost can be viewed by business unit.",
         "Role": "arn:aws:iam::739275439843:role/service-role/AWSGlueETL-DataLake",
         "CreatedOn": "2024-11-12T16:36:58.812000+00:00",
-        "LastModifiedOn": "2025-08-26T18:43:16.445000+00:00",
+        "LastModifiedOn": "2026-11-02T15:08:48.299000+00:00",
         "ExecutionProperty": {
             "MaxConcurrentRuns": 1
         },
@@ -16,12 +16,13 @@
             "PythonVersion": "3"
         },
         "DefaultArguments": {
-            "--enable-metrics": "true",
+            "--enable-metrics": "",
             "--enable-spark-ui": "true",
             "--spark-event-logs-path": "s3://aws-glue-assets-739275439843-ca-central-1/sparkHistoryLogs/",
             "--enable-job-insights": "true",
             "--enable-observability-metrics": "true",
-            "--enable-glue-datacatalog": "true",
+            "--conf": "spark.eventLog.rolling.enabled=true --conf spark.sql.catalog.glue_catalog.glue.skip-name-validation=true",
+            "--enable-glue-datacatalog": "",
             "--job-bookmark-option": "job-bookmark-enable",
             "--job-language": "python",
             "--TempDir": "s3://aws-glue-assets-739275439843-ca-central-1/temporary/",
@@ -34,7 +35,7 @@
         "WorkerType": "G.2X",
         "NumberOfWorkers": 10,
         "SecurityConfiguration": "encryption-at-rest",
-        "GlueVersion": "5.0",
+        "GlueVersion": "6.0",
         "CodeGenConfigurationNodes": {
             "node-1731428848266": {
                 "CatalogSource": {
@@ -131,6 +132,24 @@
                             ],
                             "FromType": "string",
                             "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "state",
+                            "FromPath": [
+                                "state"
+                            ],
+                            "FromType": "string",
+                            "ToType": "string",
+                            "Dropped": false
+                        },
+                        {
+                            "ToKey": "paths",
+                            "FromPath": [
+                                "paths"
+                            ],
+                            "FromType": "array",
+                            "ToType": "array",
                             "Dropped": false
                         },
                         {
@@ -1422,7 +1441,7 @@
                     "Path": "s3://cds-data-lake-transformed-production/operations/aws/cost-usage-report/",
                     "Compression": "snappy",
                     "SchemaChangePolicy": {
-                        "EnableUpdateCatalog": true,
+                        "EnableUpdateCatalog": false,
                         "UpdateBehavior": "UPDATE_IN_DATABASE",
                         "Table": "cost_usage_report_by_account",
                         "Database": "operations_aws_production"

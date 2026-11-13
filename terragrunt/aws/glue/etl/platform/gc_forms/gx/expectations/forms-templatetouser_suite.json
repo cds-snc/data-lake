@@ -1,10 +1,14 @@
 {
-  "expectation_suite_name": "forms-templatetouser_suite",
+  "name": "forms-templatetouser_suite",
   "expectations": [
-     {
-      "expectation_type": "expect_table_columns_to_match_set",
+    {
+      "type": "expect_table_columns_to_match_set",
       "kwargs": {
-        "column_set": ["templateid", "userid", "timestamp"],
+        "column_set": [
+          "templateid",
+          "userid",
+          "timestamp"
+        ],
         "exact_match": false
       },
       "meta": {
@@ -12,7 +16,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "templateid",
         "regex": ".*"
@@ -22,7 +26,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "userid",
         "regex": ".*"
@@ -32,7 +36,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_in_type_list",
+      "type": "expect_column_values_to_be_in_type_list",
       "kwargs": {
         "column": "timestamp",
         "type_list": [
@@ -43,16 +47,12 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "timestamp",
-        "min_value": "2000-01-01",
-        "parse_strings_as_datetimes": false
+        "min_value": "2000-01-01T00:00:00"
       },
       "meta": {}
     }
-  ],
-  "meta": {
-    "great_expectations_version": "0.18.22"
-  }
+  ]
 }
