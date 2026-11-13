@@ -136,7 +136,8 @@ data "aws_iam_policy_document" "s3_read_data_lake" {
     resources = [
       "${var.glue_bucket_arn}/*",
       "${var.raw_bucket_arn}/*",
-      "${var.transformed_bucket_arn}/*"
+      "${var.transformed_bucket_arn}/*",
+      "${local.raw_bucket_production_arn}/*",
     ]
   }
 }
@@ -188,7 +189,8 @@ data "aws_iam_policy_document" "gc_notify_rds_export_kms" {
       "kms:ReEncryptTo",
     ]
     resources = [
-      "arn:aws:kms:${var.region}:${var.account_id}:key/*"
+      "arn:aws:kms:${var.region}:${var.account_id}:key/*",
+      "arn:aws:kms:${var.region}:739275439843:key/*"
     ]
     condition {
       test     = "ForAnyValue:StringEquals"
