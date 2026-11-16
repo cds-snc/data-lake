@@ -280,9 +280,7 @@ def get_new_data(
         for field in fields:
             field_name = field["name"]
             if field_name not in df.columns:
-                logger.warn(
-                    f"Skipping transformation for missing field: {field_name}"
-                )
+                logger.warn(f"Skipping transformation for missing field: {field_name}")
                 continue
 
             field_type = postgres_to_spark_type(field["type"])
