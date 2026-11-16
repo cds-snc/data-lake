@@ -127,7 +127,7 @@ def store_validation_result(result, suite_name: str, target_gx_bucket: str) -> N
         )
         logger.info(f"Validation result written to s3://{target_gx_bucket}/{key}")
     except Exception as e:
-        logger.warning(f"Could not write validation result to S3: {str(e)}")
+        logger.warn(f"Could not write validation result to S3: {str(e)}")
 
 
 def validate_with_gx(
@@ -270,7 +270,7 @@ def get_new_data(
             missing_fields = [
                 field for field in field_names if field not in existing_columns
             ]
-            logger.warning(f"Some configured fields missing in data: {missing_fields}")
+            logger.warn(f"Some configured fields missing in data: {missing_fields}")
             logger.info(f"Available columns: {existing_columns}")
 
         # Filter df to only include the specified fields
@@ -280,7 +280,7 @@ def get_new_data(
         for field in fields:
             field_name = field["name"]
             if field_name not in df.columns:
-                logger.warning(
+                logger.warn(
                     f"Skipping transformation for missing field: {field_name}"
                 )
                 continue
@@ -311,7 +311,7 @@ def get_new_data(
         logger.error(f"Attempted to read with fallback schema: {fallback_schema}")
 
         # Return empty DataFrame with the same explicit schema
-        logger.warning("Returning empty DataFrame due to read failure")
+        logger.warn("Returning empty DataFrame due to read failure")
         return spark.createDataFrame([], fallback_schema)
 
 
@@ -506,7 +506,7 @@ def process_data():
                         f"Successfully refreshed partitions for {DATABASE_NAME_TRANSFORMED}.{table}"
                     )
                 except Exception as repair_e:
-                    logger.warning(
+                    logger.warn(
                         f"MSCK REPAIR failed (table might not exist yet): {str(repair_e)}"
                     )
             else:
