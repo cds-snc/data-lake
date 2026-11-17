@@ -190,6 +190,108 @@ resource "aws_glue_trigger" "platform_gc_notify_job" {
 }
 
 #
+# Platform / GC Design System
+#
+data "local_file" "platform_gc_design_system_job" {
+  filename = "${path.module}/etl/platform/gc_design_system/process_data.py"
+}
+
+resource "aws_s3_object" "platform_gc_design_system_job" {
+  bucket = var.glue_bucket_name
+  key    = "platform/gc_design_system/process_data.py"
+  source = data.local_file.platform_gc_design_system_job.filename
+  etag   = filemd5(data.local_file.platform_gc_design_system_job.filename)
+}
+
+data "local_file" "platform_gc_design_system_requirements" {
+  filename = "${path.module}/etl/platform/gc_design_system/requirements.txt"
+}
+
+resource "aws_s3_object" "platform_gc_design_system_requirements" {
+  bucket = var.glue_bucket_name
+  key    = "platform/gc_design_system/requirements.txt"
+  source = data.local_file.platform_gc_design_system_requirements.filename
+  etag   = filemd5(data.local_file.platform_gc_design_system_requirements.filename)
+}
+
+data "archive_file" "platform_gc_design_system_tables" {
+  type        = "zip"
+  source_dir  = "${path.module}/etl/platform/gc_design_system/tables"
+  output_path = "${path.module}/etl/platform/gc_design_system/tables.zip"
+}
+
+resource "aws_s3_object" "platform_gc_design_system_tables" {
+  bucket = var.glue_bucket_name
+  key    = "platform/gc_design_system/tables.zip"
+  source = data.archive_file.platform_gc_design_system_tables.output_path
+  etag   = data.archive_file.platform_gc_design_system_tables.output_md5
+}
+
+data "archive_file" "platform_gc_design_system_gx" {
+  type        = "zip"
+  source_dir  = "${path.module}/etl/platform/gc_design_system/gx"
+  output_path = "${path.module}/etl/platform/gc_design_system/gx.zip"
+}
+
+resource "aws_s3_object" "platform_gc_design_system_gx" {
+  bucket = var.glue_bucket_name
+  key    = "platform/gc_design_system/gx.zip"
+  source = data.archive_file.platform_gc_design_system_gx.output_path
+  etag   = data.archive_file.platform_gc_design_system_gx.output_md5
+}
+
+resource "aws_glue_job" "platform_gc_design_system_job" {
+  name = "Platform / GC Design System"
+
+  glue_version           = "6.0"
+  timeout                = 60 # minutes
+  role_arn               = aws_iam_role.glue_etl.arn
+  security_configuration = aws_glue_security_configuration.encryption_at_rest.name
+  worker_type            = "G.1X"
+  number_of_workers      = 2
+
+  command {
+    script_location = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_design_system_job.key}"
+    python_version  = "3"
+  }
+
+  default_arguments = {
+    "--continuous-log-logGroup"          = "/aws-glue/jobs/${aws_glue_security_configuration.encryption_at_rest.name}/service-role/${aws_iam_role.glue_etl.name}/output"
+    "--continuous-log-logStreamPrefix"   = "platform_gc_design_system"
+    "--enable-continuous-cloudwatch-log" = "true"
+    "--enable-continuous-log-filter"     = "true"
+    "--enable-auto-scaling"              = "true"
+    "--enable-glue-datacatalog"          = "true"
+    "--enable-job-insights"              = "true"
+    "--enable-metrics"                   = "true"
+    "--enable-observability-metrics"     = "true"
+    "--gx_config_object"                 = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_design_system_gx.key}"
+    "--job-language"                     = "python"
+    "--python-modules-installer-option"  = "-r"
+    "--additional-python-modules"        = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_design_system_requirements.key}"
+    "--source_bucket"                    = var.transformed_bucket_name
+    "--source_prefix"                    = "platform/gc-design-system/cloudfront-logs"
+    "--output_bucket"                    = var.transformed_bucket_name
+    "--output_prefix"                    = "platform/gc-design-system"
+    "--database_name_output"             = aws_glue_catalog_database.platform_gc_design_system.name
+    "--table_config_object"              = "s3://${var.glue_bucket_name}/${aws_s3_object.platform_gc_design_system_tables.key}"
+    "--table_name_prefix"                = "platform_gc_design_system"
+    "--target_env"                       = var.env
+  }
+}
+
+resource "aws_glue_trigger" "platform_gc_design_system_job" {
+  name     = "Platform / GC Design System"
+  schedule = "cron(0 11 * * ? *)" # Daily at 11am UTC
+  type     = "SCHEDULED"
+  enabled  = local.is_production # CloudFront log processing only runs in production
+
+  actions {
+    job_name = aws_glue_job.platform_gc_design_system_job.name
+  }
+}
+
+#
 # Platform / Support / Freshdesk
 #
 data "local_file" "platform_support_freshdesk_job" {
