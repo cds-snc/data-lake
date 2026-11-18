@@ -45,7 +45,7 @@ data "aws_iam_policy_document" "platform_notify_rds_snapshot_exports_kms" {
     principals {
       type = "AWS"
       identifiers = concat(
-        [local.gc_notify_rds_export_role_arn],
+        [local.gc_notify_rds_export_role_arn, local.data_lake_staging_etl_role_arn],
         local.gc_notify_quicksight_role_arns,
       )
     }

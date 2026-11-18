@@ -32,4 +32,5 @@ locals {
 
   s3_bes_prefix                = "bes"
   s3_bes_strategic_data_prefix = "${local.s3_bes_prefix}/strategic-data"
+  raw_bucket_production_arn    = "arn:aws:s3:::cds-data-lake-raw-production"
 }
