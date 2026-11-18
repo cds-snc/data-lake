@@ -26,6 +26,10 @@ from pyspark.sql.functions import (
 )
 
 import great_expectations as gx
+from great_expectations.core.expectation_suite import ExpectationSuite
+from great_expectations.expectations.expectation_configuration import (
+    ExpectationConfiguration,
+)
 
 args = getResolvedOptions(
     sys.argv,
@@ -55,17 +59,14 @@ TABLE_NAME_PREFIX = args["table_name_prefix"]
 TARGET_ENV = args["target_env"]
 GX_CONFIG_OBJECT = args["gx_config_object"]
 
-# Referrer hosts that indicate developer traffic (local dev servers, ddev, docker)
 DEV_REFERRER_HOSTS = ["localhost", "127.0.0.1", "host.docker.internal"]
 DEV_REFERRER_SUFFIX = ".ddev.site"
 
-# Extracts the host from an absolute URL, e.g. https://www.canada.ca/en.html -> www.canada.ca
 REFERRER_HOST_REGEX = r"^[A-Za-z][A-Za-z0-9+.-]*://([^/:?#]+)"
 
 NO_REFERRER = "(none)"
 UNKNOWN_REFERRER = "(unknown)"
 
-# Initialize Spark and Glue contexts
 sc = SparkContext.getOrCreate()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
@@ -76,90 +77,109 @@ if spark is not None:
 logger = glueContext.get_logger()
 
 
-def configure_gx_stores(context: gx.DataContext, target_gx_bucket: str = None):
+def load_expectation_suite(suite_name: str) -> ExpectationSuite:
     """
-    Configure the Great Expectations validation store to write to S3 at runtime.
+    Load a Great Expectations suite from the JSON files shipped in the gx
+    configuration archive (gx/expectations/<suite_name>.json).
     """
-    if "test" not in target_gx_bucket:
-        logger.info(f"Writing validation results to S3 bucket: {target_gx_bucket}")
+    suite_path = os.path.join(os.getcwd(), "gx", "expectations", f"{suite_name}.json")
+    with open(suite_path, "r") as f:
+        suite_config = json.load(f)
 
-        context.add_store(
-            store_name="validations_store",
-            store_config={
-                "class_name": "ValidationsStore",
-                "store_backend": {
-                    "class_name": "TupleS3StoreBackend",
-                    "bucket": target_gx_bucket,
-                    "prefix": "platform/gc-design-system/data-validation/validations/",
-                },
-            },
-        )
+    return ExpectationSuite(
+        name=suite_config["name"],
+        expectations=[
+            ExpectationConfiguration(
+                type=expectation["type"],
+                kwargs=expectation["kwargs"],
+                meta=expectation.get("meta", {}),
+            )
+            for expectation in suite_config["expectations"]
+        ],
+    )
 
-        context.add_store(
-            store_name="evaluation_parameter_store",
-            store_config={
-                "class_name": "EvaluationParameterStore",
-            },
+
+def store_validation_result(result, suite_name: str, target_gx_bucket: str) -> None:
+    """
+    Write the Great Expectations validation result to S3.  Great Expectations 1.x
+    no longer ships an S3 store backend, so the result is written directly.
+    A failure to store the result never fails the validation itself.
+    """
+    if "test" in target_gx_bucket:
+        logger.info("Not writing validation result to S3 (test bucket)")
+        return
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    key = (
+        "platform/gc-design-system/data-validation/validations/"
+        f"{suite_name}/{timestamp}.json"
+    )
+    try:
+        boto3.client("s3").put_object(
+            Bucket=target_gx_bucket,
+            Key=key,
+            Body=json.dumps(result.to_json_dict(), default=str).encode("utf-8"),
         )
-    else:
-        logger.info("Writing validation results locally")
+        logger.info(f"Validation result written to s3://{target_gx_bucket}/{key}")
+    except Exception as e:
+        logger.warn(f"Could not write validation result to S3: {str(e)}")
 
 
 def validate_with_gx(
     dataframe: SparkDataFrame,
-    spark_session,
-    checkpoint_name: str,
+    suite_name: str,
     batch_name: str = "runtime_batch",
 ) -> bool:
     """
-    Validate the Spark DataFrame using the specified Great Expectations checkpoint.
+    Validate the Spark DataFrame using the specified Great Expectations suite.
     Logs the details of every failed expectation.
 
     Returns:
         bool: True if validation passes, False otherwise
     """
     try:
-        gx_context_path = os.path.join(os.getcwd(), "gx")
-        context = gx.get_context(context_root_dir=gx_context_path, cloud_mode=False)
+        suite = load_expectation_suite(suite_name)
 
-        configure_gx_stores(context, OUTPUT_BUCKET)
-
-        context.datasources["spark_datasource"].execution_engine.spark = spark_session
-
-        result = context.run_checkpoint(
-            checkpoint_name=checkpoint_name,
-            batch_request={
-                "runtime_parameters": {"batch_data": dataframe},
-                "batch_identifiers": {"default_identifier_name": batch_name},
-            },
+        context = gx.get_context(mode="ephemeral")
+        data_source = context.data_sources.add_spark(name="spark_datasource")
+        data_asset = data_source.add_dataframe_asset(name=suite_name)
+        batch_definition = data_asset.add_batch_definition_whole_dataframe(batch_name)
+        suite = context.suites.add(suite)
+        validation_definition = context.validation_definitions.add(
+            gx.ValidationDefinition(
+                name=f"{suite_name}_validation", data=batch_definition, suite=suite
+            )
         )
 
-        if not result["success"]:
-            logger.error(f"Validation failed for checkpoint '{checkpoint_name}'")
+        result = validation_definition.run(batch_parameters={"dataframe": dataframe})
 
-            for run_result in result["run_results"].values():
-                for res in run_result["validation_result"]["results"]:
-                    if res["success"]:
-                        continue
-                    config = res["expectation_config"]
-                    details = res.get("result", {})
-                    logger.error(
-                        f"FAILED: {config['expectation_type']} "
-                        f"on column '{config['kwargs'].get('column', '')}'"
-                    )
-                    logger.error(f"Expected: {config['kwargs']}")
-                    for key in (
-                        "partial_unexpected_list",
-                        "unexpected_count",
-                        "element_count",
-                        "observed_value",
-                    ):
-                        if key in details:
-                            logger.error(f"{key}: {details[key]}")
-                    logger.error("=" * 80)
+        store_validation_result(result, suite_name, OUTPUT_BUCKET)
+
+        if not result.success:
+            logger.error(f"Validation failed for suite '{suite_name}'")
+
+            for res in result.results:
+                if res.success:
+                    continue
+                config = res.expectation_config
+                details = res.result or {}
+                logger.error(
+                    f"FAILED: {config.type} "
+                    f"on column '{config.kwargs.get('column', '')}'"
+                )
+                logger.error(f"Expected: {config.kwargs}")
+                for key in (
+                    "partial_unexpected_list",
+                    "unexpected_count",
+                    "element_count",
+                    "observed_value",
+                ):
+                    if key in details:
+                        logger.error(f"{key}: {details[key]}")
+                logger.error("=" * 80)
             return False
 
-        logger.info(f"Validation succeeded for checkpoint '{checkpoint_name}'.")
+        logger.info(f"Validation succeeded for suite '{suite_name}'.")
         return True
     except Exception as e:
         logger.error(f"Error during Great Expectations validation: {str(e)}")
@@ -188,7 +208,6 @@ def read_cloudfront_logs(date_from: str) -> SparkDataFrame:
     logger.info(f"Reading {source_path} from {date_from}...")
 
     df = spark.read.parquet(source_path)
-    # Spark may infer the partition column as a date; compare and keep it as a string
     df = df.withColumn("date", col("date").cast("string"))
     return df.filter(col("date") >= lit(date_from))
 
@@ -317,7 +336,7 @@ def process_data():
         table_name = dataset["table_name"]
         partition_cols = dataset["partition_cols"]
         look_back_days = dataset["look_back_days"]
-        gx_checkpoint = f"gcds-{table_name}_checkpoint"
+        gx_suite = f"gcds-{table_name}_suite"
 
         logger.info(f"Processing {table_name} data...")
         data = aggregate_cloudfront_logs(
@@ -326,8 +345,7 @@ def process_data():
 
         row_count = data.count()
 
-        # An empty window fails the row count check in the GX suite
-        if not validate_with_gx(data, spark, gx_checkpoint):
+        if not validate_with_gx(data, gx_suite):
             raise ValueError(
                 f"Great Expectations validation failed for {table_name}. Aborting ETL process."
             )
@@ -335,7 +353,6 @@ def process_data():
         table = f"{TABLE_NAME_PREFIX}_{table_name}"
         s3_output_path = f"{OUTPUT_PATH}/{table_name}/"
 
-        # Dynamic partition overwrite only replaces the date partitions in the window
         spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
         data.write.mode("overwrite").partitionBy(partition_cols).parquet(s3_output_path)
         logger.info(f"Wrote {row_count} rows to {s3_output_path}")

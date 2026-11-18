@@ -1,8 +1,8 @@
 {
-  "expectation_suite_name": "gcds-cloudfront_daily_suite",
+  "name": "gcds-cloudfront_daily_suite",
   "expectations": [
     {
-      "expectation_type": "expect_table_row_count_to_be_between",
+      "type": "expect_table_row_count_to_be_between",
       "kwargs": {
         "min_value": 1000
       },
@@ -11,7 +11,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_unique_value_count_to_be_between",
+      "type": "expect_column_unique_value_count_to_be_between",
       "kwargs": {
         "column": "date",
         "min_value": 3
@@ -21,7 +21,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_not_be_null",
+      "type": "expect_column_values_to_not_be_null",
       "kwargs": {
         "column": "date"
       },
@@ -30,7 +30,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "date",
         "regex": "^\\d{4}-\\d{2}-\\d{2}$"
@@ -40,7 +40,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_not_be_null",
+      "type": "expect_column_values_to_not_be_null",
       "kwargs": {
         "column": "referrer_host"
       },
@@ -49,7 +49,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_not_be_null",
+      "type": "expect_column_values_to_not_be_null",
       "kwargs": {
         "column": "uri_stem"
       },
@@ -58,7 +58,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "status",
         "regex": "^\\d{3}$"
@@ -68,7 +68,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "requests",
         "min_value": 1
@@ -78,7 +78,7 @@
       }
     },
     {
-      "expectation_type": "expect_column_values_to_be_between",
+      "type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "bytes_sent",
         "min_value": 0

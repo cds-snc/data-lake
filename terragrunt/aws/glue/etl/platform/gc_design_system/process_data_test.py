@@ -2,8 +2,9 @@ import glob
 import json
 import os
 import sys
+from contextlib import contextmanager
 from datetime import datetime, timezone
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from pyspark.sql import SparkSession
@@ -45,6 +46,9 @@ from process_data import (  # noqa: E402
     download_s3_object,
     get_dataset_config,
     get_date_from,
+    load_expectation_suite,
+    store_validation_result,
+    validate_with_gx,
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -274,15 +278,25 @@ def test_table_configs_are_valid():
         assert config["look_back_days"] >= 1
 
 
-def test_every_table_has_gx_checkpoint_and_suite():
+def test_every_table_has_gx_suite():
     for path in glob.glob(os.path.join(BASE_DIR, "tables", "*.json")):
         table = os.path.basename(path)[: -len(".json")]
         assert os.path.exists(
-            os.path.join(BASE_DIR, "gx", "checkpoints", f"gcds-{table}_checkpoint.yml")
-        )
-        assert os.path.exists(
             os.path.join(BASE_DIR, "gx", "expectations", f"gcds-{table}_suite.json")
         )
+
+
+def test_gx_suites_load(monkeypatch):
+    """Every suite shipped in gx/expectations must load as a valid GX 1.x suite."""
+    monkeypatch.chdir(BASE_DIR)
+    suite_files = sorted(os.listdir(os.path.join(BASE_DIR, "gx", "expectations")))
+    assert len(suite_files) > 0
+
+    for suite_file in suite_files:
+        suite_name = suite_file.replace(".json", "")
+        suite = load_expectation_suite(suite_name)
+        assert suite.name == suite_name
+        assert len(suite.expectations) > 0
 
 
 def test_gx_suite_columns_exist_in_output(spark_session):
@@ -297,3 +311,102 @@ def test_gx_suite_columns_exist_in_output(spark_session):
         column = expectation["kwargs"].get("column")
         if column:
             assert column in output_columns
+
+
+# ===== GREAT EXPECTATIONS VALIDATION TESTS =====
+
+
+@contextmanager
+def mock_gx(success=True, failed_results=None):
+    """
+    Patch the Great Expectations module used by process_data so that the
+    validation definition run returns a canned result.
+    """
+    result = MagicMock()
+    result.success = success
+    result.results = failed_results or []
+
+    with patch("process_data.gx") as gx_mock, patch(
+        "process_data.load_expectation_suite"
+    ) as load_suite_mock:
+        context = gx_mock.get_context.return_value
+        validation_definition = context.validation_definitions.add.return_value
+        validation_definition.run.return_value = result
+        gx_mock.load_suite_mock = load_suite_mock
+        gx_mock.validation_definition = validation_definition
+        yield gx_mock
+
+
+def test_validate_with_gx_success(spark_session):
+    df = aggregate(spark_session, [log_row("https://a.ca/")])
+
+    with mock_gx(success=True) as gx_mock, patch("process_data.boto3.client"):
+        assert validate_with_gx(df, "test_suite") is True
+
+        gx_mock.load_suite_mock.assert_called_once_with("test_suite")
+        gx_mock.get_context.assert_called_once_with(mode="ephemeral")
+        call_args = gx_mock.validation_definition.run.call_args
+        assert call_args[1]["batch_parameters"] == {"dataframe": df}
+
+
+def test_validate_with_gx_failure(spark_session):
+    df = aggregate(spark_session, [log_row("https://a.ca/")])
+
+    failed = MagicMock()
+    failed.success = False
+    failed.expectation_config.type = "expect_table_row_count_to_be_between"
+    failed.expectation_config.kwargs = {"min_value": 1000}
+    failed.result = {"observed_value": 0}
+
+    with mock_gx(success=False, failed_results=[failed]), patch(
+        "process_data.boto3.client"
+    ):
+        assert validate_with_gx(df, "test_suite") is False
+
+
+def test_validate_with_gx_exception_returns_false(spark_session):
+    df = aggregate(spark_session, [log_row("https://a.ca/")])
+
+    with mock_gx() as gx_mock:
+        gx_mock.get_context.side_effect = Exception("GX context error")
+        assert validate_with_gx(df, "test_suite") is False
+
+
+def test_validate_with_gx_missing_suite(spark_session):
+    df = aggregate(spark_session, [log_row("https://a.ca/")])
+    assert validate_with_gx(df, "gcds-does_not_exist_suite") is False
+
+
+def test_store_validation_result_writes_to_s3():
+    validation_result = MagicMock()
+    validation_result.to_json_dict.return_value = {"success": True}
+
+    with patch("process_data.boto3.client") as mock_client:
+        store_validation_result(
+            validation_result, "gcds-cloudfront_daily_suite", "output-bucket"
+        )
+
+        kwargs = mock_client.return_value.put_object.call_args[1]
+        assert kwargs["Bucket"] == "output-bucket"
+        assert kwargs["Key"].startswith(
+            "platform/gc-design-system/data-validation/validations/"
+            "gcds-cloudfront_daily_suite/"
+        )
+        assert json.loads(kwargs["Body"]) == {"success": True}
+
+
+def test_store_validation_result_skipped_for_test_bucket():
+    with patch("process_data.boto3.client") as mock_client:
+        store_validation_result(MagicMock(), "gcds-cloudfront_daily_suite", "test-b")
+        mock_client.assert_not_called()
+
+
+def test_store_validation_result_does_not_raise_on_s3_failure():
+    validation_result = MagicMock()
+    validation_result.to_json_dict.return_value = {"success": True}
+
+    with patch("process_data.boto3.client") as mock_client:
+        mock_client.return_value.put_object.side_effect = Exception("S3 error")
+        store_validation_result(
+            validation_result, "gcds-cloudfront_daily_suite", "output-bucket"
+        )
