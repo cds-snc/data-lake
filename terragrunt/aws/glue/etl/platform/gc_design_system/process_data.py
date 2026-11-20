@@ -62,7 +62,7 @@ GX_CONFIG_OBJECT = args["gx_config_object"]
 DEV_REFERRER_HOSTS = ["localhost", "127.0.0.1", "host.docker.internal"]
 DEV_REFERRER_SUFFIX = ".ddev.site"
 
-REFERRER_HOST_REGEX = r"^[A-Za-z][A-Za-z0-9+.-]*://([^/:?#]+)"
+REFERRER_HOST_REGEX = r"^[A-Za-z][A-Za-z0-9+.-]*://(\[[^\]/?#]+\]|[^/:?#\[\]]+)"
 
 NO_REFERRER = "(none)"
 UNKNOWN_REFERRER = "(unknown)"

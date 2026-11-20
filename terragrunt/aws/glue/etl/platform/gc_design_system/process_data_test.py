@@ -138,6 +138,33 @@ def test_referrer_host_is_lowercased_without_path_or_port(spark_session):
     assert list(result.keys()) == ["www.canada.ca"]
 
 
+@pytest.mark.parametrize(
+    "referer,expected_host",
+    [
+        ("https://[2001:db8::1]/", "[2001:db8::1]"),
+        ("https://[2001:DB8::2]:8443/page?x=1", "[2001:db8::2]"),
+        ("http://[::1]:3000/", "[::1]"),
+    ],
+)
+def test_ipv6_referrer_host_keeps_full_address(spark_session, referer, expected_host):
+    result = by_referrer(aggregate(spark_session, [log_row(referer)]))
+
+    assert list(result.keys()) == [expected_host]
+
+
+def test_different_ipv6_referrers_are_not_merged(spark_session):
+    rows = [log_row("https://[2001:db8::1]/"), log_row("https://[2001:db8::2]/")]
+    result = by_referrer(aggregate(spark_session, rows))
+
+    assert sorted(result.keys()) == ["[2001:db8::1]", "[2001:db8::2]"]
+
+
+def test_unterminated_ipv6_referrer_is_unknown(spark_session):
+    result = by_referrer(aggregate(spark_session, [log_row("https://[2001:db8::1/")]))
+
+    assert list(result.keys()) == ["(unknown)"]
+
+
 def test_blank_and_missing_referrers_are_none(spark_session):
     rows = [log_row(""), log_row("-"), log_row("  "), log_row(None)]
     result = by_referrer(aggregate(spark_session, rows))
