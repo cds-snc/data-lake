@@ -28,6 +28,8 @@ jobs:
           - module_type: etl  
             module_path: platform/gc_forms
           - module_type: etl
+            module_path: platform/gc_design_system
+          - module_type: etl
             module_path: platform/gc_notify
           - module_type: etl
             module_path: platform/support/freshdesk

@@ -83,6 +83,32 @@
               "End": true
             }
           }
+        },
+        {
+          "StartAt": "StartGCDesignSystemJob",
+          "States": {
+            "StartGCDesignSystemJob": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "${platform_gc_design_system_job_name}"
+              },
+              "Catch": [
+                {
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
+                  "Next": "GCDesignSystemJobFailed"
+                }
+              ],
+              "End": true
+            },
+            "GCDesignSystemJobFailed": {
+              "Type": "Pass",
+              "Result": "GC Design System Glue job failed",
+              "End": true
+            }
+          }
         }
       ]
     },

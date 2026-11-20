@@ -1,0 +1,5 @@
+{
+  "table_name": "cloudfront_daily",
+  "partition_cols": ["date"],
+  "look_back_days": 3
+}
