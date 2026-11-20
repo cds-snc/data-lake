@@ -133,7 +133,7 @@ def validate_with_gx(
 ) -> bool:
     """
     Validate the Spark DataFrame using the specified Great Expectations suite.
-    Logs the details of every failed expectation.
+    The full validation result is stored in S3.
 
     Args:
         expectation_parameters: runtime values for the suite's $PARAMETER kwargs
@@ -164,26 +164,6 @@ def validate_with_gx(
 
         if not result.success:
             logger.error(f"Validation failed for suite '{suite_name}'")
-
-            for res in result.results:
-                if res.success:
-                    continue
-                config = res.expectation_config
-                details = res.result or {}
-                logger.error(
-                    f"FAILED: {config.type} "
-                    f"on column '{config.kwargs.get('column', '')}'"
-                )
-                logger.error(f"Expected: {config.kwargs}")
-                for key in (
-                    "partial_unexpected_list",
-                    "unexpected_count",
-                    "element_count",
-                    "observed_value",
-                ):
-                    if key in details:
-                        logger.error(f"{key}: {details[key]}")
-                logger.error("=" * 80)
             return False
 
         logger.info(f"Validation succeeded for suite '{suite_name}'.")

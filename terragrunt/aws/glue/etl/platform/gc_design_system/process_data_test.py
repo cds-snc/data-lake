@@ -345,14 +345,13 @@ def test_gx_suite_columns_exist_in_output(spark_session):
 
 
 @contextmanager
-def mock_gx(success=True, failed_results=None):
+def mock_gx(success=True):
     """
     Patch the Great Expectations module used by process_data so that the
     validation definition run returns a canned result.
     """
     result = MagicMock()
     result.success = success
-    result.results = failed_results or []
 
     with patch("process_data.gx") as gx_mock, patch(
         "process_data.load_expectation_suite"
@@ -380,15 +379,7 @@ def test_validate_with_gx_success(spark_session):
 def test_validate_with_gx_failure(spark_session):
     df = aggregate(spark_session, [log_row("https://a.ca/")])
 
-    failed = MagicMock()
-    failed.success = False
-    failed.expectation_config.type = "expect_table_row_count_to_be_between"
-    failed.expectation_config.kwargs = {"min_value": 1000}
-    failed.result = {"observed_value": 0}
-
-    with mock_gx(success=False, failed_results=[failed]), patch(
-        "process_data.boto3.client"
-    ):
+    with mock_gx(success=False), patch("process_data.boto3.client"):
         assert validate_with_gx(df, "test_suite") is False
 
 
