@@ -46,6 +46,7 @@ from process_data import (  # noqa: E402
     download_s3_object,
     get_dataset_config,
     get_date_from,
+    get_expected_dates,
     load_expectation_suite,
     store_validation_result,
     validate_with_gx,
@@ -410,3 +411,48 @@ def test_store_validation_result_does_not_raise_on_s3_failure():
         store_validation_result(
             validation_result, "gcds-cloudfront_daily_suite", "output-bucket"
         )
+
+
+def test_get_expected_dates_excludes_today():
+    today = datetime(2026, 11, 18, 5, 0, tzinfo=timezone.utc)
+    assert get_expected_dates(3, today) == ["2026-11-15", "2026-11-16", "2026-11-17"]
+
+
+def test_get_expected_dates_starts_at_date_from():
+    today = datetime(2026, 11, 18, 5, 0, tzinfo=timezone.utc)
+    assert get_expected_dates(3, today)[0] == get_date_from(3, today)
+
+
+def window_dataframe(spark_session, dates, rows_per_date=500):
+    rows = [
+        (date, "(none)", "/a", "200", 1, 100)
+        for date in dates
+        for _ in range(rows_per_date)
+    ]
+    return spark_session.createDataFrame(
+        rows, ["date", "referrer_host", "uri_stem", "status", "requests", "bytes_sent"]
+    )
+
+
+def test_suite_passes_when_every_expected_date_is_present(spark_session, monkeypatch):
+    monkeypatch.chdir(BASE_DIR)
+    expected = ["2026-11-03", "2026-11-04", "2026-11-05"]
+    df = window_dataframe(spark_session, expected)
+
+    assert validate_with_gx(
+        df,
+        "gcds-cloudfront_daily_suite",
+        expectation_parameters={"expected_dates": expected},
+    )
+
+
+def test_suite_fails_when_a_day_in_the_window_is_missing(spark_session, monkeypatch):
+    monkeypatch.chdir(BASE_DIR)
+    expected = ["2026-11-03", "2026-11-04", "2026-11-05"]
+    df = window_dataframe(spark_session, ["2026-11-03", "2026-11-04", "2026-11-06"])
+
+    assert not validate_with_gx(
+        df,
+        "gcds-cloudfront_daily_suite",
+        expectation_parameters={"expected_dates": expected},
+    )

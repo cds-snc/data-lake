@@ -11,13 +11,15 @@
       }
     },
     {
-      "type": "expect_column_unique_value_count_to_be_between",
+      "type": "expect_column_distinct_values_to_contain_set",
       "kwargs": {
         "column": "date",
-        "min_value": 3
+        "value_set": {
+          "$PARAMETER": "expected_dates"
+        }
       },
       "meta": {
-        "description": "The window should contain at least 3 distinct dates (no missing days)"
+        "description": "Every day in the re-processing window must be present (no missing days)"
       }
     },
     {

@@ -129,10 +129,14 @@ def validate_with_gx(
     dataframe: SparkDataFrame,
     suite_name: str,
     batch_name: str = "runtime_batch",
+    expectation_parameters: dict = None,
 ) -> bool:
     """
     Validate the Spark DataFrame using the specified Great Expectations suite.
     Logs the details of every failed expectation.
+
+    Args:
+        expectation_parameters: runtime values for the suite's $PARAMETER kwargs
 
     Returns:
         bool: True if validation passes, False otherwise
@@ -151,7 +155,10 @@ def validate_with_gx(
             )
         )
 
-        result = validation_definition.run(batch_parameters={"dataframe": dataframe})
+        result = validation_definition.run(
+            batch_parameters={"dataframe": dataframe},
+            expectation_parameters=expectation_parameters,
+        )
 
         store_validation_result(result, suite_name, OUTPUT_BUCKET)
 
@@ -198,6 +205,19 @@ def get_date_from(look_back_days: int, today: datetime = None) -> str:
     """
     today = today or datetime.now(timezone.utc)
     return (today - timedelta(days=look_back_days)).strftime("%Y-%m-%d")
+
+
+def get_expected_dates(look_back_days: int, today: datetime = None) -> List[str]:
+    """
+    Return every date (YYYY-MM-DD, UTC) from the start of the re-processing window
+    up to and including yesterday.  Today is excluded because its logs are still
+    arriving, so the partition may legitimately be absent or partial.
+    """
+    today = today or datetime.now(timezone.utc)
+    return [
+        (today - timedelta(days=days)).strftime("%Y-%m-%d")
+        for days in range(look_back_days, 0, -1)
+    ]
 
 
 def read_cloudfront_logs(date_from: str) -> SparkDataFrame:
@@ -345,7 +365,12 @@ def process_data():
 
         row_count = data.count()
 
-        if not validate_with_gx(data, gx_suite):
+        expectation_parameters = {
+            "expected_dates": get_expected_dates(look_back_days),
+        }
+        if not validate_with_gx(
+            data, gx_suite, expectation_parameters=expectation_parameters
+        ):
             raise ValueError(
                 f"Great Expectations validation failed for {table_name}. Aborting ETL process."
             )
