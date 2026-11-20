@@ -284,7 +284,7 @@ resource "aws_glue_trigger" "platform_gc_design_system_job" {
   name     = "Platform / GC Design System"
   schedule = "cron(0 11 * * ? *)" # Daily at 11am UTC
   type     = "SCHEDULED"
-  enabled  = local.is_production # CloudFront log processing only runs in production
+  enabled  = false
 
   actions {
     job_name = aws_glue_job.platform_gc_design_system_job.name

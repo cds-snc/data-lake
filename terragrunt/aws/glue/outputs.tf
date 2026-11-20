@@ -28,6 +28,11 @@ output "platform_support_freshdesk_name" {
   value       = aws_glue_job.platform_support_freshdesk.name
 }
 
+output "platform_gc_design_system_job_name" {
+  description = "GC Design System Glue job name."
+  value       = aws_glue_job.platform_gc_design_system_job.name
+}
+
 output "platform_gc_design_system_crawler_name" {
   description = "GC Design System Airtable Glue crawler name."
   value       = aws_glue_crawler.platform_gc_design_system_airtable.name
