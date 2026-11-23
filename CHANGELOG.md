@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.47.0](https://github.com/cds-snc/data-lake/compare/v1.46.0...v1.47.0) (2026-11-23)
+
+
+### Features
+
+* add GCDS CloudFront daily ETL ([#791](https://github.com/cds-snc/data-lake/issues/791)) ([cdc110e](https://github.com/cds-snc/data-lake/commit/cdc110e7507c8a9e06f664e4f8f0240d651ddfbb))
+
+
+### Miscellaneous Chores
+
+* **deps:** update all minor dependencies ([#794](https://github.com/cds-snc/data-lake/issues/794)) ([769266b](https://github.com/cds-snc/data-lake/commit/769266bf930393019afc92d7d9d7eab2050a4a14))
+* **deps:** update all non-major github action dependencies ([#795](https://github.com/cds-snc/data-lake/issues/795)) ([c359728](https://github.com/cds-snc/data-lake/commit/c359728c5d6384146f717a1fe66085a28c651c06))
+* **deps:** update all patch dependencies ([#793](https://github.com/cds-snc/data-lake/issues/793)) ([899df25](https://github.com/cds-snc/data-lake/commit/899df25cc14d7f45a7efaf2e6ad1a91a3ea587fd))
+
 ## [1.46.0](https://github.com/cds-snc/data-lake/compare/v1.45.5...v1.46.0) (2026-11-16)
 
 
